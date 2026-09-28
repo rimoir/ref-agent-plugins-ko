@@ -1,0 +1,45 @@
+# 에이전트 이식성
+
+Ponytail은 여러 에이전트에 옮겨 쓸 수 있는 스킬 배포판이다. 핵심 동작은 `skills/`의 스킬에 들어 있고, 호스트별 파일은 그 동작을 특정 에이전트에서 쉽게 불러오게 해 주는 어댑터다.
+
+## 지원하는 어댑터
+
+| 호스트 | 파일 | 메모 |
+|------|-------|-------|
+| Claude Code | `.claude-plugin/plugin.json`, `commands/`, `hooks/claude-codex-hooks.json`, `hooks/` | 전체 플러그인으로 설치하며 세션 활성화, 모드 추적, 명령, 상태 표시줄을 지원한다. |
+| Codex | `.codex-plugin/plugin.json`, `hooks/claude-codex-hooks.json`, `hooks/`, `skills/` | 같은 스킬에 활성화와 모드 추적용 수명 주기 훅을 더해 플러그인으로 설치한다. |
+| Grok Build | 루트 `plugin.json`, `.grok-plugin/marketplace.json`, `skills/`, `commands/` | `grok plugin install DietrichGebert/ponytail --trust`로 설치한 뒤 활성화한다. Grok은 코딩 작업용 스킬 설명을 보고 ponytail을 자동으로 호출할 수 있고, `/ponytail`을 쓰면 명시적으로 활성화한다. Grok 수명 주기 훅은 출력을 보여 주기만 하고 지시문을 주입하지는 못해서 쓰지 않는다. |
+| OpenCode | `.opencode/plugins/ponytail.mjs`, `.opencode/command/`, `hooks/`, `skills/` | 서버 플러그인이 `experimental.chat.system.transform`으로 매 턴 규칙을 주입하고 `/ponytail` 전환을 저장한다. 공용 지시문 생성기를 재사용한다. |
+| pi | `pi-extension/`, `skills/`, `hooks/` | 패키지 확장이다. 공용 지시문 생성기로 매 턴 규칙을 주입하고 `/ponytail` 명령을 등록한다. |
+| Hermes Agent | `plugin.yaml`, `__init__.py`, `skills/` | Hermes 전용 플러그인이다. `pre_llm_call`로 활성 모드를 주입하고, 게이트웨이의 `/ponytail-*` 스킬 명령을 에이전트 프롬프트로 바꿔 쓰고, `/ponytail` 모드 전환을 등록하고, 함께 들어 있는 스킬을 `ponytail:<skill>`로 노출한다. |
+| Gemini CLI | `gemini-extension.json`, `AGENTS.md`, `commands/`, `skills/` | 확장 매니페스트의 `contextFileName`이 항상 켜져 있는 규칙용 `AGENTS.md`를 가리키고, Gemini CLI가 자동으로 찾는 기존 `commands/*.toml`과 `skills/`를 재사용한다. Claude/Codex 훅 맵은 Gemini가 자동으로 찾는 `hooks/hooks.json` 경로에 두지 않는다. |
+| Cursor | `hooks/cursor-hooks.json`, `scripts/cursor-hooks.js`, `hooks/`, `.cursor/rules/ponytail.mdc` | Cursor 자체 훅을 쓴다. `node scripts/cursor-hooks.js install`은 `sessionStart`(`additional_context`로 기본 레벨 규칙 주입)와 `beforeSubmitPrompt`(`/ponytail` 레벨 추적, `additional_context`로 새 레벨 규칙 주입)를 `~/.cursor/hooks.json`에, `--project`를 붙이면 `.cursor/hooks.json`에 병합하고, 관련 없는 훅은 그대로 둔다. 서브에이전트 주입은 없고(Cursor의 `subagentStart`는 `permission`/`user_message`만 받는다) 클라우드 에이전트에서는 `sessionStart`가 없다. `.cursor/rules/ponytail.mdc`는 지시문만 쓰는 대안으로 남아 있고, 이 규칙이 작업 공간에 있으면 훅은 안내문만 주입한다. 동작 규약과 검증 기록은 [cursor-hooks.md](cursor-hooks.md)에 있다. |
+| Windsurf | `.windsurf/rules/ponytail.md` | 프로젝트 규칙 |
+| Cline | `.clinerules/ponytail.md` | 프로젝트 규칙 |
+| GitHub Copilot | `.github/copilot-instructions.md` | 저장소 지시문 파일 |
+| GitHub Copilot CLI | `.github/plugin/`, `AGENTS.md`, `.github/copilot-instructions.md`, `~/.copilot/copilot-instructions.md` | 플러그인을 지원한다(`copilot plugin marketplace add DietrichGebert/ponytail` + `copilot plugin install ponytail@ponytail`). 대체 수단인 지시문 모드도 남아 있다. 프로젝트별로는 `AGENTS.md`나 `.github/copilot-instructions.md`에서, 전역으로는 `~/.copilot/copilot-instructions.md`에서 읽는다(지시문 수준 지원, `/ponytail` 레벨과 훅 없음). |
+| Antigravity | `AGENTS.md` | 저장소 루트의 `AGENTS.md`를 항상 켜져 있는 규칙으로 읽는다(`.cursorrules`/`CLAUDE.md`와 같은 방식). 작업 공간 규칙에는 `.agents/rules/`도 쓸 수 있다. 지시문 수준으로 지원한다. |
+| CodeWhale | `AGENTS.md` | 저장소 루트의 `AGENTS.md`를 프로젝트 지시문으로 읽는다. 대체 파일로 `CLAUDE.md`와 `.claude/instructions.md`도 읽는다. 지시문 수준으로 지원한다. |
+| Swival | `.swival/skills/`, `AGENTS.md` | `swival skills add https://github.com/DietrichGebert/ponytail`은 ponytail 스킬 전부를 `.swival/skills/`에 바로 설치한다. `--global`을 붙이면 먼저 라이브러리(`~/.config/swival/library`)에 준비해 두고, 그다음 `swival skills add ponytail`(또는 `--global ponytail`)로 프로젝트별로 또는 모든 곳에서 활성화한다. 지시문 수준의 대체 수단으로 저장소 루트의 `AGENTS.md`와 전역 `~/.config/swival/AGENTS.md`도 읽는다. |
+| VS Code + Codex extension | `AGENTS.md` | Codex 확장은 `AGENTS.md`(저장소 루트, 또는 전역으로 `~/.codex/AGENTS.md`)를 읽는다. 지시문 수준으로 지원한다. 위의 Codex 전체 플러그인 행은 여기에 `/ponytail` 레벨과 훅을 더한다. |
+| JetBrains Junie | `AGENTS.md` | Settings → Tools → Junie → Project Settings → Guidelines Path에서 `AGENTS.md`를 지정하면 Junie가 읽는다(아직 자동이 아니다). 이 저장소에는 `AGENTS.md`가 들어 있고, `.junie/guidelines.md`는 Junie의 예전 경로다. 지시문 수준으로 지원한다. |
+| Amp (Sourcegraph) | `AGENTS.md` | Amp는 작업 디렉터리와 `$HOME`까지의 상위 디렉터리에서 `AGENTS.md`를 읽고(`~/.config/amp/AGENTS.md` 같은 전역 설정도 읽는다), 없으면 `AGENT.md`/`CLAUDE.md`를 읽는다. 지시문 수준으로 지원한다. |
+| Jules (Google) | `AGENTS.md` | Jules는 저장소 루트의 `AGENTS.md`를 자동으로 읽는다. 지시문 수준으로 지원한다. |
+| Kiro | `.kiro/steering/ponytail.md` | 스티어링 규칙이다. 전역이나 프로젝트 안에 복사한다. |
+| Qoder | `.qoder/rules/ponytail.md`, `.qoder-plugin/plugin.json`, `hooks/qoder-hooks.json`, `skills/`, `AGENTS.md` | Qoder는 `AGENTS.md`를 항상 켜져 있는 컨텍스트로 자동으로 불러온다. `.qoder/rules/ponytail.md`는 프로젝트별 규칙을 제공하고, 플러그인 매니페스트는 ponytail 스킬이 들어 있는 `skills/`를 가리킨다(Skill 시스템에서 `/ponytail`, `/ponytail-review` 등으로 호출한다). 전체 플러그인 수준으로 지원한다. `hooks/qoder-hooks.json` 템플릿이 `UserPromptSubmit`(모드 활성화 + 규칙 주입)와 `task|Task` 매처를 쓴 `PreToolUse`(서브에이전트 주입)를 등록한다. 지시문 수준 지원은 `AGENTS.md`로 저장소 루트에서 설정 없이 바로 동작한다. |
+| Zed | `AGENTS.md` | Agent Panel의 기본 규칙 파일 가운데 하나로 워크트리 루트의 `AGENTS.md`를 자동으로 포함한다. 지시문 수준으로 지원한다. |
+| 범용 에이전트 | `AGENTS.md` 또는 `skills/*/SKILL.md` | 간결한 규칙 파일을 복사하거나 스킬 파일을 직접 불러온다. |
+
+## 어댑터 규칙
+
+어댑터에는 꼭 필요한 연결 코드만 둔다. 호스트가 스킬이나 훅을 지원하면 기존 `skills/`와 `hooks/` 파일을 가리키게 한다. 호스트가 프로젝트 지시문만 지원하면 복사한 규칙 문구를 `AGENTS.md`와 맞춰 둔다.
+
+## 이식 가능한 동작
+
+- `skills/ponytail/SKILL.md`: 게으른 시니어 개발자 모드
+- `skills/ponytail-review/SKILL.md`: 과잉 설계 리뷰
+- `skills/ponytail-audit/SKILL.md`: 저장소 전체 과잉 설계 감사
+- `skills/ponytail-debt/SKILL.md`: `ponytail:` 표식을 단 의도적 단순화를 모아 관리하는 부채 목록
+- `skills/ponytail-gain/SKILL.md`: 벤치마크로 측정한 효과를 보여 주는 점수표
+- `skills/ponytail-help/SKILL.md`: 빠른 참조
+- `AGENTS.md`: 스킬을 지원하지 않는 에이전트용으로 항상 켜져 있는 간결한 지시문 모음

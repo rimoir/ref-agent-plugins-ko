@@ -1,0 +1,5 @@
+interface:
+  display_name: "Wait What"
+  short_description: "더 쉽게, 내가 모르는 맥락을 넣어 다시 설명"
+policy:
+  allow_implicit_invocation: false

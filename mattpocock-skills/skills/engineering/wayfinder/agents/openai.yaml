@@ -1,0 +1,5 @@
+interface:
+  display_name: "Wayfinder"
+  short_description: "큰 작업을 결정 티켓으로 나눠 계획한다"
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,5 @@
+interface:
+  display_name: "Writing Beats"
+  short_description: "원재료를 전개 단위로 엮어 글을 만든다"
+policy:
+  allow_implicit_invocation: false

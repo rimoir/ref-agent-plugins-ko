@@ -1,0 +1,5 @@
+interface:
+  display_name: "Setup Matt Pocock Skills"
+  short_description: "저장소를 스킬에 맞게 설정"
+policy:
+  allow_implicit_invocation: false

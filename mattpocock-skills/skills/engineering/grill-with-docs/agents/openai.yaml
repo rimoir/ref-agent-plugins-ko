@@ -1,0 +1,5 @@
+interface:
+  display_name: "Grill with Docs"
+  short_description: "설계를 집요하게 질문하고 문서를 쓴다"
+policy:
+  allow_implicit_invocation: false

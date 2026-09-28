@@ -1,0 +1,5 @@
+interface:
+  display_name: "Writing Shape"
+  short_description: "원재료를 다듬어 글 한 편으로 만든다"
+policy:
+  allow_implicit_invocation: false

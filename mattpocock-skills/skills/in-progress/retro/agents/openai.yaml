@@ -1,0 +1,5 @@
+interface:
+  display_name: "Retro"
+  short_description: "코딩 세션을 회고한다."
+policy:
+  allow_implicit_invocation: false

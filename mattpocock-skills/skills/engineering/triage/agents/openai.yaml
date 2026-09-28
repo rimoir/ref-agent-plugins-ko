@@ -1,0 +1,5 @@
+interface:
+  display_name: "Triage"
+  short_description: "분류 역할에 따라 이슈를 옮긴다"
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,5 @@
+interface:
+  display_name: "To Tickets"
+  short_description: "계획을 종단 간 최소 구현 티켓으로 나눈다"
+policy:
+  allow_implicit_invocation: false

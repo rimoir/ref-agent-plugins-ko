@@ -1,0 +1,5 @@
+interface:
+  display_name: "Teach"
+  short_description: "안내에 따라 작업 공간에서 개념을 배운다"
+policy:
+  allow_implicit_invocation: false

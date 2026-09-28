@@ -1,0 +1,5 @@
+interface:
+  display_name: "Writing Fragments"
+  short_description: "글의 원재료가 될 글 조각을 모은다"
+policy:
+  allow_implicit_invocation: false

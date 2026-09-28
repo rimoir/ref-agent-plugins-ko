@@ -1,0 +1,5 @@
+interface:
+  display_name: "Grill Me"
+  short_description: "인터뷰로 계획을 구체적으로 다듬는다"
+policy:
+  allow_implicit_invocation: false

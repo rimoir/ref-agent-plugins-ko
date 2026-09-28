@@ -1,0 +1,5 @@
+interface:
+  display_name: "Setup TS Deep Modules"
+  short_description: "TypeScript 패키지를 깊은 모듈 구조로 강제"
+policy:
+  allow_implicit_invocation: false

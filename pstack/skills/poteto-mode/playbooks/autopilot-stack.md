@@ -1,0 +1,16 @@
+### Autopilot-stack
+
+**스택은 네 책임이지만 머지는 아니다. 완전한 자율로 큐를 만들고 검증한 뒤, 운영자에게 검토하고 머지할 선형 base-branch 스택 하나를 넘긴다.** **Autopilot-full**의 형제 플레이북이다.
+
+1. **owner 루프는 그대로 돌린다.** 프로그램 전체에서 forge를 한 번 정한다. 기본은 GitHub CLI(`gh`)다. `command -v origin`이 성공하고 Origin이 레포를 찾을 수 있으면 PR 생성, 수정, 조회, watch, 머지 작업에 `origin pr ...`을 쓴다. 그렇지 않으면 `gh`를 쓰고 대체했다는 사실을 기록한다. Graphite(`gt`)를 요구하지 않는다. PR마다 Cursor 클라우드 에이전트 하나가 자기 변경을 처음부터 끝까지 맡는다. 빌드, 첫 push, 자체 증명 전에 ready로 연 PR, 자체 증명(게이트, CI, 영수증), `../references/bugbot-triage.md`에 따른 회의적인 Bugbot 분류, 군더더기 제거(`cursor-team-kit` 플러그인의 `deslop` 스킬(`/deslop`)), `/no-comments`(**no-comments** 스킬), `playbooks/babysit.md`에 따라 통과할 때까지 babysit이다. 작업이 독립적이면 owner를 병렬로 돌린다. 약 15분 안에 모든 owner는 **show-me-your-work** 스킬에 따라 `decisions.tsv` 기록을 시작하고, 첫 브랜치 스냅숏을 push하고, PR을 draft가 아닌 ready로 연다. 기록은 커밋하지 않고 보고와 함께 돌려준다. owner는 Autopilot-full 2단계의 `children.tsv`도 유지한다.
+2. **깨우기 체인으로 감사한다.** 루트는 대략 30분마다 감사 틱을 돈다. 로컬 루트는 틱마다 실제 터미널 `/loop`를 건다. 이 루프는 모니터링되는 셸에서 30분 sleep을 하고 출력 알림 센티널을 내보낸다. 클라우드 루트는 대신 기존 cloud-sleeper 깨우기 체인을 쓴다. 주기를 기억이나 유실될 수 있는 완료 알림에 맡기지 않는다. 틱마다 `git show origin/main:pstack/skills/poteto-mode/playbooks/autopilot-stack.md`로 trunk의 이 플레이북을 다시 읽고, 걸어 둔 `/goal`을 다시 읽는다. 작업을 둘 모두에 비춰 감사한다. 어긋난 점은 그 틱 안에 고친다. owner마다 일반적인 생존 확인이나 상태 확인을 한다. 진행으로 치는 것은 부수 효과뿐이다. 커밋, push, PR이나 검사 변화, 저장소 보고다. 예상 실행 시간을 넘기고도 부수 효과가 없는 레인은 멈춘 것으로 본다. 즉시 내리고 대체 레인을 투입한다. 점잖게 돌아오기를 기다리지 않는다. Autopilot-full 6단계에 따라 모든 subagent를 확인하고 틱을 끝낸다.
+3. **운영자 게이트를 지킨다.** 먼저 말하고 기다린다. 계획을 말해 달라는 요청은 진행 신호가 아니다. 운영자가 명시적으로 진행하라고 하면 전체 프로그램 목표로 `/goal`을 건다. 목표는 사슬이 끝날 때까지 턴을 넘어 이어진다. 운영자가 멈추라고 하면 모든 owner가 즉시 쓰기 금지 상태로 멈춘다.
+4. **라운드마다 검증한다.** owner는 출시할 코드가 확정되면 code-ready head SHA를 보고하고, 루프가 통과하면 정확한 head SHA와 함께 STACK-READY를 보고한다. 루트는 Autopilot-full 4단계에 따라 라운드마다 검증하되, merge-ready 대신 STACK-READY를 쓴다. 검증되지 않은 것은 스택에 들어가지 않는다.
+5. **깨끗한 판정이면 덧붙이고, 절대 출시하지 않는다.** 어떤 owner도 머지하거나, auto-merge를 예약하거나, 닫지 않는다. 깨끗한 판정을 받은 PR은 선형 base-branch 스택 하나에 검증된 순서나 운영자가 지정한 순서로 덧붙인다.
+6. **토폴로지는 한 명이 쓰고, 빌드는 여럿이 병렬로 쓴다.** owner는 자기 브랜치만 push하고 끝, 현재 base, 의도한 부모를 보고한다. 토폴로지를 쓰는 것은 루트뿐이다. PR을 덧붙이려면 의도한 부모를 fetch하고, 자식 브랜치를 그 부모의 정확한 끝으로 rebase하고, `ls-remote` 확인을 거친 뒤에만 `--force-with-lease`로 push하고, PR base를 부모 브랜치로 정한다. 정한 forge에 맞춰 `origin pr create --status open --base <parent-branch>`나 `gh pr create --base <parent-branch>`로 만든다. 기존 PR의 대상은 `origin pr edit <pr> --base <parent-branch>`나 `gh pr edit <pr> --base <parent-branch>`로 바꾼다. trunk를 대상으로 하는 것은 루트 PR뿐이다. `gt`로 사슬을 제출하거나 등록하지 않는다.
+7. **드리프트는 루트에서 흡수하고, 움직인 것은 다시 검증한다.** 루트는 현재 trunk를 fetch하고 사슬을 아래에서 위로 rebase한다. rebase가 owner의 파일에서 충돌을 드러내면 그 owner가 자기 몫을 고치고 루트가 결과를 push한다. rebase는 그 위의 모든 SHA를 다시 쓰고 옛 SHA의 판정을 무효로 만든다. 판정 SHA마다 `playbooks/shipping.md`의 patch-id 규칙을 적용한다. 더 이상 유효하지 않은 것은 전달 전에 이 플레이북의 4단계를 다시 거친다. patch-id가 그대로여도 다시 쓴 push마다 mergeability와 CI를 다시 돌린다. 공동 서명(countersign) 규칙은 Autopilot-full과 같다. 정말로 새로운 고정값(pin)이 생기면 멈추고 루트의 새 공동 서명을 받는다. 이미 머지된 값의 드리프트를 흡수하는 것은 새로 올리는 것이 아니다.
+8. **사슬을 전달한다.** 산출물은 검증된 PR로 이루어진 선형 사슬 하나다. 정한 forge에서 아래부터 검토할 수 있고, 모든 고리는 PR 본문이나 코멘트에 검증자의 판정을 담는다. 운영자가 직접 클릭하거나 merge-when-ready를 예약해 검토하고 머지한다.
+
+**autopilot 둘 중에서 고르기.** PR이 서로 독립이고 머지 권한을 받았으면 Autopilot-full을 쓴다. 운영자가 머지 전에 검토하고 싶어 하거나, 작업이 순서를 갖거나 서로 엮여 있거나, 머지 권한이 없으면 Autopilot-stack을 쓴다.
+
+**답변:** 스택 루트와 끝의 링크, 고리마다 한 줄짜리 판정 요약, 보류하거나 제외한 것과 그 이유.

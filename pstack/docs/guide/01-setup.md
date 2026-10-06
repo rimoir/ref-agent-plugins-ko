@@ -22,7 +22,9 @@ Cursor가 플러그인 설치를 확인해 준다.
 
 [`/setup-pstack`](../../skills/setup-pstack/SKILL.md)은 쓸 수 있는 모델을 감지하고, 추론 예산을 묻고, 각 역할(코드 위임, 판단, 리뷰 패널)을 보여 준 뒤 원하는 바를 묻는다. 질문에 답한다. 그러면 모든 pstack 스킬이 읽는 작은 규칙인 `~/.cursor/rules/pstack-models.mdc`를 쓴다.
 
-신경 쓰는 것만 바꾸면 된다. 규칙에 줄이 없는 역할은 스킬의 기본값을 유지한다. 기본값으로 돌리려면 그 역할의 줄을 지운다. `/setup-pstack`을 다시 돌리면 모델이 기본값과 다른 역할은 그대로 둔다. 0.15.3 이전에 쓴 규칙은 옛 기본 모델을 고정하므로, 그 역할 줄이나 파일 자체를 지운 뒤 `/setup-pstack`을 다시 돌린다.
+기본값은 `large` 예산과 같은 `xhigh` 추론으로 돈다. `unlimited`는 각 모델을 `max`까지 가장 높은 단계로 올린다. Opus는 `max`로 간다. Grok은 `xhigh`가 최대라서 그대로 머문다. `medium`과 `small`은 추론을 낮추고 토큰을 덜 쓴다.
+
+신경 쓰는 것만 바꾸면 된다. 규칙에 줄이 없는 역할은 스킬의 기본값을 유지한다. 기본값으로 돌리려면 그 역할의 줄을 지운다. `/setup-pstack`을 다시 돌리면 모델이 기본값과 다른 역할은 그대로 둔다. 기본값이 바뀌면 그 전에 쓴 규칙은 여전히 옛 기본값을 고정하므로, 그 역할 줄이나 파일 자체를 지운 뒤 `/setup-pstack`을 다시 돌린다.
 
 Auto를 쓰면 어떻게 되는지 궁금할 수 있다. 역할을 `inherit-parent`나 `auto`로 두면 pstack은 subagent의 `model` 필드를 생략하고, subagent는 부모 채팅 모델을 물려받는다. 두 값은 뜻이 같고 둘 다 모델 slug가 아니다. 패널 역할의 값은 목록이며 항목마다 subagent 하나가 돌기 때문에 목록 길이가 패널 크기를 정한다. 설정은 `swarm workers`도 구성한다. 이것은 race가 갈래마다 모델을 지정하지 않는 한 모든 `/swarm` 워커의 기본 모델이다.
 
@@ -30,9 +32,22 @@ Auto를 쓰면 어떻게 되는지 궁금할 수 있다. 역할을 `inherit-pare
 
 설정이 끝날 무렵 `/setup-pstack`은 프로젝트에서 앱 동작을 입증할 방법, 즉 `verify-*` 스킬이나 기존 하네스를 찾는다. 둘 다 없으면 [`/create-verification-skill`](../../skills/create-verification-skill/SKILL.md)로 하나 만들자고 한 번 제안한다.
 
-수락하면 에이전트가 사용자처럼 앱을 조작하도록 가르치는 프로젝트 로컬 스킬 `.cursor/skills/verify-<app>/`을 쓴다. 넘겨주기 전에 스킬이 동작함을 한 번 입증한다. 거절하면 설정은 다음으로 넘어간다. `/create-verification-skill`은 언제든 직접 돌릴 수 있다. 이 스킬이 언제 제 몫을 하는지는 [검증과 배포](./06-verify-and-ship.md#create-a-project-verification-skill)에서 다룬다.
+수락하면 에이전트가 사용자처럼 앱을 조작하도록 가르치는 프로젝트 로컬 스킬 `.cursor/skills/verify-<app>/`을 쓴다. 넘겨주기 전에 스킬이 동작함을 한 번 입증한다. 거절하면 설정은 다음으로 넘어간다. `/create-verification-skill`은 언제든 직접 돌릴 수 있다. 자세한 내용은 [검증과 배포](./06-verify-and-ship.md#create-a-project-verification-skill)에서 다룬다.
+
+pstack이 처음이라면 수락하라. 자기 작업을 확인할 수 있는 에이전트는 확인이 통과할 때까지 계속 일한다. 그렇지 못한 에이전트는 모든 결과를 손으로 확인하라고 넘긴다. 이 가이드에 나오는 것 가운데 검증 스킬이 가장 큰 값을 한다.
 
 설정이 끝나면 새 채팅을 시작한다. 모델 규칙은 새 세션에 적용된다.
+
+## 비용 관리하기
+
+pstack은 subagent와 리뷰 패널에 토큰을 더 쓴다. 엄밀함의 값이다. 덜 쓰려면 이렇게 한다.
+
+- `/setup-pstack`을 다시 돌려 더 작은 추론 예산이나 더 싼 모델을 고른다. 메인 채팅에는 강한 모델을, 코드 역할에는 더 싸고 빠른 모델을 두는 조합이 좋다.
+- 역할을 `auto`나 `inherit-parent`로 두어 채팅 자체의 모델로 돌게 한다.
+- 패널 목록을 줄인다. 항목 하나가 subagent 하나를 돌린다.
+- `/poteto-mode`는 엄밀함이 필요한 일에 아껴 둔다. 작고 뻔한 수정에는 필요 없다.
+
+<a id="run-your-first-task"></a>
 
 ## 첫 작업 돌리기
 
@@ -44,6 +59,6 @@ Auto를 쓰면 어떻게 되는지 궁금할 수 있다. 역할을 `inherit-pare
 
 할 일 목록을 지켜본다. 첫 항목들은 일치한 플레이북의 단계를 복사해 넣은 것으로, 이 프롬프트에서는 Feature 플레이북이다. `/poteto-mode`가 어떤 단계를 건너뛰면 그 단계는 `skip: <reason>`과 함께 목록에 남으므로 무엇을 하지 않기로 했는지 볼 수 있다.
 
-여기서부터는 평소처럼 후속 요청을 입력하면 된다. `/poteto-mode`는 계속 유지된다. 그만두겠다고 말할 때까지 대화 내내 켜져 있다.
+여기서부터는 평소처럼 후속 요청을 입력하면 된다. 채팅 내내 `/poteto-mode`를 켜 두려면 `/` 메뉴에서 고를 때 Enter 대신 Option+Enter(Mac)나 Alt+Enter(Windows)를 누른다. 그러면 [Custom Mode](https://cursor.com/docs/skills)가 되어 나갈 때까지 매 턴 컨텍스트에 남는다. Custom Mode는 Agents Window와 CLI에서 쓸 수 있다. 그냥 Enter를 누르면 스킬이 메시지 하나에만 붙고, 채팅이 길어질수록 흐려진다.
 
 다음: [`/poteto-mode`로 작업 보내기](./02-poteto-mode.md).

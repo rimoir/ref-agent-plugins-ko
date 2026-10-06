@@ -33,20 +33,19 @@ diff(또는 파일 내용)와 함께, 리뷰어가 코드를 이해하는 데 �
 
 ## 3단계, 리뷰어 띄우기
 
-Task 도구로 모든 리뷰어를 메시지 하나에서 띄운다. `~/.cursor/rules/pstack-models.mdc`의 `interrogate reviewers` 줄을 쓰고, 항목마다 리뷰어 하나를 두며, 아래 Reviewer A/B/C 라벨은 설정된 항목 수에 맞춰 늘리거나 줄인다. 규칙이나 그 줄이 없으면 표의 기본값을 쓴다.
+Task 도구로 모든 리뷰어를 메시지 하나에서 띄운다. `~/.cursor/rules/pstack-models.mdc`의 `interrogate reviewers` 줄을 쓰고, 항목마다 리뷰어 하나를 두며, 아래 Reviewer A/B 라벨은 설정된 항목 수에 맞춰 늘리거나 줄인다. 규칙이나 그 줄이 없으면 표의 기본값을 쓴다.
 
 | Subagent | 기본 모델 |
 |----------|---------------|
-| Reviewer A | `claude-opus-5-5-max` |
-| Reviewer B | `gpt-5.6-sol-max` |
-| Reviewer C | `grok-4.7-xhigh-fast` |
+| Reviewer A | `claude-opus-5-5-xhigh` |
+| Reviewer B | `grok-4.7-xhigh-fast` |
 
 리뷰어마다:
 - `subagent_type`: `generalPurpose`
 - `model`: 설정된 `interrogate reviewers` 항목, 설정된 줄이 없으면 표의 기본값. `auto`나 `inherit-parent` 항목이면 `model`을 생략해 그 리뷰어가 부모 모델로 돌게 한다.
 - `readonly`: `true`
 
-Task 도구가 설정된 항목을 거부하면 그 리뷰어를 같은 계열의 표 기본값으로 돌리고 그렇다고 알린다. 계열은 접두사로 구분한다. `claude-*`, `gpt-*`, `grok-*`. 맞는 계열이 없으면 Reviewer A의 기본값을 쓴다. 표 기본값이 거부되면 Task 도구 오류 메시지에서 유효한 slug를 확인하고, 가장 가까운 대응(같은 계열에서 추론 등급이 가장 높은 것을 선호)을 골라 띄운 뒤, 기본값 표를 갱신하는 PR을 따로 연다. slug 문제로 리뷰를 막지 않는다. 별칭 항목은 절대 거부된 slug로 다루지 않고, 어느 대체 규칙도 적용하지 않는다.
+Task 도구가 설정된 항목을 거부하면 그 리뷰어를 같은 계열의 표 기본값으로 돌리고 그렇다고 알린다. 계열은 접두사로 구분한다. `claude-*`와 `grok-*`. 맞는 계열이 없으면 Reviewer A의 기본값을 쓴다. 표 기본값이 거부되면 Task 도구 오류 메시지에서 유효한 slug를 확인하고, 가장 가까운 대응(같은 계열과 같은 추론 등급을 선호)을 골라 띄운 뒤, 기본값 표를 갱신하는 PR을 따로 연다. slug 문제로 리뷰를 막지 않는다. 별칭 항목은 절대 거부된 slug로 다루지 않고, 어느 대체 규칙도 적용하지 않는다.
 
 `references/reviewer-prompt.md`를 읽고 템플릿을 다음으로 채운다.
 1. 밝힌 의도

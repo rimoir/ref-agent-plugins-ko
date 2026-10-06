@@ -125,7 +125,7 @@ subagent 설정(각각):
 synthesizer subagent를 하나 띄운다.
 
 - `subagent_type`: `generalPurpose`
-- `model`: `why synthesizer` 줄, 기본값 `claude-opus-5-5-max`
+- `model`: `why synthesizer` 줄, 기본값 `claude-opus-5-5-xhigh`
 - `readonly`: `false` (agent 모드). synthesizer의 품질 점검은 인용을 표본 검증하며, 여기에 MCP 접근이 필요할 수 있다. readonly/Ask 모드는 MCP를 없애 이를 무력화한다.
 
 synthesizer가 받는 것은 다음과 같다.

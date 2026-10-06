@@ -1,6 +1,6 @@
 # 원칙 이름으로 방향 잡기
 
-pstack은 원칙 23개를 각각 스킬로 제공한다. `/poteto-mode`는 여러 단계짜리 과제를 시작할 때마다 그 색인을 읽고, 과제가 건드리는 원칙을 적용하고, 응답에서 적용한 원칙마다 그것이 바꾼 결정과 함께 이름을 밝힌다.
+pstack은 원칙 24개를 각각 스킬로 제공한다. `/poteto-mode`는 여러 단계짜리 과제를 시작할 때마다 그 색인을 읽고, 과제가 건드리는 원칙을 적용하고, 응답에서 적용한 원칙마다 그것이 바꾼 결정과 함께 이름을 밝힌다.
 
 원칙은 호출하는 것이 아니다. 이름으로 방향을 잡는다. 각 이름은 에이전트가 이미 읽은 완전한 규칙을 가리키므로, 한 구절이 지시 한 문단보다 작업을 더 정확하게 돌려놓는다.
 
@@ -26,7 +26,7 @@ separate before serializing shared state. 시도마다 worktree를 따로 주고
 
 각 구절이 먹히는 것은 그 뒤의 규칙이 구체적이기 때문이다. 그래도 에이전트는 응답에서 그 규칙이 어떤 결정을 바꿨는지 말해야 한다. 바뀐 결정 없이 원칙만 인용했다면 적용하지 않고 이름만 들먹였다는 신호다.
 
-## 23개 원칙 간단히
+## 24개 원칙 간단히
 
 핵심 원칙은 얼마나 만들지, 언제 설계를 다시 생각할지 정한다.
 
@@ -39,7 +39,7 @@ separate before serializing shared state. 시도마다 worktree를 따로 주고
 - [Outcome-Oriented Execution](../../skills/principle-outcome-oriented-execution/SKILL.md)(결과 지향 실행)은 버릴 호환 상태를 보존하지 않고 재작성을 목표 설계로 수렴시킨다.
 - [Experience First](../../skills/principle-experience-first/SKILL.md)(경험 우선)는 구현 편의보다 사용자가 얻는 결과를 고른다.
 - [Exhaust the Design Space](../../skills/principle-exhaust-the-design-space/SKILL.md)(설계 공간 소진)는 선례가 없을 때 경쟁하는 프로토타입 두세 개를 만든다.
-- [Build the Lever](../../skills/principle-build-the-lever/SKILL.md)(지렛대 만들기)는 작업을 하거나 증명하는 스크립트를 만들어 리뷰어가 다시 돌릴 수 있게 한다.
+- [Build the Lever](../../skills/principle-build-the-lever/SKILL.md)(지렛대 만들기)는 작업을 하거나 증명하는 스크립트를 만들어 리뷰어가 다시 돌릴 수 있게 한다. 에이전트가 같은 일을 계속 손으로 하고 있다면, 있었으면 하는 도구나 스킬을 직접 쓰게 한다. 스크립트가 어떤 단계를 매번 같은 방식으로 할 수 있다면 스크립트를 쓰고, 에이전트는 판단이 필요한 일에 아껴 둔다.
 
 아키텍처 원칙은 상태, 검증, 호환성이 어디에 사는지 정한다.
 
@@ -56,6 +56,7 @@ separate before serializing shared state. 시도마다 worktree를 따로 주고
 - [Fix Root Causes](../../skills/principle-fix-root-causes/SKILL.md)(근본 원인 수정)는 코드를 바꾸기 전에 재현하고 원인까지 추적한다.
 - [Sequence Work into Verifiable Units](../../skills/principle-sequence-verifiable-units/SKILL.md)(검증 가능한 단위로 작업 나누기)는 작은 단위마다 확인으로 끝낸 뒤 다음을 시작한다.
 - [Test Behavior, Not Implementation](../../skills/principle-test-behavior-not-implementation/SKILL.md)(구현이 아니라 동작을 테스트)은 사용자가 부르는 방식으로 코드를 호출하고 문자 그대로의 기댓값을 단언하며, import한 함수가 전부 `undefined`를 돌려줘도 통과할 테스트는 지운다.
+- [Explain the Number](../../skills/principle-explain-the-number/SKILL.md)(숫자를 설명하라)는 누군가 측정한 숫자를 믿거나 보고하기 전에, 그 숫자를 제한하는 요인을 대고 엉뚱한 것을 잰 것이 아님을 배제한다. [`/benchmark-checklist`](../../skills/benchmark-checklist/SKILL.md)는 이것을 실제 실행으로 답하는 질문 일곱 개로 바꾼다.
 
 위임 원칙은 병렬 작업을 제정신으로 유지한다.
 
@@ -64,7 +65,7 @@ separate before serializing shared state. 시도마다 worktree를 따로 주고
 
 그리고 메타 원칙 하나가 있다.
 
-- [Encode Lessons in Structure](../../skills/principle-encode-lessons-in-structure/SKILL.md)(교훈을 구조에 새기기)는 두 번 반복한 조언을 lint, 검사, 스크립트로 바꾼다.
+- [Encode Lessons in Structure](../../skills/principle-encode-lessons-in-structure/SKILL.md)(교훈을 구조에 새기기)는 두 번 반복한 조언을 lint, 검사, 스크립트로 바꾼다. [`/correct`](../../skills/correct/SKILL.md)는 [내 것으로 만들기](./09-make-it-yours.md#fix-the-environment-with-correct)에서 보듯 이것을 저장소 전체에 적용한다.
 
 목록을 외우지 않는다. 지금은 훑어보고, 여기 있는 이름 하나로 막을 수 있었을 일을 에이전트가 하는 순간 다시 돌아온다. 어휘는 그렇게 몸에 붙는다.
 

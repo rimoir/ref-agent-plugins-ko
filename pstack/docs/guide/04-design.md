@@ -2,6 +2,8 @@
 
 어려운 설계를 한 번에 시도하면 모델이 처음 떠올린 모양에 갇힌다. `/architect`는 구현 전에 타입과 경계를 정한다. `/arena`는 같은 과제를 여러 번 시도하게 하고 가장 좋은 부분을 합친다. `/interrogate`는 다른 모델들이 결과를 깨뜨려 보게 한다. 설계 종합이 아니라 커버리지가 목적이면 `/swarm`이 조각이나 경주를 펼쳐 놓고 결과를 모은다.
 
+가장 흔한 설계 실수 두 가지는 에이전트의 첫 설계를 그대로 받는 것과 어떤 코드로도 시험하지 않은 계획을 다듬는 것이다. 이 페이지는 둘 다 바로잡는다. 계획은 코드로 세운다. 프로토타입이 열린 질문에 답하고, README나 튜토리얼이 목표를 정하며, 글로 쓴 계획은 맨 마지막에 온다.
+
 ![로봇 셋이 /architect, /arena, /interrogate 패널 아래 각자의 책상에서 경쟁하는 다리 모형을 설계하고, 클립보드를 든 심판 로봇이 의심스러운 눈으로 살펴본다.](./images/design.jpg)
 
 ## `/architect`로 모양을 정한다
@@ -17,6 +19,8 @@
 ```text
 /architect with checkpoint. stop and show me before implementing.
 ```
+
+코드를 쓰기 시작하면 설계는 신성하지 않다. 구현 중에 서로 무관한 곳에서 같은 우회책이 나오거나 `any`나 강제 캐스트로만 컴파일되는 타입이 보이면, `/architect`는 이를 설계가 틀렸다는 증거로 본다. 땜질하지 않고 스케치를 버린 뒤 처음부터 다시 시작한다.
 
 ## `/arena`로 시도를 펼친다
 
@@ -62,9 +66,55 @@ flowchart LR
 /interrogate the whole branch, but skeptically. no nitpicks unless it's an actual bug or regression.
 ```
 
-[`/interrogate`](../../skills/interrogate/SKILL.md)는 같은 diff, 의도, 기준표를 서로 다른 모델 계열의 리뷰어 여럿에게 보낸다. 핵심은 모델의 다양성이다. 모델마다 사각지대가 달라서, 두 모델이 따로 제기한 발견은 신뢰도가 높은 신호다. 리드는 모든 것을 `Act on`(조치), `Consider`(고려), `Noted`(참고), `Dismissed`(기각)로 분류하고, 기각마다 이유를 달며, 아무것도 자동으로 적용하지 않는다.
+[`/interrogate`](../../skills/interrogate/SKILL.md)는 같은 diff, 의도, 기준표를 서로 다른 모델 계열의 리뷰어들에게 보낸다. 핵심은 모델의 다양성이다. 모델마다 사각지대가 달라서, 두 모델이 따로 제기한 발견은 신뢰도가 높은 신호다. 리드는 모든 것을 `Act on`(조치), `Consider`(고려), `Noted`(참고), `Dismissed`(기각)로 분류하고, 기각마다 이유를 달며, 아무것도 자동으로 적용하지 않는다.
 
 기각한 것도 읽는다. 리드는 실용적인 시니어 엔지니어이지 신탁이 아니며, 그 판단을 뒤집을 수 있다.
+
+## 논쟁 대신 프로토타입
+
+첫 설계를 그대로 받지 않는다. 몇 가지를 요청하고, 눈으로 볼 수 있는 증거로 고른다.
+
+```text
+/poteto-mode prototype a few options for the new dropdown menu. take screenshots or videos for me to compare.
+```
+
+[Prototype 플레이북](../../skills/poteto-mode/playbooks/prototype.md)은 scratch 디렉터리에 버릴 스케치를 만들고, 변형들을 전환기 하나 뒤에 두고, 각각을 직접 돌려 스크린숏이나 시간을 잰다. UI뿐 아니라 동작과 알고리즘에도 통한다. 프로토타입은 코드로 하는 계획이다. 에이전트가 나에게 묻는 대신 무언가를 돌려서 스스로 열린 질문에 답하게 하고, 내가 떠올리지 못했을 선택지가 나올 여지를 남긴다.
+
+같은 생각은 실제 설계로도 커진다. `/architect`와 프로토타입을 짝짓고 리뷰 관문을 둔다.
+
+```text
+/poteto-mode we need rate limiting for external webhooks. /architect it first, and answer open questions with prototypes. let me review before proceeding.
+```
+
+추상적인 계획에 리뷰어를 쓰지 않는다. `/interrogate`는 diff에 쓰는 것이다. 코드가 뒤에 없는 계획에 적대적 리뷰를 겨누면 리뷰어들은 결코 일어나지 않을 이론적 위험과 엣지 케이스를 지어낸다. 프로토타입으로 질문을 정리하고, 그다음 만들어진 것을 리뷰한다.
+
+## 공유 코드에는 README부터
+
+다른 코드가 쓸 패키지나 API라면 사용자가 읽을 문서부터 시작한다.
+
+```text
+/poteto-mode write a tutorial for how i would use the new config package first. then /teach me why it beats the current one.
+```
+
+튜토리얼을 먼저 쓰면 호출하는 쪽의 시점을 강제로 갖게 된다. 가상의 사용자에게 API를 설명하고, 거기서 거꾸로 구현으로 간다. 문서는 에이전트가 자기 작업을 대조할 구체적인 목표도 된다. 문서 자체가 중요하면 [`/technical-writing`](../../skills/technical-writing/SKILL.md)을 지목해, 튜토리얼이 레퍼런스와 설명으로 한꺼번에 흘러가지 않고 튜토리얼로 남게 한다.
+
+## 설계가 정해진 뒤에 계획하기
+
+pstack에는 일부러 계획 스킬이 없다. 글로 된 계획이 정말 필요하면 설계가 정해진 뒤에 요청한다.
+
+```text
+/poteto-mode turn this design into a plan. small verifiable PRs, each with its own verification steps.
+```
+
+[Multi-phase plan 플레이북](../../skills/poteto-mode/playbooks/multi-phase-plan.md)은 남은 열린 질문을 프로토타입으로 정리한 뒤, PR마다 한 섹션을 쓰고 각 섹션을 변경이 동작한다는 증거로 끝맺는다. 테스트 스위트 통과만으로는 그 증거가 되지 않는다. 산출물은 계획이다. 플레이북은 계획을 구현하지 않고, 다음에 어떤 실행 플레이북이 돌려야 하는지 짚어 준다.
+
+마이그레이션이라면 프롬프트에 기준을 적는다.
+
+```text
+/poteto-mode plan the migration of our ui library to the new styling system. small verifiable PRs, each with visual regression checks. the result must match the original exactly, bugs included.
+```
+
+"bugs included"는 마이그레이션이 도중에 슬쩍 고치는 일을 막는다. 그러면 옛 출력과 새 출력을 비교할 수 없게 되기 때문이다. 여러 날에 걸친 프로젝트라면 계획을 한동안 저장소에 커밋해 다른 에이전트가 진행 중인 작업을 보게 할 수 있다. 작업이 반영되면 지운다.
 
 ## 과제에 설계 작업이 얼마나 필요한가
 
@@ -74,7 +124,9 @@ flowchart LR
 - 함수 경계를 넘거나 소유권을 옮기는 변경에는 `/architect`를 쓰고, 그러면 `/arena`도 따라온다.
 - 이름, 형식, 알고리즘처럼 독립된 시도가 도움이 되는 단독 결정에는 `/arena`를 바로 쓴다.
 - 커버리지 매트릭스, 병렬 검사 묶음, 갈래를 선언한 경주에는 `/swarm`을 쓴다.
+- 레이아웃, 시간, 접근법처럼 무언가를 돌려 답할 수 있는 열린 질문에는 논쟁이 아니라 프로토타입을 쓴다.
 - 되돌리기 비싸고 의견이 갈리는 설계에는 `/architect`를 쓰고, 출시 전에 `/interrogate`를 쓴다.
+- PR 여러 개에 걸친 작업에는 설계가 정해진 뒤에 쓴 계획을 쓴다.
 
 `/poteto-mode`는 이미 이 단계를 적용한다. 경계를 넘는 작업은 알아서 `/architect`를 부르므로, 이 명령들을 직접 쓰는 것은 주로 기본보다 더 많거나 적은 검토를 원할 때다.
 

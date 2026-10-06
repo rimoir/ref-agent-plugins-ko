@@ -153,27 +153,38 @@ function parseUser(input: unknown): User {
 모든 `as`는 잠재적 런타임 크래시다. 타입 시스템이 주장을 검증한 뒤에만 캐스트한다.
 
 ```ts
+import { z } from "zod";
+
 // 하지 말 것
 const user = data as User;
 
-// 할 것. 캐스트할 자격은 경계에서 얻는다.
-function parseUser(data: unknown): User {
-  if (typeof data !== "object" || data === null) {
-    throw new Error("expected object");
-  }
-  if (!("id" in data) || typeof (data as Record<string, unknown>).id !== "string") {
-    throw new Error("expected id");
-  }
-  // ... 모든 필드를 검증한다
-  return data as User; // OK, 전체 검증 뒤 자격을 얻은 캐스트
+// 하지 말 것
+function isUser(data: unknown): data is User {
+  return typeof data === "object" && data !== null && "id" in data;
 }
+
+// 할 것
+const userSchema = z.object({ id: z.string(), name: z.string() });
+type User = z.infer<typeof userSchema>;
+
+function parseUser(data: unknown): User {
+  return userSchema.parse(data);
+}
+```
+
+타입이 먼저 있으면 검증기에 그것이 증명하는 타입을 붙인다. 그러면 타입보다 덜 증명하는 검증기를 컴파일러가 거부한다. 아래 객체에서 `name`을 빼면 대입이 컴파일되지 않는다.
+
+```ts
+type User = { id: string; name: string };
+
+const userSchema: z.ZodType<User> = z.object({ id: z.string(), name: z.string() });
 ```
 
 기존 코드에서 `as`를 걷어 내는 리팩터링을 할 때는 TypeScript가 왜 추론하지 못하는지 찾는다.
 
 - 판별자 누락: 하나 추가하고 판별 유니온으로 바꾼다.
 - 지나치게 넓은 원천 타입(예: `Record<string, unknown>`): 좁힌다.
-- 타입 없는 경계: 파싱 함수나 스키마를 추가한다.
+- 타입 없는 경계: 그 형태를 소유한 스키마로 파싱한다. 스키마가 없는 곳에만 새로 추가한다.
 - 정말로 표현할 수 없음: 브랜드 타입이나 `satisfies`를 쓴다.
 
 ## 좁히기 위계

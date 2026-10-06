@@ -32,6 +32,14 @@
 
 숫자 하나를 꾸준히 개선하려면 [Hillclimb 플레이북](../../skills/poteto-mode/playbooks/hillclimb.md)이 있다. 지표, 목표치, 최소 시도 횟수를 주면, 고정된 측정 하네스로 한 번에 가설 하나씩 반복한다. 개선은 남기고 나머지는 모두 되돌린다.
 
+두 perf 플레이북 모두 자기 숫자에 [`/benchmark-checklist`](../../skills/benchmark-checklist/SKILL.md)를 돌린다. Perf issue는 기준선과 그 뒤의 모든 숫자를 점검하고, Hillclimb은 하네스를 고정하기 전에 점검한다. 직접 입력할 때는 [검증하고 내보내기](./06-verify-and-ship.md#vet-a-measured-number-with-benchmark-checklist)에서 다룬다.
+
+수정보다 원인이 먼저 필요할 때도 있다. 누수, 유휴 상태의 CPU 공회전, 화면 깨짐처럼 지금 살아 있는 증상이라면 [Runtime forensics 플레이북](../../skills/poteto-mode/playbooks/runtime-forensics.md)이 실행 중인 프로세스를 계측한다. 이미 떠 둔 프로파일이라면 [Trace forensics 플레이북](../../skills/poteto-mode/playbooks/trace-forensics.md)이 그 산출물을 읽고 핫 프레임을 소스에 매핑한다. 둘 다 수정이 아니라 진단을 돌려준다.
+
+```text
+/poteto-mode here's a cpuprofile from the slow startup. tell me where the time goes and which source lines own it. no fix yet.
+```
+
 ## `/tdd`로 실패하는 테스트부터 쓰기
 
 버그에 값싼 로컬 테스트 경로가 있으면 프롬프트 전체가 두 단어로 끝날 수 있다.
@@ -42,9 +50,9 @@
 
 맥락 안에서는 그것으로 충분하다. [`/tdd`](../../skills/tdd/SKILL.md)는 의도한 이유로 실패하는 가장 작은 테스트를 쓰고, 그다음 수정을 하고, 테스트를 다시 돌린다. 테스트에 넓은 하네스 설정이나 깨지기 쉬운 mock이 필요하다면 스킬이 그렇다고 말하고 대신 가장 가까운 실행 가능한 확인을 쓴다. 실제 명령이 더 강한 증거인 곳에 테스트를 억지로 넣지 않는다.
 
-## TypeScript 규칙은 알아서 로드되게 두기
+## TypeScript 규칙은 이름으로 로드하기
 
-[`typescript-best-practices`](../../skills/typescript-best-practices/SKILL.md)는 워크플로에서 슬래시 명령으로 쓰지 않는다. 에이전트가 `.ts`나 `.tsx` 파일을 건드릴 때마다 로드되어, 타입 시스템 원칙을 구체적인 규칙으로 바꾼다. 판별 유니언, 경계에서의 `unknown`, 빠짐없는 변형 처리, 스키마에서 파생한 타입이다.
+[`typescript-best-practices`](../../skills/typescript-best-practices/SKILL.md)는 타입 시스템 원칙을 구체적인 규칙으로 바꾼다. 판별 유니언, 경계에서의 `unknown`, 빠짐없는 변형 처리, 스키마에서 파생한 타입이다. 저절로 로드되지 않으니 작업이 `.ts`나 `.tsx` 파일을 건드리면 `/typescript-best-practices`를 입력한다.
 
 ## 커밋 전에 정리하기
 

@@ -48,8 +48,6 @@ disable-model-invocation: true
 
 모드를 섞지 않는다. 튜토리얼 안에 레퍼런스 표를 넣지 않고, 레퍼런스 안에서 튜토리얼처럼 손을 잡아 주지 않고, 하우투 안에서 논쟁하지 않는다. 대신 나누고 링크한다.
 
-출처: diataxis.fr, 2026-07-18 확인.
-
 ## 독자에게 말하는 문장을 쓴다 (Google 개발자 스타일)
 
 - 독자를 "you"로 부르고 현재 시제로 쓴다. "Will"은 정말 나중에 일어나는 일에만 쓴다.
@@ -64,8 +62,6 @@ disable-model-invocation: true
 - 순서가 있으면 번호 목록, 나머지는 글머리표 목록이다. 목록은 완전한 문장으로 소개한다. 항목은 형태를 나란히 맞춘다.
 - 코드는 코드 글꼴로, UI 요소는 굵게 쓴다. 연속 쉼표(serial comma)를 쓴다. "etc."는 빼고 목록이 일부라는 것을 앞에서 밝힌다.
 
-출처: developers.google.com/style, 2026-07-18 확인.
-
 ## 문장이 한 번에 하나씩 실리게 한다 (STE 규칙)
 
 - 지시문은 한 문장에 지시 하나, 그 밖의 문장은 한 문장에 생각 하나다.
@@ -76,8 +72,6 @@ disable-model-invocation: true
 - 동작마다 단어 하나를 골라 고수한다. 여기선 "start", 저기선 "initiate"가 아니라 "start"다.
 - 절차는 직접 명령문으로 쓴다. 서술로도, 수동태로도 쓰지 않는다. "the component must be installed"가 아니라 "Install the component"다.
 - 할 수 있으면 "-ing" 단어를 피한다. 너무 많은 문법 역할을 맡아 오독을 낳는다.
-
-출처: asd-ste100.org (Issue 9, 2025), 2026-07-18 확인. 번호가 붙은 규칙과 사전은 명세 PDF에 있다. 위 원칙은 다른 곳에 옮겨 쓸 수 있는 핵심이다.
 
 ## 두 가지로 읽히는 문장을 남기지 않는다 (Global English)
 
@@ -93,8 +87,6 @@ disable-model-invocation: true
 - 슬래시를 쓰지 않는다. "a/b"나 "and/or" 대신 "a, b, or both"로 쓴다.
 - 한 대상은 어디서나 한 이름으로 부른다. 같은 것을 "the gate", "the ratchet", "the budget check"로 부르는 문서는 세 가지를 가르친다. 바뀌지 않은 문장을 수정 사이에 고쳐 쓰는 것도 같은 비용을 치른다. 바뀌지 않은 것을 뒤흔들지 않는다.
 - 관용구, 구어, 라틴어 약어, 은유를 뺀다. 비원어민 독자, 번역가, 에이전트 모두 평이한 구문을 가장 잘 파싱한다.
-
-출처: Kohl, The Global English Style Guide (SAS Press). 가이드라인 원문은 Internet Archive와 SAS 샘플 장에서 2026-07-18에 확인.
 
 ## 문체와 레포별 사항
 

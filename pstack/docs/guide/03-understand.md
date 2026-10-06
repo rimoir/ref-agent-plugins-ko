@@ -1,8 +1,20 @@
 # 바꾸기 전에 코드 이해하기
 
-이해하지 못한 코드를 고치면 미묘한 회귀가 출시된다. pstack은 들어가는 길을 네 가지 준다. `/how`는 코드가 지금 무엇을 하는지 설명한다. `/why`는 코드가 그런 모양이 된 이유를 캐낸다. `/teach`는 둘을 섞어 하나의 설명으로 만든다. `/recall`은 한 주제에 대한 자기 최근 맥락을 다시 세운다.
+이해하지 못한 코드를 고치면 미묘한 회귀가 출시되고, 이는 에이전트에게도 똑같다. 에이전트는 보통 둘 중 하나로 실패한다. 원하는 바를 잘못 읽거나, 일을 제대로 할 맥락이 없다. 첫째는 [프롬프트에 담을 것](./02-poteto-mode.md#what-goes-in-a-prompt)이 다룬다. 이 페이지는 둘째를 다룬다.
+
+pstack은 들어가는 길을 네 가지 준다. `/how`는 코드가 지금 무엇을 하는지 설명한다. `/why`는 코드가 그런 모양이 된 이유를 캐낸다. `/teach`는 둘을 섞어 하나의 설명으로 만든다. `/recall`은 한 주제에 대한 자기 최근 맥락을 다시 세운다. 넷 모두 에이전트가 내가 확인할 수 있는 말로 자기 생각을 설명하게 만든다. 나보다 코드를 더 잘 알지도 모르는 에이전트를 그렇게 감독한다.
 
 ![탐정이 돋보기로 기계 설계도를 살피는 동안 로봇들이 사건 파일을 가져온다. 뒤편 증거판에는 /how와 /why 아래로 단서들이 이어져 있다.](./images/understanding.jpg)
+
+## 읽기 전용 조사부터 시작하기
+
+원인이 불분명하면 수정이 아니라 발견을 요청한다.
+
+```text
+/poteto-mode investigate why background jobs time out every few hours. give me what we know, what data you used, and your best hypotheses. don't change any code yet.
+```
+
+"don't change any code yet"은 이 요청을 [Investigation 플레이북](../../skills/poteto-mode/playbooks/investigation.md)으로 보낸다. 플레이북은 `/how`를 돌리고, 동기에 관한 질문이면 `/why`를 더해 출처를 단 설명을 돌려준다. 여러 선택지 중 하나를 골라야 하면 트레이드오프 표와 함께 추천을 돌려준다. "what data you used"를 물으면 에이전트가 증거와 짐작을 나눈다. 발견이 수정을 가리키면 수정은 새 작업으로 시작한다.
 
 ## `/how`로 동작 추적하기
 
@@ -30,13 +42,27 @@
 
 [`/teach`](../../skills/teach/SKILL.md)는 요약으로 모자랄 때 쓴다. `/how`와 `/why`를 실행하고(작은 변경이면 둘 중 하나만), 발견한 내용을 다이어그램을 하나씩 쌓아 가는 쉬운 설명으로 엮는다. "convince me(나를 설득해 봐)"라는 틀은 훔쳐 쓸 만하다. 설명을 둘러보기가 아니라 찔러 볼 수 있는 논증으로 바꿔 준다.
 
+에이전트 자신의 선택에도 통한다.
+
+```text
+/teach me why you implemented it this way and not with a queue. what did you trade off, and why?
+```
+
+가르치기는 나만큼 에이전트에게도 도움이 된다. 자기 작업을 설명해야 하는 에이전트는 자신 있게 말하고 넘어가는 대신 코드를 읽고 주장마다 증거를 대야 한다.
+
 ## `/recall`로 자기 맥락 다시 세우기
 
 ```text
 /recall catch me up on the export work from last week
 ```
 
-[`/recall`](../../skills/recall/SKILL.md)은 자기 최근 채팅과 공유 기록(이슈, 이전 수정, 아직 터지는 에러)을 캐내서, 지금 상황과 다음 할 일을 담은 브리핑을 돌려준다. 한동안 손 놓았던 주제로 돌아올 때 쓴다. 특정 채팅 하나를 재개하고 싶다면 그것은 `/recall`이 아니라 아래의 Session pickup 플레이북이다.
+[`/recall`](../../skills/recall/SKILL.md)은 자기 최근 채팅과 공유 기록(이슈, 이전 수정, 아직 터지는 에러)을 캐내서, 지금 상황과 다음 할 일을 담은 브리핑을 돌려준다. 옛 채팅에는 새 에이전트에게 없는 맥락이 있으니, 옛 주제로 새 작업을 시작할 때는 그것부터 불러온 뒤 새 입력을 넘긴다.
+
+```text
+/recall my work on the virtualized list from yesterday, then read this bug report.
+```
+
+특정 채팅 하나를 재개하고 싶다면 그것은 `/recall`이 아니라 아래의 Session pickup 플레이북이다.
 
 ## Session pickup으로 이전 작업 넘겨받기
 

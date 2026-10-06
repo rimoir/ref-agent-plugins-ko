@@ -32,11 +32,11 @@ Phase A는 통합할 주변 시스템이 없는 진짜 백지 작업일 때만 �
 
 design-sketch 작업과 Phase A의 기반 산출물을 가지고 **arena** 스킬을 돌린다. 각 러너의 프롬프트로 `references/runner-prompt.md`를 넘긴다. 후보마다 `references/rationale-template.md` 형식의 설계 패키지를 낸다.
 
-러너는 `pstack-models.mdc` 규칙의 `arena runners` 줄 대신 `architect runners` 줄에서 가져온다. 규칙이나 그 줄이 없으면 `claude-opus-5-5-max`, `gpt-5.6-sol-max`, `grok-4.7-xhigh-fast`를 쓴다. 별칭 항목과 거부된 항목은 **arena** 스킬 Phase A의 러너 규칙을 따른다.
+러너는 `pstack-models.mdc` 규칙의 `arena runners` 줄 대신 `architect runners` 줄에서 가져온다. 규칙이나 그 줄이 없으면 `claude-opus-5-5-xhigh`와 `grok-4.7-xhigh-fast`를 쓴다. 별칭 항목과 거부된 항목은 **arena** 스킬 Phase A의 러너 규칙을 따른다.
 
 두 번 설계한다. 첫 후보가 충분해 보여도 종합 전에 구조적으로 다른 후보를 최소 두 개 요구한다. **exhaust-the-design-space** 원칙 스킬을 구체화한 것이다. 한 형태 안의 국소 수정이 아니라 형태 전체가 다른 대안이어야 한다.
 
-종합 전에 모든 후보를 [`references/design-red-flags.md`](references/design-red-flags.md)로 걸러 낸다. 얕은 모듈, 정보 누출, 시간순 분해, 그냥 통과시키는 메서드는 기각하거나 고친다.
+종합 전에 모든 후보를 [`references/design-red-flags.md`](references/design-red-flags.md)로 걸러 낸다. 다음 기여자는 자기가 연 파일만 보고, 가장 가까운 예시를 베끼고, 컴파일되는 가장 짧은 길을 택하는 에이전트라고 가정한다. 파일 하나에서 옳아 보이는 변경이 저장소 전체에서도 옳은 설계를 고른다.
 
 살아남은 후보는 인터페이스 깊이로 비교한다. 더 작고 단순한 공개 표면 뒤에 더 많은 복잡도를 숨기는 설계를 고른다. 풍부한 인터페이스는 기능을 여러 계층에 흩지 않고 모아 두어 호출 사슬을 짧게 유지할 수 있다.
 

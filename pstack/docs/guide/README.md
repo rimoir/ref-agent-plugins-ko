@@ -6,16 +6,24 @@ pstack은 에이전트를 세세하게 관리하지 않을 때 가장 잘 동작
 
 1. [pstack 설정](./01-setup.md). 플러그인을 설치하고 모델을 고른다.
 2. [`/poteto-mode`로 작업 보내기](./02-poteto-mode.md). 목표를 주고 플레이북을 고르는 모습을 지켜본다.
-3. [코드 이해하기](./03-understand.md). 무엇이든 고치기 전에 `/how`, `/why`, `/teach`, `/recall`.
-4. [변경 설계하기](./04-design.md). 코드가 모양을 굳히기 전에 `/architect`, `/arena`, `/swarm`, `/interrogate`.
+3. [코드 이해하기](./03-understand.md). 읽기 전용 조사, 그리고 무엇이든 고치기 전에 `/how`, `/why`, `/teach`, `/recall`.
+4. [변경 설계하기](./04-design.md). 코드가 모양을 굳히기 전에 `/architect`, `/arena`, `/swarm`, `/interrogate`, 프로토타입, 계획.
 5. [변경을 만들고 정리하기](./05-build-and-clean.md). 빌드 플레이북, `/tdd`, `/unslop`, `/no-comments`.
-6. [검증하고 내보내기](./06-verify-and-ship.md). 실제 앱에서 동작을 증명하고, 초점 잡힌 PR을 열어 머지까지 끌고 간다.
-7. [잠든 사이에 작업 돌리기](./07-overnight.md). 밤샘 계약, 감사할 수 있는 결정 로그, 에이전트 하나를 넘어 규모를 키우는 플레이북.
-8. [원칙 이름으로 방향 잡기](./08-principles.md). 작업 도중 에이전트의 방향을 바꾸는 23개의 이름.
-9. [내 것으로 만들기](./09-make-it-yours.md). 나만의 모드, 그리고 스킬 변경을 테스트하는 법.
+6. [검증하고 내보내기](./06-verify-and-ship.md). 실제 앱에서 동작을 증명하고, `/benchmark-checklist`로 숫자를 점검한 뒤, 초점 잡힌 PR을 열어 머지까지 끌고 간다.
+7. [잠든 사이에 작업 돌리기](./07-overnight.md). 루프보다 먼저 쌓는 신뢰, 밤샘 계약, 감사할 수 있는 결정 로그, 에이전트 하나를 넘어 규모를 키우는 Projects와 automation.
+8. [원칙 이름으로 방향 잡기](./08-principles.md). 작업 도중 에이전트의 방향을 바꾸는 24개의 이름.
+9. [내 것으로 만들기](./09-make-it-yours.md). 나만의 모드, 반복되는 실수를 잡는 `/correct`, 그리고 스킬 변경을 테스트하는 법.
 10. [레시피와 함정](./10-recipes-and-pitfalls.md). 복사할 프롬프트와 피할 실수.
 
 처음에는 순서대로 읽는다. 그다음부터는 각 페이지가 독립적으로 읽힌다.
+
+막혔거나 어떤 스킬이 맞는지 모르겠다면 질문과 함께 [`/poteto-help`](../../skills/poteto-help/SKILL.md)를 입력한다.
+
+```text
+/poteto-help which skill should i use to review this branch?
+```
+
+답을 주고, 보낼 프롬프트를 건네고, 답의 출처인 스킬이나 가이드 페이지를 링크한다. pstack 실행은 토큰을 실제로 쓰기 때문에 작업을 직접 시작하지는 않는다. 준비되면 그 프롬프트를 보내면 된다. 입력할 때만 실행된다.
 
 ## 하나만 기억한다면
 

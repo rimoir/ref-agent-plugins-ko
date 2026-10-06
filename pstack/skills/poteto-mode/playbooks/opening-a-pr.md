@@ -10,23 +10,26 @@
 
 **제목.** `type(scope): subject` 형태의 Conventional Commits를 쓴다. type은 `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `perf` 중 하나다. scope에는 `pstack`이나 `poteto-mode`처럼 바뀐 영역을 쓴다. subject는 짧은 명령형으로 쓴다. 변경을 담은 실제 심벌이 있으면 그 이름을 쓴다. 예를 들면 `fix(pstack): retarget opening-a-pr babysit trigger`다. 끝에 마침표를 붙이지 않는다.
 
-**설명.** PR 본문은 브리핑이지 실험 노트가 아니다. diff를 가진 리뷰어가 변경이 왜 있는지, 무엇이 범위 밖인지, 변경이 동작함을 어떻게 증명했는지 알 수 있어야 한다. squash 커밋 본문이 곧 PR 본문이다. 본문 때문에 squash 커밋이 대략 40줄을 넘게 되면 본문을 줄인다.
+**설명.** PR 본문은 브리핑이지 실험 노트가 아니다. diff를 가진 리뷰어가 변경이 왜 있는지, 무엇을 빼 두었는지, 무엇을 깨뜨릴 수 있는지, 동작함을 어떻게 증명했는지를 1분 안에 알 수 있어야 한다. 식별자를 적게 쓴 짧고 쉬운 문장으로 쓴다. 글을 벽처럼 쌓지 않는다. squash 커밋 본문이 곧 PR 본문이다. 본문 때문에 squash 커밋이 대략 40줄을 넘게 되면 본문을 줄인다.
 
-아래 절을 순서대로 쓴다. 할 말이 없는 절은 뺀다.
+절마다 굵은 글씨 머리말이 아니라 `##` 헤딩 아래에 두어 절이 서로 구분되게 한다. 아래 절을 순서대로 쓴다. 할 말이 없는 절은 뺀다.
 
-- `## Why`. 의도와 접근을 짧은 문단 한두 개로 적는다. SHA나 rebase 내력을 나열하지 않는다. "main 기준" 같은 서두를 붙이지 않는다.
-- `## Scope`. 글머리표로 실제 심벌과 경로를 나열한다. 이름 변경이나 대상 변경은 양쪽을 다 적는다. 포함과 제외는 그 경계가 중요할 때만 적는다. 파일별 에세이를 쓰지 않는다.
-- `## Tradeoffs`. 리뷰어가 안 적으면 물어볼 만한 기각된 대안만 적는다. 실제로 선택지가 없었다면 이 절을 건너뛴다.
-- `## Blast Radius`. 한 문장에서 세 문장 사이로 변경이 누구 또는 무엇에 닿는지, 왜 안전하거나 위험한지 적는다. 수정 없이 main이 red로 남으면 계속 드는 비용을 적는다.
-- `## Verification`. 실제로 돌린 경로마다 그 이름과 결과를 적는다. 성능 변경이라면 단위를 붙인 주요 수치 하나를 `before → after` 형태로 보고한다. 나머지 증거는 arena나 swarm 디렉터리 링크로 건다. 표본 크기 방법론, swarm 경과 낭독, 지표 표는 넣지 않는다.
+- `## Why`에는 문제와 접근을 짧은 문장 한 개에서 세 개로 적는다. SHA나 rebase 내력을 나열하지 않는다. "main 기준" 같은 서두를 붙이지 않는다.
+- `## What changed`에는 짧은 글머리표를 한 개에서 세 개 쓴다. 실제 심벌이나 경로는 그것이 변경을 담을 때만 적는다. 이름 변경이나 대상 변경은 양쪽을 다 적는다.
+- `## Scope`에는 PR이 다루는 것과 일부러 뺀 것(관련 후속 작업이나 알려진 빈틈 등)을 늘 적는다. 짧은 항목 한 개에서 세 개로 쓴다. 심벌이나 경로를 나열하지 않고, 파일별 에세이를 쓰지 않는다.
+- `## Tradeoffs`에는 리뷰어가 안 적으면 물어볼 만한 기각된 대안만 적는다. 실제로 선택지가 없었다면 이 절을 건너뛴다.
+- `## Blast Radius`에는 변경이 누구 또는 무엇에 닿는지, 왜 안전하거나 위험한지를 한두 문장으로 적는다. main이 red라면 그대로 두는 비용을 적는다.
+- `## Verification`에는 글머리표를 한 개에서 세 개 쓴다. 글머리표마다 실제로 돌린 경로와 그 결과를 적는다. 성능 변경이라면 단위를 붙인 주요 수치 하나를 `before → after` 형태로 보고한다. 나머지 증거는 arena나 swarm 디렉터리 링크로 건다. 표본 크기 방법론, swarm 경과 낭독, 지표 표는 넣지 않는다.
 
-이 절들 뒤에, 주장을 증명할 때 영상이나 스크린숏을 붙인다. 전체 SHA, swarm이나 arena 레인 낭독, 지렛대 수정 에세이, 파일별 체크리스트, "CLEAN" 판정은 붙이지 않는다. 이런 세부는 링크된 산출물에 둔다. `## Summary`나 `## Test plan` 같은 상투 절을 쓰지 않는다. 커밋 본문은 제목을 되풀이하지 않는다.
+이 절들 뒤에, 주장을 증명할 때 영상이나 스크린숏을 붙인다. 전체 SHA, swarm이나 arena 레인 낭독, 지렛대 수정 에세이, 파일별 체크리스트, "CLEAN" 판정은 붙이지 않는다. 이런 세부는 링크된 산출물에 둔다. 커밋 본문은 제목을 되풀이하지 않는다.
 
 **Forge.** 첫 PR 작업 전에 forge를 정하고, 생성, 수정, 조회, 감시, 머지까지 그 선택을 유지한다. GitHub CLI(`gh`)가 기본이다. `command -v origin`이 성공하고 Origin이 저장소를 해석할 수 있으면 `origin pr ...`을 우선한다. Origin이 없거나 저장소를 해석하지 못하면 `gh`에 머물고 대체 경로를 썼다고 기록한다. Graphite(`gt`)를 요구하지 않는다.
 
-**크기와 스택.** 큰 PR 하나보다 좁은 PR 다섯 개를 택한다. 스택은 base 브랜치 체인이다. root PR은 trunk를 대상으로 한다. 각 자식 브랜치는 부모의 정확한 끝에 rebase하고, 그 PR은 부모 브랜치를 대상으로 한다. 정해진 forge에 따라 `origin pr create --status open --base <parent-branch>`나 `gh pr create --base <parent-branch>`로 자식을 만든다. 기존 자식의 대상은 `origin pr edit <pr> --base <parent-branch>`나 `gh pr edit <pr> --base <parent-branch>`로 바꾼다. trunk에서 브랜치를 따는 것은 독립적인 작업일 때뿐이다. 스택 작업을 크게 하기 전에 trunk에 rebase한다.
+**내장 PR 도구.** 실행 환경이 내장 PR 도구를 제공하면 생성, 수정, 대상 변경, ready 표시를 forge CLI가 아니라 그 도구로 한다. 방법은 도구 자체의 지침에 있다. CLI로 만든 PR은 나중 실행이 수정할 수 있는 설명처럼 도구가 추적하는 것을 놓친다. 도구가 다루지 않는 일과, 그런 도구가 없는 실행의 모든 PR 작업에는 정해진 forge를 쓴다.
 
-**준비 상태.** 모든 PR은 draft가 아니라 ready로 연다. Origin에서는 `--status open`을 넘긴다. `gh`에서는 `--draft`를 뺀다. 클라우드 에이전트의 PR 도구는 기본값이 draft이므로 모든 PR 생성 호출에 `draft: false`를 설정한다. 그래도 draft로 열리면 정해진 forge에 따라 `origin pr ready <number>`나 `gh pr ready <number>`를 실행한다. PR 상태를 언급하기 전에 `origin pr view <number>`나 `gh pr view <number>`를 실행한다.
+**크기와 스택.** 큰 PR 하나보다 좁은 PR 다섯 개를 택한다. 스택은 base 브랜치 체인이다. root PR은 trunk를 대상으로 한다. 각 자식 브랜치는 부모의 정확한 끝에 rebase하고, 그 PR은 부모 브랜치를 대상으로 한다. 내장 PR 도구가 없으면 정해진 forge에 따라 `origin pr create --status open --base <parent-branch>`나 `gh pr create --base <parent-branch>`로 자식을 만들고, 기존 자식의 대상은 `origin pr edit <pr> --base <parent-branch>`나 `gh pr edit <pr> --base <parent-branch>`로 바꾼다. trunk에서 브랜치를 따는 것은 독립적인 작업일 때뿐이다. 스택 작업을 크게 하기 전에 trunk에 rebase한다.
+
+**준비 상태.** 모든 PR은 draft가 아니라 ready로 연다. 내장 PR 도구는 기본값이 draft일 수 있으므로 그 도구로 하는 모든 생성 호출에 `draft: false`를 설정한다. Origin에서는 `--status open`을 넘긴다. `gh`에서는 `--draft`를 뺀다. 그래도 draft로 열리면 PR 도구로 ready 표시를 하거나, 정해진 forge에 따라 `origin pr ready <number>`나 `gh pr ready <number>`를 실행한다. PR 상태를 언급하기 전에 `origin pr view <number>`나 `gh pr view <number>`를 실행한다.
 
 **Babysit.** PR을 연다고 babysit이 시작되지는 않는다. URL을 올리고 계속 만든다. 먼저 단계나 스택을 끝낸다. 스택 전체가 생긴 뒤 사용자가 요청할 때만 별도의 babysit 단계를 돌린다. 새 PR마다 babysit하면 빌드가 멈추고, 이후 wave가 다시 시작시킬 커밋에 체크를 낭비한다. 피드백이 의도에서 벗어나면 반박한다.
 

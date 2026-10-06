@@ -1,8 +1,19 @@
 # 자는 동안 작업 돌리기
 
-앞의 모든 것이 여기서 결실을 맺는다. 자기 작업을 스스로 검증한다고 믿을 수 있는 에이전트라면 어려운 작업을 맡기고 혼자 둘 수 있다. 그것을 안전하게 만드는 것은 희망이 아니다. 확인 가능한 종료 조건, 격리된 worktree, 아침에 감사하는 결정 로그다.
+앞의 모든 것이 여기서 결실을 맺는다. 자기 작업을 스스로 검증한다고 믿을 수 있는 에이전트라면 어려운 작업을 맡기고 혼자 둘 수 있다. 그것을 안전하게 만드는 것은 희망이 아니다. 확인 가능한 종료 조건, 격리된 worktree나 클라우드 에이전트, 아침에 감사하는 결정 로그다.
 
 ![그녀가 문가에서 잘 자라고 손을 흔드는 동안 로봇들이 공장을 계속 돌리고, 한 로봇은 BUILD LOOP ACTIVE 표지판 아래의 DECISION LOG 게시판을 갱신한다.](./images/overnight.jpg)
+
+## 루프보다 신뢰를 먼저 얻기
+
+믿지 못하는 루프는 미검증 작업을 더 빨리 만들어 낼 뿐이고, 엉망은 반복할 때마다 불어난다. 루프를 돌려 두고 떠나기 전에 그럴 자격을 갖췄는지 확인한다.
+
+- 작업을 직접 한 번 해 봤거나 에이전트가 하는 것을 지켜봐서, 좋은 결과가 어떤 모습인지 안다.
+- 여러분이 직접 쓸 도구와 신호를 에이전트도 가지고 있다. 검증 스킬, 프로파일러, 로그.
+- 모든 단계가 자기 작업을 증명하고, 작업이 기준에 못 미치면 라인을 멈출 수 있다.
+- 실행 기록을 몇 개 읽고, 반복되는 실패를 도구나 스킬이나 검사로 바꿔 두었다.
+
+네 가지가 모두 성립한 뒤에야 루프를 자율로 돌린다. 그전까지는 지켜보면서 돌린다.
 
 ## 밤샘 계약
 
@@ -25,6 +36,8 @@ keep a decision log. don't ask me before committing.
 - 비상구가 있으면 진짜 막다른 길에서 멈추고 이유를 적을 수 있다. 여덟 시간 동안 목표를 창의적으로 재해석하는 것보다 낫다.
 
 자리를 비운 뒤에 이 작업을 리뷰할 것이므로, `/poteto-mode`는 이 작업을 [`/figure-it-out`](../../skills/figure-it-out/SKILL.md)으로 보낸다. 이 스킬은 코드보다 먼저 실행 단계를 설계하고 결정 로그를 연결한다.
+
+실행을 일부러 멈추려면 에이전트에게 멈추라고 하거나, 곧 오프라인이 되거나 Cursor를 재시작한다고 말한다. [Pause safely 플레이북](../../skills/poteto-mode/playbooks/pause-safely.md)은 지금 단계를 끝내거나 되돌리고, 작업 중 체크포인트를 커밋하고, 재개 메모를 쓴다. 새 채팅은 Session pickup 플레이북을 거쳐 그 메모에서 작업을 이어받는다. "계속해"라는 말은 결코 멈춤을 일으키지 않는다.
 
 ## 루프가 밤새 하는 일
 
@@ -75,6 +88,34 @@ flowchart TD
 ```text
 /poteto-mode orchestrate the store migration. own it until every package is converted and merged. i'll check in twice a day.
 ```
+
+<a id="run-many-projects-in-parallel"></a>
+
+## 여러 프로젝트를 병렬로 돌리기
+
+[Cursor Project](https://cursor.com/blog/projects)는 코디네이터 에이전트 하나에게 지속되는 스레드를 준다. 코디네이터는 코드를 쓰지 않는다. 서브에이전트를 지휘하고, 서브에이전트는 기본적으로 클라우드에서 돌기 때문에 노트북을 덮어도 작업이 계속된다. Orchestrate 플레이북이 기대하는 모양이 바로 이것이다. 코디네이터에게 보내는 프롬프트를 `/poteto-mode`로 시작하면, 코디네이터가 띄운 서브에이전트들이 플레이북을 따른다.
+
+도움이 되는 습관 몇 가지:
+
+- 기능, 마이그레이션, 성능 개선, 기술 부채 정리처럼 작업 덩어리마다 Project를 따로 준다. 여러 개를 나란히 돌릴 수 있다.
+- 관련 채팅을 끝난 것까지 Project 안으로 끌어다 놓는다. 그 안의 모든 에이전트에게 맥락이 된다.
+- 머지 전에 PR마다 검증 swarm을 붙이고, 대기열은 Autopilot-stack이나 Autopilot-full에 맡긴다.
+- 코디네이터에게 데이터로 뒷받침된 계획을 요구하고, 열린 질문은 여러분에게 묻기 전에 프로토타입으로 답하게 한다.
+
+프롬프트 하나로 조사부터 실행까지 Project 전체를 끌고 갈 수 있다.
+
+```text
+/poteto-mode refactor this repo so its architecture is more agent friendly. use /correct and /architect on past commits and review comments to find the mistakes agents make most here. use /recall for context from past chats. answer open questions with prototypes instead of asking me. come back with a plan backed by real data. once i approve it, run it with autopilot-stack or autopilot-full, and ask me which.
+```
+
+## 루프가 스스로 시작하게 하기
+
+위의 모든 루프는 여전히 여러분이 시작해 주기를 기다린다. 예약되거나 이벤트로 움직이는 자동화는 그 단계를 없앤다. 소프트웨어 유지보수는 여기에 잘 맞는 단계로 나뉜다. 리포트를 분류하고, 재현하고, 고치고, 수정을 검증한다. 이런 라인을 믿을 만하게 지키는 규칙은 두 가지다.
+
+- 모든 단계가 라인을 멈출 수 있다. 분류 단계는 리포트가 의도된 동작이라고 판단할 수 있고, 재현 단계는 재현에 실패할 수 있고, 수정 단계는 변경이 너무 위험하다고 판단할 수 있다. 이런 결과는 모두 쓸모 있다. 나쁜 작업이 되돌리기 더 비싼 다음 단계로 넘어가지 못하게 막기 때문이다.
+- 모든 단계가 증거를 넘긴다. 재현 단계는 망가진 상태의 스크린숏과 비디오를 붙이고, 수정 단계는 전후 증명을 붙인다. 그러면 사람은 코드 한 줄을 읽기 전에 에이전트가 올바른 것을 고쳤는지 확인할 수 있다.
+
+pstack은 이것을 Slack 이슈 리포트용 [자동화 팩](../../automations/benny/README.md)으로 꺼진 상태로 담아 둔다. 자동화 하나는 리포트를 분류한다. 다른 하나는 확인된 버그를 재현하고 작은 수정 초안을 준비할 수도 있다. 설정하려면 에이전트에게 [`FOR_AGENTS.md`](../../automations/benny/FOR_AGENTS.md)를 가리키고 대상 저장소를 알려 준다.
 
 **함정:** 시간은 종료 조건이 아니다. "work on this for 4 hours"는 에이전트에게 확인할 것을 아무것도 주지 않고, 일어나면 결과 대신 네 시간 분량의 움직임만 남아 있다. `/loop`에는 통과하거나 실패할 수 있는 조건식을 준다.
 

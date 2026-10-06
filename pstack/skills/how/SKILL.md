@@ -34,7 +34,7 @@ disable-model-invocation: true
 한 번에 탐색하고 설명하는 Task subagent 하나를 띄운다.
 
 - `subagent_type`: `generalPurpose`
-- `model`: `how explainer` 줄, 기본값 `claude-opus-5-5-max`
+- `model`: `how explainer` 줄, 기본값 `claude-opus-5-5-xhigh`
 - `readonly`: `true`
 
 `references/explainer-prompt.md`에서 탐색자 발견 섹션을 빼고 프롬프트를 만든다. 4단계로 간다.
@@ -44,7 +44,7 @@ disable-model-invocation: true
 모든 탐색자가 돌아오면, 발견한 내용을 하나의 설명으로 종합할 Task subagent 하나를 띄운다.
 
 - `subagent_type`: `generalPurpose`
-- `model`: `how explainer` 줄, 기본값 `claude-opus-5-5-max`
+- `model`: `how explainer` 줄, 기본값 `claude-opus-5-5-xhigh`
 - `readonly`: `true`
 
 `references/explainer-prompt.md`에 모든 탐색자의 발견을 채워 넣어 프롬프트를 만든다.

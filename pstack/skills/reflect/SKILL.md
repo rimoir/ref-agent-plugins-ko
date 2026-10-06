@@ -34,15 +34,15 @@ ls -t <agent-transcripts>/*.jsonl <agent-transcripts>/*/*.jsonl <agent-transcrip
 
 | 관점 | 역할 줄 | 기본 `model` | 프롬프트 템플릿 |
 |---|---|---|---|
-| 판단(Judgment) | `reflect judgment, divergent, synthesizer` | `claude-opus-5-5-max` | `references/judgment-reviewer.md` |
-| 도구(Tooling) | `reflect tooling` | `gpt-5.6-sol-max` | `references/tooling-reviewer.md` |
-| 발산(Divergent) | `reflect judgment, divergent, synthesizer` | `claude-opus-5-5-max` | `references/divergent-reviewer.md` |
+| 판단(Judgment) | `reflect judgment, divergent, synthesizer` | `claude-opus-5-5-xhigh` | `references/judgment-reviewer.md` |
+| 도구(Tooling) | `reflect tooling` | `grok-4.7-xhigh-fast` | `references/tooling-reviewer.md` |
+| 발산(Divergent) | `reflect judgment, divergent, synthesizer` | `claude-opus-5-5-xhigh` | `references/divergent-reviewer.md` |
 
 각 템플릿을 원문 그대로 넘기고, 표시된 자리에 대화 기록 경로나 요약을 넣는다. 리뷰어는 `Task` 응답 본문으로 발견 사항을 돌려준다.
 
 ### 3. 종합
 
-`Task` 호출 하나, `subagent_type: generalPurpose`, `model`은 `reflect judgment, divergent, synthesizer` 줄의 값(기본 `claude-opus-5-5-max`), 에이전트 모드(`readonly: false`)로 돌린다. 종합자의 품질 점검에는 인용을 표본 검증하는 일이 포함되며, 여기에 MCP 접근이 필요할 수 있다. readonly는 MCP를 빼 버린다. `references/synthesizer.md`를 원문 그대로 쓰고, 표시된 자리에 각 리뷰어의 전체 출력을 넣는다. 종합자는 구조화된 Accepted / Rejected / Backlog 목록을 돌려준다.
+`Task` 호출 하나, `subagent_type: generalPurpose`, `model`은 `reflect judgment, divergent, synthesizer` 줄의 값(기본 `claude-opus-5-5-xhigh`), 에이전트 모드(`readonly: false`)로 돌린다. 종합자의 품질 점검에는 인용을 표본 검증하는 일이 포함되며, 여기에 MCP 접근이 필요할 수 있다. readonly는 MCP를 빼 버린다. `references/synthesizer.md`를 원문 그대로 쓰고, 표시된 자리에 각 리뷰어의 전체 출력을 넣는다. 종합자는 구조화된 Accepted / Rejected / Backlog 목록을 돌려준다.
 
 ### 4. 구조적 강제 점검
 

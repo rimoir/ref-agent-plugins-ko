@@ -37,6 +37,39 @@ flowchart TD
 
 이것이 Bug fix 프롬프트다. "repro first"는 예의가 아니라 진짜 제약이고, 플레이북은 이를 지킨다. 할 일 목록이 Bug fix 단계로 채워지는 것을 지켜보면 된다. 건너뛴 단계도 `skip: <reason>`을 달고 보이는 채로 남는다.
 
+<a id="what-goes-in-a-prompt"></a>
+
+## 프롬프트에 담을 것
+
+쓸모 있는 프롬프트는 최대 다섯 가지를 담고, 각각 한 문장이면 된다.
+
+- **목표.** 무엇이 잘못됐는지, 무엇을 원하는지 말한다.
+- **완료 확인.** 통과하거나 실패할 수 있어야 한다. "더 좋게 만들어"나 "한 시간 동안 작업해"는 확인이 아니다.
+- **보고 싶은 증거.** 실제 명령 출력, 흐름을 찍은 영상, 저장된 값, 전후 숫자를 요청한다.
+- **이미 아는 것.** 증상, 재현 단계, 로그 한 줄, 링크가 있으면 에이전트가 찾아 헤매지 않아도 된다.
+- **진짜 제약.** "repro first", "don't change any code yet", "zero behavior change", "let me review before proceeding"은 각각 에이전트의 행동을 바꾼다.
+
+다섯 가지를 모두 담은 프롬프트는 이렇다.
+
+```text
+/poteto-mode the csv export drops its last row since yesterday's deploy. failing job id is 4812. repro first, then fix. done means the 60k-row fixture exports every row. show me the row counts before and after.
+```
+
+빼는 편이 나은 것도 두 가지 있다.
+
+- **방법.** 무엇을 이룰지만 말하고, 내가 고를 길보다 나은 길을 에이전트가 찾을 여지를 남긴다. 스킬 목록도 마찬가지인데, 아래 함정에서 다룬다.
+- **처음부터 원인에 대한 내 가설.** 짐작을 말하면 탐색이 내가 가리킨 곳으로 좁아진다. 내 짐작을 꺼내기 전에 에이전트가 문제를 다시 서술하게 한다.
+
+긴 스레드나 모호한 버그처럼 잡음이 많은 보고라면 다시 서술하기를 첫 단계로 둔다.
+
+```text
+/poteto-mode read this thread. restate the underlying issue in your own words, in plain english. don't change any code yet.
+```
+
+잘못 읽은 부분은 코드가 생기기 전에 서술에서 드러난다. 거기서 바로잡으면 잘못된 수정 하나 대신 메시지 하나로 끝난다.
+
+## 후속 요청은 짧게
+
 대화에 이미 맥락이 있으면 프롬프트는 거의 없어진다. 다음은 모두 충분하다.
 
 ```text
@@ -51,7 +84,7 @@ continue
 keep going until done
 ```
 
-짧아도 되는 이유는 모드가 유지되고 플레이북이 구조를 쥐고 있기 때문이다. 말은 의도를 싣고, 엄밀함은 스킬이 싣는다.
+짧아도 되는 이유는 플레이북이 구조를 쥐고 있고, Custom Mode가 매 턴 `/poteto-mode`를 컨텍스트에 남겨 두기 때문이다. 시작하는 법은 [pstack 설정](./01-setup.md#run-your-first-task)에 있다. 말은 의도를 싣고, 엄밀함은 스킬이 싣는다.
 
 ## "new task"로 작업 바꾸기
 
@@ -63,15 +96,17 @@ keep going until done
 
 "new task"는 `/poteto-mode`에게 이전 플레이북을 이어 가지 말고 다시 맞추라고 알린다. "don't change any code yet"은 이번 작업을 Investigation에 고정한다. 이 두 표현이 없으면 Feature 도중의 모드는 질문을 다음 기능 단계로 다루기 쉽다.
 
-## 병렬 작업에는 전용 worktree를
+## 병렬 작업에는 전용 머신을
 
-한 저장소에 에이전트 여러 개를 돌리면 작업 트리를 두고 싸운다. 처음부터 격리를 요청한다.
+컴퓨터 한 대에서 한 저장소에 에이전트 여러 개를 돌리면 작업 트리와 포트, 빌드 출력을 두고 싸운다. 가장 깔끔한 격리는 [cloud subagent](https://cursor.com/docs/subagents#cloud-subagents)다. 각각 자기 VM과 브랜치를 받으므로 내 머신을 건드리지 않고 의존성을 설치하고 앱을 돌리고 결과를 영상으로 찍을 수 있다. 작업 앞에 `/in-cloud`를 입력하거나 부모 채팅에 cloud subagent로 일을 넘기라고 한다.
+
+로컬에 남아야 하는 작업이라면 처음부터 worktree를 요청한다.
 
 ```text
 /poteto-mode new task. branch off <base> in a fresh worktree, then port the parser change there.
 ```
 
-작업마다 자기 브랜치와 worktree를 가지면 어떤 에이전트도 다른 에이전트의 파일을 짓밟지 않는다. [Opening a PR 플레이북](../../skills/poteto-mode/playbooks/opening-a-pr.md)은 코드 변경을 이미 worktree에서 처리하므로, 특정 base나 위치가 중요할 때만 이렇게 말하면 된다.
+작업마다 자기 브랜치와 worktree를 가지면 어떤 에이전트도 다른 에이전트의 파일을 짓밟지 않는다. worktree는 디스크와 머신 자원을 쓰므로 노트북 한 대에서는 몇 개만 동시에 돌린다. [Opening a PR 플레이북](../../skills/poteto-mode/playbooks/opening-a-pr.md)은 코드 변경을 이미 worktree에서 처리하므로, 특정 base나 위치가 중요할 때만 이렇게 말하면 된다.
 
 worktree는 쌓인다. 디스크가 빠듯해지면 이렇게 묻는다.
 

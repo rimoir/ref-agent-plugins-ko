@@ -32,15 +32,14 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 ### Arm the program (프로그램 가동)
 
 - [ ] 운영자에게 프로토콜과 이 계획을 설명하고 멈춘다. 운영자가 명시적으로 진행하라고 할 때만 실행을 시작한다.
-- [ ] 운영자가 진행하라고 하면 정확히 이 문구로 `/goal`을 건다. "<계획 경로, 순서대로 나열한 PR id, 검증 규칙, 머지 담당, 완료 조건.>"
 - [ ] 프로그램 시작 시 trunk에서 다음을 읽는다. 매 틱마다 다시 읽는다.
   - [ ] `git show origin/main:pstack/skills/poteto-mode/playbooks/<실행 플레이북>.md`
   - [ ] `git show origin/main:pstack/skills/swarm/SKILL.md`
   - [ ] `git show origin/main:<control skill 경로>`
   - [ ] `git show origin/main:pstack/skills/poteto-mode/playbooks/opening-a-pr.md`
   - [ ] `git show origin/main:pstack/skills/<프로그램이 쓰는 나머지 각 leaf 스킬>`
-- [ ] 30분(30-minute) 감사 틱을 건다. 로컬 세션에서는 실제 터미널 `/loop`를 쓴다. 클라우드 루트에서는 cloud-sleeper 깨우기 체인을 쓴다. 주기를 기억에 맡기지 않는다.
-- [ ] 다음 틱 프롬프트를 그대로 쓴다. "trunk의 실행 플레이북과 걸어 둔 /goal을 다시 읽는다. 작업을 둘 모두에 비춰 감사하고 어긋난 점은 이번 틱에 고친다. 활성 레인을 모두 확인하고 진행 여부는 부수 효과로만 판단한다. 멈춘 레인은 내리고 대체 레인을 지금 투입한다. 그다음, 이전 상태 메시지(status message)가 보고하지 않은 추적 대상 변화를 감사에서 찾았을 때만 운영자에게 채팅으로 짧은 상태 메시지를 올린다. 열린 PR, code-ready head, 시작하거나 끝난 라운드, 판정, 머지, 멈춘 에이전트와 취한 조치, 추가되거나 해소된 블로커, 운영자만 내릴 수 있는 결정 같은 것이다. 그런 변화는 모두 적고 그 밖의 것은 적지 않는다. 표, 머지 목록, 변하지 않은 블로커를 되풀이하지 않는다. 감사에서 아무것도 찾지 못했으면 응답 텍스트 없이 턴을 끝낸다. 어느 경우든 이번 틱의 행을 결정 기록에 남긴다. 행에는 보고한 항목을, 없으면 없음을 적는다."
+- [ ] 운영자가 진행하라고 하면 아래 틱 프롬프트로 감사 틱을 `/loop 1h`로 건다. 주기를 기억에 맡기지 않는다.
+- [ ] 다음 틱 프롬프트를 그대로 쓴다. "trunk의 실행 플레이북을 다시 읽는다. 작업을 그에 비춰 감사하고 어긋난 점은 이번 틱에 고친다. 활성 레인을 모두 확인하고 진행 여부는 부수 효과로만 판단한다. 멈춘 레인은 내리고 대체 레인을 지금 투입한다. 그다음, 이전 상태 메시지(status message)가 보고하지 않은 추적 대상 변화를 감사에서 찾았을 때만 운영자에게 채팅으로 짧은 상태 메시지를 올린다. 열린 PR, code-ready head, 시작하거나 끝난 라운드, 판정, 머지, 멈춘 에이전트와 취한 조치, 추가되거나 해소된 블로커, 운영자만 내릴 수 있는 결정 같은 것이다. 그런 변화는 모두 적고 그 밖의 것은 적지 않는다. 표, 머지 목록, 변하지 않은 블로커를 되풀이하지 않는다. 감사에서 아무것도 찾지 못했으면 응답 텍스트 없이 턴을 끝낸다. 어느 경우든 이번 틱의 행을 결정 기록에 남긴다. 행에는 보고한 항목을, 없으면 없음을 적는다."
 - [ ] 운영자가 보류하거나 중단하라고 하면 모든 owner에게 즉시 쓰기 금지 명령을 보낸다.
 
 ### Spawn owners (owner 생성)
@@ -55,7 +54,7 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 ### PR mechanics, for every PR (모든 PR 공통 절차)
 
 - [ ] forge를 한 번 정한다. 기본은 `gh`다. `command -v origin`이 성공하고 Origin이 레포를 찾을 수 있으면 모든 PR 작업에 `origin pr`을 쓴다. `gh`로 되돌아간 경우는 기록한다. `gt`를 요구하지 않는다.
-- [ ] 정한 forge에 맞춰 `origin pr create --status open --base <base-branch>`나 `gh pr create --base <base-branch>`로 PR을 draft가 아닌 ready 상태로 연다. 스택의 자식 PR은 부모 브랜치를 대상으로 한다.
+- [ ] **Opening a PR**에 따라 PR을 draft가 아닌 ready 상태로 연다. 실행 환경에 내장 PR 도구가 있으면 그것을 쓰고, 없으면 정한 forge에 맞춰 `origin pr create --status open --base <base-branch>`나 `gh pr create --base <base-branch>`를 쓴다. 스택의 자식 PR은 부모 브랜치를 대상으로 한다.
 - [ ] PR로 나가는 push 전에 레포의 lint와 typecheck를 한 번 돌린다. hook을 켠 채로 push한다.
 - [ ] 커밋마다 그 전에 `/deslop`을, 리뷰 전에 `/no-comments`를 돌린다.
 - [ ] Bugbot과 보안 리뷰어 코멘트는 모두 `../references/bugbot-triage.md`에 따라 분류한다.

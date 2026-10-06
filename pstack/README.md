@@ -25,9 +25,9 @@ AI가 슬롭(slop) 코드를 너무 많이 쓴다는 인식이 점점 커지고 
 1. [`/setup-pstack`](./skills/setup-pstack/SKILL.md)을 실행해 추론 예산을 정하고 쓰고 싶은 모델을 고른다.
 2. 엄격함이 필요한 일을 할 때마다 [`/poteto-mode`](./skills/poteto-mode/SKILL.md)를 쓴다.
 
-처음이라면 [pstack 가이드](./docs/guide/README.md)가 설정과 프롬프트 작성부터 검증, 밤샘 실행까지 첫 실전 작업을 차근차근 안내한다.
+처음이라면 [pstack 가이드](./docs/guide/README.md)가 설정과 프롬프트 작성부터 검증, 밤샘 실행까지 첫 실전 작업을 차근차근 안내한다. 막혔거나 어떤 스킬이 맞는지 모르겠다면 [`/poteto-help`](./skills/poteto-help/SKILL.md)에 물어보라.
 
-이게 전부다. 나머지 스킬은 상황에 따라 쓰며, 모드 스킬이 필요할 때 알아서 사용한다. 기본 설정에서 모드는 모델의 강점에 따라 일을 나눈다. 코드 위임(feature, refactoring, bug fix, perf, hillclimb)은 grok에 가고, 가장 어려운 변경과 산문, 판단은 opus 5.5에 간다. 기본 패널은 opus 5.5 / sol / grok이다. [`/setup-pstack`](./skills/setup-pstack/SKILL.md)으로 무엇이든 바꿀 수 있다.
+이게 전부다. 나머지 스킬은 상황에 따라 쓰며, 모드 스킬이 필요할 때 알아서 사용한다. 기본 설정에서 모드는 모델의 강점에 따라 일을 나눈다. 코드 위임(feature, refactoring, bug fix, perf, hillclimb)은 grok에 가고, 가장 어려운 변경과 산문, 판단은 opus 5.5에 간다. 기본 패널은 opus 5.5 / grok이다. [`/setup-pstack`](./skills/setup-pstack/SKILL.md)으로 무엇이든 바꿀 수 있다.
 
 ## 사용법
 
@@ -88,7 +88,7 @@ morning.
 
 전체 규칙과 플레이북은 [`skills/poteto-mode/SKILL.md`](./skills/poteto-mode/SKILL.md)에 있다.
 
-[`/poteto-mode`](./skills/poteto-mode/SKILL.md)는 고정 모드(sticky mode)이기도 하다. 한 번 들어가면 턴이 바뀌어도 켜져 있고, 플레이북이 맞거나 작업에 엄격함이 필요할 때 스스로 적용되며 그 밖에는 끼어들지 않는다. 끄고 싶으면 언제든 그렇게 말하면 된다.
+[`/poteto-mode`](./skills/poteto-mode/SKILL.md)를 턴이 바뀌어도 켜 두려면 `/` 메뉴에서 고른 뒤 enter 대신 option+enter(mac)나 alt+enter(windows)를 누른다. 그러면 [커스텀 모드](https://cursor.com/docs/skills)가 되는데, cursor는 이를 agents 창과 cli에서 제공한다. 커스텀 모드는 매 턴 컨텍스트에 남아 있고, 플레이북이 맞거나 작업에 엄격함이 필요할 때 스스로 적용되며 그 밖에는 끼어들지 않는다. 그냥 enter를 누르면 메시지 하나에만 붙는다. 끄고 싶으면 그렇게 말하거나 모드에서 나오면 된다.
 
 [`/poteto-mode`](./skills/poteto-mode/SKILL.md)는 cursor의 `/loop` 명령과 아주 잘 맞는다. 엄격함을 희생하지 않고 cursor를 몇 시간이고 일하게 할 수 있다.
 
@@ -110,6 +110,7 @@ morning.
 | 스킬 | 쓰는 때 |
 |---|---|
 | [`/poteto-mode`](./skills/poteto-mode/SKILL.md) | 사소하지 않은 모든 작업의 기본 진입점. |
+| [`/poteto-help`](./skills/poteto-help/SKILL.md) | pstack이 처음이거나 어떤 스킬, 플레이북, 원칙이 맞는지 모를 때. 무엇을 하려는지 알아낸 뒤 그 부분에 답하고, 입력할 프롬프트를 건넨다. `/poteto-help`를 입력할 때만 실행된다. |
 | [`/how`](./skills/how/SKILL.md) | 하위 시스템이 어떻게 동작하는지 차근차근 설명을 듣고 싶을 때. |
 | [`/why`](./skills/why/SKILL.md) | 무언가가 왜 이렇게 만들어졌는지 알고 싶을 때. 실행 시점에 사용 가능한 MCP를 찾아 증거 범주(소스 관리, 이슈 트래커, 장문 문서, 실시간 채팅, 인프라 관측, 에러 추적, 분석 웨어하우스)마다 병렬로 조회한다. |
 | [`/recall`](./skills/recall/SKILL.md) | 작업을 시작하거나 재개하면서, 한 주제에 대한 최근 맥락을 자기 채팅 기록과 공유 기록에서 다시 세워 짧은 현재 상태 브리핑으로 받고 싶을 때. |
@@ -117,13 +118,15 @@ morning.
 | [`/architect`](./skills/architect/SKILL.md) | 함수 경계를 넘는 코드를 쓰기 직전에 호출자의 사용법, 타입, 모듈 형태를 먼저 정하고 싶을 때. |
 | [`/arena`](./skills/arena/SKILL.md) | 같은 일을 N번 병렬로 시도하고 각각에서 가장 좋은 부분을 가져오고 싶을 때. |
 | [`/swarm`](./skills/swarm/SKILL.md) | 서로 다른 조각이나 경합 대상에 N개의 작업자를 병렬로 붙이고 보고서 하나로 모으고 싶을 때. |
-| [`/interrogate`](./skills/interrogate/SKILL.md) | diff가 있고 여러 다른 모델이 엄격한 코드 품질 관점까지 동원해 그것을 깨 보게 하고 싶을 때. |
+| [`/interrogate`](./skills/interrogate/SKILL.md) | diff가 있고 다른 모델들이 엄격한 코드 품질 관점까지 동원해 그것을 깨 보게 하고 싶을 때. |
 | [`/automate-me`](./skills/automate-me/SKILL.md) | 자기가 실제로 일해 온 방식으로 초안을 잡은 자기만의 `-mode` 스킬을 원할 때. |
 | [`/make-bot-ui`](./skills/make-bot-ui/SKILL.md) | 버튼이 webhook으로 Grok Bot을 깨우는 페이지나 대시보드를 원할 때. sender-key 전달과 Tailscale까지 포함한다. |
 | [`/setup-pstack`](./skills/setup-pstack/SKILL.md) | pstack이 역할별로 쓸 모델을 고르고 싶을 때. 쓸 수 있는 모델을 감지하고 설정 rule을 쓴다. |
 | [`/reflect`](./skills/reflect/SKILL.md) | 긴 작업이 반영됐고 그 레시피를 스킬 수정으로 남기고 싶을 때. |
+| [`/correct`](./skills/correct/SKILL.md) | 에이전트가 같은 실수를 반복해 계속 바로잡고 있을 때. 기록에서 실수 유형을 캐내 각각을 통하는 가장 높은 수준에서 고치고(아키텍처, 그다음 타입과 lint와 ci, 그다음 테스트, 문서는 마지막), 규칙마다 그것을 강제하는 수단을 짝지은 표를 유지한다. |
 | [`/teach`](./skills/teach/SKILL.md) | 변경이나 하위 시스템을 요약으로 끝내지 않고 정말로 이해하고 싶을 때. how와 why를 실행하고 다이어그램을 하나씩 쌓아 가며 쉬운 설명 하나로 엮는다. |
 | [`/tdd`](./skills/tdd/SKILL.md) | 버그를 고치는데 값싼 로컬 테스트 경로가 있을 때. 실패하는 테스트를 먼저 쓰고 그다음에 고친다. |
+| [`/benchmark-checklist`](./skills/benchmark-checklist/SKILL.md) | 벤치마크를 돌렸거나 속도 향상이나 회귀를 측정했을 때. 보고하거나 그에 따라 행동하기 전에 그 숫자를 점검한다(병목, 튜닝, 오류, 반복 실행, end-to-end 관련성). |
 | [`/no-comments`](./skills/no-comments/SKILL.md) | 리뷰 전에 주석을 걷어 낸다. Comment Sicko를 띄우고, 받아들인 지적을 고치고, 주석이 주장하던 제약을 코드로 표현할 방법을 제안한다. |
 | [`/typescript-best-practices`](./skills/typescript-best-practices/SKILL.md) | typescript를 읽거나 고칠 때. 타입 시스템 규율 원칙을 문법 수준에서 구체화한다. |
 | [`/figure-it-out`](./skills/figure-it-out/SKILL.md) | 번들된 플레이북 중 맞는 것이 없을 때. 작업에 맞는 엄격하고 감사 가능한 플레이북을 설계한다. |
@@ -177,8 +180,10 @@ tdd:               /tdd implement
 unslop:            can we unslop and tighten the new changes?
 reflect:           /reflect that took too long. capture what we learned so the next run doesn't
                    repeat it.
+correct:           /correct
 show-me-your-work: /show-me-your-work keep a decision trail i can review when i'm back.
 automate-me:       /automate-me
+help:              /poteto-help which skill should i use to review this branch?
 ```
 
 </details>
@@ -193,10 +198,10 @@ pstack은 [Comment Sicko](./agents/comment-sicko.md)도 함께 제공한다. `su
 
 ## 원칙
 
-원칙 하나에 짧은 스킬 하나씩, 모두 스물세 개다. `poteto-mode`는 이를 인라인으로 색인해 두고 작업을 시작할 때 그 색인을 읽는다. 독립 파일이 있는 이유는 다른 스킬이 원칙을 이름으로 참조할 수 있게 하고, 색인이 각 원칙의 전체 규칙을 가리킬 수 있게 하기 위해서다.
+원칙 하나에 짧은 스킬 하나씩, 모두 스물네 개다. `poteto-mode`는 이를 인라인으로 색인해 두고 작업을 시작할 때 그 색인을 읽는다. 독립 파일이 있는 이유는 다른 스킬이 원칙을 이름으로 참조할 수 있게 하고, 색인이 각 원칙의 전체 규칙을 가리킬 수 있게 하기 위해서다.
 
 <details>
-<summary>원칙 스물세 개</summary>
+<summary>원칙 스물네 개</summary>
 
 | 원칙 | 그룹 | 규칙 |
 |---|---|---|
@@ -220,6 +225,7 @@ pstack은 [Comment Sicko](./agents/comment-sicko.md)도 함께 제공한다. `su
 | [fix-root-causes](./skills/principle-fix-root-causes/SKILL.md) | verification | 증상마다 근본 원인까지 추적해 거기서 고친다. 먼저 재현하고, 원인에 닿을 때까지 왜냐고 묻고, 크래시를 덮는 nil 체크 방어는 참는다. |
 | [sequence-verifiable-units](./skills/principle-sequence-verifiable-units/SKILL.md) | verification | 여러 단계로 된 작업(일괄 정리, 마이그레이션, 비슷한 수정의 연속)과 커밋·PR을 쌓는 방식에 적용한다. 일을 각각 검증 가능한 상태로 끝나는 작은 단위로 쪼개고, 다음으로 넘어가기 전에 하나씩 확인하고, 순서 자체가 리뷰어에게 증명이 되도록 전달 순서를 정한다. |
 | [test-behavior-not-implementation](./skills/principle-test-behavior-not-implementation/SKILL.md) | verification | 테스트를 쓰거나 바꾸거나 유지할 때 적용한다. 사용자가 부르는 방식대로 코드를 부르고, 사용자가 관찰하는 결과를 리터럴 기댓값과 비교해 단언한다. import한 모든 함수가 undefined를 반환해도 테스트가 통과한다면 단언을 다시 쓰거나 테스트를 지운다. |
+| [explain-the-number](./skills/principle-explain-the-number/SKILL.md) | verification | 측정한 숫자(속도 향상, 회귀, 처리량, 지연 시간, eval 결과)를 믿거나 보고하거나 그에 따라 행동하기 전에 적용한다. 무엇이 그 숫자를 제한하는지 찾고, 생각하는 작업과 다른 것을 잰 것은 아닌지 배제한다. |
 | [guard-the-context-window](./skills/principle-guard-the-context-window/SKILL.md) | delegation | 대량 작업은 subagent로 보낸다. 메인 스레드에는 원본 페이로드가 아니라 요약을 둔다. |
 | [never-block-on-the-human](./skills/principle-never-block-on-the-human/SKILL.md) | delegation | 진행하고, 결과를 보여 주고, 사람이 사후에 방향을 바로잡게 한다. 확인 요청은 되돌릴 수 없는 행동에만 아껴 둔다. |
 | [encode-lessons-in-structure](./skills/principle-encode-lessons-in-structure/SKILL.md) | meta | 글을 더 쓰는 대신 규칙을 lint, 메타데이터 플래그, 런타임 검사, 스크립트로 담는다. |
@@ -248,7 +254,7 @@ cursor에는 이미 훌륭한 plan 모드가 있고 pstack과도 잘 맞는다. 
 
 모델도 설정할 수 있다. [`/setup-pstack`](./skills/setup-pstack/SKILL.md)을 입력하라. 접근 가능한 모델을 감지하고, 각 역할(코드, 판단, 리뷰 패널)을 모델에 연결하는 작은 상시 적용 rule을 쓴다. 모든 스킬이 이 rule을 읽고, rule이 없으면 합리적인 기본값으로 돌아가므로 원하는 것만 덮어쓰면 된다.
 
-0.15.3 이전에 쓴 rule은 옛 기본 모델에 고정되어 있다. 해당 역할 줄들이나 파일을 지운 뒤 `/setup-pstack`을 다시 실행하라. 다시 실행해도 모델이 기본값과 다른 역할은 그대로 유지된다.
+기본값이 바뀌면 그 전에 쓴 rule은 여전히 옛 기본값에 고정되어 있다. 해당 역할 줄들이나 파일을 지운 뒤 `/setup-pstack`을 다시 실행하라. 다시 실행해도 모델이 기본값과 다른 역할은 그대로 유지된다.
 
 ## 자동화
 

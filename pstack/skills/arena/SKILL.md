@@ -25,7 +25,7 @@ disable-model-invocation: true
 
 1. 각 후보가 만들어 낼 산출물을 밝힌다.
 2. 채점 기준(rubric)을 끌어낸다. *이* 작업에서 성공이 어떤 모습인지 밝히고, 그것을 채점할 수 있는 구체적인 기준 3~6개로 바꾼다. 채점 기준은 Phase D에서 고르는 쪽의 도구다. 후보는 작업만 본다.
-3. 실행자(runner)를 고른다. `~/.cursor/rules/pstack-models.mdc`의 `arena runners` 줄을 쓴다. 규칙 파일이나 그 줄이 없으면 기본으로 `claude-opus-5-5-max`, `gpt-5.6-sol-max`, `grok-4.7-xhigh-fast`에 하나씩 띄운다. 이 줄이나 cross-judge 줄의 `auto`나 `inherit-parent` 항목은 부모 모델을 뜻하므로 그 항목에는 `model`을 생략한다. Task 도구가 설정된 항목을 거부하면 그 자리는 같은 계열의 기본 모델로 돌리고 그렇게 했다고 밝힌다. 계열은 접두사로 나눈다. `claude-*`, `gpt-*`, `grok-*`다. 맞는 계열이 없으면 `claude-opus-5-5-max`를 쓴다. 기본 모델을 거부하면 오류 메시지에서 같은 계열의 가장 가까운 유효 slug를 쓴다. arena가 설계 방향 여러 개를 다루면 더 많이 띄운다. 작업이 판단보다 생성량에 좌우되면 같은 모델을 N번 쓴다.
+3. 실행자(runner)를 고른다. `~/.cursor/rules/pstack-models.mdc`의 `arena runners` 줄을 쓴다. 규칙 파일이나 그 줄이 없으면 기본으로 `claude-opus-5-5-xhigh`와 `grok-4.7-xhigh-fast`에 하나씩 띄운다. 이 줄이나 cross-judge 줄의 `auto`나 `inherit-parent` 항목은 부모 모델을 뜻하므로 그 항목에는 `model`을 생략한다. Task 도구가 설정된 항목을 거부하면 그 자리는 같은 계열의 기본 모델로 돌리고 그렇게 했다고 밝힌다. 계열은 접두사로 나눈다. `claude-*`와 `grok-*`다. 맞는 계열이 없으면 `claude-opus-5-5-xhigh`를 쓴다. 기본 모델을 거부하면 오류 메시지에서 같은 계열의 가장 가까운 유효 slug를 쓴다. arena가 설계 방향 여러 개를 다루면 더 많이 띄운다. 작업이 판단보다 생성량에 좌우되면 같은 모델을 N번 쓴다.
 4. 출력 경로를 배정한다. **separate-before-serializing-shared-state** 원칙 스킬에 따라 후보마다 자기 위치(가능하면 git worktree, 아니면 `/tmp/arena-<slug>/candidate-<n>/`)에 쓴다.
 
 ## Phase B: Fan out
@@ -38,7 +38,7 @@ disable-model-invocation: true
 
 ## Phase C: Cross-judge
 
-Phase B의 후보가 모두 끝나면 `~/.cursor/rules/pstack-models.mdc`의 `arena cross-judge pool` 줄에서 모델 하나를 고른다. 규칙 파일이나 그 줄이 없으면 `claude-opus-5-5-max`, `gpt-5.6-sol-max`, `grok-4.7-xhigh-fast` 중에서 고른다. 부모와 다른 모델 계열을 우선한다. 그 모델로 읽기 전용 판정 subagent 하나를 띄운다. 판정자는 채점 기준과 경로 라벨이 붙은 후보를 보고, 기준마다 점수를 매기고, 근거와 함께 기반을 추천한다. 판정자는 후보들과 동시에가 아니라 Phase D에서 부모가 읽는 동안 병렬로 돈다. 후보가 아직 쓰는 중에는 판정자를 띄우지 않는다.
+Phase B의 후보가 모두 끝나면 `~/.cursor/rules/pstack-models.mdc`의 `arena cross-judge pool` 줄에서 모델 하나를 고른다. 규칙 파일이나 그 줄이 없으면 `claude-opus-5-5-xhigh`와 `grok-4.7-xhigh-fast` 중에서 고른다. 부모와 다른 모델 계열을 우선한다. 그 모델로 읽기 전용 판정 subagent 하나를 띄운다. 판정자는 채점 기준과 경로 라벨이 붙은 후보를 보고, 기준마다 점수를 매기고, 근거와 함께 기반을 추천한다. 판정자는 후보들과 동시에가 아니라 Phase D에서 부모가 읽는 동안 병렬로 돈다. 후보가 아직 쓰는 중에는 판정자를 띄우지 않는다.
 
 ## Phase D: 기반 고르기
 

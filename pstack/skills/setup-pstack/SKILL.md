@@ -19,14 +19,14 @@ pstack의 역할별 모델을 정하는 항상 적용 규칙 `~/.cursor/rules/ps
 
 ### 3. 예산, 대응, 확인
 
-**(a) 예산 묻기.** 자유 텍스트보다 AskQuestion을 우선한다. 다음 네 가지 선택지를 정확히 이 라벨로 제시하고, 규칙에 현재 예산이 기록되어 있으면 그것을 밝힌다.
+**(a) 예산 묻기.** 자유 텍스트보다 AskQuestion을 우선한다. 다음 네 가지 선택지를 정확히 이 라벨로 제시하고, 규칙에 현재 예산이 기록되어 있으면 그것을 밝힌다. 규칙이 없으면 `large`가 스킬 기본값과 같다고 말한다.
 
-- `unlimited — keep max`
+- `unlimited — max reasoning`
 - `large — xhigh reasoning`
 - `medium — high reasoning`
 - `small — medium reasoning`
 
-**(b) 적용.** 스킬 기본값으로 작업 표를 만들고, 다시 실행하는 경우에는 계열, 목록, 별칭(`inherit-parent`, `auto`)으로 바꾼 역할을 유지한다. `unlimited`는 모든 effort를 그 표 그대로 둔다. `large`, `medium`, `small`은 패널 항목을 포함한 모든 실제 slug의 effort 토큰을 각각 `xhigh`, `high`, `medium`으로 설정한다. effort 토큰은 마지막 토큰, 또는 끝에 `fast`가 붙어 있으면 그 앞의 토큰이며, 순서는 `max` > `xhigh` > `high` > `medium` > `low`다. 결과가 감지된 slug가 아니면, 같은 계열의 감지된 slug 중 목표 이하에서 effort가 가장 높은 것을 쓰고, 그것도 없으면 그 역할을 선택이 필요하다고 표시한다. `inherit-parent`와 `auto`는 바뀌지 않는다. 따라서 `small`은 `claude-opus-5-5-max`를 `claude-opus-5-5-medium`으로, `grok-4.7-xhigh-fast`를 `grok-4.7-medium-fast`로 바꾼다.
+**(b) 적용.** 스킬 기본값으로 작업 표를 만들고, 다시 실행하는 경우에는 계열, 목록, 별칭(`inherit-parent`, `auto`)으로 바꾼 역할을 유지한다. `unlimited`, `large`, `medium`, `small`은 패널 항목을 포함한 모든 실제 slug의 effort 토큰을 각각 `max`, `xhigh`, `high`, `medium`으로 설정한다. effort 토큰은 마지막 토큰, 또는 끝에 `fast`가 붙어 있으면 그 앞의 토큰이며, 순서는 `max` > `xhigh` > `high` > `medium` > `low`다. 결과가 감지된 slug가 아니면, 같은 계열의 감지된 slug 중 목표 이하에서 effort가 가장 높은 것을 쓰고, 그것도 없으면 그 역할을 선택이 필요하다고 표시한다. `inherit-parent`와 `auto`는 바뀌지 않는다. 따라서 `unlimited`는 `claude-opus-5-5-xhigh`를 `claude-opus-5-5-max`로 바꾼다. Grok slug는 `xhigh`가 최고라서 `unlimited`에서는 대체 규칙에 따라 Grok이 `xhigh`에 머물고 `grok-4.7-xhigh-fast`는 그대로다. `large`는 두 기본값을 모두 유지한다. `small`은 둘을 `claude-opus-5-5-medium`과 `grok-4.7-medium-fast`로 바꾼다.
 
 **(c) 역할을 보여 주고 확인.** 모든 역할을 모델과 함께 보여 주고, 감지된 집합에 없는 실제 slug는 선택이 필요하다고 표시한다. 2단계에서 버린 줄도 각각 나열한다. 그대로 받아들일지, 특정 역할을 바꿀지 묻고, 선택지로 감지된 모델과 `inherit-parent`, `auto`를 제시한다(둘 다 이 역할이 부모 채팅 모델로 돈다는 뜻이며, Auto 사용자가 Auto에 머무는 방법이다). 자유 텍스트보다 AskQuestion을 우선한다. 패널 역할(arena runners, architect runners, interrogate reviewers)의 값은 목록이고, 별칭 항목을 포함해 항목마다 subagent 하나가 돌므로 목록 길이가 개수를 정한다. `arena cross-judge pool`도 목록이지만, Arena는 가능하면 부모와 모델 계열이 다른 값 하나를 골라 쓴다. `swarm workers`는 경주나 비교가 갈래마다 다른 모델을 배정하지 않는 한 모든 worker의 기본 모델이다.
 
@@ -45,24 +45,24 @@ alwaysApply: true
 ---
 # pstack model configuration. One line per role. Delete a line to fall back to the skill default.
 # `inherit-parent` or `auto` as a value: the role runs on the parent chat model (omit Task `model`). Alias entries in a panel list still count toward its fan-out.
-# budget: unlimited (max)
+# budget: large (xhigh)
 feature, refactoring: grok-4.7-xhigh-fast
 bug-fix: grok-4.7-xhigh-fast
 perf-issue: grok-4.7-xhigh-fast
 hillclimb: grok-4.7-xhigh-fast
-judgment and prose: claude-opus-5-5-max
-hardest tasks: claude-opus-5-5-max
+judgment and prose: claude-opus-5-5-xhigh
+hardest tasks: claude-opus-5-5-xhigh
 how explorer: grok-4.7-xhigh-fast
-how explainer: claude-opus-5-5-max
+how explainer: claude-opus-5-5-xhigh
 why investigators: grok-4.7-xhigh-fast
-why synthesizer: claude-opus-5-5-max
-reflect tooling: gpt-5.6-sol-max
-reflect judgment, divergent, synthesizer: claude-opus-5-5-max
-arena runners: claude-opus-5-5-max, gpt-5.6-sol-max, grok-4.7-xhigh-fast
-arena cross-judge pool: claude-opus-5-5-max, gpt-5.6-sol-max, grok-4.7-xhigh-fast
+why synthesizer: claude-opus-5-5-xhigh
+reflect tooling: grok-4.7-xhigh-fast
+reflect judgment, divergent, synthesizer: claude-opus-5-5-xhigh
+arena runners: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast
+arena cross-judge pool: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast
 swarm workers: grok-4.7-xhigh-fast
-architect runners: claude-opus-5-5-max, gpt-5.6-sol-max, grok-4.7-xhigh-fast
-interrogate reviewers: claude-opus-5-5-max, gpt-5.6-sol-max, grok-4.7-xhigh-fast
+architect runners: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast
+interrogate reviewers: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast
 ```
 
 ### 6. 확인

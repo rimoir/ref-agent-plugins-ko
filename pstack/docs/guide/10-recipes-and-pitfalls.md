@@ -12,6 +12,30 @@ use /how first to understand how this initialization works. then use /why to fig
 
 동작 방식이 먼저, 이력이 나중이다. 각 스킬의 보고서는 어떤 출처를 검색했는지 알려 주므로 답이 무엇에 근거하는지 알 수 있다.
 
+## 코드를 건드리기 전에 시끄러운 리포트 다시 말하게 하기
+
+```text
+/poteto-mode read this thread. restate the underlying issue in your own words, in plain english. don't change any code yet.
+```
+
+잘못 읽었다면 다시 말한 내용에 드러나고, 바로잡는 데는 메시지 하나면 된다. 에이전트가 자기 생각을 말하기 전까지 여러분의 가설은 혼자 간직한다.
+
+## 고르기 전에 프로토타입 만들기
+
+```text
+/poteto-mode prototype a few options for the settings layout. put them behind a switcher and send me screenshots of each.
+```
+
+설명이 아니라 돌아가는 것들 중에서 고른다. 에이전트는 그 과정에서 레이아웃과 타이밍에 관한 자기 질문에 스스로 답한다.
+
+## 정해진 설계를 계획으로 바꾸기
+
+```text
+/poteto-mode turn this design into a plan. small verifiable PRs, each with its own proof.
+```
+
+설계가 정해진 뒤에만 요청한다. 산출물은 계획이고, 계획은 그것을 실행할 플레이북을 지목한다.
+
 ## 설계에 대한 다른 의견 받기
 
 ```text
@@ -43,6 +67,38 @@ worker마다 패키지 하나를 맡는다. 부모는 모든 조각을 기다렸
 ```
 
 "if there's a cheap test path"가 중요하다. 깨지기 쉬운 목으로 테스트를 억지로 만들면 실제 명령을 돌리는 것보다 증명하는 것이 적고, 플레이북은 그렇다고 말할 수 있다.
+
+## 리포트를 재현하고 증거와 함께 고치기
+
+```text
+/poteto-mode repro this with /verify-<app>. if it repros on main, fix it and show me a video as proof.
+```
+
+"if it repros on main"은 버그가 이미 사라졌을 때 실행을 일찍 멈추게 한다. 비디오가 있으면 diff를 읽기 전에 수정을 확인할 수 있다.
+
+## 숫자를 올리기 전에 검증하기
+
+```text
+/benchmark-checklist vet this 40% speedup before it goes in the pr description
+```
+
+빨라짐, 느려짐, 측정 가능한 차이 없음, 결론 없음 중 하나를 실행 횟수, 범위, 숫자를 제한하는 요인과 함께 받는다.
+
+## 같은 실수 바로잡기 그만하기
+
+```text
+/correct agents keep adding new config flags without registering them in the schema
+```
+
+수정은 아키텍처, 타입, lint, 테스트로 저장소에 들어가므로 다음 에이전트는 그 실수를 할 수 없다.
+
+## 작업을 시작하지 않고 방법 묻기
+
+```text
+/poteto-help how do i get poteto-mode to stay on every turn?
+```
+
+답, 보낼 프롬프트, 출처 링크를 받는다. 그 프롬프트를 보내기 전에는 아무것도 실행되지 않는다.
 
 ## 자리를 비운 동안 실행을 정직하게 유지하기
 
@@ -82,7 +138,13 @@ apply prove it works. show me the real output, not the build log.
 
 - **프롬프트에 스킬 나열하기.** "use /how then /architect then /arena"는 플레이북이 이미 정한 순서를 뒤섞는다. 목표와 제약을 말한다. 기본값을 덮어쓸 때만 스킬 이름을 댄다.
 - **모호한 종료 조건.** "make it better"는 `/loop`에게 확인할 것을 주지 않는다. 통과하거나 실패할 수 있는 명령이나 산출물을 준다.
-- **worktree 하나에 병렬 에이전트 여럿.** 서로 덮어쓰고 diff는 고고학이 된다. "own worktree per attempt"라고 말하면 격리는 공짜다.
+- **원인에 대한 내 가설부터 꺼내기.** 에이전트는 여러분이 가리킨 곳만 찾는다. 먼저 문제를 다시 말하게 한 다음 짐작을 공유한다.
+- **첫 설계 받아들이기.** 한 번의 시도는 모델이 처음 떠올린 모양에 갇힌다. 프로토타입이나 `/architect`를 요청하고 증거로 고른다.
+- **추상적인 계획 다듬기.** 코드 없는 계획을 적대적으로 리뷰하면 결코 일어나지 않을 위험을 지어낸다. 열린 질문은 프로토타입으로 정리하고, 만들어진 것을 리뷰한다.
+- **worktree 하나에 병렬 에이전트 여럿.** 서로 덮어쓰고 diff는 고고학이 된다. 클라우드 에이전트로 돌리거나 "own worktree per attempt"라고 말한다.
+- **루프를 믿기 전에 돌리기.** 자기 작업을 검증하지 못하는 루프는 미검증 작업을 더 빨리 만들 뿐이다. 검증 스킬부터 동작하게 만든다.
+- **검증 안 된 숫자 믿기.** 데워진 캐시나 건너뛴 코드 경로가 속도 향상을 꾸며 낼 수 있다. 숫자를 어디에 내놓기 전에 `/benchmark-checklist`를 돌린다.
+- **같은 실수를 손으로 바로잡기.** 채팅에서의 교정은 실행 하나에만 도움이 된다. `/correct`는 이후 어떤 실행도 반복하지 않게 저장소를 고친다.
 - **커버리지를 위해 `/arena` 쓰기.** `/arena`는 설계나 코드 브리프 하나를 반복한 뒤 기반을 고르고 가장 좋은 부분을 접목한다. `/swarm`은 조각이나 명시한 경주 갈래로 나누고 보고서 하나로 모은다.
 - **리뷰 코멘트 전부 받아들이기.** 봇도 사람도 진짜 발견과 잡음을 한 목록에 섞어 낸다. `/interrogate`는 발견을 이유와 함께 act-on과 dismissed 바구니로 나누고, 어느 쪽이든 직접 뒤집을 수 있다.
 - **`auto`를 모델 slug로 여기기.** `auto`와 `inherit-parent`는 "model 필드를 생략해 subagent가 부모 채팅 모델을 물려받게 한다"는 뜻이다. 역할은 [Setup](./01-setup.md)에서 다룬다.

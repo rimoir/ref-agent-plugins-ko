@@ -40,7 +40,7 @@ Codex CLI:    ~/.codex/skills/unlazy
 명시적인 트리거를 넣어 규모 있는 작업을 요청한다.
 
 ```text
-/unlazy tree 5 refactor the payment module and verify every migration path
+/unlazy tree 5 결제 모듈을 리팩터링하고 마이그레이션 경로를 빠짐없이 검증해 줘
 ```
 
 단독 작업이면 [templates/gates-leaf.md](templates/gates-leaf.md)를 `GATES.md`로 복사하고, 모든 플레이스홀더를 채운 뒤, 명령을 실행하지 않고 내용을 확인한다.

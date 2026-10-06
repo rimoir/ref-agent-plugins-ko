@@ -235,7 +235,7 @@ function area(s: Shape): number {
   }
 }
 
-// void switch
+// void를 반환하는 switch
 function handle(s: Shape): void {
   switch (s.kind) {
     case "circle":

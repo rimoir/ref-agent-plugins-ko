@@ -8,16 +8,16 @@
 
 ```mermaid
 flowchart TD
-    A[Your prompt] --> B[poteto-mode]
-    B --> C[Read the Principles section]
-    C --> D{Match the task}
-    D -->|Read-only question| E[Investigation]
-    D -->|Defect| F[Bug fix]
-    D -->|New behavior| G[Feature]
-    D -->|Structure only| H[Refactoring]
-    D -->|Measured slowness| I[Perf issue]
-    D -->|Large work or no match| J[figure-it-out]
-    E --> K[Verify and report]
+    A[내 프롬프트] --> B[poteto-mode]
+    B --> C[원칙 섹션 읽기]
+    C --> D{작업 유형 판별}
+    D -->|읽기 전용 질문| E[조사]
+    D -->|결함| F[버그 수정]
+    D -->|새 동작| G[기능]
+    D -->|구조만 변경| H[리팩터링]
+    D -->|측정된 느림| I[성능 문제]
+    D -->|큰 작업 또는 해당 없음| J[figure-it-out]
+    E --> K[검증하고 보고]
     F --> K
     G --> K
     H --> K
@@ -32,7 +32,7 @@ flowchart TD
 명세를 쓸 필요는 없다. 무엇이 잘못됐는지나 무엇을 원하는지, 거기에 에이전트의 시간을 아껴 줄 이미 아는 사실을 더해 말하면 된다.
 
 ```text
-/poteto-mode users get two notifications after a retry. repro first, then fix and verify.
+/poteto-mode 재시도하고 나면 사용자에게 알림이 두 번 가. 먼저 재현하고 고친 다음 검증해 줘.
 ```
 
 이것이 Bug fix 프롬프트다. "repro first"는 예의가 아니라 진짜 제약이고, 플레이북은 이를 지킨다. 할 일 목록이 Bug fix 단계로 채워지는 것을 지켜보면 된다. 건너뛴 단계도 `skip: <reason>`을 달고 보이는 채로 남는다.
@@ -52,7 +52,7 @@ flowchart TD
 다섯 가지를 모두 담은 프롬프트는 이렇다.
 
 ```text
-/poteto-mode the csv export drops its last row since yesterday's deploy. failing job id is 4812. repro first, then fix. done means the 60k-row fixture exports every row. show me the row counts before and after.
+/poteto-mode 어제 배포 뒤로 CSV 내보내기에서 마지막 행이 빠져. 실패한 잡 id는 4812야. 먼저 재현하고 고쳐 줘. 6만 행짜리 픽스처가 행을 전부 내보내면 끝이야. 전후 행 수를 보여 줘.
 ```
 
 빼는 편이 나은 것도 두 가지 있다.
@@ -63,7 +63,7 @@ flowchart TD
 긴 스레드나 모호한 버그처럼 잡음이 많은 보고라면 다시 서술하기를 첫 단계로 둔다.
 
 ```text
-/poteto-mode read this thread. restate the underlying issue in your own words, in plain english. don't change any code yet.
+/poteto-mode 이 스레드 읽어 봐. 근본 문제를 네 말로, 쉬운 말로 다시 정리해 줘. 아직 코드는 건드리지 마.
 ```
 
 잘못 읽은 부분은 코드가 생기기 전에 서술에서 드러난다. 거기서 바로잡으면 잘못된 수정 하나 대신 메시지 하나로 끝난다.
@@ -73,15 +73,15 @@ flowchart TD
 대화에 이미 맥락이 있으면 프롬프트는 거의 없어진다. 다음은 모두 충분하다.
 
 ```text
-/poteto-mode do it
+/poteto-mode 진행해
 ```
 
 ```text
-continue
+계속해
 ```
 
 ```text
-keep going until done
+끝날 때까지 계속해
 ```
 
 짧아도 되는 이유는 플레이북이 구조를 쥐고 있고, Custom Mode가 매 턴 `/poteto-mode`를 컨텍스트에 남겨 두기 때문이다. 시작하는 법은 [pstack 설정](./01-setup.md#run-your-first-task)에 있다. 말은 의도를 싣고, 엄밀함은 스킬이 싣는다.
@@ -91,7 +91,7 @@ keep going until done
 긴 채팅에는 지난 작업의 맥락이 쌓인다. 주제를 바꿀 때는 그렇다고 말한다.
 
 ```text
-/poteto-mode new task. figure out why the cache entry survives logout. don't change any code yet.
+/poteto-mode 새 작업이야. 로그아웃해도 캐시 항목이 남는 이유를 알아내 줘. 아직 코드는 건드리지 마.
 ```
 
 "new task"는 `/poteto-mode`에게 이전 플레이북을 이어 가지 말고 다시 맞추라고 알린다. "don't change any code yet"은 이번 작업을 Investigation에 고정한다. 이 두 표현이 없으면 Feature 도중의 모드는 질문을 다음 기능 단계로 다루기 쉽다.
@@ -103,7 +103,7 @@ keep going until done
 로컬에 남아야 하는 작업이라면 처음부터 worktree를 요청한다.
 
 ```text
-/poteto-mode new task. branch off <base> in a fresh worktree, then port the parser change there.
+/poteto-mode 새 작업이야. 새 worktree에서 <base>로부터 브랜치를 따고, 거기로 파서 변경을 옮겨 줘.
 ```
 
 작업마다 자기 브랜치와 worktree를 가지면 어떤 에이전트도 다른 에이전트의 파일을 짓밟지 않는다. worktree는 디스크와 머신 자원을 쓰므로 노트북 한 대에서는 몇 개만 동시에 돌린다. [Opening a PR 플레이북](../../skills/poteto-mode/playbooks/opening-a-pr.md)은 코드 변경을 이미 worktree에서 처리하므로, 특정 base나 위치가 중요할 때만 이렇게 말하면 된다.
@@ -111,7 +111,7 @@ keep going until done
 worktree는 쌓인다. 디스크가 빠듯해지면 이렇게 묻는다.
 
 ```text
-/poteto-mode what's eating my disk? prune the worktrees that are safe to prune.
+/poteto-mode 디스크를 뭐가 잡아먹고 있어? 지워도 안전한 worktree는 정리해 줘.
 ```
 
 [Worktree cleanup 플레이북](../../skills/poteto-mode/playbooks/worktree-cleanup.md)은 모든 worktree를 머지 상태, 커밋하지 않은 작업, 아직 그것을 건드리는 채팅 기준으로 분류한다. 그 증거로 안전이 확인된 것만 지우고, 커밋하지 않은 작업이 남은 것은 멈춰서 판단을 기다린다.
@@ -121,7 +121,7 @@ worktree는 쌓인다. 디스크가 빠듯해지면 이렇게 묻는다.
 자리를 비울 때는 완료가 무엇인지 말하고 떠난다.
 
 ```text
-/poteto-mode im stepping away. keep going until the migration check reports zero old callers. log your decisions.
+/poteto-mode 나 잠깐 자리 비운다. 마이그레이션 검사에서 옛 호출부가 0개로 나올 때까지 계속해. 결정은 기록해 둬.
 ```
 
 나중에 검토할 작업은 [`/figure-it-out`](../../skills/figure-it-out/SKILL.md)으로 간다. 이 스킬은 실행의 phase를 설계하고 [`/show-me-your-work`](../../skills/show-me-your-work/SKILL.md) 결정 로그를 남긴다. 밤샘 실행의 전체 약속은 [잠든 사이에 작업 돌리기](./07-overnight.md)에서 다룬다.

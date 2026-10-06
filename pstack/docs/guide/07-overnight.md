@@ -20,10 +20,10 @@
 좋은 인계에는 목표, 종료 조건, 권한, 비상구가 있다. 길 필요는 없다.
 
 ```text
-/poteto-mode im going to bed. migrate every caller to the new parser in a fresh worktree off <base>.
-done means zero old callers, all parser fixtures pass, old api deleted.
-keep a decision log. don't ask me before committing.
-/loop until done. if you're truly stuck after a few hours, stop and write up why.
+/poteto-mode 나 이제 잔다. <base>에서 딴 새 worktree에서 호출부를 전부 새 파서로 옮겨 줘.
+옛 호출부 0개, 파서 픽스처 전부 통과, 옛 API 삭제까지 되면 끝이야.
+결정 기록을 남겨. 커밋 전에 나한테 묻지 마.
+/loop 끝날 때까지. 몇 시간 해도 정말 막히면 멈추고 이유를 정리해 둬.
 ```
 
 각 줄이 무엇을 얻어 주는지 살펴본다.
@@ -43,12 +43,12 @@ keep a decision log. don't ask me before committing.
 
 ```mermaid
 flowchart TD
-    A[Check the finish condition] --> B[Make the smallest justified change]
-    B --> C[Verify against the real artifact]
-    C --> D{Progress?}
-    D -->|Yes| E[Commit]
-    D -->|No| F[Discard]
-    E --> G[Log one decision row]
+    A[종료 조건 확인] --> B[근거 있는 가장 작은 변경]
+    B --> C[실제 산출물로 검증]
+    C --> D{진전이 있나?}
+    D -->|예| E[커밋]
+    D -->|아니오| F[폐기]
+    E --> G[결정 한 줄 기록]
     F --> G
     G --> A
 ```
@@ -62,7 +62,7 @@ flowchart TD
 돌아오면 실행을 리뷰 형태로 요청한다.
 
 ```text
-/show-me-your-work catch me up on what you did last night
+/show-me-your-work 어젯밤에 한 일 알려 줘
 ```
 
 스킬은 요약을 돌려주기 전에 다른 모델 계열의 리뷰어를 띄워 기록과 대화록을 읽게 하고, 답은 살펴볼 만한 것을 나열한 Attention 섹션으로 끝난다. 그 섹션을 먼저 읽고, 그다음 섹션이 가리키는 로그 행을 읽는다. 밤새 일어난 일을 전부 다시 읽는 것이 아니라 결정을 감사하는 것이다.
@@ -74,19 +74,19 @@ flowchart TD
 [Autopilot-full](../../skills/poteto-mode/playbooks/autopilot-full.md)은 독립적인 PR의 대기열을 병합까지 돌린다. PR마다 빌드부터 병합까지 책임지는 owner 에이전트가 하나씩 붙고, 어떤 owner도 자기 판정만으로 병합하지 않는다. 새로 띄운 검증자 무리가 owner의 코드 준비 완료 head에서 한 라운드를 시작하고, 이후 패치를 바꾸는 push마다 다시 시작한다. 병합될 패치에 대한 깨끗한 판정만이 병합을 허가한다.
 
 ```text
-/poteto-mode full autopilot on this queue. each item is independent. i want them merged by morning.
+/poteto-mode 이 큐를 완전 자동으로 처리해 줘. 항목끼리는 독립적이야. 아침까지 머지돼 있으면 좋겠어.
 ```
 
 [Autopilot-stack](../../skills/poteto-mode/playbooks/autopilot-stack.md)은 같은 owner 루프를 돌리지만 아무것도 내보내지 않는다. 일어나면 모든 고리에 검증자 판정이 붙은 선형 base-branch 스택 하나가 있고, 리뷰와 반영은 직접 한다. 변경끼리 얽혀 있거나, 무엇이든 병합되기 전에 직접 보고 싶으면 Autopilot-full 대신 이것을 고른다.
 
 ```text
-/poteto-mode autopilot these five changes but stack them, don't ship. i'll land the stack in the morning.
+/poteto-mode 이 변경 다섯 개를 자동으로 진행하되 스택으로만 쌓고 내보내지는 마. 스택은 아침에 내가 랜딩할게.
 ```
 
 [Orchestrate](../../skills/poteto-mode/playbooks/orchestrate.md)는 에이전트 하나의 수명보다 오래가는 프로그램을 위한 것이다. 여러 날에 걸치고, 쌓인 PR이 많고, 상주하는 코디네이터 채팅 하나 아래 subagent 무리가 일한다. 코디네이터는 브리프를 쓰고, subagent가 끝낸 것을 모으고, 병합되지 않은 가장 아래 PR을 초록색으로 유지하며, 코드는 직접 쓰지 않는다. 일부러 무거운 장치다. 에이전트 하나가 세션 하나에서 끝낼 수 있는 작업이면 플레이북이 스스로 위의 밤샘 계약으로 되돌려 보낸다.
 
 ```text
-/poteto-mode orchestrate the store migration. own it until every package is converted and merged. i'll check in twice a day.
+/poteto-mode store 마이그레이션을 지휘해 줘. 모든 패키지가 전환되고 머지될 때까지 네가 책임져. 나는 하루에 두 번 들여다볼게.
 ```
 
 <a id="run-many-projects-in-parallel"></a>
@@ -105,7 +105,7 @@ flowchart TD
 프롬프트 하나로 조사부터 실행까지 Project 전체를 끌고 갈 수 있다.
 
 ```text
-/poteto-mode refactor this repo so its architecture is more agent friendly. use /correct and /architect on past commits and review comments to find the mistakes agents make most here. use /recall for context from past chats. answer open questions with prototypes instead of asking me. come back with a plan backed by real data. once i approve it, run it with autopilot-stack or autopilot-full, and ask me which.
+/poteto-mode 이 저장소를 에이전트가 다루기 쉬운 구조로 리팩터링해 줘. 지난 커밋과 리뷰 코멘트에 /correct 와 /architect 를 돌려서 여기서 에이전트가 가장 자주 하는 실수를 찾아. 지난 대화 맥락은 /recall 로 가져와. 열린 질문은 나한테 묻지 말고 프로토타입으로 답해. 실제 데이터로 뒷받침한 계획을 가져와. 내가 승인하면 autopilot-stack이나 autopilot-full로 실행하되, 어느 쪽으로 할지는 나한테 물어봐.
 ```
 
 ## 루프가 스스로 시작하게 하기

@@ -18,47 +18,47 @@
 씨앗 커밋 목록을 넓힌다.
 
 ```bash
-# Full history of the file through renames
+# 이름 변경을 따라간 파일 전체 이력
 git log --follow --oneline -- <file>
 
-# Pickaxe: commits that added or removed this exact text
+# pickaxe. 이 텍스트를 정확히 추가하거나 지운 커밋
 git log -S '<exact_string_from_code>' -- <file>
 
-# Or for patterns:
+# 패턴으로 찾으려면
 git log -G '<regex>' -- <file>
 
-# Who wrote each line and when
+# 각 줄을 누가 언제 썼는가
 git blame -L <start>,<end> <file>
 
-# The full diff of a specific commit
+# 특정 커밋의 전체 diff
 git show <hash>
 
-# Commits between two points affecting this file
+# 두 지점 사이에서 이 파일에 영향을 준 커밋
 git log <old>..<new> -p -- <file>
 ```
 
 실질적인 커밋마다 PR 맥락을 가져온다.
 
 ```bash
-# Find the PR number from the merge commit or branch
+# 머지 커밋이나 브랜치에서 PR 번호를 찾는다
 git log -1 --format=%B <hash>
 
-# Full PR context: body, review comments, linked issues
+# PR 전체 맥락. 본문, 리뷰 코멘트, 연결된 이슈
 gh pr view <number> --json title,body,author,createdAt,mergedAt,labels,closingIssuesReferences,comments,reviews,files
 
-# The --json reviews and comments fields are where the real signal is
+# 진짜 신호는 --json의 reviews와 comments 필드에 있다
 ```
 
 코드 밖의 문서를 찾는다.
 
 ```bash
-# ADRs often live in docs/adr/ or similar
+# ADR은 보통 docs/adr/ 같은 곳에 있다
 rg -l -i 'architecture.decision' --glob '*.md'
 
-# TODOs and FIXMEs near the target
+# 대상 근처의 TODO와 FIXME
 rg -n -C2 '(TODO|FIXME|HACK|XXX|NOTE)' <target_file>
 
-# Related tests. Names often encode the "why"
+# 관련 테스트. 이름에 "왜"가 담겨 있을 때가 많다
 rg -l '<symbol>' --glob '*test*'
 ```
 

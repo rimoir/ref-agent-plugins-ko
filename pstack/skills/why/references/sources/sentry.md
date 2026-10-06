@@ -27,7 +27,7 @@ Sentry MCP를 쓴다.
 2. **대상과 관련된 이슈를 검색한다.**
 
    ```
-   search_issues (natural language, e.g., "errors in PaymentService timeout", "unhandled exceptions in uploadFile")
+   search_issues (자연어. 예를 들어 "PaymentService 타임아웃 오류", "uploadFile의 처리되지 않은 예외")
    ```
 
    좋은 쿼리 재료는 대상이 처리하는 예외 클래스 이름, 대상의 함수나 클래스 이름, 대상이 검사하는 에러 메시지 문자열, 대상의 파일 경로다.
@@ -35,8 +35,8 @@ Sentry MCP를 쓴다.
 3. **릴리스와 시간 구간으로 좁힌다.**
 
    ```
-   search_issue_events (filter by release, time, environment, trace ID, tags)
-   get_issue_tag_values (for an issue, see distribution across versions, users, environments)
+   search_issue_events (릴리스, 시간, 환경, trace ID, 태그로 거른다)
+   get_issue_tag_values (이슈 하나의 버전, 사용자, 환경별 분포를 본다)
    ```
 
    의심 가는 이슈가 있으면 다음을 확인한다.
@@ -48,7 +48,7 @@ Sentry MCP를 쓴다.
 4. **맥락을 보려고 이벤트 전체를 가져온다.**
 
    ```
-   get_sentry_resource (pass a Sentry URL or type+ID)
+   get_sentry_resource (Sentry URL이나 type+ID를 넘긴다)
    ```
 
    스택 트레이스가 대상 코드를 지나가는가? 태그와 breadcrumb가 대상이 방어하는 조건과 맞는가?
@@ -56,7 +56,7 @@ Sentry MCP를 쓴다.
 5. **대상 근처에 반영된 릴리스를 확인한다.**
 
    ```
-   find_releases (around the commit date of the target)
+   find_releases (대상 커밋 날짜 전후)
    ```
 
    릴리스 버전을 PR 머지 날짜와 대조한다.

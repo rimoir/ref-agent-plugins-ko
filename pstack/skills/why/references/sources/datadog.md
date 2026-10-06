@@ -21,15 +21,15 @@ Datadog MCP를 쓴다. 넓게 시작한 뒤 좁힌다.
 1. **담당 서비스를 찾는다.**
 
    ```
-   search_datadog_services (filter by name or team)
-   search_datadog_service_dependencies (see upstream/downstream)
+   search_datadog_services (이름이나 팀으로 거른다)
+   search_datadog_service_dependencies (상류와 하류를 본다)
    ```
 
 2. **대시보드와 모니터를 먼저 본다. 팀이 무엇을 신경 쓰는지 알려 준다.**
 
    ```
-   search_datadog_dashboards (query: feature name, service name, symbol)
-   search_datadog_monitors   (same queries)
+   search_datadog_dashboards (쿼리는 기능 이름, 서비스 이름, 심볼)
+   search_datadog_monitors   (같은 쿼리)
    ```
 
    대시보드나 모니터가 대상을 다루면 그 쿼리와 지켜보는 임계값을 적어 둔다. "왜 N으로 제한돼 있나?"의 답이 그 임계값인 경우가 많다.
@@ -37,9 +37,9 @@ Datadog MCP를 쓴다. 넓게 시작한 뒤 좁힌다.
 3. **대상 주변의 메트릭.**
 
    ```
-   search_datadog_metrics (by name pattern, e.g., the feature or symbol)
-   get_datadog_metric_context (metadata: description, units, tags)
-   get_datadog_metric (timeseries; "was there a spike around the PR date?")
+   search_datadog_metrics (이름 패턴으로. 예를 들어 기능이나 심볼)
+   get_datadog_metric_context (메타데이터. 설명, 단위, 태그)
+   get_datadog_metric (시계열. "PR 날짜 즈음에 급증이 있었나?")
    ```
 
    메트릭의 추이를 대상이 추가되거나 바뀐 날짜와 맞춰 보면 강한 보강 증거가 된다. "`payment_timeout` 메트릭이 2023-11-03에 치솟았고 재시도 로직은 2023-11-06에 병합됐다."
@@ -47,8 +47,8 @@ Datadog MCP를 쓴다. 넓게 시작한 뒤 좁힌다.
 4. **로그. 쏟아 내지 말고 좁힌다.**
 
    ```
-   search_datadog_logs (raw log patterns near the target, set use_log_patterns=true)
-   analyze_datadog_logs (SQL-style aggregations, only when you need counts)
+   search_datadog_logs (대상 근처의 원시 로그 패턴, use_log_patterns=true로 설정)
+   analyze_datadog_logs (SQL식 집계, 개수가 필요할 때만)
    ```
 
    심볼, 오류 문자열, 기능 이름으로 찾는다. **기간을 제한한 쿼리를 강하게 우선한다**(예: 변경 전후 30일). 로그 양은 엄청나다. 제한 없는 검색은 시간을 낭비하고 시간 초과가 날 수 있다.
@@ -56,9 +56,9 @@ Datadog MCP를 쓴다. 넓게 시작한 뒤 좁힌다.
 5. **APM 스팬과 트레이스.**
 
    ```
-   aggregate_spans    (stats: "how often does this endpoint fail?")
-   search_datadog_spans (inspect individual spans)
-   get_datadog_trace  (a specific trace ID)
+   aggregate_spans    (통계. "이 엔드포인트는 얼마나 자주 실패하나?")
+   search_datadog_spans (개별 span을 살핀다)
+   get_datadog_trace  (특정 trace ID)
    ```
 
    타임아웃, 재시도, 느린 경로, 서비스 간 동작에 쓸모 있다.
@@ -66,8 +66,8 @@ Datadog MCP를 쓴다. 넓게 시작한 뒤 좁힌다.
 6. **인시던트.**
 
    ```
-   search_datadog_incidents (by title, team, date range)
-   get_datadog_incident     (full detail for a specific incident)
+   search_datadog_incidents (제목, 팀, 날짜 범위로)
+   get_datadog_incident     (특정 인시던트의 전체 상세)
    ```
 
    대상이 방어적으로 보이면 그것이 추가된 무렵의 인시던트를 찾는다. 타임라인에 "X에 대한 방어 검사 추가"가 있는 인시던트는 거의 직접 증거다.

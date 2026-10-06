@@ -20,7 +20,7 @@ pstack은 에이전트를 세세하게 관리하지 않을 때 가장 잘 동작
 막혔거나 어떤 스킬이 맞는지 모르겠다면 질문과 함께 [`/poteto-help`](../../skills/poteto-help/SKILL.md)를 입력한다.
 
 ```text
-/poteto-help which skill should i use to review this branch?
+/poteto-help 이 브랜치 리뷰하려면 어떤 스킬을 써야 해?
 ```
 
 답을 주고, 보낼 프롬프트를 건네고, 답의 출처인 스킬이나 가이드 페이지를 링크한다. pstack 실행은 토큰을 실제로 쓰기 때문에 작업을 직접 시작하지는 않는다. 준비되면 그 프롬프트를 보내면 된다. 입력할 때만 실행된다.
@@ -30,7 +30,7 @@ pstack은 에이전트를 세세하게 관리하지 않을 때 가장 잘 동작
 에이전트에게 목표와 그것을 확인할 방법을 여러분의 말로 준다.
 
 ```text
-/poteto-mode the export writes duplicate rows when a retry lands mid-run. repro first, then fix and verify.
+/poteto-mode 실행 중간에 재시도가 들어가면 내보내기가 행을 중복으로 써. 먼저 재현하고 고친 다음 검증해 줘.
 ```
 
 플레이북 이름을 대거나 스킬을 나열할 필요는 없다. "repro first"(먼저 재현)와 확인 가능한 결과만 있으면 `/poteto-mode`가 라우팅하는 데 충분하다. Bug fix 플레이북에 맞춰 단계를 todo 목록으로 옮기고, 각 단계가 시작될 때 알맞은 스킬을 호출한다.

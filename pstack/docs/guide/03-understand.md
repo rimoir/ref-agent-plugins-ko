@@ -11,7 +11,7 @@ pstack은 들어가는 길을 네 가지 준다. `/how`는 코드가 지금 무�
 원인이 불분명하면 수정이 아니라 발견을 요청한다.
 
 ```text
-/poteto-mode investigate why background jobs time out every few hours. give me what we know, what data you used, and your best hypotheses. don't change any code yet.
+/poteto-mode 백그라운드 잡이 몇 시간마다 타임아웃 나는 이유를 조사해 줘. 지금 아는 것, 근거로 쓴 데이터, 가장 유력한 가설을 알려 줘. 아직 코드는 건드리지 마.
 ```
 
 "don't change any code yet"은 이 요청을 [Investigation 플레이북](../../skills/poteto-mode/playbooks/investigation.md)으로 보낸다. 플레이북은 `/how`를 돌리고, 동기에 관한 질문이면 `/why`를 더해 출처를 단 설명을 돌려준다. 여러 선택지 중 하나를 골라야 하면 트레이드오프 표와 함께 추천을 돌려준다. "what data you used"를 물으면 에이전트가 증거와 짐작을 나눈다. 발견이 수정을 가리키면 수정은 새 작업으로 시작한다.
@@ -19,7 +19,7 @@ pstack은 들어가는 길을 네 가지 준다. `/how`는 코드가 지금 무�
 ## `/how`로 동작 추적하기
 
 ```text
-/how do we dedupe notifications? is there an n+1 when we look up subscribers?
+/how 알림 중복은 어떻게 걸러? 구독자를 조회할 때 n+1이 있나?
 ```
 
 실제로 품은 질문을 한다. [`/how`](../../skills/how/SKILL.md)는 코드를 읽고, 시니어 엔지니어가 그 하위 시스템에 당신을 온보딩해 주는 수준으로 답한다. 런타임 흐름, 핵심 타입, 뻔하지 않은 부분이 담긴다. 큰 하위 시스템이면 먼저 읽기 전용 탐색자 두세 개에서 네 개까지 펼친다. 좁은 질문이면 그냥 읽고 설명한다.
@@ -27,7 +27,7 @@ pstack은 들어가는 길을 네 가지 준다. `/how`는 코드가 지금 무�
 ## `/why`로 역사 캐내기
 
 ```text
-/why was the retry limit set to five? does the reason still hold?
+/why 재시도 한도를 왜 5로 정했어? 그 이유가 아직도 유효해?
 ```
 
 [`/why`](../../skills/why/SKILL.md)는 미제 사건을 맡은 탐정처럼 일한다. 소스 관리에서 시작해, MCP가 열어 주는 증거 범주를 무엇이든 병렬로 조회한다. 이슈 트래커, 장문 문서, 팀 채팅, 관측, 에러 추적, 분석 같은 것들이다. 보고서는 모든 것을 인용하고, 직접 증거와 추론을 구분하고, 기록이 빈약하면 "~로 보인다"고 말한다. 결과가 없어도 보고한다. "아무도 이유를 적어 두지 않았다"도 그 자체로 답이기 때문이다.
@@ -37,7 +37,7 @@ pstack은 들어가는 길을 네 가지 준다. `/how`는 코드가 지금 무�
 ## `/teach`로 정말 이해하기
 
 ```text
-/teach me how this PR changes retries. convince me it fixes the cause and not the symptom.
+/teach 이 PR이 재시도를 어떻게 바꾸는지 알려 줘. 증상이 아니라 원인을 고친다는 걸 납득시켜 줘.
 ```
 
 [`/teach`](../../skills/teach/SKILL.md)는 요약으로 모자랄 때 쓴다. `/how`와 `/why`를 실행하고(작은 변경이면 둘 중 하나만), 발견한 내용을 다이어그램을 하나씩 쌓아 가는 쉬운 설명으로 엮는다. "convince me(나를 설득해 봐)"라는 틀은 훔쳐 쓸 만하다. 설명을 둘러보기가 아니라 찔러 볼 수 있는 논증으로 바꿔 준다.
@@ -45,7 +45,7 @@ pstack은 들어가는 길을 네 가지 준다. `/how`는 코드가 지금 무�
 에이전트 자신의 선택에도 통한다.
 
 ```text
-/teach me why you implemented it this way and not with a queue. what did you trade off, and why?
+/teach 큐 대신 이 방식으로 구현한 이유를 알려 줘. 무엇을 포기했고, 왜 그랬어?
 ```
 
 가르치기는 나만큼 에이전트에게도 도움이 된다. 자기 작업을 설명해야 하는 에이전트는 자신 있게 말하고 넘어가는 대신 코드를 읽고 주장마다 증거를 대야 한다.
@@ -53,13 +53,13 @@ pstack은 들어가는 길을 네 가지 준다. `/how`는 코드가 지금 무�
 ## `/recall`로 자기 맥락 다시 세우기
 
 ```text
-/recall catch me up on the export work from last week
+/recall 지난주 내보내기 작업 진행 상황 알려 줘
 ```
 
 [`/recall`](../../skills/recall/SKILL.md)은 자기 최근 채팅과 공유 기록(이슈, 이전 수정, 아직 터지는 에러)을 캐내서, 지금 상황과 다음 할 일을 담은 브리핑을 돌려준다. 옛 채팅에는 새 에이전트에게 없는 맥락이 있으니, 옛 주제로 새 작업을 시작할 때는 그것부터 불러온 뒤 새 입력을 넘긴다.
 
 ```text
-/recall my work on the virtualized list from yesterday, then read this bug report.
+/recall 어제 가상화 목록 작업한 걸 떠올리고, 그다음 이 버그 리포트를 읽어 줘.
 ```
 
 특정 채팅 하나를 재개하고 싶다면 그것은 `/recall`이 아니라 아래의 Session pickup 플레이북이다.
@@ -69,7 +69,7 @@ pstack은 들어가는 길을 네 가지 준다. `/how`는 코드가 지금 무�
 다른 에이전트가(혹은 지난주의 당신이) 브랜치를 작업 도중에 남겨 뒀다면 이렇게 한다.
 
 ```text
-/poteto-mode take over this branch. read the decision log, figure out what's done, and continue from there. don't redo finished work.
+/poteto-mode 이 브랜치를 이어받아 줘. 결정 기록을 읽고 어디까지 됐는지 파악해서 거기서부터 계속해. 끝난 작업은 다시 하지 마.
 ```
 
 [Session pickup 플레이북](../../skills/poteto-mode/playbooks/session-pickup.md)은 이전 기록을 권위 있는 것으로 다룬다. 브랜치 상태와 결정을 재구성하고, 재개 지점을 정하고, 모든 것을 처음부터 다시 도출하는 대신 물려받은 주장을 원래 목표와 대조해 검증한다.

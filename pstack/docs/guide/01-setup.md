@@ -54,7 +54,7 @@ pstack은 subagent와 리뷰 패널에 토큰을 더 쓴다. 엄밀함의 값이
 실제이지만 작은 일을 골라 동료에게 설명하듯 적는다.
 
 ```text
-/poteto-mode add a --json flag to this command. text output stays byte-identical. verify both.
+/poteto-mode 이 명령에 --json 플래그를 추가해 줘. 텍스트 출력은 바이트 단위로 그대로 둬야 해. 둘 다 검증해.
 ```
 
 할 일 목록을 지켜본다. 첫 항목들은 일치한 플레이북의 단계를 복사해 넣은 것으로, 이 프롬프트에서는 Feature 플레이북이다. `/poteto-mode`가 어떤 단계를 건너뛰면 그 단계는 `skip: <reason>`과 함께 목록에 남으므로 무엇을 하지 않기로 했는지 볼 수 있다.

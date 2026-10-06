@@ -59,12 +59,12 @@
 ```
 ## Findings
 
-### 1. [Severity] Short title
-**Location**: file:line or function name
-**Finding**: What's wrong
-**Evidence**: Why this matters
-**Suggestion**: (optional) What to do instead
+### 1. [Severity] 짧은 제목
+**Location**: file:line 또는 함수 이름
+**Finding**: 무엇이 잘못됐는가
+**Evidence**: 왜 중요한가
+**Suggestion**: (선택) 대신 무엇을 할지
 
-### 2. [Severity] Short title
+### 2. [Severity] 짧은 제목
 ...
 ```

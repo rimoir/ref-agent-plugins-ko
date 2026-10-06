@@ -43,8 +43,8 @@ pstack의 역할별 모델을 정하는 항상 적용 규칙 `~/.cursor/rules/ps
 description: pstack per-role model choices (overrides skill defaults)
 alwaysApply: true
 ---
-# pstack model configuration. One line per role. Delete a line to fall back to the skill default.
-# `inherit-parent` or `auto` as a value: the role runs on the parent chat model (omit Task `model`). Alias entries in a panel list still count toward its fan-out.
+# pstack 모델 설정. 역할 하나에 한 줄. 줄을 지우면 스킬 기본값으로 돌아간다.
+# 값이 `inherit-parent`나 `auto`면 그 역할은 부모 채팅 모델로 돈다(Task `model`을 생략한다). 패널 목록의 별칭 항목도 팬아웃 수에 포함된다.
 # budget: large (xhigh)
 feature, refactoring: grok-4.7-xhigh-fast
 bug-fix: grok-4.7-xhigh-fast

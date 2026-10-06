@@ -7,7 +7,7 @@
 ## 낯선 하위 시스템 이해하기
 
 ```text
-use /how first to understand how this initialization works. then use /why to figure out why it broke recently.
+먼저 /how 로 이 초기화가 어떻게 동작하는지 파악해. 그다음 /why 로 최근에 왜 깨졌는지 알아내.
 ```
 
 동작 방식이 먼저, 이력이 나중이다. 각 스킬의 보고서는 어떤 출처를 검색했는지 알려 주므로 답이 무엇에 근거하는지 알 수 있다.
@@ -15,7 +15,7 @@ use /how first to understand how this initialization works. then use /why to fig
 ## 코드를 건드리기 전에 시끄러운 리포트 다시 말하게 하기
 
 ```text
-/poteto-mode read this thread. restate the underlying issue in your own words, in plain english. don't change any code yet.
+/poteto-mode 이 스레드 읽어 봐. 근본 문제를 네 말로, 쉬운 말로 다시 정리해 줘. 아직 코드는 건드리지 마.
 ```
 
 잘못 읽었다면 다시 말한 내용에 드러나고, 바로잡는 데는 메시지 하나면 된다. 에이전트가 자기 생각을 말하기 전까지 여러분의 가설은 혼자 간직한다.
@@ -23,7 +23,7 @@ use /how first to understand how this initialization works. then use /why to fig
 ## 고르기 전에 프로토타입 만들기
 
 ```text
-/poteto-mode prototype a few options for the settings layout. put them behind a switcher and send me screenshots of each.
+/poteto-mode 설정 화면 레이아웃 시안을 몇 개 프로토타입으로 만들어 줘. 전환 스위치로 바꿔 볼 수 있게 하고, 시안마다 스크린샷을 보내 줘.
 ```
 
 설명이 아니라 돌아가는 것들 중에서 고른다. 에이전트는 그 과정에서 레이아웃과 타이밍에 관한 자기 질문에 스스로 답한다.
@@ -31,7 +31,7 @@ use /how first to understand how this initialization works. then use /why to fig
 ## 정해진 설계를 계획으로 바꾸기
 
 ```text
-/poteto-mode turn this design into a plan. small verifiable PRs, each with its own proof.
+/poteto-mode 이 설계를 계획으로 바꿔 줘. 검증 가능한 작은 PR로 나누고, PR마다 증거를 붙여.
 ```
 
 설계가 정해진 뒤에만 요청한다. 산출물은 계획이고, 계획은 그것을 실행할 플레이북을 지목한다.
@@ -39,7 +39,7 @@ use /how first to understand how this initialization works. then use /why to fig
 ## 설계에 대한 다른 의견 받기
 
 ```text
-ask /arena for a second opinion on this thread and our approach
+이 스레드와 우리 접근법에 대해 /arena 에 다른 의견을 물어봐
 ```
 
 지금 설계가 여러 후보 중 하나가 되고, 종합 결과가 패널이 더 나은 것을 찾았는지 아니면 지금 것을 확인했는지 알려 준다. 비싼 결정을 내리기 전에 드는 싼 보험이다.
@@ -47,7 +47,7 @@ ask /arena for a second opinion on this thread and our approach
 ## 독립된 조각을 병렬로 점검하기
 
 ```text
-/swarm check every package under packages/ against its check.sh. one worker per package. one report.
+/swarm packages/ 아래 패키지마다 check.sh로 검사해 줘. 패키지당 워커 하나, 보고서는 하나로.
 ```
 
 worker마다 패키지 하나를 맡는다. 부모는 모든 조각을 기다렸다가 worker 출력을 날것으로 쏟아 내는 대신 `PASS`, `ISSUES`, `BLOCKED` 보고서 하나를 돌려준다.
@@ -55,7 +55,7 @@ worker마다 패키지 하나를 맡는다. 부모는 모든 조각을 기다렸
 ## 브랜치를 회의적으로 리뷰하기
 
 ```text
-/interrogate the whole branch, but skeptically. don't change anything yet. no nitpicks unless it's an actual bug or regression in behavior.
+/interrogate 브랜치 전체를 의심하면서 봐 줘. 아직 아무것도 바꾸지 마. 실제 버그나 동작 회귀가 아니면 사소한 지적은 빼.
 ```
 
 수식어가 실제로 일을 한다. "don't change anything yet"은 읽기 전용으로 묶어 두고, 사소한 지적 규칙은 잡음을 미리 걸러 `Act on` 발견이 시간을 들일 가치가 있게 한다.
@@ -63,7 +63,7 @@ worker마다 패키지 하나를 맡는다. 부모는 모든 조각을 기다렸
 ## 실패하는 테스트로 버그 고치기
 
 ```text
-/poteto-mode repro the duplicate write first. if there's a cheap test path, /tdd it. then fix and rerun.
+/poteto-mode 중복 쓰기부터 재현해 줘. 테스트로 싸게 잡을 길이 있으면 /tdd 로 가. 그다음 고치고 다시 돌려.
 ```
 
 "if there's a cheap test path"가 중요하다. 깨지기 쉬운 목으로 테스트를 억지로 만들면 실제 명령을 돌리는 것보다 증명하는 것이 적고, 플레이북은 그렇다고 말할 수 있다.
@@ -71,7 +71,7 @@ worker마다 패키지 하나를 맡는다. 부모는 모든 조각을 기다렸
 ## 리포트를 재현하고 증거와 함께 고치기
 
 ```text
-/poteto-mode repro this with /verify-<app>. if it repros on main, fix it and show me a video as proof.
+/poteto-mode /verify-<app> 으로 이거 재현해 줘. main에서도 재현되면 고치고 증거로 영상을 보여 줘.
 ```
 
 "if it repros on main"은 버그가 이미 사라졌을 때 실행을 일찍 멈추게 한다. 비디오가 있으면 diff를 읽기 전에 수정을 확인할 수 있다.
@@ -79,7 +79,7 @@ worker마다 패키지 하나를 맡는다. 부모는 모든 조각을 기다렸
 ## 숫자를 올리기 전에 검증하기
 
 ```text
-/benchmark-checklist vet this 40% speedup before it goes in the pr description
+/benchmark-checklist 이 40% 속도 개선을 PR 설명에 넣기 전에 검증해 줘
 ```
 
 빨라짐, 느려짐, 측정 가능한 차이 없음, 결론 없음 중 하나를 실행 횟수, 범위, 숫자를 제한하는 요인과 함께 받는다.
@@ -87,7 +87,7 @@ worker마다 패키지 하나를 맡는다. 부모는 모든 조각을 기다렸
 ## 같은 실수 바로잡기 그만하기
 
 ```text
-/correct agents keep adding new config flags without registering them in the schema
+/correct 에이전트가 새 config 플래그를 스키마에 등록하지 않고 자꾸 추가해
 ```
 
 수정은 아키텍처, 타입, lint, 테스트로 저장소에 들어가므로 다음 에이전트는 그 실수를 할 수 없다.
@@ -95,7 +95,7 @@ worker마다 패키지 하나를 맡는다. 부모는 모든 조각을 기다렸
 ## 작업을 시작하지 않고 방법 묻기
 
 ```text
-/poteto-help how do i get poteto-mode to stay on every turn?
+/poteto-help poteto-mode가 매 턴 켜져 있게 하려면 어떻게 해?
 ```
 
 답, 보낼 프롬프트, 출처 링크를 받는다. 그 프롬프트를 보내기 전에는 아무것도 실행되지 않는다.
@@ -103,7 +103,7 @@ worker마다 패키지 하나를 맡는다. 부모는 모든 조각을 기다렸
 ## 자리를 비운 동안 실행을 정직하게 유지하기
 
 ```text
-im going to bed, keep going autonomously until every fixture passes. do not stop. keep a decision log i can audit in the morning.
+나 이제 잔다. 픽스처가 전부 통과할 때까지 알아서 계속해. 멈추지 마. 아침에 내가 검토할 수 있게 결정 기록을 남겨.
 ```
 
 전체 계약은 [밤샘 페이지](./07-overnight.md)에 있다. 작업과 종료 조건이 이미 대화에 있으면 짧은 형태로도 된다.
@@ -113,15 +113,15 @@ im going to bed, keep going autonomously until every fixture passes. do not stop
 방향을 잡는 프롬프트는 한 줄이다.
 
 ```text
-i said the goal is to repro. i did not ask for a fix yet.
+목표는 재현이라고 했잖아. 아직 고쳐 달라고 한 적 없어.
 ```
 
 ```text
-apply prove it works. show me the real output, not the build log.
+prove it works 원칙을 적용해. 빌드 로그 말고 실제 출력을 보여 줘.
 ```
 
 ```text
-/unslop that, no emdashes
+/unslop 방금 그거, em대시 없이
 ```
 
 말이 더 필요한 경우는 드물다. 필요한 것은 맞는 이름이고, [원칙 페이지](./08-principles.md)가 그 어휘다.

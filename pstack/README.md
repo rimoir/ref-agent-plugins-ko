@@ -38,13 +38,13 @@ AI가 슬롭(slop) 코드를 너무 많이 쓴다는 인식이 점점 커지고 
 이 스킬이 주된 지름길이다. 에이전트에게 엄격한 엔지니어링 작업을 맡겨야 할 때마다 쓴다. 플레이북 스물세 개가 함께 들어 있다.
 
 ```
-/poteto-mode this pr has a subtle bug where the scroll drifts every 750ms even when idle. repro
-first, then fix and verify.
+/poteto-mode 이 PR에 미묘한 버그가 있어. 가만히 둬도 750ms마다 스크롤이 밀려. 먼저 재현하고
+고친 다음 검증해 줘.
 ```
 
 ```
-/poteto-mode i'm going to bed. land the stack even if ci flakes. i want everything merged by
-morning.
+/poteto-mode 나 이제 잔다. CI가 흔들려도 스택을 랜딩해 줘. 아침까지 전부 머지돼 있으면
+좋겠어.
 ```
 
 <details>
@@ -97,11 +97,11 @@ morning.
 [`/poteto-mode`](./skills/poteto-mode/SKILL.md)는 단계에 필요할 때 이 스킬 대부분을 대신 실행한다(`how`, `why`, `architect`, `arena`, `swarm`, `interrogate`, `unslop`, `no-comments`, `technical-writing`, `tdd`, 그리고 원칙들). 아래 표는 하나를 직접 쓰고 싶을 때를 위한 것이다.
 
 ```
-/how do we cancel runs? do we have an n+1 when we look up every run to cancel?
+/how 실행은 어떻게 취소해? 취소할 실행을 하나씩 조회할 때 n+1이 생기나?
 ```
 
 ```
-/interrogate review this pr.
+/interrogate 이 PR 리뷰해 줘.
 ```
 
 <details>
@@ -150,40 +150,38 @@ morning.
 <summary>전체 예시</summary>
 
 ```
-bug fix:           /poteto-mode this pr has a subtle bug where the scroll drifts every 750ms even
-                   when idle. repro first, then fix and verify.
-perf:              /poteto-mode a big list takes a second or two to load even though we virtualize.
-                   run a cpu trace and tell me why.
-feature:           /poteto-mode build a small feature behind a feature flag. verify it really works.
-prototype:         /poteto-mode build two prototypes of the markdown renderer so we can compare.
-                   spawn an agent for each.
-multi-phase:       /poteto-mode open source these skills as a plugin. nothing internal leaks, work
-                   in a temp dir, show me the dependency graph first.
-overnight run:     /poteto-mode i'm going to bed. land the stack even if ci flakes. i want
-                   everything merged by morning.
-babysit:           /poteto-mode check on pr 123. anything outstanding?
-visual parity:     /poteto-mode the row spacing is too tall when this flag is on. the second image
-                   is correct. repro and fix until it matches.
-figure it out:     /poteto-mode i'm stepping away. migrate every caller from the synchronous store
-                   to the new async one, keeping behavior identical. i want to trust it was done
-                   right when i'm back.
-how:               /how do we cancel runs? do we have an n+1 when we look up every run to cancel?
-why:               /why is this feature flag not on yet?
-architect:         design this instrumentation to be high signal with no false positives. /architect
-                   this first.
-arena:             /arena take my prompt to the arena verbatim. i want to compare their proposals
-                   with yours.
-swarm:             /swarm check every package under packages/ against its check.sh. one worker per
-                   package. one report.
-interrogate:       /interrogate review this pr.
+버그 수정:         /poteto-mode 이 PR에 미묘한 버그가 있어. 가만히 둬도 750ms마다 스크롤이 밀려.
+                   먼저 재현하고 고친 다음 검증해 줘.
+성능:              /poteto-mode 가상화했는데도 큰 목록이 뜨는 데 1~2초 걸려. CPU 트레이스를
+                   떠서 이유를 알려 줘.
+기능:              /poteto-mode 작은 기능을 피처 플래그 뒤에 만들어 줘. 진짜 동작하는지 검증해.
+프로토타입:        /poteto-mode 비교할 수 있게 마크다운 렌더러 프로토타입을 두 개 만들어 줘.
+                   하나당 에이전트 하나씩 띄워.
+다단계:            /poteto-mode 이 스킬들을 플러그인으로 오픈소스화해 줘. 내부 정보는 하나도
+                   새면 안 되고, 임시 디렉터리에서 작업하고, 의존성 그래프부터 보여 줘.
+밤샘 실행:         /poteto-mode 나 이제 잔다. CI가 흔들려도 스택을 랜딩해 줘. 아침까지 전부
+                   머지돼 있으면 좋겠어.
+지켜보기:          /poteto-mode PR 123 상태 확인해 줘. 남은 거 있어?
+시각 일치:         /poteto-mode 이 플래그를 켜면 행 간격이 너무 넓어. 두 번째 이미지가 맞는
+                   거야. 똑같아질 때까지 재현하고 고쳐.
+figure it out:     /poteto-mode 나 잠깐 자리 비운다. 동기 store를 쓰는 호출부를 전부 새 비동기
+                   store로 옮겨 줘. 동작은 그대로 유지하고. 돌아왔을 때 제대로 됐다고 믿을 수
+                   있으면 좋겠어.
+how:               /how 실행은 어떻게 취소해? 취소할 실행을 하나씩 조회할 때 n+1이 생기나?
+why:               /why 이 피처 플래그는 왜 아직 안 켜졌어?
+architect:         이 계측을 신호는 크고 오탐은 없게 설계해 줘. 먼저 /architect 로 잡아.
+arena:             /arena 내 프롬프트를 그대로 아레나에 넘겨. 다른 모델 제안을 네 것과 비교하고
+                   싶어.
+swarm:             /swarm packages/ 아래 패키지마다 check.sh로 검사해 줘. 패키지당 워커 하나,
+                   보고서는 하나로.
+interrogate:       /interrogate 이 PR 리뷰해 줘.
 tdd:               /tdd implement
-unslop:            can we unslop and tighten the new changes?
-reflect:           /reflect that took too long. capture what we learned so the next run doesn't
-                   repeat it.
+unslop:            새로 바꾼 부분 unslop 하고 좀 다듬어 줄래?
+reflect:           /reflect 너무 오래 걸렸다. 다음 실행에서 되풀이하지 않게 배운 걸 남겨.
 correct:           /correct
-show-me-your-work: /show-me-your-work keep a decision trail i can review when i'm back.
+show-me-your-work: /show-me-your-work 돌아와서 검토할 수 있게 결정 기록을 남겨 줘.
 automate-me:       /automate-me
-help:              /poteto-help which skill should i use to review this branch?
+help:              /poteto-help 이 브랜치 리뷰하려면 어떤 스킬을 써야 해?
 ```
 
 </details>

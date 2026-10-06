@@ -34,16 +34,16 @@ disable-model-invocation: true
 이 작업은 직접 한다.
 
 ```bash
-# Blame target lines for last-touch commits
+# 대상 줄을 마지막으로 건드린 커밋을 blame으로 찾는다
 git blame -L <start>,<end> <file>
 
-# Full file history, with patches, through renames
+# 이름 변경을 따라가며 패치까지 포함한 파일 전체 이력
 git log --follow -p -- <file>
 
-# Last N commits touching the file, PR numbers visible
+# 파일을 건드린 최근 N개 커밋, PR 번호가 보인다
 git log --oneline -20 -- <file>
 
-# Extract PR numbers from a commit message
+# 커밋 메시지에서 PR 번호를 뽑는다
 git log -1 --format=%B <commit>
 ```
 

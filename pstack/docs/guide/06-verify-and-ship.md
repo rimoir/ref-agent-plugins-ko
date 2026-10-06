@@ -11,7 +11,7 @@
 완료가 무엇을 뜻하는지 첫 프롬프트에 어떤 말로든 적는다.
 
 ```text
-/poteto-mode add json output to this command. text output stays byte-identical, the json parses, both run against the sample project. show me the evidence.
+/poteto-mode 이 명령에 JSON 출력을 추가해 줘. 텍스트 출력은 바이트 단위로 그대로고, JSON은 파싱돼야 하고, 둘 다 샘플 프로젝트에서 돌려 봐. 증거를 보여 줘.
 ```
 
 이제 에이전트에게는 맞춰야 할 기분이 아니라 실행할 수 있는 검사 세 개가 있다. 답이 돌아오면 정확한 명령과 출력이 담겨 있어야 한다. 검사를 실행하지 못했다면 좋은 답은 "결론 없음(inconclusive)"이라고 말한다. 증거 없이 자신만만한 답은 위험 신호로 받아들여야 한다.
@@ -35,7 +35,7 @@
 전후 숫자는 실수로 틀리기 가장 쉬운 증거다. 데워진 캐시, 한쪽만 디버그 빌드, 측정 구간 안에서 실제로 돌지 않은 작업 하나만으로도 그럴듯한 속도 향상이 나온다. 숫자를 보고하거나 그에 따라 움직이기 전에 다음을 입력한다.
 
 ```text
-/benchmark-checklist vet the export speedup before it goes in the pr
+/benchmark-checklist 내보내기 속도 개선을 PR에 넣기 전에 검증해 줘
 ```
 
 [`/benchmark-checklist`](../../skills/benchmark-checklist/SKILL.md)는 질문 일곱 개를 던지고, 각각에 대해 실행에서 나온 증거를 요구한다.
@@ -67,11 +67,11 @@
 그때부터 "앱에서 검증해"는 이 저장소에서 어떤 에이전트든 설정 대화 없이 실행할 수 있는 단계가 된다. 증명을 특정한 형태로 받고 싶다면 프롬프트에서 이름을 부른다.
 
 ```text
-/poteto-mode build the bulk-archive action. use /verify-<app> to verify your changes and show me a video and screenshots as proof.
+/poteto-mode 일괄 보관 기능을 만들어 줘. /verify-<app> 으로 변경을 검증하고 증거로 영상과 스크린샷을 보여 줘.
 ```
 
 ```text
-/poteto-mode repro this with /verify-<app>. if it repros on main, fix it and show me a video as proof.
+/poteto-mode /verify-<app> 으로 이거 재현해 줘. main에서도 재현되면 고치고 증거로 영상을 보여 줘.
 ```
 
 검증 스킬이 동작하면 [`/swarm`](../../skills/swarm/SKILL.md)이 전체 검증을 기능 맵 항목별로 나누고 결과를 모을 수 있다. 검증자 swarm은 충분히 큰 표본으로 성능 개선을 확인하거나, PR이 나가기 전에 앱을 퍼징해 회귀를 찾기도 한다.
@@ -100,7 +100,7 @@
 ## PR 열기
 
 ```text
-/poteto-mode open the pr. small ordered commits, evidence in the description.
+/poteto-mode PR 열어 줘. 커밋은 작게 순서대로, 증거는 설명에 넣어.
 ```
 
 [PR 열기 플레이북](../../skills/poteto-mode/playbooks/opening-a-pr.md)은 worktree에서 작업하고, 작업을 작고 순서 있는 커밋으로 rebase하고, diff를 정리하고, 산문을 unslop하고, PR 링크를 돌려준다. 뚱뚱한 PR 하나보다 좁은 PR 다섯 개가 낫고, 자라나는 브랜치보다 쌓아 올린 후속 PR이 낫다.
@@ -110,13 +110,13 @@
 열린 PR은 곧바로 걸림돌을 모으기 시작한다. 검사가 실패하고, 리뷰어가 코멘트를 달고, trunk가 움직인다. 이 잡일은 [Babysit 플레이북](../../skills/poteto-mode/playbooks/babysit.md)에 맡긴다.
 
 ```text
-/poteto-mode babysit this pr. get it green.
+/poteto-mode 이 PR 지켜봐 줘. 초록불 될 때까지.
 ```
 
 Babysit은 번들된 watcher로 PR을 지켜보며 걸림돌을 순서대로 처리한다. 충돌, 리뷰 스레드, CI 순이다. 알려진 수정은 모두 한 번의 push로 묶어, 수정할 때마다가 아니라 한 번만 검사가 다시 돈다. 코멘트 분류는 회의적이다. 사람과 봇이 진짜 지적과 잡음을 같은 목록에 올리기 때문이다. 진짜 지적에는 수정이 들어가고, 잡음은 반증을 스레드에 남기고 기각한다. 상태만 알고 싶다면 작게 물어본다. 그러면 Babysit은 루프를 시작하지 않고 답한다.
 
 ```text
-/poteto-mode check on pr 123. anything outstanding?
+/poteto-mode PR 123 상태 확인해 줘. 남은 거 있어?
 ```
 
 Babysit은 머지 가능 상태에서 멈춘다. 모든 것이 초록이어도 머지하지 않는다. 머지는 다른 결정이기 때문이다.
@@ -126,7 +126,7 @@ Babysit은 머지 가능 상태에서 멈춘다. 모든 것이 초록이어도 �
 초록이 안전과 같지는 않다. 착지할 준비가 되면 그렇게 말한다.
 
 ```text
-/poteto-mode land the stack.
+/poteto-mode 스택 랜딩해 줘.
 ```
 
 [Shipping 플레이북](../../skills/poteto-mode/playbooks/shipping.md)은 무엇이든 무장하기 전에 각 PR을 독립적으로 검증한다. PR마다 새 에이전트 하나가 동작을 실제로 증명하며, 변경을 판정하는 에이전트는 결코 그 변경을 쓴 에이전트가 아니다. 그런 다음 Shipping은 맨 아래부터 연속으로 검증된 구간만 착지시킨다. 기본은 GitHub를 통해, CLI가 있으면 Origin을 통해 PR을 하나씩 처리하고, 연쇄를 끊는 첫 PR을 보고한다. 검증되지 않은 PR 위에 놓인 검증된 PR은 기다린다. 그것을 머지하면 빈틈이 그 아래로 딸려 들어가기 때문이다.

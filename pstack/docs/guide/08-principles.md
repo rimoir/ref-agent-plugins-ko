@@ -9,19 +9,19 @@ pstack은 원칙 24개를 각각 스킬로 제공한다. `/poteto-mode`는 여�
 에이전트가 기존 어댑터 세 개 위에 새 어댑터를 덧대려 한다고 하자.
 
 ```text
-use subtract before you add. 낡은 어댑터부터 지우고 남은 것을 설계해.
+subtract before you add 원칙을 써. 낡은 어댑터부터 지우고 남은 것을 설계해.
 ```
 
 빌드가 통과했다고 성공을 주장한다고 하자.
 
 ```text
-apply prove it works. 실제 import 흐름을 돌리고 기록된 레코드를 보여 줘.
+prove it works 원칙을 적용해. 실제 import 흐름을 돌리고 기록된 레코드를 보여 줘.
 ```
 
 병렬 시도 두 개가 같은 브랜치에 쓰려 한다고 하자.
 
 ```text
-separate before serializing shared state. 시도마다 worktree를 따로 주고, 잠금은 쓰지 마.
+separate before serializing shared state 원칙대로 해. 시도마다 worktree를 따로 주고, 잠금은 쓰지 마.
 ```
 
 각 구절이 먹히는 것은 그 뒤의 규칙이 구체적이기 때문이다. 그래도 에이전트는 응답에서 그 규칙이 어떤 결정을 바꿨는지 말해야 한다. 바뀐 결정 없이 원칙만 인용했다면 적용하지 않고 이름만 들먹였다는 신호다.

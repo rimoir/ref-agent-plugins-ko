@@ -15,7 +15,7 @@ poteto-mode는 한 사람의 스타일이다. 그 밑의 장치, 즉 플레이�
 습관이 바뀔 때마다 다시 돌린다.
 
 ```text
-/automate-me update my mode skill with everything since its last edit
+/automate-me 마지막 수정 이후 내용을 전부 내 mode 스킬에 반영해 줘
 ```
 
 업데이트 모드는 스킬이 마지막으로 바뀐 뒤의 이력만 캐낸다. 반박하지 않은 규칙은 남기고, 새 증거가 있는 규칙은 고치고, 정말 새로운 패턴에만 섹션을 추가한다.
@@ -25,7 +25,7 @@ poteto-mode는 한 사람의 스타일이다. 그 밑의 장치, 즉 플레이�
 무언가를 배운 작업 직후에 돌린다.
 
 ```text
-/reflect that took way too long. capture what we learned so the next run doesn't repeat it.
+/reflect 너무 오래 걸렸다. 다음 실행에서 되풀이하지 않게 배운 걸 남겨.
 ```
 
 [`/reflect`](../../skills/reflect/SKILL.md)는 대화록을 병렬 리뷰어 셋에게 보내고, 종합자가 제안을 `Accepted`, `Rejected`, `Backlog`로 나눈 뒤 스킬을 바꾸기 전에 승인을 기다린다. 앞으로의 결정을 바꿀 제안만 승인한다. 이상했던 세션 하나는 일화이지 규칙이 아니다.
@@ -44,7 +44,7 @@ poteto-mode는 한 사람의 스타일이다. 그 밑의 장치, 즉 플레이�
 사람의 리뷰는 목록에 없다. 모든 PR에서 같은 실수를 잡아내야 하는 리뷰어가 바로 이것이 고치려는 문제다. 일은 [`/correct`](../../skills/correct/SKILL.md)가 한다.
 
 ```text
-/correct agents keep calling the database client directly instead of going through the repository layer
+/correct 에이전트가 repository 계층을 거치지 않고 데이터베이스 클라이언트를 자꾸 직접 호출해
 ```
 
 최근 커밋, revert, 리뷰 코멘트, 우회책을 설명하는 주석을 읽고 실수를 유형별로 묶는다. 두 번 일어나야 유형으로 친다. 가장 잦은 유형부터 하나당 커밋 하나로, 통하는 가장 높은 수준에서 고치고, 새 검사마다 과거의 실제 실수에서 실패함을 증명한다. 또 에이전트 지시 파일에 규칙마다 그것을 강제하는 수단을 짝지은 표를 유지해서, 아무것도 강제하지 않는 규칙은 반복으로 드러나게 한다. 답에는 유형마다 증거, 고른 수준, 더 높은 수준이 통하지 않은 이유가 나열된다.
@@ -56,7 +56,7 @@ poteto-mode는 한 사람의 스타일이다. 그 밑의 장치, 즉 플레이�
 잡아 두고 싶은 워크플로를 이미 알고 있을 때 쓴다.
 
 ```text
-/poteto-mode write a skill for verifying database migrations in this repo
+/poteto-mode 이 저장소의 데이터베이스 마이그레이션을 검증하는 스킬을 써 줘
 ```
 
 스킬 쓰기는 [Authoring or modifying a skill 플레이북](../../skills/poteto-mode/playbooks/authoring-a-skill.md)에 해당한다. 이 플레이북은 Cursor 내장 `create-skill`을 거치고, frontmatter와 링크를 검증하고, Opening a PR 플레이북으로 결과를 내보낸다. 에이전트가 읽는 글은 사람이 읽는 글보다 기준이 높다. 쓸모없는 문장 하나가 미래의 어떤 에이전트가 따르는 지시가 되기 때문이다. `SKILL.md`를 맨손으로 쓰지 말고 플레이북이 그 기준을 지키게 둔다.
@@ -68,7 +68,7 @@ poteto-mode는 한 사람의 스타일이다. 그 밑의 장치, 즉 플레이�
 내보내는 글이 스킬만은 아니다. 문서, RFC, readme, PR 설명, 커밋 메시지에는 다음을 쓴다.
 
 ```text
-/technical-writing review the readme changes
+/technical-writing README 바뀐 부분 리뷰해 줘
 ```
 
 [`/technical-writing`](../../skills/technical-writing/SKILL.md)은 목표 하나를 가진 계층형 기준을 적용한다. 지친 엔지니어가 한 번 읽고 이해하는 글이다. 먼저 문서의 모드(튜토리얼, 하우투, 레퍼런스, 설명)를 고르고, 그다음 문장 단위로 다룬다. 누가 무엇을 하는지, 한 문장에 한 생각, 두 가지로 읽히는 것은 없게 한다. 당신이나 에이전트가 방금 쓴 것을 리뷰할 때 쓰거나, 문서를 요청할 때 처음부터 이름을 댄다.
@@ -78,13 +78,13 @@ poteto-mode는 한 사람의 스타일이다. 그 밑의 장치, 즉 플레이�
 스킬 수정은 앞으로의 모든 세션에 영향을 주므로 실험답게 테스트한다. 남의 스킬을 들여올 때도 마찬가지다. 남기기 전에 그 스킬이 여러분의 작업에서 에이전트를 더 낫게 만드는지 확인한다.
 
 ```text
-/poteto-mode run the eval playbook on this skill change. same task for both variants, candidates stay blind.
+/poteto-mode 이 스킬 변경에 eval 플레이북을 돌려 줘. 두 변형에 같은 과제를 주고, 후보는 블라인드로 유지해.
 ```
 
 스킬이 계속 빗나가고 무엇을 해야 하는지 안다면, 작업 하나에서 고치고 테스트한다.
 
 ```text
-/poteto-mode update the review skill so it flags missing migrations, and eval the change.
+/poteto-mode 리뷰 스킬이 빠진 마이그레이션을 잡아내게 고치고, 그 변경을 eval 해 줘.
 ```
 
 eval을 처음부터 요청해 두면 수정이 정직해진다. 나쁜 세션 하나를 보고 쓴 수정은 그 세션에 과적합하기 쉽고, 수정이 쌓이면 스킬이 표류한다. eval은 표류가 나가기 전에 잡는다.

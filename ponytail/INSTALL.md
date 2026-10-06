@@ -198,7 +198,6 @@ node ponytail/scripts/cursor-hooks.js install
 
 네이티브 훅 두 개를 `~/.cursor/hooks.json`에 합치고(`--project`를 붙이면 `<project>/.cursor/hooks.json`에 쓴다) 이미 있던 훅은 그대로 둔다. 항목은 그 체크아웃의 `node`를 실행하므로 체크아웃을 그 자리에 두거나, 옮긴 뒤에는 설치를 다시 돌린다. Cursor는 저장할 때 파일을 다시 불러온다. 새 채팅을 열면 기본 레벨의 규칙 세트가 `sessionStart`로 들어온다. `/ponytail lite`, `/ponytail full`, `/ponytail ultra`, `/ponytail off`를 일반 메시지로 보내면 남은 대화의 레벨이 바뀐다. `/ponytail`은 현재 레벨을 알려 준다. Cursor의 `subagentStart`는 컨텍스트를 주입할 수 없어서 서브에이전트는 규칙 세트 없이 돌고, 클라우드 에이전트에서는 `sessionStart`가 아예 발생하지 않는다. 항상 켜진 규칙(`.cursor/rules/ponytail.mdc`)과 훅은 둘 중 하나만 쓴다. 워크스페이스에 규칙이 있는 동안 훅은 아무것도 주입하지 않고 모드 명령은 안내문으로 답하므로, 훅이 레벨을 관리하게 하려면 규칙을 지운다. 계약, 검증 기록, 한계는 [docs/cursor-hooks.md](docs/cursor-hooks.md)에 있다. 제거: `node ponytail/scripts/cursor-hooks.js uninstall`.
 
-<a id="settings"></a>
 ## 설정
 
 모든 새 세션의 레벨은 `PONYTAIL_DEFAULT_MODE` 환경 변수(`lite`/`full`/`ultra`/`off`)나 `~/.config/ponytail/config.json`(Windows에서는 `%APPDATA%\ponytail\config.json`)의 `defaultMode` 필드로 정한다. 기본값은 `full`이다.
@@ -215,7 +214,6 @@ npx skills add DietrichGebert/ponytail
 
 `--agent`로 에이전트를 고르고(IBM Bob이면 `--agent bob`), `--skill '*'`로 묻지 않고 여섯 개를 모두 받으며, 프로젝트 대신 사용자 범위로 설치하려면 `--global`을 붙인다. 이 방법은 스킬만 설치한다. 항상 켜진 규칙 세트도 쓰려면 [`AGENTS.md`](AGENTS.md)를 함께 넣거나 위의 플러그인 중 하나를 쓴다.
 
-<a id="other-agents-rules-file-only"></a>
 ## 그 밖의 에이전트 (규칙 파일만)
 
 Cursor([훅 설치](#cursor) 대신 규칙만 쓰는 방법), Windsurf, Cline, GitHub Copilot Chat(독립 실행형 [Copilot CLI](#github-copilot-cli)가 아닌 VS Code, JetBrains, Visual Studio 에디터 확장), Aider, Kiro, Zed, CodeWhale, Swival, Qoder: 이 저장소에서 맞는 규칙 파일을 복사한다 ([`.cursor/rules/`](.cursor/rules/), [`.windsurf/rules/`](.windsurf/rules/), [`.clinerules/`](.clinerules/), [`.github/copilot-instructions.md`](.github/copilot-instructions.md), [`AGENTS.md`](AGENTS.md), [`.kiro/steering/`](.kiro/steering/), [`.qoder/rules/`](.qoder/rules/)).
@@ -232,7 +230,6 @@ Amp(Sourcegraph)는 작업 디렉터리부터 `$HOME`까지 상위 디렉터리�
 
 Jules(Google)는 저장소 루트의 `AGENTS.md`를 읽는다. 이 저장소에 들어 있으므로 설정 없이 규칙 세트를 불러온다.
 
-<a id="uninstall"></a>
 ## 제거
 
 | 호스트 | 명령 |

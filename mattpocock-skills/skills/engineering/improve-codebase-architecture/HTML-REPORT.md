@@ -9,7 +9,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Architecture review for {{repo name}}</title>
+    <title>{{repo name}} 아키텍처 리뷰</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module">
       import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
@@ -68,7 +68,7 @@
     flowchart LR
       A[OrderHandler] --> B[OrderValidator]
       B --> C[OrderRepo]
-      C -.leak.-> D[PricingClient]
+      C -. 누수 .-> D[PricingClient]
       classDef leak stroke:#dc2626,stroke-width:2px;
       class C,D leak
   </pre>

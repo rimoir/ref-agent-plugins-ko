@@ -48,9 +48,9 @@ interface ThemeConfig {
 
 ## 이전 요청
 
-- #42: "Add dark mode support"
-- #87: "Night theme for accessibility"
-- #134: "Dark theme option"
+- #42: "다크 모드 지원 추가"
+- #87: "접근성을 위한 야간 테마"
+- #134: "다크 테마 옵션"
 ```
 
 ### 파일 이름 짓기

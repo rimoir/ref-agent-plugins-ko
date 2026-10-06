@@ -58,7 +58,7 @@ UI 프로토타입은 **앱의 나머지 부분과 함께 놓여 있을 때** �
 라우트에 전환 컴포넌트를 하나 만든다.
 
 ```tsx
-// pseudo-code, adapt to the project's framework
+// 의사 코드다. 프로젝트의 프레임워크에 맞게 고친다
 const variant = searchParams.get('variant') ?? 'A';
 return (
   <>

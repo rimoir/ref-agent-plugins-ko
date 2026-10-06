@@ -34,16 +34,16 @@ type Request = {
   body: { id: string };
   headers: Record<string, string>;
   cookies: Record<string, string>;
-  // ...20 more properties
+  // ...속성 20개 더
 };
 
 it("gets user by id", () => {
-  // Only care about body.id but must fake entire Request
+  // body.id만 필요한데 Request 전체를 가짜로 만들어야 한다
   getUser({
     body: { id: "123" },
     headers: {},
     cookies: {},
-    // ...fake all 20 properties
+    // ...속성 20개를 전부 가짜로 채운다
   });
 });
 ```
@@ -83,7 +83,7 @@ getUser(fromPartial({ body: { id: "123" } }));
 변경 전:
 
 ```ts
-getUser({ body: { id: 123 } } as unknown as Request); // wrong type on purpose
+getUser({ body: { id: 123 } } as unknown as Request); // 일부러 틀린 타입
 ```
 
 변경 후:

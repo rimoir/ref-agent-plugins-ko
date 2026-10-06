@@ -1,4 +1,4 @@
-# CONTEXT.md 형식
+# GLOSSARY.md 형식
 
 ## 구조
 
@@ -31,18 +31,18 @@ _Avoid_: Client, buyer, account
 
 ## 단일 컨텍스트 저장소와 다중 컨텍스트 저장소
 
-**단일 컨텍스트(대부분의 저장소):** 저장소 루트에 `CONTEXT.md` 하나를 둔다.
+**단일 컨텍스트(대부분의 저장소):** 저장소 루트에 `GLOSSARY.md` 하나를 둔다.
 
-**다중 컨텍스트:** 저장소 루트의 `CONTEXT-MAP.md`에 컨텍스트 목록, 각 컨텍스트의 위치, 컨텍스트 사이의 관계를 적는다.
+**다중 컨텍스트:** 저장소 루트의 `GLOSSARY-MAP.md`에 컨텍스트 목록, 각 컨텍스트의 위치, 컨텍스트 사이의 관계를 적는다.
 
 ```md
-# 컨텍스트 맵
+# 용어집 맵
 
 ## 컨텍스트
 
-- [Ordering](./src/ordering/CONTEXT.md): 고객 주문을 받고 추적한다
-- [Billing](./src/billing/CONTEXT.md): 청구서를 만들고 결제를 처리한다
-- [Fulfillment](./src/fulfillment/CONTEXT.md): 창고 피킹과 배송을 관리한다
+- [Ordering](./src/ordering/GLOSSARY.md): 고객 주문을 받고 추적한다
+- [Billing](./src/billing/GLOSSARY.md): 청구서를 만들고 결제를 처리한다
+- [Fulfillment](./src/fulfillment/GLOSSARY.md): 창고 피킹과 배송을 관리한다
 
 ## 관계
 
@@ -53,8 +53,8 @@ _Avoid_: Client, buyer, account
 
 이 스킬은 어떤 구조인지 다음과 같이 판단한다.
 
-- `CONTEXT-MAP.md`가 있으면 그 파일을 읽어 컨텍스트를 찾는다.
-- 루트에 `CONTEXT.md`만 있으면 단일 컨텍스트다.
-- 둘 다 없으면 첫 용어가 정해질 때 루트에 `CONTEXT.md`를 만든다.
+- `GLOSSARY-MAP.md`가 있으면 그 파일을 읽어 컨텍스트를 찾는다.
+- 루트에 `GLOSSARY.md`만 있으면 단일 컨텍스트다.
+- 둘 다 없으면 첫 용어가 정해질 때 루트에 `GLOSSARY.md`를 만든다.
 
 컨텍스트가 여러 개면 지금 주제가 어느 컨텍스트에 해당하는지 판단한다. 분명하지 않으면 사용자에게 묻는다.

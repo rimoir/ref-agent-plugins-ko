@@ -85,10 +85,12 @@
 
 ## 전체 흐름에서의 위치
 
-`code-review`는 구현 흐름 `grill-with-docs → to-spec → to-tickets → implement → code-review`의 끝에 있는 리뷰 단계다. 지정한 브랜치나 PR 어디에든 단독으로도 쓸 수 있다.
+`code-review`는 구현 흐름 `grill-with-docs → to-spec → to-tickets → implement → code-review → retro`의 끝 무렵에 있는 리뷰 단계다. 지정한 브랜치나 PR 어디에든 단독으로도 쓸 수 있다.
 
-- [implement](https://aihero.dev/skills-implement)가 가장 가까운 관련 스킬이다. 구현을 진행하고, 커밋하기 전에 마지막 리뷰로 이 스킬을 호출한다.
+- [implement](https://aihero.dev/skills-implement)가 가장 가까운 관련 스킬이다. 구현을 진행하고, 커밋하기 전에 마지막 리뷰로 이 스킬을 호출한다. [implement-spec](https://aihero.dev/skills-implement-spec)도 통합 브랜치 전체를 대상으로 한 번 같은 일을 한다.
 - [to-spec](https://aihero.dev/skills-to-spec)과 [to-tickets](https://aihero.dev/skills-to-tickets)는 스펙 축이 대조하는 문서를 만든다. 스펙이 모호하면 스펙 축의 리뷰도 모호해진다.
+- [retro](https://aihero.dev/skills-retro)는 이 스킬 다음에 오고 이 스킬을 다듬는다. 세션을 보니 리뷰가 어떤 종류의 실수를 계속 놓친다면, `retro`가 그 실수를 잡을 검사나 코딩 표준 축이 읽을 `CODING_STANDARDS.md` 규칙을 제안한다.
+- [pr](https://aihero.dev/skills-pr)은 리뷰를 마친 작업을 올릴 때 PR 본문을 쓴다.
 - [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture)는 코드베이스 전체를 보는 짝이다. 이 스킬은 언제나 diff 하나만 본다.
 
 상황에 어떤 스킬이 맞는지 모를 때는 [ask-matt](https://aihero.dev/skills-ask-matt)가 전체 스킬 중 알맞은 것을 알려 준다.

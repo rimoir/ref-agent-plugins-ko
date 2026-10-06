@@ -13,7 +13,7 @@
 집요한 질문 스킬 가운데 어느 것을 쓸지는 지금 다루는 대상에 따라 다르다.
 
 - **무엇이든, 어디서든**: `grill-me`. 저장소가 필요 없고 파일을 쓰지 않으며, 주제가 코드가 아니어도 된다.
-- **맞춰 볼 코드베이스가 있을 때**: [grill-with-docs](https://aihero.dev/skills-grill-with-docs). 같은 인터뷰를 하지만 [상태를 남긴다](https://www.aihero.dev/ai-coding-dictionary/stateful). 코드를 읽고, 알게 된 내용을 `CONTEXT.md`와 ADR(아키텍처 결정 기록)에 남긴다.
+- **맞춰 볼 코드베이스가 있을 때**: [grill-with-docs](https://aihero.dev/skills-grill-with-docs). 같은 인터뷰를 하지만 [상태를 남긴다](https://www.aihero.dev/ai-coding-dictionary/stateful). 코드를 읽고, 알게 된 내용을 `GLOSSARY.md`와 ADR(아키텍처 결정 기록)에 남긴다.
 - **세션 하나로 다루기에 너무 클 때**: [wayfinder](https://aihero.dev/skills-wayfinder). 작업 전체를 계획 이슈(map, 결정 목록과 하위 티켓을 묶는 상위 이슈)로 만들고, 그 안에서 집요한 질문 세션을 진행한다.
 
 [계획 모드(plan mode)](https://www.aihero.dev/ai-coding-dictionary/agent-mode)는 끈다. 계획 모드에서는 에이전트가 서둘러 계획을 내놓으려 한다. 질문을 이어 가며 따져 보는 것과는 정반대다.
@@ -71,6 +71,6 @@
 
 `grill-me`는 **어디서든, 무엇에든 실행할 수 있는 단독 스킬**이다. 상태를 남기지 않기 때문에 어디로든 옮겨 쓸 수 있다. 저장소도, 작업 공간도, 설정도 필요 없고, 아이디어가 소프트웨어에 관한 것이라고 가정하지도 않는다. 사람들은 사업 결정, 글쓰기, 다음에 할 일처럼 머릿속에서 정리되지 않는 모든 것에 이 스킬을 쓴다.
 
-이 이동성이 [grill-with-docs](https://aihero.dev/skills-grill-with-docs)와의 차이의 전부다. grill-with-docs는 같은 인터뷰를 하지만 맞춰 볼 코드베이스를 읽고, 알게 된 내용을 `CONTEXT.md`와 ADR로 기록한다. 둘 다 [grilling](https://aihero.dev/skills-grilling) 기본 스킬 위에서 동작한다. `grill-me`는 사용자가 직접 호출해 grilling을 쓰는 진입점이고, 아무것도 남기지 않는다.
+이 이동성이 [grill-with-docs](https://aihero.dev/skills-grill-with-docs)와의 차이의 전부다. grill-with-docs는 같은 인터뷰를 하지만 맞춰 볼 코드베이스를 읽고, 알게 된 내용을 `GLOSSARY.md`와 ADR로 기록한다. 둘 다 [grilling](https://aihero.dev/skills-grilling) 기본 스킬 위에서 동작한다. `grill-me`는 사용자가 직접 호출해 grilling을 쓰는 진입점이고, 아무것도 남기지 않는다.
 
 집요하게 질문한 대상이 결국 소프트웨어로 드러나면, 같은 대화를 [to-spec](https://aihero.dev/skills-to-spec)에 넘겨 구현 흐름으로 이어 갈 수 있다(할 수 있다는 것이지, 이 스킬의 목적은 아니다). 어느 흐름이 맞는지 모르겠으면 [ask-matt](https://aihero.dev/skills-ask-matt)가 알맞은 스킬을 알려 준다.

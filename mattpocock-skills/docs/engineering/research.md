@@ -14,7 +14,7 @@
 | --- | --- |
 | 결정을 내리려면 알아야 하는 외부 사실 | `research` |
 | 사용자와 *함께* 인터뷰로 내리는 결정 | [grilling](https://aihero.dev/skills-grilling) |
-| `CONTEXT.md`와 ADR에 기록해 오래 유지할 아키텍처 결정 | [grill-with-docs](https://aihero.dev/skills-grill-with-docs) |
+| `GLOSSARY.md`와 ADR에 기록해 오래 유지할 아키텍처 결정 | [grill-with-docs](https://aihero.dev/skills-grill-with-docs) |
 | 어떤 방식이 자기 코드베이스에서 동작하는지 확인하기 | [prototype](https://aihero.dev/skills-prototype) |
 | 한 세션에 담기에는 너무 큰 계획 | [wayfinder](https://aihero.dev/skills-wayfinder) |
 

@@ -93,7 +93,7 @@
 `to-tickets`는 주 구현 흐름의 한 단계다.
 
 ```txt
-grill-with-docs → to-spec → to-tickets → implement → code-review
+grill-with-docs → to-spec → to-tickets → implement → code-review → retro
 ```
 
-앞 단계는 [to-spec](https://aihero.dev/skills-to-spec)이다. to-spec이 넘겨주는 확정된 스펙을 기준으로 티켓을 나눈다. 두 스킬은 끊기지 않은 컨텍스트 창 하나에서 실행한다. 다음 단계는 [implement](https://aihero.dev/skills-implement)다. implement는 새 세션마다 티켓 하나를 구현하고, 테스트는 [tdd](https://aihero.dev/skills-tdd)로 진행하며, 마지막에 [code-review](https://aihero.dev/skills-code-review)를 실행한다. 어떤 스킬이나 흐름이 맞는지 모를 때는 [ask-matt](https://aihero.dev/skills-ask-matt)에 물어본다.
+앞 단계는 [to-spec](https://aihero.dev/skills-to-spec)이다. to-spec이 넘겨주는 확정된 스펙을 기준으로 티켓을 나눈다. 두 스킬은 끊기지 않은 컨텍스트 창 하나에서 실행한다. 다음 단계는 [implement](https://aihero.dev/skills-implement)다. implement는 새 세션마다 티켓 하나를 구현하고, 테스트는 [tdd](https://aihero.dev/skills-tdd)로 진행하며, 마지막에 [code-review](https://aihero.dev/skills-code-review)를 실행한다. 다른 길은 [implement-spec](https://aihero.dev/skills-implement-spec)이다. 같은 차단 관계를 작업 그래프로 읽고, 바로 진행할 수 있는 티켓을 모두 통합 브랜치 하나에서 병렬로 구현한다. 어떤 스킬이나 흐름이 맞는지 모를 때는 [ask-matt](https://aihero.dev/skills-ask-matt)에 물어본다.

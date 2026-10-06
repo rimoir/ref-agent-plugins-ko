@@ -27,9 +27,9 @@
 
 ## 사전 준비
 
-실행하는 데 필요한 것은 없다. `CONTEXT.md`와 `docs/adr/`의 ADR(아키텍처 결정 기록)이 있으면 읽고, 그 경우 사용자 도메인의 명사를 그대로 쓴다. 후보를 "FooBarHandler를 리팩터링한다"가 아니라 "Order 접수 모듈을 깊게 만든다"처럼 쓴다.
+실행하는 데 필요한 것은 없다. `GLOSSARY.md`와 `docs/adr/`의 ADR(아키텍처 결정 기록)이 있으면 읽고, 그 경우 사용자 도메인의 명사를 그대로 쓴다. 후보를 "FooBarHandler를 리팩터링한다"가 아니라 "Order 접수 모듈을 깊게 만든다"처럼 쓴다.
 
-이 스킬이 파일을 쓰는 곳은 다음과 같다. 보고서는 저장소 밖의 `<tmpdir>/architecture-review-<timestamp>.html`에 쓴다. 집요한 질문 루프 동안에는 `CONTEXT.md`에 용어를 추가하거나 뜻을 더 분명하게 다듬고, 파일이 없으면 새로 만든다. 거절한 후보를 ADR로 기록해서 다음 실행에서 같은 제안이 다시 나오지 않게 할지도 묻는다.
+이 스킬이 파일을 쓰는 곳은 다음과 같다. 보고서는 저장소 밖의 `<tmpdir>/architecture-review-<timestamp>.html`에 쓴다. 집요한 질문 루프 동안에는 `GLOSSARY.md`에 용어를 추가하거나 뜻을 더 분명하게 다듬고, 파일이 없으면 새로 만든다. 거절한 후보를 ADR로 기록해서 다음 실행에서 같은 제안이 다시 나오지 않게 할지도 묻는다.
 
 ## 깊이, 그리고 깊이를 찾는 보고서
 
@@ -98,4 +98,4 @@
 
 ## 전체 흐름에서의 위치
 
-`improve-codebase-architecture`는 **주기적 관리** 스킬이다. 어떤 흐름에도 속하지 않고 며칠마다 실행해서, 작업을 직접 하는 대신 할 작업을 쌓아 둔다. 관련 스킬은 다음과 같다. [codebase-design](https://aihero.dev/skills-codebase-design)은 모든 후보가 쓰는 깊이와 교체 지점 용어를 정의한다. [grilling](https://aihero.dev/skills-grilling)은 후보를 고른 뒤 설계 결정 트리(결정 하나가 그 결정에 딸린 결정들로 갈라지는 구조)를 따라가고, [domain-modeling](https://aihero.dev/skills-domain-modeling)은 결정이 확정되는 대로 `CONTEXT.md`와 ADR을 최신 상태로 유지한다. 이 스킬이 만들어 내는 것은 아이디어이고, 이 아이디어는 [grill-with-docs](https://aihero.dev/skills-grill-with-docs)나 [to-spec](https://aihero.dev/skills-to-spec)에서 주 개발 흐름으로 다시 들어간다. 상황에 맞는 스킬을 고르려면 [ask-matt](https://aihero.dev/skills-ask-matt)를 쓴다. ask-matt는 전체 스킬을 대상으로 한 안내 스킬(router, 다른 스킬과 각각 쓸 때를 알려 주는 스킬)이다.
+`improve-codebase-architecture`는 **주기적 관리** 스킬이다. 어떤 흐름에도 속하지 않고 며칠마다 실행해서, 작업을 직접 하는 대신 할 작업을 쌓아 둔다. 관련 스킬은 다음과 같다. [codebase-design](https://aihero.dev/skills-codebase-design)은 모든 후보가 쓰는 깊이와 교체 지점 용어를 정의한다. [grilling](https://aihero.dev/skills-grilling)은 후보를 고른 뒤 설계 결정 트리(결정 하나가 그 결정에 딸린 결정들로 갈라지는 구조)를 따라가고, [domain-modeling](https://aihero.dev/skills-domain-modeling)은 결정이 확정되는 대로 `GLOSSARY.md`와 ADR을 최신 상태로 유지한다. 이 스킬이 만들어 내는 것은 아이디어이고, 이 아이디어는 [grill-with-docs](https://aihero.dev/skills-grill-with-docs)나 [to-spec](https://aihero.dev/skills-to-spec)에서 주 개발 흐름으로 다시 들어간다. 주 흐름의 끝에서 짝을 이루는 스킬은 [retro](https://aihero.dev/skills-retro)다. 이 스킬은 에이전트가 작업하는 코드를 개선하고, `retro`는 구현이 끝난 뒤 그 주변 환경(검사, 코딩 표준, 지침 파일)을 개선한다. 상황에 맞는 스킬을 고르려면 [ask-matt](https://aihero.dev/skills-ask-matt)를 쓴다. ask-matt는 전체 스킬을 대상으로 한 안내 스킬(router, 다른 스킬과 각각 쓸 때를 알려 주는 스킬)이다.

@@ -54,11 +54,11 @@
 
 **티켓 전체를 한꺼번에 넘기거나 여러 개를 병렬로 실행할 수 있나요?**
 
-안 된다. 한 번 호출에 티켓 하나다. 티켓 대기열 전체를 한꺼번에 배정하는 기능과 [서브에이전트](https://www.aihero.dev/ai-coding-dictionary/subagent)로 나눠 실행하는 기능은 여러 번 요청되었지만 둘 다 없다. 체크아웃 하나에서 `/implement` 세션 여러 개를 나란히 실행하는 것은 지원되지 않는 정도를 넘어 더 나쁘다. 한 현장 보고에 따르면 이슈 세 개를 처리한 한나절 동안, 한 세션의 `git commit --amend`가 다른 세션의 커밋에 적용되었고, `refs/stash`에서 stash 하나가 사라졌고, 커밋이 엉뚱한 브랜치에 올라갔다. 세션들은 작업 디렉터리 하나, 인덱스 하나, HEAD 하나를 함께 쓴다. 커뮤니티에서 쓰는 우회 방법은 Git 워크트리다. 단 `refs/stash`는 워크트리끼리도 공유되므로 워크트리만으로는 stash 문제가 해결되지 않는다. 지금 병렬로 실행하고 싶다면 직접 구성해야 한다.
+`/implement`로는 안 된다. 한 번 호출에 티켓 하나다. 스펙 전체를 한 번에 실행하려면 [implement-spec](https://aihero.dev/skills-implement-spec)을 쓴다. 진행 가능 목록 전체에 걸쳐 티켓을 [서브에이전트](https://www.aihero.dev/ai-coding-dictionary/subagent)에게 나눠 주고(서브에이전트마다 워크트리 하나), 결과를 통합 브랜치 하나에 병합한다. 체크아웃 하나에서 `/implement` 세션 여러 개를 나란히 실행하는 것은 지원되지 않는 정도를 넘어 더 나쁘다. 한 현장 보고에 따르면 이슈 세 개를 처리한 한나절 동안, 한 세션의 `git commit --amend`가 다른 세션의 커밋에 적용되었고, `refs/stash`에서 stash 하나가 사라졌고, 커밋이 엉뚱한 브랜치에 올라갔다. 세션들은 작업 디렉터리 하나, 인덱스 하나, HEAD 하나를 함께 쓴다. 커뮤니티에서 쓰는 우회 방법은 Git 워크트리다. 단 `refs/stash`는 워크트리끼리도 공유되므로 워크트리만으로는 stash 문제가 해결되지 않는다.
 
 **커밋하는 대신 풀 리퀘스트를 열 수 있나요?**
 
-기본 기능으로는 없다. 현재 브랜치에 바로 커밋하는데, 이것이 너무 성급하다고 느끼는 사람이 여럿 있다. 코드가 동작하는지 확인할 기회를 갖기 전에 코드가 들어가기 때문이다. 설정 플래그도 없고 PR 모드도 없다. 사람들은 호출할 때 지시하거나("브랜치에 커밋하고 PR을 열어 줘") 로컬에 있는 스킬 사본을 고쳐서 이 동작을 바꾼다.
+기본 기능으로는 없다. 현재 브랜치에 바로 커밋하는데, 이것이 너무 성급하다고 느끼는 사람이 여럿 있다. 코드가 동작하는지 확인할 기회를 갖기 전에 코드가 들어가기 때문이다. 설정 플래그도 없고 PR 모드도 없다. 사람들은 호출할 때 지시하거나("브랜치에 커밋하고 PR을 열어 줘") 로컬에 있는 스킬 사본을 고쳐서 이 동작을 바꾼다. 에이전트가 PR을 쓸 때는 [pr](https://aihero.dev/skills-pr)이 본문의 형태를 잡는다.
 
 **`code-review`가 변경 사항을 볼 수 없다고 해요.**
 
@@ -84,10 +84,10 @@
 
 ## 전체 흐름에서의 위치
 
-`implement`는 주 흐름에서 끝에서 두 번째인 구현 단계다.
+`implement`는 주 흐름의 구현 단계다.
 
 ```txt
-grill-with-docs → to-spec → to-tickets → implement → code-review
+grill-with-docs → to-spec → to-tickets → implement → code-review → retro
 ```
 
 관련 스킬은 [to-tickets](https://aihero.dev/skills-to-tickets), [tdd](https://aihero.dev/skills-tdd), [code-review](https://aihero.dev/skills-code-review)다. to-tickets는 implement가 받아서 쓰는 티켓을 만들고, 티켓 순서를 정하는 차단 관계를 적는다. implement는 교체 지점마다 안에서 tdd를 진행하고, 커밋하기 전에 code-review를 실행한다. implement는 계획 스킬들의 다음 단계에 있고 그 결과를 믿는다. 넘겨받은 작업의 형태를 다시 검증하지 않으므로, 구조가 잘못된 계획 이슈(map, 결정 목록과 하위 티켓을 묶는 상위 이슈)나 계층별로 나뉜 티켓도 적힌 그대로 구현한다.

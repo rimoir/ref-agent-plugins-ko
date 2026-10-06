@@ -14,7 +14,7 @@
 
 각 버킷 폴더에는 `README.md`가 있고, 이 파일은 버킷 안의 모든 스킬을 한 줄 설명과 함께 나열하며 스킬 이름을 그 스킬의 `SKILL.md`로 링크한다. 정식 버킷의 `README.md`와 최상위 `README.md`는 항목을 **사용자 호출**(User-invoked)과 **모델 호출**(Model-invoked)로 묶는다. 정식 버킷이 아닌 버킷(`misc/`, `in-progress/`)의 `README.md`는 묶지 않은 단순 목록을 쓴다.
 
-`engineering/`과 `productivity/`의 스킬에는 사람이 읽는 문서 페이지도 `docs/<bucket>/<skill-name>.md`에 있다(docs 트리는 `skills/` 아래의 이 두 버킷 폴더 구조를 그대로 따른다). 게시 URL은 버킷과 상관없이 `https://aihero.dev/skills-<skill-name>`이다. docs 경로는 저장소 안에서 정리하는 용도일 뿐이다. `engineering/`이나 `productivity/`에 스킬을 추가하거나, 이름을 바꾸거나, 동작을 바꾸면 [.agents/writing-docs.md](./.agents/writing-docs.md)에 따라 그 스킬의 문서 페이지를 만들거나 다시 맞춘다. 완성된 페이지에는 **하는 일**, **언제 쓰나**, **자주 묻는 질문**, **잘 동작하고 있다는 신호** 섹션이 있다. 템플릿, 섹션 순서, 질문을 찾을 곳은 `writing-docs.md`에 있다. 정식 버킷이 아닌 버킷(`misc/`, `in-progress/`, `deprecated/`)의 스킬에는 문서 페이지를 **만들지 않는다**.
+`engineering/`과 `productivity/`의 스킬에는 사람이 읽는 문서 페이지도 `docs/<bucket>/<skill-name>.md`에 있다(docs 트리는 `skills/` 아래의 이 두 버킷 폴더 구조를 그대로 따른다). 게시 URL은 버킷과 상관없이 `https://aihero.dev/skills-<skill-name>`이다. docs 경로는 저장소 안에서 정리하는 용도일 뿐이다. `engineering/`이나 `productivity/`에 스킬을 추가하거나, 이름을 바꾸거나, 동작을 바꾸면 [.agents/writing-docs.md](./.agents/writing-docs.md)에 따라 그 스킬의 문서 페이지를 만들거나 다시 맞춘다. 완성된 페이지에는 **하는 일**, **언제 쓰나**, **자주 묻는 질문**, **잘 동작하고 있다는 신호** 섹션이 있다. 템플릿, 섹션 순서, 질문을 찾을 곳은 `writing-docs.md`에 있다. 정식 버킷이 아닌 버킷(`misc/`, `in-progress/`, `deprecated/`)의 스킬에는 문서 페이지를 **만들지 않는다**. 예외는 정식 버킷에서 아예 없앤 스킬 하나뿐이다. 그 페이지는 보관(archived) 표시를 달고 남긴다(`writing-docs.md` 참고).
 
 모든 `SKILL.md`는 사용자 호출 스킬(사람이 이름을 입력해야만 실행되는 스킬. frontmatter에 `disable-model-invocation: true`, `agents/openai.yaml`에 `policy.allow_implicit_invocation: false`를 두며 사람만 호출할 수 있다)이거나 모델 호출 스킬(모델이 스스로 실행할 수도, 사람이 입력해 실행할 수도 있는 스킬)이다. [.agents/invocation.md](./.agents/invocation.md)를 본다.
 

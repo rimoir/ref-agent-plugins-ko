@@ -1,6 +1,6 @@
 ## 하는 일
 
-`wait-what`은 메시지를 이해하지 못했을 때 입력하는 스킬이다. 입력하면 [에이전트](https://www.aihero.dev/ai-coding-dictionary/agent)가 방금 한 말을 다시 설명한다. 사용자에게 부족했던 맥락을 더하고, 쉬운 말로 쓰고, 프로젝트 `CONTEXT.md`의 용어를 쓴다.
+`wait-what`은 메시지를 이해하지 못했을 때 입력하는 스킬이다. 입력하면 [에이전트](https://www.aihero.dev/ai-coding-dictionary/agent)가 방금 한 말을 다시 설명한다. 사용자에게 부족했던 맥락을 더하고, 쉬운 말로 쓰고, 프로젝트 `GLOSSARY.md`의 용어를 쓴다.
 
 스킬 본문은 세 줄이다. 덜 쓴 초안이 아니라 일부러 그렇게 설계했다. 장황함을 줄이려는 스킬은 길어지면서 실패한다. 간결하게 쓰라는 사백 줄짜리 스킬이 있어도 [모델](https://www.aihero.dev/ai-coding-dictionary/model)은 여전히 장황하다. 모델은 간결하게 써 달라는 부탁이 아니라 글의 분량을 따라가기 때문이다. 이 스킬에는 정확한 핵심 단어(leading word, 모델이 사전 학습으로 이미 알고 있어 동작 전체를 이끄는 짧은 개념어) 하나만 있고 다른 것은 없다.
 
@@ -20,17 +20,17 @@
 
 ## 이미 쓰는 언어 활용
 
-스킬 본문은 전역 `CLAUDE.md`와 프로젝트 `CONTEXT.md`에 이미 있는 핵심 단어를 다시 쓴다. ASD-STE100 Simplified Technical English(단순화한 기술 영어 규격)가 문체를 정하고, 공통 언어(ubiquitous language, 팀과 코드가 함께 쓰는 도메인 용어)가 명사를 제공한다. 스킬과 `CLAUDE.md`, `CONTEXT.md`가 같은 [토큰](https://www.aihero.dev/ai-coding-dictionary/token)을 쓰므로 이 스킬을 호출하는 것은 새 지시가 아니다. 에이전트가 이미 동의한 지시를 다시 떠올리게 하는 것이다.
+스킬 본문은 전역 `CLAUDE.md`와 프로젝트 `GLOSSARY.md`에 이미 있는 핵심 단어를 다시 쓴다. ASD-STE100 Simplified Technical English(단순화한 기술 영어 규격)가 문체를 정하고, 공통 언어(ubiquitous language, 팀과 코드가 함께 쓰는 도메인 용어)가 명사를 제공한다. 스킬과 `CLAUDE.md`, `GLOSSARY.md`가 같은 [토큰](https://www.aihero.dev/ai-coding-dictionary/token)을 쓰므로 이 스킬을 호출하는 것은 새 지시가 아니다. 에이전트가 이미 동의한 지시를 다시 떠올리게 하는 것이다.
 
-`CONTEXT.md`가 없어도(지금 다루는 컨텍스트에 맞는 `CONTEXT.md`를 가리키는 `CONTEXT-MAP.md`도 없어도) 스킬은 동작한다. 도메인 용어 부분만 빠진다.
+`GLOSSARY.md`가 없어도(지금 다루는 컨텍스트에 맞는 `GLOSSARY.md`를 가리키는 `GLOSSARY-MAP.md`도 없어도) 스킬은 동작한다. 도메인 용어 부분만 빠진다.
 
 ## 잘 동작하고 있다는 신호
 
 - 다시 한 설명이 더 짧고 퉁명스러워지는 것이 아니라 **더 짧고 더 분명해진다**.
 - 단어를 지우기만 하지 않고, 사용자에게 부족했던 전제를 더한다.
-- 지어낸 명사 대신 프로젝트의 명사를 쓴다. `CONTEXT.md`의 용어가 다시 나온다.
+- 지어낸 명사 대신 프로젝트의 명사를 쓴다. `GLOSSARY.md`의 용어가 다시 나온다.
 - 두 번 연달아 써도 말이 점점 짧게 끊기는 쪽으로 나빠지지 않는다.
 
 ## 전체 흐름에서의 위치
 
-`wait-what`은 어느 때든, 어떤 대화에서든, 다른 스킬 안에서도 쓸 수 있다. 이미 보낸 메시지 하나를 나중에 바로잡는다. 근본적인 해결책은 미리 합의한 공통 언어이고, 그것이 [grill-with-docs](https://aihero.dev/skills-grill-with-docs)다. grill-with-docs는 진행하면서 [domain-modeling](https://aihero.dev/skills-domain-modeling)을 실행하는 [집요한 질문](https://www.aihero.dev/ai-coding-dictionary/grilling) 세션이라서, 사용자와 에이전트가 함께 쓰는 단어가 `CONTEXT.md`에 기록된다. 지금 어떤 스킬이 맞는지 확실하지 않으면 [ask-matt](https://aihero.dev/skills-ask-matt)가 안내한다.
+`wait-what`은 어느 때든, 어떤 대화에서든, 다른 스킬 안에서도 쓸 수 있다. 이미 보낸 메시지 하나를 나중에 바로잡는다. 근본적인 해결책은 미리 합의한 공통 언어이고, 그것이 [grill-with-docs](https://aihero.dev/skills-grill-with-docs)다. grill-with-docs는 진행하면서 [domain-modeling](https://aihero.dev/skills-domain-modeling)을 실행하는 [집요한 질문](https://www.aihero.dev/ai-coding-dictionary/grilling) 세션이라서, 사용자와 에이전트가 함께 쓰는 단어가 `GLOSSARY.md`에 기록된다. 지금 어떤 스킬이 맞는지 확실하지 않으면 [ask-matt](https://aihero.dev/skills-ask-matt)가 안내한다.

@@ -34,7 +34,7 @@ PR 본문은 이 템플릿으로 쓴다.
 
 ## 섹션
 
-서론은 모두 빼고 설명은 짧게 쓴다. `CONTEXT.md`에 있는 사용자의 공통 언어(ubiquitous language, 팀과 코드가 함께 쓰는 도메인 용어)를 쓴다.
+서론은 모두 빼고 설명은 짧게 쓴다. `GLOSSARY.md`에 있는 사용자의 공통 언어(ubiquitous language, 팀과 코드가 함께 쓰는 도메인 용어)를 쓴다.
 
 ### 요약
 
@@ -62,9 +62,11 @@ submitForm
 
 - UI 구조는 컴포넌트 트리로 보여 주고, 중요한 상태와 모듈 경계를 함께 적는다.
 
-```tsx
-<SessionPage>(apps / example / src / routes / session.tsx);
-useSessionEvents() < SessionToolbar > <RunSkillButton>(packages / ui);
+```text
+<SessionPage> (apps/example/src/routes/session.tsx)
+  useSessionEvents()
+  <SessionToolbar>
+    <RunSkillButton> (packages/ui)
 ```
 
 - 파일별 책임이나 광범위 리팩터링은 얕은 파일 트리로 보여 준다.

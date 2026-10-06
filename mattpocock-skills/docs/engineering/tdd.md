@@ -88,7 +88,7 @@ v1.0에서 [codebase-design](https://aihero.dev/skills-codebase-design)으로 �
 `tdd`는 주 흐름에서 따로 한 단계를 차지하지 않고, 구현 단계 안에서 실제 구현 방식을 맡는다.
 
 ```txt
-grill-with-docs → to-spec → to-tickets → implement → code-review
+grill-with-docs → to-spec → to-tickets → implement → code-review → retro
 ```
 
 [to-spec](https://aihero.dev/skills-to-spec)이 테스트 교체 지점을 미리 합의하고, [implement](https://aihero.dev/skills-implement)가 티켓마다 `tdd`를 진행하고, [code-review](https://aihero.dev/skills-code-review)가 나중에 합의한 교체 지점만 썼는지 확인하며 `tdd`가 더 이상 하지 않는 리팩터링을 맡는다. 다른 관련 스킬은 [codebase-design](https://aihero.dev/skills-codebase-design)이다. `tdd`가 쓰는 교체 지점과 깊은 모듈 용어를 정의하는 공통 출처다. 전체 스펙 없이 구체적인 동작을 만들 때는 이 스킬만 따로 쓸 수도 있다. 어떤 스킬이 상황에 맞는지 모를 때는 [ask-matt](https://aihero.dev/skills-ask-matt)가 알려 준다.

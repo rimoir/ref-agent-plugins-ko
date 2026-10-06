@@ -18,7 +18,8 @@
 | 다른 사람이 보낸, 아직 확인하거나 정리하지 않은 버그 보고 | 먼저 [triage](https://aihero.dev/skills-triage) |
 | 결함을 쫓는 것이 아니라 설계 질문에 답하려는 일회용 코드 | [prototype](https://aihero.dev/skills-prototype) |
 | 계획한 동작을 테스트 먼저 만들기 | [tdd](https://aihero.dev/skills-tdd) |
-| 버그를 테스트로 고정할 적절한 교체 지점(seam, 그 자리의 코드를 고치지 않고 동작을 바꿔 끼울 수 있는 위치이자 모듈 인터페이스가 놓이는 곳)이 없다 | [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture). 이 스킬이 직접 그쪽으로 넘긴다 |
+| 버그를 고친 뒤 무엇이 있었으면 버그를 막을 수 있었는지 묻는다 | 같은 세션에서 실행하는 [retro](https://aihero.dev/skills-retro) |
+| 버그를 테스트로 고정할 적절한 교체 지점(seam, 그 자리의 코드를 고치지 않고 동작을 바꿔 끼울 수 있는 위치이자 모듈 인터페이스가 놓이는 곳)이 없다 | [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture). 직접 시작한다 |
 
 ## 빠르고 결과가 일정한 루프가 이 스킬의 핵심이다
 
@@ -51,7 +52,7 @@
 | 5단계로 | 확인 작업은 각각 특정 예측 하나에 대응하고, 변수를 한 번에 하나만 바꾸며, 모든 디버그 로그에 `[DEBUG-a4f2]` 같은 태그가 붙어 있어 grep 한 번으로 정리할 수 있다 |
 | 완료 | 원래 재현 사례가 더 이상 재현되지 않고, 계측 코드가 지워졌고, 맞는 것으로 확인된 가설이 커밋 메시지에 적혀 있다 |
 
-5단계에는 알아 둘 만한 예외가 있다. 회귀 테스트는 수정하기 전에 작성하지만, 그 테스트를 둘 **올바른 교체 지점**이 있을 때만 그렇게 한다. 올바른 교체 지점은 테스트가 호출 지점에서 실제로 일어나는 진짜 버그 패턴을 실행할 수 있는 곳이다. 쓸 수 있는 교체 지점이 너무 얕으면 이 스킬은 잘못된 안심만 주는 테스트를 작성하지 말고 그렇다고 말하라는 지시를 받는다. 교체 지점이 없다는 사실 자체가 발견한 결과이고, 그래서 사후 분석이 `improve-codebase-architecture`로 넘어간다.
+5단계에는 알아 둘 만한 예외가 있다. 회귀 테스트는 수정하기 전에 작성하지만, 그 테스트를 둘 **올바른 교체 지점**이 있을 때만 그렇게 한다. 올바른 교체 지점은 테스트가 호출 지점에서 실제로 일어나는 진짜 버그 패턴을 실행할 수 있는 곳이다. 쓸 수 있는 교체 지점이 너무 얕으면 이 스킬은 잘못된 안심만 주는 테스트를 작성하지 말고 그렇다고 말하라는 지시를 받는다. 교체 지점이 없다는 사실 자체가 발견한 결과이고, 이 스킬은 그 사실을 덮어 버리지 않고 기록한다.
 
 ## 자주 묻는 질문
 
@@ -90,4 +91,4 @@ v1.0.0에서 `/diagnosing-bugs`로 이름이 바뀌었다. 이전 이름은 더 
 
 `diagnosing-bugs`는 언제든 꺼내 쓰는 단독 스킬이다. 무언가가 고장 났을 때 시작하고, 수정과 회귀 테스트가 들어가면 끝낸다. 상태를 남기지 않고 미리 설정할 것도 없다. [ask-matt](https://aihero.dev/skills-ask-matt)는 "무언가 고장 났다"는 상황을 이 스킬로 안내한다.
 
-눈여겨볼 관련 스킬은 다음과 같다. [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture)는 코드에 버그를 테스트로 고정할 교체 지점이 없다는 것이 진짜 발견일 때 [인계](https://www.aihero.dev/ai-coding-dictionary/handoff)를 받는다. 그 추천은 수정이 들어간 뒤, 정보가 더 많아졌을 때 한다. [triage](https://aihero.dev/skills-triage)는 다른 사람이 보낸 가공되지 않은 보고로 들어오는 버그를 이 스킬보다 먼저 다루고, 같은 1~2단계를 더 얕게 한다.
+눈여겨볼 관련 스킬은 다음과 같다. [retro](https://aihero.dev/skills-retro)는 이 스킬 다음에 온다. 수정이 들어가면 같은 세션에서 실행해 무엇이 있었으면 버그를 막을 수 있었는지 묻는다. 처음보다 정보가 더 많아진 때다. `retro`는 사용자 호출 스킬이므로 이 스킬이 스스로 호출하지는 않는다. [triage](https://aihero.dev/skills-triage)는 다른 사람이 보낸 가공되지 않은 보고로 들어오는 버그를 이 스킬보다 먼저 다루고, 같은 1~2단계를 더 얕게 한다.

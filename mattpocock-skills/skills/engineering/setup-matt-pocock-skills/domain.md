@@ -4,8 +4,8 @@
 
 ## 탐색하기 전에 이 파일들을 읽는다
 
-- 저장소 루트의 **`CONTEXT.md`**, 또는
-- 저장소 루트에 **`CONTEXT-MAP.md`**가 있으면 그 파일. 이 파일은 컨텍스트마다 `CONTEXT.md`를 하나씩 가리킨다. 주제와 관련된 파일을 모두 읽는다.
+- 저장소 루트의 **`GLOSSARY.md`**, 또는
+- 저장소 루트에 **`GLOSSARY-MAP.md`**가 있으면 그 파일. 이 파일은 컨텍스트마다 `GLOSSARY.md`를 하나씩 가리킨다. 주제와 관련된 파일을 모두 읽는다.
 - **`docs/adr/`**: 지금 작업하려는 영역과 관련된 ADR(아키텍처 결정 기록)을 읽는다. 다중 컨텍스트 저장소라면 컨텍스트 범위의 결정이 있는 `src/<context>/docs/adr/`도 확인한다.
 
 이 파일 중 없는 것이 있으면 **아무 말 없이 계속 진행한다**. 파일이 없다고 알리지 않고, 미리 만들자고 제안하지도 않는다. `/domain-modeling` 스킬(`/grill-with-docs`와 `/improve-codebase-architecture`에서 호출된다)이 용어나 결정이 실제로 정해질 때 그때그때 이 파일을 만든다.
@@ -16,31 +16,31 @@
 
 ```
 /
-├── CONTEXT.md
+├── GLOSSARY.md
 ├── docs/adr/
 │   ├── 0001-event-sourced-orders.md
 │   └── 0002-postgres-for-write-model.md
 └── src/
 ```
 
-다중 컨텍스트 저장소(루트에 `CONTEXT-MAP.md`가 있다):
+다중 컨텍스트 저장소(루트에 `GLOSSARY-MAP.md`가 있다):
 
 ```
 /
-├── CONTEXT-MAP.md
+├── GLOSSARY-MAP.md
 ├── docs/adr/                          ← 시스템 전체 결정
 └── src/
     ├── ordering/
-    │   ├── CONTEXT.md
+    │   ├── GLOSSARY.md
     │   └── docs/adr/                  ← 컨텍스트별 결정
     └── billing/
-        ├── CONTEXT.md
+        ├── GLOSSARY.md
         └── docs/adr/
 ```
 
 ## 용어집의 용어를 쓴다
 
-출력에서 도메인 개념을 부를 때(이슈 제목, 리팩터링 제안, 가설, 테스트 이름 등) `CONTEXT.md`에 정의된 용어를 쓴다. 용어집이 쓰지 말라고 명시한 동의어로 바꿔 쓰지 않는다.
+출력에서 도메인 개념을 부를 때(이슈 제목, 리팩터링 제안, 가설, 테스트 이름 등) `GLOSSARY.md`에 정의된 용어를 쓴다. 용어집이 쓰지 말라고 명시한 동의어로 바꿔 쓰지 않는다.
 
 필요한 개념이 아직 용어집에 없다면 그 자체가 신호다. 프로젝트가 쓰지 않는 말을 새로 만들고 있거나(다시 생각한다), 실제로 빠진 용어가 있는 것이다(`/domain-modeling`에서 다루도록 기록해 둔다).
 

@@ -13,7 +13,7 @@
 | 상황 | 쓸 스킬 |
 | --- | --- |
 | 작업 디렉터리에서 작업하고 있지 않다 | [grill-me](https://aihero.dev/skills-grill-me): 같은 [세션](https://www.aihero.dev/ai-coding-dictionary/session)을 진행하지만, 에이전트가 스스로 실행하지 않는 이름으로 부른다 |
-| 작업 디렉터리에서 작업하고 있다 | [grill-with-docs](https://aihero.dev/skills-grill-with-docs): 같은 세션을 진행하면서 `CONTEXT.md`와 ADR(아키텍처 결정 기록)을 함께 쓴다 |
+| 작업 디렉터리에서 작업하고 있다 | [grill-with-docs](https://aihero.dev/skills-grill-with-docs): 같은 세션을 진행하면서 `GLOSSARY.md`와 ADR(아키텍처 결정 기록)을 함께 쓴다 |
 | 세션 하나로 감당하기에 너무 큰 작업 | [wayfinder](https://aihero.dev/skills-wayfinder): 계획 이슈(map, 결정 목록과 하위 티켓을 묶는 상위 이슈)를 만들고, 결정 티켓(실행할 작업이 아니라 결정으로 해소되는 질문을 담은 하위 이슈) 안에서 grilling을 실행한다 |
 | 말로는 정할 수 없는 질문: 어떤 모습이어야 하는지, 어떤 느낌이어야 하는지 | [prototype](https://aihero.dev/skills-prototype): 일회용 버전을 만든 다음 다시 돌아온다 |
 | 인터뷰가 필요한 직접 만든 스킬 | 인터뷰를 새로 쓰지 말고 그 스킬에서 `/grilling`을 호출한다 |
@@ -38,7 +38,7 @@
 | --- | --- |
 | 트리, 진행 가능 목록, 라운드, 질문 형식, 사실과 결정의 구분 | 여기 |
 | 세션을 얼마나 오래 진행해야 하는지, 말로 답할 수 없는 질문은 어떻게 하는지, 생각 없이 동의만 하지 않으려면 어떻게 하는지 | [grill-me](https://aihero.dev/skills-grill-me) |
-| `CONTEXT.md`에 무엇을 쓰는지, 무엇이 ADR이 되는지 | [grill-with-docs](https://aihero.dev/skills-grill-with-docs) |
+| `GLOSSARY.md`에 무엇을 쓰는지, 무엇이 ADR이 되는지 | [grill-with-docs](https://aihero.dev/skills-grill-with-docs) |
 
 ## 자주 묻는 질문
 

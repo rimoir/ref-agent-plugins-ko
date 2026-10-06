@@ -10,7 +10,7 @@
 - **[handoff](./handoff/SKILL.md)**: 다른 에이전트가 작업을 이어 갈 수 있도록 현재 대화를 인계 문서로 압축한다.
 - **[teach](./teach/SKILL.md)**: 현재 디렉터리를 상태를 남기는 학습 작업 공간으로 써서, 여러 세션에 걸쳐 사용자에게 새 기술이나 개념을 가르친다.
 - **[to-questionnaire](./to-questionnaire/SKILL.md)**: 혼자서는 답할 수 없는 결정을, 답할 수 있는 사람에게 보낼 Markdown 질문지로 만든다(그 사람이 비동기로 채우거나 회의에서 함께 채운다).
-- **[wait-what](./wait-what/SKILL.md)**: 메시지를 이해하지 못한 순간 바로 실행한다. 에이전트가 사용자에게 부족했던 컨텍스트를 채워 `CONTEXT.md` 용어를 써서 쉬운 말로 다시 설명한다.
+- **[wait-what](./wait-what/SKILL.md)**: 메시지를 이해하지 못한 순간 바로 실행한다. 에이전트가 사용자에게 부족했던 컨텍스트를 채워 `GLOSSARY.md` 용어를 써서 쉬운 말로 다시 설명한다.
 
 ## 모델 호출(Model-invoked)
 

@@ -4,7 +4,7 @@
 
 저장소마다 달라지는 것은 이 파일들뿐이다. 스킬 자체는 어디서나 똑같고, 실행할 때 `docs/agents/issue-tracker.md`를 읽고 거기 적힌 대로 한다. 그래서 이 스킬 모음은 GitHub에 묶여 있지 않고, 다른 곳을 가리키게 하려고 스킬 파일을 고칠 필요도 없다. "스킬을 사용자 지정 이슈 트래커에 연결해 줘"라고 하며 이 스킬을 실행하면, 프로그램으로 연결할 수 있는 트래커라면 무엇이든 스킬을 하나도 고치지 않고 쓸 수 있다.
 
-이 스킬은 정해진 대로 실행되는 스크립트가 아니라 프롬프트로 움직이는 스킬이다. `git remote`, 기존 `CLAUDE.md`, 기존 `CONTEXT.md`를 읽고, 찾은 내용을 제안하고, 무엇이든 쓰기 전에 사용자의 확인을 기다린다.
+이 스킬은 정해진 대로 실행되는 스크립트가 아니라 프롬프트로 움직이는 스킬이다. `git remote`, 기존 `CLAUDE.md`, 기존 `GLOSSARY.md`를 읽고, 찾은 내용을 제안하고, 무엇이든 쓰기 전에 사용자의 확인을 기다린다.
 
 ## 언제 쓰나
 
@@ -33,7 +33,7 @@
 | --- | --- | --- |
 | **이슈 트래커** | `git remote`에 맞는 트래커 | 항상(실제로 골라야 하는 것은 이것 하나다) |
 | **분류 라벨** | 표준 이름(`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`)을 그대로 쓰기 | `triage` 스킬이 설치되어 있을 때만 |
-| **도메인 문서** | 단일 컨텍스트(루트에 `CONTEXT.md` 하나와 `docs/adr/`) | 모노레포 신호를 찾았을 때만(그때는 다중 컨텍스트 `CONTEXT-MAP.md`를 제안한다) |
+| **도메인 문서** | 단일 컨텍스트(루트에 `GLOSSARY.md` 하나와 `docs/adr/`) | 모노레포 신호를 찾았을 때만(그때는 다중 컨텍스트 `GLOSSARY-MAP.md`를 제안한다) |
 
 트래커 선택지는 다음과 같다.
 
@@ -91,4 +91,4 @@ v1.1 직후에 이 질문을 직접 받았을 때 Matt는 그렇다고 답했다
 
 ## 전체 흐름에서의 위치
 
-`setup-matt-pocock-skills`는 엔지니어링 흐름의 **한 번만 실행하는 설정**이다. 흐름 속 한 단계가 아니라 나머지 모든 스킬이 전제로 삼는 사전 준비다. 관련 스킬은 이 스킬이 쓴 파일을 읽는 스킬들이다. [triage](https://aihero.dev/skills-triage)는 여기서 기록한 라벨 이름을 붙이고, [to-spec](https://aihero.dev/skills-to-spec)과 [to-tickets](https://aihero.dev/skills-to-tickets)는 여기서 정한 트래커에 게시하고, [wayfinder](https://aihero.dev/skills-wayfinder)는 같은 트래커 파일의 "wayfinder 작업" 섹션을 읽어 계획 이슈(map, 결정 목록과 하위 티켓을 묶는 상위 이슈)와 하위 [티켓](https://www.aihero.dev/ai-coding-dictionary/ticket)을 어떻게 저장하는지 안다. 이 스킬이 기록한 도메인 문서 구조는 나중에 [domain-modeling](https://aihero.dev/skills-domain-modeling)이 채운다. domain-modeling은 용어나 결정이 실제로 정해질 때가 되어서야 `CONTEXT.md`와 ADR을 만든다. 그래서 설정 직후 저장소가 비어 있는 것이 정상이다. 다음에 어느 스킬을 쓸지는 [ask-matt](https://aihero.dev/skills-ask-matt)가 전체 스킬 모음을 기준으로 안내한다.
+`setup-matt-pocock-skills`는 엔지니어링 흐름의 **한 번만 실행하는 설정**이다. 흐름 속 한 단계가 아니라 나머지 모든 스킬이 전제로 삼는 사전 준비다. 관련 스킬은 이 스킬이 쓴 파일을 읽는 스킬들이다. [triage](https://aihero.dev/skills-triage)는 여기서 기록한 라벨 이름을 붙이고, [to-spec](https://aihero.dev/skills-to-spec)과 [to-tickets](https://aihero.dev/skills-to-tickets)는 여기서 정한 트래커에 게시하고, [wayfinder](https://aihero.dev/skills-wayfinder)는 같은 트래커 파일의 "wayfinder 작업" 섹션을 읽어 계획 이슈(map, 결정 목록과 하위 티켓을 묶는 상위 이슈)와 하위 [티켓](https://www.aihero.dev/ai-coding-dictionary/ticket)을 어떻게 저장하는지 안다. 이 스킬이 기록한 도메인 문서 구조는 나중에 [domain-modeling](https://aihero.dev/skills-domain-modeling)이 채운다. domain-modeling은 용어나 결정이 실제로 정해질 때가 되어서야 `GLOSSARY.md`와 ADR을 만든다. 그래서 설정 직후 저장소가 비어 있는 것이 정상이다. 다음에 어느 스킬을 쓸지는 [ask-matt](https://aihero.dev/skills-ask-matt)가 전체 스킬 모음을 기준으로 안내한다.

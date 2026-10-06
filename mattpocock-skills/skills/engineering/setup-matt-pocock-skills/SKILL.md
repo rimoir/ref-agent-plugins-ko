@@ -10,7 +10,7 @@ disable-model-invocation: true
 
 - **이슈 트래커**: 이슈를 관리하는 곳(기본값은 GitHub이고, 로컬 마크다운도 별도 설정 없이 지원한다)
 - **분류 라벨**: 표준 분류(triage) 역할마다 쓰는 라벨 문자열
-- **도메인 문서**: `CONTEXT.md`와 ADR(아키텍처 결정 기록)을 두는 위치와, 스킬이 그 문서를 읽는 규칙
+- **도메인 문서**: `GLOSSARY.md`와 ADR(아키텍처 결정 기록)을 두는 위치와, 스킬이 그 문서를 읽는 규칙
 
 이 스킬은 정해진 대로 실행되는 스크립트가 아니라 프롬프트로 움직이는 스킬이다. 탐색하고, 찾은 내용을 보여 주고, 사용자와 확인한 다음 파일을 쓴다.
 
@@ -22,7 +22,7 @@ disable-model-invocation: true
 
 - `git remote -v`와 `.git/config`: GitHub 저장소인가? 어느 저장소인가?
 - 저장소 루트의 `AGENTS.md`와 `CLAUDE.md`: 둘 중 하나라도 있는가? 어느 한쪽에 `## Agent skills` 섹션이 이미 있는가?
-- 저장소 루트의 `CONTEXT.md`와 `CONTEXT-MAP.md`
+- 저장소 루트의 `GLOSSARY.md`와 `GLOSSARY-MAP.md`
 - `docs/adr/`와 `src/*/docs/adr/` 디렉터리
 - `docs/agents/`: 이 스킬이 전에 만든 결과물이 이미 있는가?
 - `.scratch/`: 로컬 마크다운 이슈 트래커 규칙을 이미 쓰고 있다는 표시
@@ -56,9 +56,9 @@ disable-model-invocation: true
 
 기본값은 표준 분류 역할이며, 각 라벨 문자열은 역할 이름과 같다: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. 사용자가 **예**라고 하면 그대로 쓴다. 사용자가 아니라고 할 때만(보통 트래커가 이미 다른 이름을 쓰고 있어서다. 예: `needs-triage` 대신 `bug:triage`) 바꿀 이름을 받아 둔다. 그래야 `triage`가 중복 라벨을 새로 만들지 않고 기존 라벨을 붙인다.
 
-**섹션 C: 도메인 문서.** 기본값은 **단일 컨텍스트**(저장소 루트에 `CONTEXT.md` 하나와 `docs/adr/`)다. 거의 모든 저장소에 맞으므로 묻지 않고 그대로 쓴다.
+**섹션 C: 도메인 문서.** 기본값은 **단일 컨텍스트**(저장소 루트에 `GLOSSARY.md` 하나와 `docs/adr/`)다. 거의 모든 저장소에 맞으므로 묻지 않고 그대로 쓴다.
 
-**다중 컨텍스트**(루트의 `CONTEXT-MAP.md`가 컨텍스트별 `CONTEXT.md` 파일을 가리키는 구조)는 탐색에서 모노레포 신호를 찾았을 때만 제안한다. 그때는 어느 구조를 원하는지 확인한다.
+**다중 컨텍스트**(루트의 `GLOSSARY-MAP.md`가 컨텍스트별 `GLOSSARY.md` 파일을 가리키는 구조)는 탐색에서 모노레포 신호를 찾았을 때만 제안한다. 그때는 어느 구조를 원하는지 확인한다.
 
 ### 3. 확인과 수정
 

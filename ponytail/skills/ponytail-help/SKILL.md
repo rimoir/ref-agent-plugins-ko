@@ -32,7 +32,7 @@ description: >
 | **ponytail-gain** | `/ponytail-gain` | 측정한 효과를 보여 주는 점수표: 코드 감소, 비용 감소, 속도 향상. |
 | **ponytail-help** | `/ponytail-help` | 이 카드를 보여 준다. |
 
-Codex는 `@ponytail`, `@ponytail-review`, `@ponytail-help`를 쓴다.
+Codex CLI와 IDE 확장에서는 `$ponytail:ponytail`, `$ponytail:ponytail-review`, `$ponytail:ponytail-help`로 스킬을 호출한다.
 Claude Code와 OpenCode는 위의 슬래시 명령 형식을 쓴다(OpenCode는 위의 스킬을 모두 슬래시 명령으로 제공한다).
 
 ## 끄기

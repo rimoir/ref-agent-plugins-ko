@@ -18,7 +18,7 @@ ponytail이 의도적으로 단순화한 부분에는 모두 `ponytail:` 주석�
 저장소에서 주석 표식을 grep으로 찾는다. `node_modules`, `.git`, 빌드 결과물은
 건너뛴다.
 
-`grep -rnE '(#|//) ?ponytail:' .`  (쓰는 스택에 다른 주석 접두사가 있으면 추가한다)
+`grep -rnE --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=build '(#|//|/[*]) ?ponytail:' .`  (쓰는 스택에 다른 주석 접두사가 있으면 추가한다)
 
 검색 결과 한 건이 부채 목록의 한 행이다. 주석 접두사를 조건에 넣었기 때문에,
 이 규칙을 언급만 하는 산문은 부채 목록에 들어가지 않는다.

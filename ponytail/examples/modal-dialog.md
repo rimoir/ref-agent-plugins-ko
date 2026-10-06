@@ -6,7 +6,7 @@
 
 ```bash
 npm install @radix-ui/react-dialog
-# or: npm install react-modal
+# 또는: npm install react-modal
 ```
 
 ```jsx
@@ -44,7 +44,7 @@ export function DeleteModal({ onConfirm, onCancel }) {
 ## Ponytail 적용
 
 ```html
-<!-- ponytail: browser has one, with focus trapping and backdrop built in -->
+<!-- ponytail: 브라우저에 이미 있고 포커스 가두기와 배경도 내장돼 있다 -->
 <dialog id="confirm-delete">
   <p>This action cannot be undone.</p>
   <button id="cancel">Cancel</button>
@@ -57,7 +57,7 @@ const dialog = document.getElementById("confirm-delete");
 document.getElementById("cancel").onclick = () => dialog.close();
 document.getElementById("confirm").onclick = () => { onConfirm(); dialog.close(); };
 
-// Open it:
+// 열기:
 dialog.showModal();
 ```
 

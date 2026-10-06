@@ -139,9 +139,9 @@ hermes plugins install DietrichGebert/ponytail --enable
 먼저 컬렉션을 라이브러리에 올려 둔 뒤, 원하는 스킬을 추가한다.
 
 ```bash
-swival skills add --global https://github.com/DietrichGebert/ponytail  # stage into ~/.config/swival/library
-swival skills add ponytail                                             # install the collection into this project
-swival skills add --global ponytail                                    # or activate it in every project
+swival skills add --global https://github.com/DietrichGebert/ponytail  # ~/.config/swival/library에 준비해 둔다
+swival skills add ponytail                                             # 이 프로젝트에 컬렉션을 설치한다
+swival skills add --global ponytail                                    # 또는 모든 프로젝트에서 켠다
 ```
 
 Swival은 프로젝트 루트의 `AGENTS.md`와 전역 `~/.config/swival/AGENTS.md`도 읽는다. 지시문만 쓰는 대체 경로다.

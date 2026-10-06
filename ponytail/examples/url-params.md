@@ -6,17 +6,17 @@
 
 ```bash
 npm install query-string
-# 4.5 kB gzipped, 3.5M downloads/week
+# gzip 4.5 kB, 주간 다운로드 350만
 ```
 
 ```js
 import qs from "query-string";
 
-// Parse
+// 파싱
 const params = qs.parse(location.search);
 // → { page: "2", sort: "name", tags: ["js", "css"] }
 
-// Build
+// 생성
 const url = qs.stringify({ page: 2, sort: "name", tags: ["js", "css"] });
 // → "page=2&sort=name&tags=js&tags=css"
 ```
@@ -24,14 +24,14 @@ const url = qs.stringify({ page: 2, sort: "name", tags: ["js", "css"] });
 ## Ponytail 적용
 
 ```js
-// ponytail: URLSearchParams does this
+// ponytail: URLSearchParams가 해 준다
 const params = new URLSearchParams(location.search);
 
-// Read
+// 읽기
 params.get("page");         // "2"
 params.getAll("tags");      // ["js", "css"]
 
-// Build
+// 생성
 const out = new URLSearchParams({ page: 2, sort: "name" });
 out.append("tags", "js");
 out.append("tags", "css");

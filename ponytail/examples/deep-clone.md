@@ -17,14 +17,14 @@ const copy = cloneDeep(original);
 또는 오래전부터 흔히 쓰는 편법:
 
 ```js
-// fragile: loses Date, undefined, Map, Set, circular refs, functions
+// 취약함: Date, undefined, Map, Set, 순환 참조, 함수가 사라진다
 const copy = JSON.parse(JSON.stringify(original));
 ```
 
 ## Ponytail 적용
 
 ```js
-// ponytail: structuredClone does this
+// ponytail: structuredClone이 해 준다
 const copy = structuredClone(original);
 ```
 

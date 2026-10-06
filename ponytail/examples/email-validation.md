@@ -15,31 +15,31 @@ import re
 
 def validate_email(email: str) -> bool:
     """
-    Validates an email address using a regular expression.
+    정규 표현식으로 이메일 주소를 검증한다.
     
     Args:
-        email (str): The email address to validate
+        email (str): 검증할 이메일 주소
         
     Returns:
-        bool: True if valid, False otherwise
+        bool: 유효하면 True, 아니면 False
     """
-    # Regular expression pattern for email validation
+    # 이메일 검증용 정규 표현식 패턴
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     
     return re.match(pattern, email) is not None
 
 
-# Test cases
+# 테스트 케이스
 if __name__ == "__main__":
     test_emails = [
-        "user@example.com",           # Valid
-        "john.doe@company.co.uk",     # Valid
-        "test+tag@domain.org",        # Valid
-        "invalid.email@",             # Invalid
-        "missing@domain",             # Invalid
-        "@nodomain.com",              # Invalid
-        "spaces in@email.com",        # Invalid
-        "user@domain..com",           # Invalid (double dot)
+        "user@example.com",           # 유효
+        "john.doe@company.co.uk",     # 유효
+        "test+tag@domain.org",        # 유효
+        "invalid.email@",             # 무효
+        "missing@domain",             # 무효
+        "@nodomain.com",              # 무효
+        "spaces in@email.com",        # 무효
+        "user@domain..com",           # 무효(점 두 개 연속)
     ]
     
     for email in test_emails:
@@ -54,15 +54,15 @@ import re
 
 def validate_email_advanced(email: str) -> tuple[bool, str]:
     """
-    Advanced email validation with detailed feedback.
+    자세한 피드백을 주는 고급 이메일 검증.
     
     Args:
-        email (str): The email address to validate
+        email (str): 검증할 이메일 주소
         
     Returns:
         tuple: (is_valid, message)
     """
-    # Basic checks
+    # 기본 검사
     if not email or not isinstance(email, str):
         return False, "Email must be a non-empty string"
     
@@ -71,13 +71,13 @@ def validate_email_advanced(email: str) -> tuple[bool, str]:
     if len(email) > 254:
         return False, "Email is too long (max 254 characters)"
     
-    # Regular expression pattern
+    # 정규 표현식 패턴
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     
     if not re.match(pattern, email):
         return False, "Email format is invalid"
     
-    # Additional checks
+    # 추가 검사
     local_part, domain = email.rsplit('@', 1)
     
     if len(local_part) > 64:
@@ -92,7 +92,7 @@ def validate_email_advanced(email: str) -> tuple[bool, str]:
     return True, "Email is valid"
 
 
-# Test the advanced version
+# 고급 버전 테스트
 if __name__ == "__main__":
     test_emails = [
         "user@example.com",
@@ -113,20 +113,20 @@ from email_validator import validate_email, EmailNotValidError
 
 def validate_email_production(email: str) -> bool:
     """
-    Validates email using the email_validator library.
-    More reliable for production use.
+    email_validator 라이브러리로 이메일을 검증한다.
+    프로덕션에서 더 믿을 만하다.
     
-    Install with: pip install email-validator
+    설치: pip install email-validator
     """
     try:
-        # Validate and normalize the email
+        # 이메일을 검증하고 정규화한다
         valid = validate_email(email)
         return True
     except EmailNotValidError:
         return False
 
 
-# Usage
+# 사용법
 if __name__ == "__main__":
     print(validate_email_production("user@example.com"))  # True
     print(validate_email_production("invalid@"))          # False

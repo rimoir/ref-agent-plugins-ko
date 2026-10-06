@@ -21,7 +21,7 @@ function debounce(func, delay) {
   };
 }
 
-// Usage
+// 사용법
 const searchInput = document.getElementById('search');
 const resultsContainer = document.getElementById('results');
 
@@ -40,7 +40,7 @@ const handleSearch = async (query) => {
   }
 };
 
-// Debounce the search function (300ms delay)
+// 검색 함수에 디바운스를 건다(300ms 지연)
 const debouncedSearch = debounce(handleSearch, 300);
 
 searchInput.addEventListener('input', (e) => {
@@ -114,16 +114,16 @@ function debounce(func, delay, options = {}) {
     }, delay);
   };
   
-  // Allow manual cancellation
+  // 직접 취소할 수 있게 한다
   debounced.cancel = () => clearTimeout(timeoutId);
   
   return debounced;
 }
 
-// Usage with options
+// 옵션과 함께 쓰는 법
 const debouncedSearch = debounce(handleSearch, 300, { immediate: false });
 
-// Cancel pending search if needed
+// 필요하면 대기 중인 검색을 취소한다
 searchInput.addEventListener('blur', () => {
   debouncedSearch.cancel();
 });
@@ -201,7 +201,7 @@ searchInput.addEventListener('input', (e) => {
   debounceTimer = setTimeout(() => {
     fetch(`/api/search?q=${encodeURIComponent(e.target.value)}`)
       .then(r => r.json())
-      .then(data => console.log(data)); // replace with your render
+      .then(data => console.log(data)); // 실제 렌더링 코드로 바꾼다
   }, 300);
 });
 ```

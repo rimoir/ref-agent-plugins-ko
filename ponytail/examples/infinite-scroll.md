@@ -32,7 +32,7 @@ export function Feed({ items, fetchMore, hasMore }) {
 ## Ponytail 적용
 
 ```jsx
-// ponytail: IntersectionObserver does this, no scroll listener needed
+// ponytail: IntersectionObserver가 해 준다. 스크롤 리스너는 필요 없다
 import { useEffect, useRef } from "react";
 
 export function Feed({ items, fetchMore, hasMore }) {

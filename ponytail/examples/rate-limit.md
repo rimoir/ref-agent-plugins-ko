@@ -85,30 +85,30 @@ import asyncio
 
 app = FastAPI()
 
-# Store request timestamps per IP
+# IP별 요청 시각을 저장한다
 request_history = defaultdict(list)
-RATE_LIMIT = 5  # requests
-TIME_WINDOW = 60  # seconds
+RATE_LIMIT = 5  # 요청 수
+TIME_WINDOW = 60  # 초
 
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
     client_ip = request.client.host
     now = datetime.now()
     
-    # Clean old requests outside time window
+    # 시간 창을 벗어난 오래된 요청을 지운다
     request_history[client_ip] = [
         req_time for req_time in request_history[client_ip]
         if now - req_time < timedelta(seconds=TIME_WINDOW)
     ]
     
-    # Check if limit exceeded
+    # 한도를 넘었는지 확인한다
     if len(request_history[client_ip]) >= RATE_LIMIT:
         return JSONResponse(
             status_code=429,
             content={"detail": "Rate limit exceeded"}
         )
     
-    # Record this request
+    # 이번 요청을 기록한다
     request_history[client_ip].append(now)
     
     return await call_next(request)
@@ -131,7 +131,7 @@ app = FastAPI()
 limiter = Limiter(key_func=get_remote_address)
 
 def get_user_id(token: str = Header(None)) -> str:
-    # Your auth logic here
+    # 인증 로직을 여기에 둔다
     return token or "anonymous"
 
 @app.get("/api/data")
@@ -203,19 +203,19 @@ async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
         }
     )
 
-# Strict limit
+# 엄격한 한도
 @app.post("/api/login")
 @limiter.limit("3/minute")
 async def login(request: Request):
     return {"token": "xxx"}
 
-# Moderate limit
+# 보통 한도
 @app.get("/api/data")
 @limiter.limit("30/minute")
 async def get_data(request: Request):
     return {"data": []}
 
-# Generous limit
+# 넉넉한 한도
 @app.get("/api/public")
 @limiter.limit("100/minute")
 async def get_public(request: Request):
@@ -245,7 +245,7 @@ async def test_rate_limit():
         for i in range(6):
             response = await client.get("/api/data")
             print(f"Request {i+1}: {response.status_code}")
-            # First 5 should be 200, 6th should be 429
+            # 처음 5번은 200, 6번째는 429여야 한다
 ```
 
 **추천:** 대부분은 `slowapi`를 쓰세요. 가장 널리 쓰이고 구현하기도 가장 쉽습니다! 🚀

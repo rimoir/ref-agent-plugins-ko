@@ -99,7 +99,7 @@ ponytail은 GitHub의 `DietrichGebert/ponytail`이나 npm의 `@dietrichgebert/po
 ponytail을 쓰면:
 
 ```html
-<!-- ponytail: browser has one -->
+<!-- ponytail: 브라우저에 이미 있다 -->
 <input type="date">
 ```
 

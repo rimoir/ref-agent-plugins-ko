@@ -170,7 +170,7 @@ export function useCountdown(initialSeconds) {
   };
 }
 
-// Usage
+// 사용법
 export function TimerWithHook() {
   const { seconds, isActive, start, pause, reset } = useCountdown(60);
 
@@ -342,19 +342,19 @@ export function StyledCountdownTimer({ initialSeconds = 60 }) {
 ## 사용 예시
 
 ```jsx
-// Basic usage
+// 기본 사용법
 <CountdownTimer initialSeconds={30} />
 
-// Advanced with callback
+// 콜백을 쓰는 고급 버전
 <AdvancedCountdownTimer 
   initialSeconds={300}
   onComplete={() => alert('Time\'s up!')}
 />
 
-// Using the hook
+// 훅 사용
 <TimerWithHook />
 
-// Styled version
+// 스타일 적용 버전
 <StyledCountdownTimer initialSeconds={60} />
 ```
 

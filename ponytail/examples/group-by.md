@@ -27,7 +27,7 @@ const byStatus = orders.reduce((acc, order) => {
 ## Ponytail 적용
 
 ```js
-// ponytail: Object.groupBy does this
+// ponytail: Object.groupBy가 해 준다
 const byStatus = Object.groupBy(orders, order => order.status);
 // → { pending: [...], shipped: [...], delivered: [...] }
 ```

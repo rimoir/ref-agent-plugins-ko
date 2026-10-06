@@ -11,13 +11,13 @@
 ```python
 import pandas as pd
 
-# Read the CSV file
+# CSV 파일을 읽는다
 df = pd.read_csv('sales.csv')
 
-# Sum the 'amount' column
+# 'amount' 열을 합산한다
 total_amount = df['amount'].sum()
 
-# Print the result
+# 결과를 출력한다
 print(f"Total amount: ${total_amount:,.2f}")
 ```
 

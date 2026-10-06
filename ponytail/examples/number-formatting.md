@@ -6,7 +6,7 @@
 
 ```bash
 npm install numeral
-# or: npm install accounting
+# 또는: npm install accounting
 ```
 
 ```js
@@ -20,7 +20,7 @@ numeral(1500).format("0.0a");            // "1.5k"
 ## Ponytail 적용
 
 ```js
-// ponytail: Intl.NumberFormat does this, locale-aware
+// ponytail: Intl.NumberFormat이 해 준다. 로캘도 반영한다
 new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" })
   .format(1234567.89);
 // → "$1,234,567.89"

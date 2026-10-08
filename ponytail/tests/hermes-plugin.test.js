@@ -213,8 +213,8 @@ print(json.dumps({'ctx': ctx}))
 `);
   const { ctx } = JSON.parse(output);
   assert.match(ctx, /PONYTAIL MODE ACTIVE — level: review/);
-  assert.match(ctx, /diff에 불필요한 복잡성이 있는지 리뷰한다/);
-  assert.match(ctx, /net: -<N>줄 줄일 수 있다/);
+  assert.match(ctx, /고장 났을 때 호출받을 시니어 개발자처럼 리뷰한다/);
+  assert.match(ctx, /판정: 배포한다\./);
   assert.doesNotMatch(ctx, /^---/);
 });
 

@@ -43,18 +43,16 @@ for (const [relPath, normalize] of copies) {
 // Upgrade path: generate the copies from SKILL.md if this ever misses a real drift.
 const INVARIANTS = [
   '이 코드베이스에',                      // ladder rung: reuse what already exists (#217)
-  '단순한 휴리스틱',                       // ceiling-comment rule
-  '실행할 수 있는 검사를 딱 하나',                    // test reflex
-  '더 허술한 알고리즘',                    // robust-variant rule
-  // the four "not lazy about" safety carve-outs: pin each so a reword in either
-  // file can't silently drop one. Only validation was pinned before. These are the
-  // continuous substrings present in both files ("prevents data loss" because the
-  // full "error handling that prevents data loss" wraps a line in SKILL.md).
+  '모든 호출 지점을 grep으로 찾고',       // root-cause bug fix (#245)
+  '변경 자체에는 절대 게으르지 않는다',    // scope: callers, tests and fixtures the change breaks
+  '그 한계와 언제 바꿀지를 적은',          // ponytail: shortcut comment
+  '경계 사례에서 올바르게 동작하는',       // robust-variant rule
+  '검사가 없는 게으른 코드는 끝난 코드가 아니다', // test reflex
+  // the "never cut" carve-outs: pin each so a reword in either file can't silently drop one.
   '신뢰 경계의 입력 검증',
   '데이터 손실을 막는',
   '보안',
   '접근성',
-  '검사가 없는 게으른 코드는 끝난 코드가 아니다', // one-check promoted to headline
 ];
 
 const skill = read('skills/ponytail/SKILL.md');

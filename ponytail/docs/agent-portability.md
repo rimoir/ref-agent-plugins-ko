@@ -27,7 +27,6 @@ Ponytail은 여러 에이전트에 옮겨 쓸 수 있는 스킬 배포판이다.
 | GitHub Copilot CLI | `.github/plugin/`, `AGENTS.md`, `.github/copilot-instructions.md`, `~/.copilot/copilot-instructions.md` | 플러그인을 지원한다(`copilot plugin marketplace add DietrichGebert/ponytail` + `copilot plugin install ponytail@ponytail`). 대체 수단인 지시문 모드도 남아 있다. 프로젝트별로는 `AGENTS.md`나 `.github/copilot-instructions.md`에서, 전역으로는 `~/.copilot/copilot-instructions.md`에서 읽는다(지시문 수준 지원, `/ponytail` 레벨과 훅 없음). |
 | Antigravity | `AGENTS.md` | 저장소 루트의 `AGENTS.md`를 항상 켜져 있는 규칙으로 읽는다(`.cursorrules`/`CLAUDE.md`와 같은 방식). 작업 공간 규칙에는 `.agents/rules/`도 쓸 수 있다. 지시문 수준으로 지원한다. |
 | CodeWhale | `AGENTS.md` | 저장소 루트의 `AGENTS.md`를 프로젝트 지시문으로 읽는다. 대체 파일로 `CLAUDE.md`와 `.claude/instructions.md`도 읽는다. 지시문 수준으로 지원한다. |
-| Swival | `.swival/skills/`, `AGENTS.md` | `swival skills add https://github.com/DietrichGebert/ponytail`은 ponytail 스킬 전부를 `.swival/skills/`에 바로 설치한다. `--global`을 붙이면 먼저 라이브러리(`~/.config/swival/library`)에 준비해 두고, 그다음 `swival skills add ponytail`(또는 `--global ponytail`)로 프로젝트별로 또는 모든 곳에서 활성화한다. 지시문 수준의 대체 수단으로 저장소 루트의 `AGENTS.md`와 전역 `~/.config/swival/AGENTS.md`도 읽는다. |
 | VS Code + Codex extension | `AGENTS.md` | Codex 확장은 `AGENTS.md`(저장소 루트, 또는 전역으로 `~/.codex/AGENTS.md`)를 읽는다. 지시문 수준으로 지원한다. 위의 Codex 전체 플러그인 행은 여기에 `/ponytail` 레벨과 훅을 더한다. |
 | JetBrains Junie | `AGENTS.md` | Settings → Tools → Junie → Project Settings → Guidelines Path에서 `AGENTS.md`를 지정하면 Junie가 읽는다(아직 자동이 아니다). 이 저장소에는 `AGENTS.md`가 들어 있고, `.junie/guidelines.md`는 Junie의 예전 경로다. 지시문 수준으로 지원한다. |
 | Amp (Sourcegraph) | `AGENTS.md` | Amp는 작업 디렉터리와 `$HOME`까지의 상위 디렉터리에서 `AGENTS.md`를 읽고(`~/.config/amp/AGENTS.md` 같은 전역 설정도 읽는다), 없으면 `AGENT.md`/`CLAUDE.md`를 읽는다. 지시문 수준으로 지원한다. |
@@ -48,8 +47,8 @@ Ponytail은 여러 에이전트에 옮겨 쓸 수 있는 스킬 배포판이다.
 ## 이식 가능한 동작
 
 - `skills/ponytail/SKILL.md`: 게으른 시니어 개발자 모드
-- `skills/ponytail-review/SKILL.md`: 과잉 설계 리뷰
-- `skills/ponytail-audit/SKILL.md`: 저장소 전체 과잉 설계 감사
+- `skills/ponytail-review/SKILL.md`: diff의 품질 리뷰
+- `skills/ponytail-audit/SKILL.md`: 저장소 전체의 품질 감사
 - `skills/ponytail-debt/SKILL.md`: `ponytail:` 표식을 단 의도적 단순화를 모아 관리하는 부채 목록
 - `skills/ponytail-gain/SKILL.md`: 벤치마크로 측정한 효과를 보여 주는 점수표
 - `skills/ponytail-help/SKILL.md`: 빠른 참조

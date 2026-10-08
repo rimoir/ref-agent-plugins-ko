@@ -121,8 +121,8 @@ test('sessionStart injects the default-level ruleset as additional_context and k
   const output = parse(run('ponytail-activate.js', c.env, input));
   assert.deepEqual(Object.keys(output), ['additional_context']);
   assert.match(output.additional_context, /^PONYTAIL MODE ACTIVE — level: ultra/);
-  assert.match(output.additional_context, /YAGNI를 극단까지 적용한다/, 'ultra row must survive the level filter');
-  assert.doesNotMatch(output.additional_context, /요청한 것을 만들되/, 'lite row must be filtered out');
+  assert.match(output.additional_context, /요청 자체도 따진다/, 'ultra row must survive the level filter');
+  assert.doesNotMatch(output.additional_context, /요청한 것을 만든다/, 'lite row must be filtered out');
   assert.doesNotMatch(output.additional_context, /STATUSLINE SETUP NEEDED/, 'Cursor has no Claude statusline to nudge about');
   assert.equal(fs.readFileSync(c.flag, 'utf8'), 'ultra');
   assert.equal(fs.existsSync(path.join(c.home, '.claude')), false, 'Cursor state must not land in ~/.claude');
@@ -157,8 +157,8 @@ test('beforeSubmitPrompt tracks /ponytail commands and delivers the new level ru
   assert.equal(sw.continue, true, 'must never block the prompt');
   assert.equal(sw.user_message, undefined, 'Cursor shows user_message only for blocked prompts');
   assert.match(sw.additional_context, /^PONYTAIL MODE CHANGED — level: lite/);
-  assert.match(sw.additional_context, /요청한 것을 만들되/, 'Cursor has no /ponytail command, so the level ruleset rides along');
-  assert.doesNotMatch(sw.additional_context, /YAGNI를 극단까지 적용한다/);
+  assert.match(sw.additional_context, /요청한 것을 만든다/, 'Cursor has no /ponytail command, so the level ruleset rides along');
+  assert.doesNotMatch(sw.additional_context, /요청 자체도 따진다/);
   assert.equal(fs.readFileSync(c.flag, 'utf8'), 'lite');
 
   // Bare /ponytail reports the live level without resetting it.

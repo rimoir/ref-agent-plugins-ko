@@ -170,11 +170,10 @@ test("filterSkillBodyForMode keeps rule bullets that contain a colon", () => {
 
   const filtered = filterSkillBodyForMode(body, "full");
 
-  assert.ok(filtered.includes("요청하지 않은 추상화를 만들지 않는다"));
-  assert.ok(filtered.includes("실제로 무언가를 생략한 의도적 단순화"));
-  assert.ok(filtered.includes("그 한계와 나중에 바꿀 방법을 적은 `ponytail:` 주석"));
-  // The Intensity examples are still filtered down to the active mode.
-  assert.ok(filtered.includes('full: "fetch 함수에 `@lru_cache'));
-  assert.ok(!filtered.includes('lite: "캐시를 추가했어요'));
-  assert.ok(!filtered.includes('ultra: "프로파일러가'));
+  assert.ok(filtered.includes("버그 수정: 고치기 전에 건드리는 함수의 모든 호출 지점을 grep으로 찾고"));
+  assert.ok(filtered.includes("절대 빼지 않는 것: 신뢰 경계의 입력 검증"));
+  assert.ok(filtered.includes("그 한계와 언제 바꿀지를 적은 `ponytail:` 주석"));
+  // The level rows are still filtered down to the active mode.
+  assert.ok(filtered.includes("| **full** |"));
+  assert.ok(!filtered.includes("| **lite** |"));
 });

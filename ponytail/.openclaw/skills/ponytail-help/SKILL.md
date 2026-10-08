@@ -14,9 +14,9 @@ license: MIT
 
 | 레벨 | 트리거 | 무엇이 바뀌나 |
 |-------|---------|-------------|
-| **Lite** | `/ponytail lite` | 요청한 것을 만들고, 더 게으른 대안을 한 줄로 알려 준다. |
-| **Full** | `/ponytail` | 선택 순서(the ladder, 위에서부터 차례로 확인하는 해결책 목록)를 강제한다: YAGNI(지금 필요하지 않은 기능은 만들지 않는다) → 표준 라이브러리 → 플랫폼 기본 기능 → 한 줄 → 최소 코드. 기본값이다. |
-| **Ultra** | `/ponytail ultra` | YAGNI를 극단까지 적용한다. 추가보다 삭제를 먼저 한다. 만들기 전에 요구 사항이 정말 필요한지 따진다. |
+| **Lite** | `/ponytail lite` | 요청한 것을 만들고, 더 작은 선택지를 한 줄로 알려 준다. |
+| **Full** | `/ponytail` | 가장 작은 완전한 변경을 하고, 로직에 필요한 곳에는 검사를 남기고, 건너뛴 것과 위험을 밝히는 답을 한다. 기본값이다. |
+| **Ultra** | `/ponytail ultra` | 요청 자체도 따지고, 만들기 전에 필요 없는 부분은 하지 말자고 말한다. |
 
 레벨은 바꾸거나 세션이 끝날 때까지 그대로 유지된다.
 
@@ -24,9 +24,9 @@ license: MIT
 
 | 스킬 | 트리거 | 하는 일 |
 |-------|---------|--------------|
-| **ponytail** | `/ponytail` | 게으른 모드 자체다. 동작하는 가장 단순한 해결책을 고른다. |
-| **ponytail-review** | `/ponytail-review` | 과잉 설계 리뷰: `L42: yagni: factory, one product. Inline.` |
-| **ponytail-audit** | `/ponytail-audit` | 저장소 전체 과잉 설계 감사: 삭제할 항목을 우선순위대로 나열한다. |
+| **ponytail** | `/ponytail` | 게으른 모드 자체다. 새 코드를 가장 적게 쓰고, 건너뛴 작업과 위험을 밝히는 분명한 답을 한다. |
+| **ponytail-review** | `/ponytail-review` | diff의 품질 리뷰. 버그, 보안, 부하, 빠진 테스트, 속도, 잘라낼 것을 본다. 항목마다 무엇이 잘못되는지와 고치는 방법을 적는다. |
+| **ponytail-audit** | `/ponytail-audit` | 같은 품질 리뷰를 저장소 전체에 하고 순위를 매긴다. |
 | **ponytail-debt** | `/ponytail-debt` | 의도적 단순화를 표시한 `ponytail:` 주석을 모아 추적할 수 있는 부채 목록으로 만든다. |
 | **ponytail-gain** | `/ponytail-gain` | 측정한 효과를 보여 주는 점수표: 코드 감소, 비용 감소, 속도 향상. |
 | **ponytail-help** | `/ponytail-help` | 이 카드를 보여 준다. |

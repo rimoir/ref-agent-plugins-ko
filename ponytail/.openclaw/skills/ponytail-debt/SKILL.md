@@ -1,6 +1,6 @@
 ---
 name: ponytail-debt
-description: "ponytail: 주석을 모두 모아 부채 목록 하나로 만든다. 미뤄 둔 작업을 잊지 않고 관리하게 한다. 한 번만 실행하는 보고서다."
+description: "ponytail: 지름길 주석을 모두 모아 부채 목록 하나로 만든다. 미뤄 둔 작업을 잊지 않고 관리하게 한다. 한 번만 실행하는 보고서다."
 homepage: https://github.com/DietrichGebert/ponytail
 license: MIT
 ---

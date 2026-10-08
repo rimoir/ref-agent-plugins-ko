@@ -1,12 +1,9 @@
 ---
 name: ponytail-debt
 description: >
-  코드베이스의 모든 `ponytail:` 주석을 모아 부채 목록을 만든다. ponytail이
-  남긴 의도적인 단순화와 미뤄 둔 작업을 추적해서, "나중에 하자"던 일이 결국
-  영영 하지 않는 일로 남지 않게 한다. 사용자가 "ponytail debt",
-  "/ponytail-debt", "what did ponytail defer", "list the shortcuts", "ponytail
-  ledger", "what did we mark to do later"라고 말하면 쓴다. 일회성 보고서이며
-  아무것도 바꾸지 않는다.
+  모든 `ponytail:` 지름길 주석을 부채 목록으로 나열한다. 일회성 보고서이며
+  아무것도 바꾸지 않는다. "ponytail debt", "what did ponytail defer", "list the
+  shortcuts", /ponytail-debt에 쓴다.
 ---
 
 ponytail이 의도적으로 단순화한 부분에는 모두 `ponytail:` 주석이 붙어 있고,

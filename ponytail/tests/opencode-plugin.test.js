@@ -100,7 +100,7 @@ test('V2 skill transform matches what OpenCode derives from the same SKILL.md', 
   const ponytail = added.skills.find((s) => s.id === 'ponytail');
   const source = parseSkillFile(path.join(__dirname, '..', 'skills', 'ponytail', 'SKILL.md'));
   assert.equal(ponytail.description, source.description);
-  assert.ok(ponytail.description.startsWith('실제로 동작하는 해결책 가운데 가장 게으른 것'), 'folded > block joined');
+  assert.ok(ponytail.description.startsWith('게으른 시니어 개발자 모드다. 작업을 온전히 해결하는 가장 작은 변경'), 'folded > block joined');
   assert.ok(ponytail.description.endsWith('\n'), 'YAML closes a folded scalar with a newline');
   assert.ok(!ponytail.description.includes('argument-hint'), 'block scalar stops at the next key');
   assert.equal(ponytail.content, source.body);

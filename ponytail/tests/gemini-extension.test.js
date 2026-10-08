@@ -34,7 +34,7 @@ const GEMINI_AUTO_HOOKS = 'hooks/hooks.json';
 const RULE_INVARIANTS = [
   '게으른 시니어',
   '신뢰 경계의 입력 검증',
-  '단순한 휴리스틱',
+  '그 한계와 언제 바꿀지를 적은',
 ];
 
 function read(relPath) {

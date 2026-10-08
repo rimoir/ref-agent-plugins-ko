@@ -134,20 +134,6 @@ hermes plugins install DietrichGebert/ponytail --enable
 
 프로젝트 루트의 `AGENTS.md`를 읽으므로 설정할 것이 없다. [`AGENTS.md`](AGENTS.md)를 프로젝트에 복사하거나, 이 저장소의 체크아웃에서 `codewhale`을 실행하면 끝이다.
 
-## Swival
-
-먼저 컬렉션을 라이브러리에 올려 둔 뒤, 원하는 스킬을 추가한다.
-
-```bash
-swival skills add --global https://github.com/DietrichGebert/ponytail  # ~/.config/swival/library에 준비해 둔다
-swival skills add ponytail                                             # 이 프로젝트에 컬렉션을 설치한다
-swival skills add --global ponytail                                    # 또는 모든 프로젝트에서 켠다
-```
-
-Swival은 프로젝트 루트의 `AGENTS.md`와 전역 `~/.config/swival/AGENTS.md`도 읽는다. 지시문만 쓰는 대체 경로다.
-
-명령줄에서 스킬을 명시적으로 켜려면 플러그인 네임스페이스에 `$` 접두사를 붙인다. 예: `$ponytail:ponytail-review`.
-
 ## Devin CLI
 
 ```bash
@@ -216,7 +202,7 @@ npx skills add DietrichGebert/ponytail
 
 ## 그 밖의 에이전트 (규칙 파일만)
 
-Cursor([훅 설치](#cursor) 대신 규칙만 쓰는 방법), Windsurf, Cline, GitHub Copilot Chat(독립 실행형 [Copilot CLI](#github-copilot-cli)가 아닌 VS Code, JetBrains, Visual Studio 에디터 확장), Aider, Kiro, Zed, CodeWhale, Swival, Qoder: 이 저장소에서 맞는 규칙 파일을 복사한다 ([`.cursor/rules/`](.cursor/rules/), [`.windsurf/rules/`](.windsurf/rules/), [`.clinerules/`](.clinerules/), [`.github/copilot-instructions.md`](.github/copilot-instructions.md), [`AGENTS.md`](AGENTS.md), [`.kiro/steering/`](.kiro/steering/), [`.qoder/rules/`](.qoder/rules/)).
+Cursor([훅 설치](#cursor) 대신 규칙만 쓰는 방법), Windsurf, Cline, GitHub Copilot Chat(독립 실행형 [Copilot CLI](#github-copilot-cli)가 아닌 VS Code, JetBrains, Visual Studio 에디터 확장), Aider, Kiro, Zed, CodeWhale, Qoder: 이 저장소에서 맞는 규칙 파일을 복사한다 ([`.cursor/rules/`](.cursor/rules/), [`.windsurf/rules/`](.windsurf/rules/), [`.clinerules/`](.clinerules/), [`.github/copilot-instructions.md`](.github/copilot-instructions.md), [`AGENTS.md`](AGENTS.md), [`.kiro/steering/`](.kiro/steering/), [`.qoder/rules/`](.qoder/rules/)).
 
 Kiro: `.kiro/steering/ponytail.md`를 `~/.kiro/steering/`(전역)이나 프로젝트의 `.kiro/steering/`에 복사한다.
 

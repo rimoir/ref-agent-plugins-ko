@@ -27,7 +27,7 @@ description: >
 | **ponytail** | `/ponytail` | 게으른 모드 자체다. 새 코드를 가장 적게 쓰고, 건너뛴 작업과 위험을 밝히는 분명한 답을 한다. |
 | **ponytail-review** | `/ponytail-review` | diff의 품질 리뷰. 버그, 보안, 부하, 빠진 테스트, 속도, 잘라낼 것을 본다. 항목마다 무엇이 잘못되는지와 고치는 방법을 적는다. |
 | **ponytail-audit** | `/ponytail-audit` | 같은 품질 리뷰를 저장소 전체에 하고 순위를 매긴다. |
-| **ponytail-debt** | `/ponytail-debt` | 의도적 단순화를 표시한 `ponytail:` 주석을 모아 추적할 수 있는 부채 목록으로 만든다. |
+| **ponytail-debt** | `/ponytail-debt` | 의도적 단순화를 표시한 `shortcut:` 주석을 모아 추적할 수 있는 부채 목록으로 만든다. |
 | **ponytail-gain** | `/ponytail-gain` | 측정한 효과를 보여 주는 점수표: 코드 감소, 비용 감소, 속도 향상. |
 | **ponytail-help** | `/ponytail-help` | 이 카드를 보여 준다. |
 

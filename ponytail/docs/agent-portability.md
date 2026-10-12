@@ -49,7 +49,7 @@ Ponytail은 여러 에이전트에 옮겨 쓸 수 있는 스킬 배포판이다.
 - `skills/ponytail/SKILL.md`: 게으른 시니어 개발자 모드
 - `skills/ponytail-review/SKILL.md`: diff의 품질 리뷰
 - `skills/ponytail-audit/SKILL.md`: 저장소 전체의 품질 감사
-- `skills/ponytail-debt/SKILL.md`: `ponytail:` 표식을 단 의도적 단순화를 모아 관리하는 부채 목록
+- `skills/ponytail-debt/SKILL.md`: `shortcut:` 표식을 단 의도적 단순화를 모아 관리하는 부채 목록
 - `skills/ponytail-gain/SKILL.md`: 벤치마크로 측정한 효과를 보여 주는 점수표
 - `skills/ponytail-help/SKILL.md`: 빠른 참조
 - `AGENTS.md`: 스킬을 지원하지 않는 에이전트용으로 항상 켜져 있는 간결한 지시문 모음

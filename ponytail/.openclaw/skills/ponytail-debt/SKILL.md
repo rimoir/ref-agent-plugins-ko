@@ -1,12 +1,12 @@
 ---
 name: ponytail-debt
-description: "ponytail: 지름길 주석을 모두 모아 부채 목록 하나로 만든다. 미뤄 둔 작업을 잊지 않고 관리하게 한다. 한 번만 실행하는 보고서다."
+description: "shortcut: 주석을 모두 모아 부채 목록 하나로 만든다. 미뤄 둔 작업을 잊지 않고 관리하게 한다. 한 번만 실행하는 보고서다."
 homepage: https://github.com/DietrichGebert/ponytail
 license: MIT
 ---
 
-ponytail이 의도적으로 단순화한 부분에는 모두 `ponytail:` 주석이 붙어 있고,
-주석에는 그 한계와 나중에 바꿀 방법이 적혀 있다. 이 스킬은 그 주석을 부채 목록
+ponytail이 의도적으로 단순화한 부분에는 모두 `shortcut:` 주석이 붙어 있고,
+주석에는 그 한계와 나중에 바꿀 방법이 적혀 있다(예전 코드는 `ponytail:`을 쓴다). 이 스킬은 그 주석을 부채 목록
 하나로 모아서, 미뤄 둔 작업이 아무도 모르는 사이에 영구적인 코드로 굳지 않게 한다.
 
 ## 검색
@@ -14,10 +14,13 @@ ponytail이 의도적으로 단순화한 부분에는 모두 `ponytail:` 주석�
 저장소에서 주석 표식을 grep으로 찾는다. `node_modules`, `.git`, 빌드 결과물은
 건너뛴다.
 
-`grep -rnE --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=build '(#|//|/[*]) ?ponytail:' .`  (쓰는 스택에 다른 주석 접두사가 있으면 추가한다)
+`grep -rnE --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=build '(#|//|/[*]) ?(shortcut|ponytail):' .`  (쓰는 스택에 다른 주석 접두사가 있으면 추가한다)
+
+사용자가 자기 표식 단어를 지정하면(`/ponytail-debt TODO`) 그 단어를 대신 찾는다.
 
 검색 결과 한 건이 부채 목록의 한 행이다. 주석 접두사를 조건에 넣었기 때문에,
-이 규칙을 언급만 하는 산문은 부채 목록에 들어가지 않는다.
+이 규칙을 언급만 하는 산문은 부채 목록에 들어가지 않는다. 키보드 단축키 메모처럼
+미뤄 둔 작업이 아닌 결과는 건너뛴다.
 
 ## 출력
 
@@ -25,15 +28,15 @@ ponytail이 의도적으로 단순화한 부분에는 모두 `ponytail:` 주석�
 
 `<file>:<line>, <단순화한 내용>. ceiling: <주석에 적힌 한계>. upgrade: <다시 살펴볼 조건>.`
 
-주석 규칙은 `ponytail: <한계>, <나중에 바꿀 방법>`이므로, 한계와 다시 살펴볼
+주석 규칙은 `shortcut: <한계>, <나중에 바꿀 방법>`이므로, 한계와 다시 살펴볼
 조건을 주석에서 그대로 가져온다. 행마다 담당자도 적고 싶으면
 `git blame -L<line>,<line>`을 추가한다.
 
 방치될 위험을 표시한다. 나중에 바꿀 방법이나 다시 살펴볼 조건을 적지 않은
-`ponytail:` 주석에는 `no-trigger` 태그를 붙인다. 이런 주석이 아무도 모르게
+표식 주석에는 `no-trigger` 태그를 붙인다. 이런 주석이 아무도 모르게
 방치된 채 남는다.
 
-`표식 <N>개, 그중 조건이 없는 것 <M>개.`로 끝낸다. 아무것도 찾지 못하면 `ponytail: 부채가 없다. 부채 목록이 비어 있다.`라고 적는다.
+`표식 <N>개, 그중 조건이 없는 것 <M>개.`로 끝낸다. 아무것도 찾지 못하면 `shortcut 부채가 없다. 부채 목록이 비어 있다.`라고 적는다.
 
 ## 범위
 

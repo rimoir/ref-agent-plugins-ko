@@ -163,7 +163,7 @@ test("filterSkillBodyForMode does not drop a rule bullet whose label matches a m
 
 test("filterSkillBodyForMode keeps rule bullets that contain a colon", () => {
   // Regression: rule bullets outside the Intensity section (e.g. the
-  // "No unrequested abstractions:" rule or the `ponytail:` comment convention)
+  // "No unrequested abstractions:" rule or the `shortcut:` comment convention)
   // contain a colon and must not be mistaken for mode-example lines.
   const skillPath = new URL("../../skills/ponytail/SKILL.md", import.meta.url);
   const body = readFileSync(skillPath, "utf8");
@@ -172,7 +172,7 @@ test("filterSkillBodyForMode keeps rule bullets that contain a colon", () => {
 
   assert.ok(filtered.includes("버그 수정: 고치기 전에 건드리는 함수의 모든 호출 지점을 grep으로 찾고"));
   assert.ok(filtered.includes("절대 빼지 않는 것: 신뢰 경계의 입력 검증"));
-  assert.ok(filtered.includes("그 한계와 언제 바꿀지를 적은 `ponytail:` 주석"));
+  assert.ok(filtered.includes("`shortcut: <the limit>, <when to upgrade>` 형식의 코드 주석"));
   // The level rows are still filtered down to the active mode.
   assert.ok(filtered.includes("| **full** |"));
   assert.ok(!filtered.includes("| **lite** |"));

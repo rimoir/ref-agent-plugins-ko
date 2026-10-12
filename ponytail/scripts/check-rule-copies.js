@@ -45,7 +45,7 @@ const INVARIANTS = [
   '이 코드베이스에',                      // ladder rung: reuse what already exists (#217)
   '모든 호출 지점을 grep으로 찾고',       // root-cause bug fix (#245)
   '변경 자체에는 절대 게으르지 않는다',    // scope: callers, tests and fixtures the change breaks
-  '그 한계와 언제 바꿀지를 적은',          // ponytail: shortcut comment
+  'shortcut: <the limit>, <when to upgrade>',   // shortcut marker comment
   '경계 사례에서 올바르게 동작하는',       // robust-variant rule
   '검사가 없는 게으른 코드는 끝난 코드가 아니다', // test reflex
   // the "never cut" carve-outs: pin each so a reword in either file can't silently drop one.

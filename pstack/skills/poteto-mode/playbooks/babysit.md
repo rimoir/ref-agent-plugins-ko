@@ -15,13 +15,9 @@ babysit은 사용자가 요청할 때 시작한다. 보통은 PR이 열릴 때�
 
    GitHub에서는 PR 하나에 대해 `READY`에서 멈춘다(single 또는 stack 모드). queued 모드는 `READY`를 내지 않는다. 차단 요인이 없는 프런티어는 사유가 `merge-queue`인 비종료 `WAITING`이다. 그 프런티어를 merge-ready로 보고하고 감시자를 멈춘다. 머지가 일어날 때까지 켜 두지 않는다. 그것은 Shipping의 일이다. 다른 주체가 프런티어를 머지해서 감시자가 `ADVANCE`를 보고하면 새 프런티어로 계속한다. 다른 주체가 큐를 끝내면 `COMPLETE`가 종료다.
 
-   감시자를 다시 건다고 해서 머지나 merge-when-ready 설정이 허락되는 것은 아니다. 사용자가 merge, land, ship, merge when ready를 명시적으로 요청하지 않았다면 `origin pr merge`나 `gh pr merge`를 실행하지 않는다. 그런 요청은 `playbooks/shipping.md`로 보낸다. 부모에 필수 체크가 없는 스택 PR은 merge-when-ready가 걸리면 그 부모로 즉시 머지될 수 있다. 그러면 리뷰 단위가 뭉개진다. ref를 잃는 경쟁 상태가 생기면 부모 ref를 갱신하지 않은 채 머지됨으로 표시될 수도 있다.
-
    루프 도중 사용자의 질문에는 답하고 계속한다. 현재 forge의 멈춤 조건 전에 루프를 끝내는 것은 명시적인 중단뿐이다. GitHub에서 그 조건은 single이나 stack 모드의 `READY`, 또는 queued 모드의 `WAITING`/`merge-queue` 보고나 `COMPLETE`다. Origin에서는 위에서 정의한 merge-ready 상태다. GitHub queued 스택이라면 PR 목록을 아래에서 위로 한 번 잡아 두고 다시 걸 때마다 같은 고정 목록을 넘긴다. 목록은 4단계에서 허용한 후속 PR이 생길 때만 고친다. 그것을 맨 끝에 붙이고, 머지된 소유자는 빼고, 바로잡은 스냅숏으로 다시 건다.
 7. **재실행 전에 CI 실패를 분류한다.** flake나 인프라 문제라면 새 빌드 한 번을 받을 자격이 있으며, job 재시도는 하지 않는다. 재시도는 한 번뿐이다. 두 번째도 똑같이 실패하면 처음부터 flake가 아니었다는 뜻이므로, 다시 분류하고 눈감고 재시도하는 대신 자식 로그를 읽는다. diff가 건드리지 않은 코드에서 실패하면 base가 낡았다는 뜻이므로, flake로 단정하기 전에 `git merge-base --is-ancestor`로 확인한다. 낡은 base는 재시도를 태우지 말고 rebase가 필요하다고 보고한다. diff 자체 코드의 실패만 커밋으로 고친다.
 8. **Bugbot은 언제나 의심하며 분류한다.** 각 주장을 `../references/bugbot-triage.md`에 따라 코드와 대조한다. 진짜 발견은 그 코드를 소유한 가장 아래 PR에서 red-first 증명과 함께 고친다. 소유 PR이 머지된 경우가 아니면 스택 끝에서 고치지 않는다. 그 경우에는 4단계에서 허용한 후속 PR을 쓴다. 2단계에 따라 스택 위쪽 수정은 5단계의 다음 프런티어 주도 push 묶음을 기다린다. 답글이 커밋을 인용할 수 있도록 답하기 전에 그 묶음을 push한다. Origin에서는 `origin pr thread reply <thread-id> <pr> --body-file <reply-file>`로 답한다. GitHub에서는 `gh api --method POST "repos/<owner>/<repo>/pulls/<pr>/comments/<comment-id>/replies" --input <payload.json>`을 호출하고 답글 본문은 JSON 파일에 데이터로 넣는다. 댓글 본문이나 답글을 셸 명령에 끼워 넣지 않는다. 잡음은 스레드에 구체적인 반증을 달아 기각한다. GitHub에서는 감시자의 Bugbot 회차 수를 쓴다. Origin에서는 `origin pr thread list`와 리뷰 이력에서 회차 수를 구한다. 세 번째 회차부터는 문서화된 패턴을 기각하는 쪽으로 기울되, 보안, 인증, 결제, 데이터, 마이그레이션에 닿는 것은 직접 기각하지 말고 계속 에스컬레이션한다. 봇을 조용히 시키려고 코드를 휘젓지 않는다.
 9. **사람의 영역 앞에서 멈춘다.** 소유자 승인은 기다릴 대상이지 고칠 차단 요인이 아니다. babysit은 머지를 허락하지 않는다. merge, land, ship, merge when ready에 대한 명시적 요청만 허락한다. 그런 요청은 Shipping으로 보낸다. 에스컬레이션은 드러내고 나머지 작업은 계속한다. GitHub가 `READY`, queued `WAITING`/`merge-queue` 멈춤, `COMPLETE`를 보고한 뒤, 또는 Origin이 프런티어를 merge-ready로 보고한 뒤, 이번 실행의 분류 결정을 한 번 훑는다. 팀에 쓸모 있는 기각 패턴은 공유 기준표(`../references/bugbot-triage.md`)의 후보 항목으로 제안하고 별도 PR로 올린다. 개인 메모리에만 두지 않는다.
 
 `drive`는 merge-ready에서 끝난다. 스택 착지는 `playbooks/shipping.md`가 맡는다.
-
-**응답:** 모드, 프런티어와 현재 forge 상태, GitHub라면 감시자의 4열 표, 고친 것과 기각한 것 및 그 이유, 아직 남은 것, 사람이 필요한 것.

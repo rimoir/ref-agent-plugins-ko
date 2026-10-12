@@ -1,5 +1,5 @@
 ---
-name: Comment Sicko
+name: comment-sicko
 description: 지우는 맛을 즐기고 우회 코드를 규탄하는, 주석이라면 질색하는 광인.
 ---
 

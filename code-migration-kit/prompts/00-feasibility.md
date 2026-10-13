@@ -1,80 +1,74 @@
-# 00 — Feasibility report
+# 00: 실행 가능성 보고서
 
-**When:** before anything else. Read-only toward the repo under survey;
-produces a report and a verdict. The single permitted write is appending to
-`migration/cost-log.tsv`.
-**Prerequisites:** none. **Placeholders:** `[target language]`, `[kit path]`.
+**언제:** 무엇보다 먼저. 조사 대상 저장소는 읽기만 하고, 보고서와 판정을
+낸다. 쓰기는 `migration/cost-log.tsv`에 줄을 덧붙이는 것 하나만 허용한다.
+**선행 조건:** 없음. **Placeholder:** `[target language]`, `[kit path]`.
 
 ---
 
-Read [kit path]/README.md — it defines the six-step process and the prompts
-that run it. Open your report by restating the six steps, one line
-each. Beyond that opening index, the README is your rubric, not your evidence:
-cite it only to name the step you're applying, never to support a claim about
-this repo — and the case-study numbers it mentions are not estimates for this
-one. Don't run the other prompts yet.
+[kit path]/README.md를 읽어라. 여섯 단계 프로세스와 그것을 돌리는 프롬프트가
+거기 정의되어 있다. 보고서는 여섯 단계를 한 줄씩 다시 정리하며 시작한다. 이
+첫 색인을 빼면 README는 채점 기준이지 증거가 아니다. 지금 적용하는 단계의
+이름을 댈 때만 인용하고, 이 저장소에 관한 주장의 근거로는 절대 쓰지 마라.
+README에 나오는 사례 연구 수치도 이 저장소의 추정치가 아니다. 다른 프롬프트는
+아직 돌리지 마라.
 
-Then read this codebase and tell me what a migration to [target language]
-would look like — a report, not code. Read-only commands (grep, git log, line
-counts) are fine; no edits to the codebase under survey, no test runs, and
-one build (plus the typecheck, if it's a separate command) — timing the
-current build is your baseline. Every claim gets a file path or a count you
-actually gathered; everything else is labeled an assumption. Too big to read
-fully? Sample, and say what you skipped.
+그다음 이 코드베이스를 읽고 [target language]로 옮기는 마이그레이션이 어떤
+모습일지 알려 달라. 코드가 아니라 보고서다. 읽기 전용 명령(grep, git log, 줄
+수 세기)은 써도 된다. 조사 대상 코드베이스는 고치지 말고, 테스트도 돌리지
+마라. 빌드는 한 번만 한다(typecheck가 따로 있으면 그것도 한 번). 현재 빌드에
+걸리는 시간이 기준선이다. 모든 주장에는 직접 확인한 파일 경로나 개수를 붙인다.
+나머지는 모두 가정이라고 표시한다. 다 읽기에 너무 크면 표본을 뽑고, 무엇을
+건너뛰었는지 밝힌다.
 
-Start with the case for leaving: pain instances in this code, not the
-language's reputation.
+떠나야 하는 이유부터 시작한다. 언어의 평판이 아니라 이 코드에서 실제로 겪는
+고통 사례를 든다.
 
-Then make three calls for this repo, each ending in one committed line naming
-the files that forced it — a call without file paths is no call:
+그다음 이 저장소에 관해 세 가지를 판단한다. 판단마다 그 결론을 강제한 파일을
+밝히는 확정 문장 한 줄로 끝낸다. 파일 경로가 없는 판단은 판단이 아니다.
 
-1. **Structure-preserving or redesign?** Does this architecture translate
-   one-to-one into idiomatic [target language], or does the move demand
-   restructuring?
-2. **What does verification cost?** Time the current build and typecheck as
-   the baseline; state the scaling assumption behind your estimate for the
-   target.
-3. **Do the tests survive?** Count the tests that hit the public surface —
-   they come with you — versus those that import internals, which die with the
-   old language. Three examples of each. This is a gate, not an observation: the
-   migration has no exit condition without a judge that runs against both the old
-   and new code through the public surface. If too little survives to be that
-   judge, the verdict below must name "build the judge first" as a pre-Step-1
-   task — `prompts/00b-judge-setup.md`, run between this gate and Step 1 — and
-   sketch the parity scenarios you'd check against the old code, the seed for
-   that prompt.
+1. **구조 보존인가, 재설계인가?** 이 아키텍처가 관용적인 [target language]로
+   일대일로 옮겨지는가, 아니면 이전하려면 구조를 바꿔야 하는가?
+2. **검증 비용은 얼마인가?** 현재 빌드와 typecheck 시간을 재서 기준선으로
+   삼는다. 대상 언어 쪽 추정에 깔린 규모 확장 가정을 밝힌다.
+3. **테스트가 살아남는가?** 공개 표면을 치는 테스트(함께 옮겨 간다)와 내부를
+   import하는 테스트(옛 언어와 함께 죽는다)를 센다. 각각 예시를 셋씩 든다. 이것은
+   관찰이 아니라 게이트가다. 공개 표면을 거쳐 옛 코드와 새 코드 양쪽에 돌아가는
+   판정 기준이 없으면 마이그레이션에는 종료 조건이 없다. 판정 기준이 될 만큼 살아남는
+   것이 너무 적으면, 아래 판정에 "판정 기준부터 만든다"를 1단계 이전 작업으로
+   적어야 한다. 이 게이트와 1단계 사이에 돌리는 `prompts/00b-judge-setup.md`가
+   그 작업이다. 옛 코드에 대고 확인할 동등성 시나리오의 밑그림도 그린다. 그
+   프롬프트의 씨앗이 된다.
 
-Then instantiate the six steps here: what each concretely means in this repo,
-and which of this kit's prompts runs it — blanks filled in with this repo's
-paths and units of work. Where a step needs analysis you can't do read-only,
-the filled-in prompt is the answer, not a guess. Cost is a visible
-multiplication — units of work × per-unit estimate — or the word unknown.
+그다음 여섯 단계를 이 저장소에 구체화한다. 각 단계가 이 저장소에서 실제로
+무엇을 뜻하는지, 이 키트의 어느 프롬프트가 그것을 돌리는지 적고, 빈칸은 이
+저장소의 경로와 작업 단위로 채운다. 어떤 단계에 읽기만으로는 할 수 없는 분석이
+필요하면, 추측하지 말고 빈칸을 채운 프롬프트를 답으로 내놓는다. 비용은 눈에
+보이는 곱셈(작업 단위 수 × 단위당 추정치)으로 쓰거나, unknown이라고 쓴다.
 
-Then two sections the gate decision needs:
+그다음 게이트 결정에 필요한 두 절을 쓴다.
 
-**Cost & duration.** A banded, order-of-magnitude token estimate for this
-migration, derived from the repo you just surveyed — bands only; a precise
-number is forbidden, because precise predictions will be wrong and erode
-trust. Show the drivers explicitly: file count × review topology
-(implementer, two reviewers, fixer per unit) × referee price. Then per
-step, estimated wall-clock and active-attention minutes.
+**비용과 기간.** 방금 조사한 저장소에서 끌어낸, 자릿수 수준의 구간으로 나눈 토큰
+추정치. 구간만 쓴다. 정확한 숫자는 금지한다. 정확한 예측은 틀리기 마련이고 신뢰를
+깎는다. 결정 요인을 명시한다. 파일 수 × 리뷰 구성(단위마다 구현자, 리뷰어 둘,
+수정자) × 판정기 비용이다. 그다음 단계마다 예상 경과 시간과 사람이 집중해야 하는
+시간을 분 단위로 적는다.
 
-**Model plan.** Recommended model tier per phase for this repo, one line of
-reasoning each — a decision I make at this gate, not a default. Tier by
-blast radius: rulebook authorship and amendments → largest available model
-(one-time work; every error replicates into every translated file); skeptic
-reviewers → largest or mid tier, by gap complexity; high-volume translation
-implementers → mid or small tier; fixers → mid tier (the compiler is the
-real referee). Every post-feasibility prompt (01–06) takes my chosen models
-as explicit `[model]` parameters.
+**모델 계획.** 이 저장소의 단계별 권장 모델 등급과 근거 한 줄씩. 기본값이 아니라
+내가 이 게이트에서 내리는 결정이다. 등급은 피해 반경에 따라 정한다. 규칙집 작성과
+개정은 쓸 수 있는 가장 큰 모델에 맡긴다(한 번만 하는 일이고, 오류 하나가 번역된
+모든 파일에 복제된다). 회의적 리뷰어는 간극의 복잡도에 따라 가장 큰 등급이나 중간
+등급을 쓴다. 물량이 많은 번역 구현자는 중간이나 작은 등급을 쓴다. 수정자는 중간
+등급을 쓴다(진짜 판정기는 컴파일러다). feasibility 이후의 모든 프롬프트(01~06)는
+내가 고른 모델을 명시적인 `[model]` 매개변수로 받는다.
 
-End with a verdict: migrate now, later, or don't — "don't" is a valid outcome
-of a fully sketched plan — plus the single fact that would change it, one this
-repo can't tell you, and how you'd check it in under a day. Close with what
-you read and what you ran.
-Append one timestamped line for this step to `migration/cost-log.tsv` —
-create it with header `step\ttimestamp\twall_clock_min\ttokens\tsubagents\tmodel`
-if absent; real values where available, `unknown` where not. Plain
-tab-separated values, no `key=` prefixes — a valid row looks exactly like:
+판정으로 끝낸다. 지금 마이그레이션한다, 나중에 한다, 하지 않는다 중 하나다.
+계획을 끝까지 그려 본 결과로 "하지 않는다"가 나와도 된다. 판정을 뒤집을 단 하나의
+사실도 적는다. 이 저장소가 알려 줄 수 없는 사실이어야 하고, 하루 안에 어떻게
+확인할지도 함께 적는다. 마지막에 무엇을 읽고 무엇을 돌렸는지 밝힌다.
+이 단계의 기록을 타임스탬프와 함께 `migration/cost-log.tsv`에 한 줄 덧붙인다.
+파일이 없으면 헤더 `step\ttimestamp\twall_clock_min\ttokens\tsubagents\tmodel`로
+만든다. 얻을 수 있는 값은 실제 값을, 없는 값은 `unknown`을 쓴다. `key=` 접두어 없이
+탭으로만 구분한다. 올바른 행은 정확히 이런 모양이다.
 `3	2026-06-11T14:02Z	21	2035336	35	claude-sonnet-4-6`
-(your step number and values vary; the format doesn't).
+(단계 번호와 값은 달라져도 형식은 그대로다.)

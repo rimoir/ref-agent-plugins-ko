@@ -1,70 +1,66 @@
-# 00b — Judge setup
+# 00b: 판정 기준 준비
 
-**When:** after the feasibility gate signs off "migrate," before Step 1 — but
-only when the feasibility report's call #3 found too few public-surface tests
-to judge parity (the common case). If your existing suite already exercises the
-public surface, or already lives in a third language, you have your judge: skip
-this prompt and carry that suite into Step 6.
-**Prerequisites:** signed-off feasibility verdict; the call #3 test census
-(which tests hit the public surface, which import internals).
-**Placeholders:** `[target language]`, `[reviewer model]` (from the Model plan
-signed off at the feasibility gate).
+**언제:** 실행 가능성 게이트에서 "마이그레이션한다"로 승인한 뒤, 1단계 전. 단,
+feasibility 보고서의 3번 판단에서 동등성을 판정할 공개 표면 테스트가 너무 적다고
+나왔을 때만 쓴다(흔한 경우다). 기존 테스트 묶음이 이미 공개 표면을 다루거나 제3의
+언어로 되어 있다면 판정 기준은 이미 있다. 이 프롬프트를 건너뛰고 그 테스트 묶음을
+6단계로 가져간다.
+**선행 조건:** 승인된 feasibility 판정. 3번 판단의 테스트 조사 결과(어떤 테스트가
+공개 표면을 치고 어떤 테스트가 내부를 import하는지).
+**Placeholder:** `[target language]`, `[reviewer model]`(실행 가능성 게이트에서 승인한
+모델 계획에서 가져온다).
 
-> Designed, not yet dogfooded — see RUN-NOTES. Runs 1–3 built their judge inside
-> Step 6, which is exactly the late-judge failure this prompt exists to prevent
-> (Run 1's referee shipped two comparator bugs before it could be trusted). Treat
-> the output as a draft to debug, not a verdict to believe.
+> 설계만 했고 아직 직접 써 보지는 않았다. RUN-NOTES를 본다. 1~3회차 실행은 판정 기준을
+> 6단계 안에서 만들었는데, 이 프롬프트가 막으려는 늦은 판정 기준 실패가 바로 그것이다
+> (1회차의 판정기는 믿을 만해지기 전에 비교기 버그 두 개를 내보냈다). 결과물은 믿을
+> 판정이 아니라 디버깅할 초안으로 다룬다.
 
 ---
 
-Use a workflow. The migration has no exit condition until a **judge** exists: a
-single harness that evaluates the original code and the port on equal terms, so
-"are we done?" has a mechanical answer instead of a feeling. The original code
-is the executable spec; the judge is how you query it. Build it now, while the
-old code still runs and nothing has been translated to bias you.
+워크플로를 써라. **판정 기준**이 생기기 전까지 마이그레이션에는 종료 조건이 없다.
+판정 기준은 원본 코드와 포팅본을 같은 조건으로 평가하는 하나의 하네스다. 판정 기준이
+있으면 "다 끝났나?"에 느낌이 아니라 기계적인 답이 나온다. 원본 코드는 실행 가능한
+명세이고, 판정 기준은 그 명세에 질의하는 수단이다. 옛 코드가 아직 돌아가고 아무것도
+번역되지 않아 편향될 일이 없는 지금 만든다.
 
-The judge must run against **both** implementations through the same external
-interface — CLI, HTTP, file I/O, exported API — never through source-language
-internals. A test that imports an internal function dies with the old language
-and can't see the new code, so it can't judge anything. Three steps:
+판정 기준은 **두** 구현 모두에 같은 외부 인터페이스(CLI, HTTP, 파일 I/O, export한
+API)로 돌아가야 한다. 원본 언어의 내부를 거쳐서는 절대 안 된다. 내부 함수를
+import하는 테스트는 옛 언어와 함께 죽고 새 코드를 볼 수 없으니 아무것도 판정하지
+못한다. 세 단계다.
 
-**1. Categorize.** Take the call #3 census and confirm it against the source:
-classify every existing test as **portable** (expressible as an external call
-that both implementations answer) or **internal-bound** (depends on functions,
-private state, or language features that won't exist in [target language]).
-Internal-bound tests are not judge material — note what behavior they were
-guarding so it isn't lost, but they stay behind. Report the two counts as a
-grep/file receipt, not a narrated total.
+**1. 분류.** 3번 판단의 조사 결과를 소스와 대조해 확인한다. 기존 테스트를 모두
+**portable**(두 구현이 모두 응답하는 외부 호출로 표현할 수 있음)과
+**internal-bound**(함수, 비공개 상태, [target language]에 없을 언어 기능에 기댐)로
+나눈다. internal-bound 테스트는 판정 기준 재료가 아니다. 그 테스트가 지키던 동작을
+적어 두어 잃지 않게 하되, 테스트 자체는 남겨 둔다. 두 개수는 말로 정리한 합계가
+아니라 grep이나 파일 영수증으로 보고한다.
 
-**2. Rewrite for portability.** Convert the portable tests into assertions that
-run against both old and new through the external interface — same inputs, same
-expected outputs, diffed mechanically. Where no test exists for a behavior the
-old code clearly has, write a real-world scenario instead — a small harness of a
-handful of real-world scenarios diffed against the original is enough. Then have two
-**adversarial reviewers**, separate contexts and disjoint batches, check that no
-rewrite weakened an assertion — a loosened tolerance, a dropped field, an
-`assert truthy` where the original checked an exact value. Run them on
-[reviewer model], per the Model plan — inheriting the session default is a
-deviation; log it. Every weakening they confirm against the original test is a
-bug in the rewrite, not the reviewer; fix the harness and resample.
+**2. 이식할 수 있게 다시 쓰기.** portable 테스트를 외부 인터페이스로 옛 코드와 새
+코드 양쪽에 돌아가는 단언으로 바꾼다. 입력도 같고 기대 출력도 같고, 비교는
+기계적으로 한다. 옛 코드에 분명히 있는 동작인데 테스트가 없으면 대신 실제 상황
+시나리오를 쓴다. 원본과 비교하는 실제 상황 시나리오 몇 개짜리 작은 하네스면
+충분하다. 그다음 **적대적 리뷰어** 둘에게 컨텍스트를 분리하고 겹치지 않는 묶음을
+맡겨, 다시 쓰면서 약해진 단언이 없는지 확인하게 한다. 느슨해진 허용 오차, 빠진
+필드, 원본은 정확한 값을 확인했는데 `assert truthy`로 바뀐 경우 같은 것이다.
+리뷰어는 모델 계획에 따라 [reviewer model]로 돌린다. 세션 기본값을 물려받으면
+이탈이니 기록한다. 리뷰어가 원본 테스트와 대조해 확인한 약화는 모두 리뷰어가 아니라
+다시 쓴 쪽의 버그다. 하네스를 고치고 표본을 다시 뽑는다.
 
-**3. Validate the judge against known answers.** A judge you haven't tested is a
-guess. Run the full harness against the **original** code: it must pass clean —
-any failure here is a bug in the judge, because the spec passes its own spec.
-Then run it against **deliberately broken** original code — mutate a handful of
-behaviors by hand (flip a comparison, drop an error path, change an output
-format) and confirm the judge **fails** on each. A judge that doesn't catch
-breakage isn't a judge; it's a green light wired to nothing. Report both runs:
-N/N pass on the original, and one caught failure per injected mutation.
+**3. 답을 아는 경우로 판정 기준 검증.** 시험해 보지 않은 판정 기준은 추측일 뿐이다. 하네스
+전체를 **원본** 코드에 돌린다. 깨끗하게 통과해야 한다. 명세는 자기 명세를
+통과하므로, 여기서 나온 실패는 모두 judge의 버그다. 그다음 **일부러 망가뜨린** 원본
+코드에 돌린다. 동작 몇 개를 손으로 바꾸고(비교 연산 뒤집기, 오류 경로 빼기, 출력
+형식 바꾸기) 판정 기준이 각각에서 **실패하는지** 확인한다. 망가진 것을 잡지 못하는
+판정 기준은 판정 기준이 아니다. 아무 데도 연결되지 않은 초록불이다. 두 실행을 모두
+보고한다. 원본에서 N/N 통과, 주입한 변이마다 잡아낸 실패 하나씩이다.
 
-Stop and show me the harness, the portable/internal-bound counts, the reviewer
-findings, and both validation runs — the clean pass and every caught mutation.
-Nothing in Step 1 starts until I sign off that the judge is real. This harness
-is the artifact Step 6 runs to call the migration done; keep it under version
-control and keep it running until the end.
-Append one timestamped line for this step to `migration/cost-log.tsv` —
-create it with header `step\ttimestamp\twall_clock_min\ttokens\tsubagents\tmodel`
-if absent; real values where available, `unknown` where not. Plain
-tab-separated values, no `key=` prefixes — a valid row looks exactly like:
+멈추고 하네스, portable/internal-bound 개수, 리뷰어 발견 사항, 두 검증 실행(깨끗한
+통과와 잡아낸 모든 변이)을 보여 달라. 판정 기준이 진짜라고 내가 승인하기 전에는 1단계의
+어떤 것도 시작하지 않는다. 이 하네스는 6단계에서 마이그레이션 완료를 선언할 때
+돌리는 산출물이다. 버전 관리에 넣고 끝까지 계속 돌아가게 둔다.
+이 단계의 기록을 타임스탬프와 함께 `migration/cost-log.tsv`에 한 줄 덧붙인다.
+파일이 없으면 헤더 `step\ttimestamp\twall_clock_min\ttokens\tsubagents\tmodel`로
+만든다. 얻을 수 있는 값은 실제 값을, 없는 값은 `unknown`을 쓴다. `key=` 접두어 없이
+탭으로만 구분한다. 올바른 행은 정확히 이런 모양이다.
 `3	2026-06-11T14:02Z	21	2035336	35	claude-sonnet-4-6`
-(your step number and values vary; the format doesn't).
+(단계 번호와 값은 달라져도 형식은 그대로다.)

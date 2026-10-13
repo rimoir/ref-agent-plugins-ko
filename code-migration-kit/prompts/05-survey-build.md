@@ -1,52 +1,47 @@
-# 05 — Survey build
+# 05: survey build
 
-**When:** Step 4, after the translation queue is empty. **SKIP ENTIRELY** if
-Step 4 dissolved into Step 3 per the README — your cheap referee already ran
-in-loop. **Prerequisites:** Step 3 queue at zero (`queue_runner.mjs status`).
-**Placeholders:** `[build command]`, `[module]` (your target's module
-granularity), `[fixer model]`, `[reviewer model]` (from the Model plan
-signed off at the feasibility gate).
+**언제:** 4단계, 번역 큐가 빈 뒤. README에 따라 4단계가 3단계 안으로 녹아들었다면 **통째로
+건너뛴다**. 값싼 판정기가 이미 루프 안에서 돌았다. **선행 조건:** 3단계 큐가 0
+(`queue_runner.mjs status`).
+**Placeholder:** `[build command]`, `[module]`(대상의 모듈 단위), `[fixer model]`,
+`[reviewer model]`(실행 가능성 게이트에서 승인한 모델 계획에서 가져온다).
 
 ---
 
-Use a workflow. Run ONE scripted survey build — `[build command]` over
-everything, once. Parse its diagnostics into a machine queue: a TSV of file,
-module, error code, message — sliced by [module], ordered leaves-to-root per
-the dependency map. The error list is the queue; nobody re-derives it by
-judgment.
+워크플로를 써라. 스크립트로 survey build를 딱 한 번 돌린다. 전체에 `[build command]`를
+한 번이다. 진단 결과를 기계용 큐로 파싱한다. 파일, 모듈, 오류 코드, 메시지로 된 TSV이고,
+[module] 단위로 자르고, 의존성 지도를 따라 잎에서 뿌리 순으로 정렬한다. 오류 목록이 곧
+큐다. 아무도 판단으로 다시 만들어 내지 않는다.
 
-Fan out fixers per module slice with **no compiler access** — they write
-patches from the error text and the source alone. Fixers run on
-[fixer model], reviewers on [reviewer model], per the Model plan —
-inheriting the session default is a deviation; log it. Adversarial review on
-every fix, same contract as Step 3: separate contexts, every finding cites a
-rule or a source line. The review doubles each slice's cost; Run 1 skipped
-the per-file review pass entirely, and the exact failure class it catches
-survived to the compiler (RUN-NOTES, Run 1 deviations). The daemon that owns the build is the only process that reruns
-the survey build — once per round, to produce the next queue. Repeat to zero.
+모듈 조각마다 **컴파일러 접근 없이** 수정자를 펼친다. 수정자는 오류 문구와 소스만 보고
+패치를 쓴다. 모델 계획에 따라 수정자는 [fixer model], 리뷰어는 [reviewer model]로 돌린다.
+세션 기본값을 물려받으면 이탈이니 기록한다. 모든 수정에 적대적 리뷰를 붙이고, 계약은
+3단계와 같다. 컨텍스트를 분리하고, 모든 발견은 규칙이나 소스 줄을 인용한다. 리뷰는 조각마다
+비용을 두 배로 만든다. 1회차는 파일별 리뷰를 통째로 건너뛰었고, 그 리뷰가 잡는 실패 유형이
+고스란히 컴파일러까지 살아남았다(RUN-NOTES, 1회차 이탈). 빌드를 소유한 daemon만이 survey
+build를 다시 돌리는 유일한 프로세스다. 라운드마다 한 번 돌려 다음 큐를 만든다. 0이 될
+때까지 되풀이한다.
 
-Transport: prefer `scripts/build_daemon.sh` as the referee — I start it once
-(`./build_daemon.sh --cmd "[build command]"`), it reruns the build whenever
-the tree changes, and each round lands in `migration/build-output-rN.txt`;
-fixers consume the numbered output files and never run the compiler. Run 3
-ran this step with the human relaying every build by hand — fine for 2
-rounds, not for 50. Zero-setup fallback: I run
-`[build command] 2>&1 | tee migration/build-output-rN.txt` myself each round
-— same files, same contract.
+전달 방식: 판정기로는 `scripts/build_daemon.sh`를 쓰는 편이 낫다. 내가 한 번 띄우면
+(`./build_daemon.sh --cmd "[build command]"`) 트리가 바뀔 때마다 빌드를 다시 돌리고,
+라운드마다 결과가 `migration/build-output-rN.txt`에 떨어진다. 수정자는 번호 붙은 출력 파일을
+읽고 컴파일러는 절대 돌리지 않는다. 3회차는 사람이 빌드를 하나하나 손으로 전달하며 이 단계를
+돌렸다. 2라운드면 괜찮지만 50라운드면 아니다. 준비가 필요 없는 대안은 라운드마다 내가 직접
+`[build command] 2>&1 | tee migration/build-output-rN.txt`를 돌리는 것이다. 파일도 같고
+계약도 같다.
 
-Fixer post-write check: after writing a file, `grep -c 'TODO(port)' <file>`
-must equal the `todos=` value in its PORT STATUS trailer — recount
-mechanically, never narrate. Run 3 shipped a trailer claiming todos=1 where
-grep said 2; the grep is the receipt, the trailer is the claim.
+수정자의 쓰기 후 확인: 파일을 쓴 뒤 `grep -c 'TODO(port)' <file>`가 그 파일 PORT STATUS
+트레일러의 `todos=` 값과 같아야 한다. 말로 정리하지 말고 기계적으로 다시 센다. 3회차는
+grep으로는 2인데 todos=1이라고 적힌 트레일러를 내보냈다. grep이 영수증이고 트레일러는
+주장이다.
 
-A recurring error pattern is a rulebook indictment, not N hand-fixes: queue
-the amendment for me and propose regenerating the slice that rule touched.
-Stop and show me the round-over-round error counts. End the report with an
-estimated duration for the next step (Step 5 — hello world, then smoke) —
-wall-clock and active-attention minutes, from the rounds you just timed.
-Append one timestamped line for this step to `migration/cost-log.tsv` —
-create it with header `step\ttimestamp\twall_clock_min\ttokens\tsubagents\tmodel`
-if absent; real values where available, `unknown` where not. Plain
-tab-separated values, no `key=` prefixes — a valid row looks exactly like:
+되풀이되는 오류 패턴은 손으로 N번 고칠 일이 아니라 규칙집을 문제 삼을 일이다. 개정을 나를
+위해 대기열에 올리고, 그 규칙이 닿은 조각을 다시 생성하자고 제안한다. 멈추고 라운드 간 오류
+수 변화를 보여 달라. 보고서 끝에는 다음 단계(5단계. hello world, 그다음 smoke)의 예상 기간을
+적는다. 방금 잰 라운드에서 끌어낸 경과 시간과 사람이 집중해야 하는 시간을 분 단위로 적는다.
+이 단계의 기록을 타임스탬프와 함께 `migration/cost-log.tsv`에 한 줄 덧붙인다.
+파일이 없으면 헤더 `step\ttimestamp\twall_clock_min\ttokens\tsubagents\tmodel`로
+만든다. 얻을 수 있는 값은 실제 값을, 없는 값은 `unknown`을 쓴다. `key=` 접두어 없이
+탭으로만 구분한다. 올바른 행은 정확히 이런 모양이다.
 `3	2026-06-11T14:02Z	21	2035336	35	claude-sonnet-4-6`
-(your step number and values vary; the format doesn't).
+(단계 번호와 값은 달라져도 형식은 그대로다.)

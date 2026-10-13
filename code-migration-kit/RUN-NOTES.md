@@ -1,179 +1,148 @@
-# Run notes — receipts from this kit's own test runs
+# 실행 기록: 이 키트 자체의 테스트 실행 영수증
 
-This kit's prompts and scripts were dogfooded before publishing. This file is
-the receipts: what ran, what broke, what changed because of it.
+이 키트의 프롬프트와 스크립트는 공개 전에 직접 써 보았다. 이 파일은 그 영수증이다.
+무엇을 돌렸고, 무엇이 깨졌고, 그 결과 무엇이 바뀌었는지 적는다.
 
-## Run 1 — Python → TypeScript (sandbox, 2026-06-10) — COMPLETE
+## Run 1: Python → TypeScript (샌드박스, 2026-06-10), COMPLETE
 
-- Target: **toml 0.10.2** (PyPI, MIT) — 5 files, 1,425 lines, zero deps,
-  Python test suite imports internals (dies with the language → parity-referee
-  path for Step 6, as the feasibility calls predicted).
-- Result: full port, **strict tsc clean**, smoke + round-trip pass, and a
-  12-scenario parity referee against the live Python original: **12/12
-  byte-identical** after JSON normalization — including error messages with
-  line/column positions, and one bug-for-bug fidelity check (both
-  implementations emit the same defective output for embedded control chars,
-  per the BUG(port) rule).
-- Agent topology: 1 inventory proposer, 2 skeptic reviewers (separate
-  contexts, disjoint batches), 1 fix agent, 2 bakeoff translators (B
-  quarantined in a scratch dir outside the repo), 1 diff inspector, 3
-  implementers. ~1.1M subagent tokens.
+- 대상: **toml 0.10.2** (PyPI, MIT). 파일 5개, 1,425줄, 의존성 없음. Python 테스트
+  스위트가 내부 구현을 import한다(언어와 함께 사라지므로 6단계는 동등성 판정기 경로다.
+  실행 가능성 판단이 예측한 대로다).
+- 전체를 포팅했고 **strict tsc를 통과**했으며 스모크와 왕복 변환도 통과했다. 살아 있는 Python 원본에
+  대한 12개 시나리오 동등성 판정기에서 JSON 정규화 뒤 **12/12 바이트 단위 일치**. 줄·열
+  위치가 담긴 오류 메시지도 일치했고, 버그까지 똑같이 재현했는지 보는 검사도 하나 있었다
+  (BUG(port) 규칙에 따라 두 구현 모두 내장 제어 문자에 대해 같은 결함 있는 출력을 낸다).
+- 에이전트 구성: 간극 목록 제안자 1, 회의적 리뷰어 2(서로 다른 컨텍스트, 겹치지 않는 배치),
+  수정 에이전트 1, bakeoff 번역자 2(B는 저장소 밖 scratch 디렉터리에 격리), diff 검사자 1,
+  구현자 3. subagent 토큰 약 110만 개.
 
-### What the process caught (the receipts)
+### 과정이 잡아낸 것 (영수증)
 
-1. **Step 1, depmap trial**: pointing `--root` at the package dir instead of
-   the repo root produced **0 edges silently** — a wrong map that looks like a
-   clean map. → kit fix: script now warns on 0-edges-with-multiple-files.
-2. **Step 1, skeptic round**: 20/20 inventory rows confirmed but 7
-   evidence-quality defects found (off-by-one citations; one row claimed
-   Python and JS "misbehave identically" where Python raises TypeError and JS
-   silently no-ops). One TS-inexpressible construct (dynamically-created
-   sentinel class) surfaced as UNKNOWN → rulebook amendment A1 (Symbol brand).
-3. **Step 2, bakeoff**: 14 material differences; rulebook right 9, native
-   right 2, both defensible 2, **both wrong 1** — the rule-following
-   translator silently emitted corrupted output (`"01xundefined"`) where
-   Python crashes, fully legal under the pre-amendment rules. 9 rulebook
-   silences flagged. → 10 amendments applied at the gate. This bug class
-   would have replicated across the whole fan-out.
-4. **Step 2, side discovery**: the quarantined native translator independently
-   found 2 behaviors in the upstream Python library we classified as defects
-   for porting purposes (upstream issue candidates: invalid TOML emitted near
-   control characters; crash on leading control char). Ruling: reproduce
-   bug-for-bug, mark BUG(port), fix only post-parity — now amendment A2.1.
-5. **Steps 3–4**: 5 files translated against the amended rulebook; queue
-   runner reported burndown and `verify` confirmed no empty targets. tsc
-   (in-loop, Step 4 dissolved as documented) caught exactly 2 cross-file
-   errors: a duplicated type alias and a callback signature narrower than the
-   source's duck typing. Both fixed in one referee round.
-6. **Step 6**: the parity referee itself shipped 2 bugs before the port showed
-   any — whitespace differences in the comparator and JSON.stringify silently
-   converting NaN/-Infinity to null. Lesson now in the README: debug the
-   referee before believing its verdicts; 12/12 "diverge" usually means a
-   broken referee, not a broken port.
+1. **1단계, depmap 시험**: `--root`를 저장소 루트가 아니라 패키지 디렉터리로 지정하자
+   **간선 0개가 조용히** 나왔다. 깨끗한 지도처럼 보이는 잘못된 지도다. → 키트 수정: 파일이
+   여럿인데 간선이 0개면 이제 스크립트가 경고한다.
+2. **1단계, 회의적 리뷰 라운드**: 간극 목록 20/20행이 확인됐지만 근거 품질 결함 7개가
+   나왔다(한 줄씩 어긋난 인용, Python은 TypeError를 던지고 JS는 조용히 아무것도 하지 않는데
+   "똑같이 오동작한다"고 주장한 행 하나). TS로 표현할 수 없는 구성 요소 하나(동적으로 만든
+   sentinel 클래스)가 UNKNOWN으로 드러났다 → 규칙집 수정안 A1(Symbol 브랜드).
+3. **2단계, bakeoff**: 실질적 차이 14개. 규칙집이 옳은 것 9, 자연 번역이 옳은 것 2, 둘 다
+   타당한 것 2, **둘 다 틀린 것 1**. 규칙을 따른 번역자가 Python이라면 크래시할 자리에서
+   손상된 출력(`"01xundefined"`)을 조용히 냈는데, 수정 전 규칙으로는 완전히 합법이었다.
+   규칙집의 침묵(SILENCE) 9건이 표시됐다. → 게이트에서 수정안 10개를 적용했다. 이 버그
+   유형은 팬아웃 전체로 복제됐을 것이다.
+4. **2단계, 부수 발견**: 격리된 자연 번역자가 upstream Python 라이브러리에서 동작 2개를
+   독자적으로 찾았고, 포팅 목적상 결함으로 분류했다(upstream 이슈 후보: 제어 문자 근처에서
+   잘못된 TOML을 내는 것, 맨 앞 제어 문자에서 크래시하는 것). 판정: 버그까지 똑같이 재현하고,
+   BUG(port)로 표시하고, 동등성 이후에만 고친다. 지금은 수정안 A2.1이다.
+5. **3~4단계**: 수정한 규칙집으로 파일 5개를 번역했다. 큐 실행기가 소진 상황을 보고했고
+   `verify`가 빈 대상 파일이 없음을 확인했다. tsc(루프 안, 문서대로 4단계를 녹여 넣음)는
+   파일 간 오류를 정확히 2개 잡았다. 중복된 타입 별칭 하나, 원본의 덕 타이핑보다 좁은 콜백
+   시그니처 하나다. 둘 다 판정 한 라운드에 고쳤다.
+6. **6단계**: 포팅이 문제를 보이기 전에 동등성 판정기 자체가 버그 2개를 안고 나왔다. 비교기의
+   공백 차이, 그리고 JSON.stringify가 NaN/-Infinity를 조용히 null로 바꾸는 것이다. 이 교훈은
+   이제 README에 있다. 판정기의 결론을 믿기 전에 판정기부터 디버깅한다. 12/12 "불일치"는
+   대개 포팅이 아니라 판정기가 망가졌다는 뜻이다.
 
-### Deviations from the full process (budget scaling — a production run must not skip these)
+### 전체 과정에서 벗어난 부분 (예산 축소. 프로덕션 실행에서는 건너뛰면 안 된다)
 
-- **Step 3's two-adversarial-reviewers-per-file pass was skipped** (implementer
-  + in-loop tsc + parity only). Observed consequence, exactly as the process
-  predicts: the cross-file type conflict reviewers would have caught landed in
-  the compile step instead. Cheap here (tsc, seconds); expensive in a
-  cargo-class target. The deviation produced the precise failure class the
-  review stage exists to prevent — strongest evidence in this run that the
-  stage earns its cost.
-- Bakeoff re-round on fresh files and the pilot run were folded into Step 3's
-  first unit. Logged in the target repo's RULEBOOK deviation log.
+- **3단계의 파일당 적대적 리뷰어 둘 단계를 건너뛰었다** (구현자 + 루프 안 tsc + 동등성만).
+  관찰된 결과는 과정이 예측한 그대로였다. 리뷰어가 잡았을 파일 간 타입 충돌이 컴파일 단계에
+  가서야 걸렸다. 여기서는 싸게 끝났지만(tsc, 몇 초) cargo급 대상에서는 비싸다. 이 이탈이
+  리뷰 단계가 막으려고 있는 바로 그 실패 유형을 만들었다. 리뷰 단계가 비용값을 한다는, 이번
+  실행에서 가장 강한 증거다.
+- 새 파일로 하는 bakeoff 재라운드와 파일럿 실행은 3단계의 첫 단위에 합쳤다. 대상 저장소의
+  RULEBOOK 이탈 기록에 남겼다.
 
-Limitation, stated up front: tsc is a cheap referee, so this run exercises
-Step 4 only in its dissolved-into-Step-3 form (see README). Run 2 (C → Rust)
-covers the expensive-referee path.
+미리 밝혀 두는 한계: tsc는 값싼 판정기라서 이 실행은 4단계를 3단계에 녹인 형태로만 다룬다
+(README 참고). 비싼 판정기 경로는 Run 2(C → Rust)가 다룬다.
 
-Run artifacts: `examples/run1-toml/`.
+실행 산출물: `examples/run1-toml/`.
 
-## Run 2 — C → Rust (Claude Code, developer workstation, 2026-06-11) — COMPLETE
+## Run 2: C → Rust (Claude Code, 개발자 워크스테이션, 2026-06-11), COMPLETE
 
-- Target: **tinyexpr** (~730-line C expression parser, zlib license, function-
-  pointer-heavy core). Cold-start condition: driven by a non-engineer
-  following only the kit's docs, with the kit's author firewalled — every doc
-  gap became a logged finding instead of a question.
-- Result: full port. 11/11 translated integration tests; original C smoke
-  suite re-run: **4,930/4,930, zero inherited failures**; 23 TODO(port) and
-  1 BUG(port) marker, all accounted for.
+- 대상: **tinyexpr** (약 730줄짜리 C 수식 파서, zlib 라이선스, 함수 포인터가 많은 핵심부).
+  콜드 스타트 조건: 엔지니어가 아닌 사람이 키트 문서만 보고 진행했고, 키트 작성자와는
+  차단했다. 문서의 빈틈은 질문이 아니라 기록된 발견이 됐다.
+- 전체를 포팅했다. 번역한 통합 테스트는 11/11이다. 원래 C 스모크 스위트 재실행:
+  **4,930/4,930, 물려받은 실패 0**. TODO(port) 마커 23개와 BUG(port) 마커 1개, 모두 설명됐다.
 
-### What the process caught
+### 과정이 잡아낸 것
 
-- One failing test (`test_syntax`, an error-position mismatch — the exact gap
-  class the feasibility report predicted). Protocol held: the referee was
-  checked first (the C binary confirmed all 14 expected error positions, so
-  the translated test was exonerated), then the divergence traced to TWO port
-  bugs — the second an identifier-start mismatch, `_` accepted where C's
-  `isalpha()` rejects it (the rulebook's §2 example row cites this) — sharing
-  one root cause: a silent rulebook gap. The source uses one
-  sentinel (NULL) for both allocation failure and structural parse errors;
-  the translation mapped both the same way. Rule amendment written, then the
-  sweep found the same pattern in **three more places no test exercises**.
-  One failing test, one amended rule, four corrected sites — the
-  fix-the-rule-not-the-instance loop on receipts.
+- 실패한 테스트 하나(`test_syntax`, 오류 위치 불일치. 실행 가능성 보고서가 예측한 바로 그
+  간극 유형이다). 절차대로 진행했다. 먼저 판정기를 확인했다(C 바이너리가 기대한 오류 위치
+  14개를 모두 확인해 번역된 테스트는 혐의를 벗었다). 그다음 불일치를 추적하니 포팅 버그 2개가
+  나왔다. 두 번째는 식별자 시작 문자 불일치로, C의 `isalpha()`가 거부하는 `_`를 받아들였다
+  (규칙집 §2의 예시 행이 이것을 인용한다). 둘의 근본 원인은 하나였다. 규칙집의 조용한 빈틈이다.
+  원본은 할당 실패와 구조적 파싱 오류에 같은 sentinel(NULL)을 쓰고, 번역은 둘을 같은 방식으로
+  매핑했다. 규칙 수정안을 쓰고 나서 훑어보니 **테스트가 건드리지 않는 곳 세 군데에서** 같은
+  패턴이 더 나왔다. 실패한 테스트 하나, 고친 규칙 하나, 바로잡은 지점 네 개. 인스턴스가 아니라
+  규칙을 고치는 루프가 영수증으로 남았다.
 
-### What the run caught about the kit (13 findings, all since fixed)
+### 이 실행이 키트에서 잡아낸 것 (발견 13개, 모두 수정함)
 
-- `.claude/settings.json` was never installed and nothing checked — the
-  guardrails were silently absent for the whole run. → prompts 03/04 now
-  verify and refuse to fan out without it.
-- Model selection silently defaulted for every agent. → feasibility now
-  produces a Model plan as an explicit human gate decision.
-- Five parallel inventory classifiers contended on one shared TSV; one
-  stalled mid-append and the user had to notice. → shard-then-merge with
-  mechanical `wc -l` receipts and a self-healing progress invariant.
-- Cost was unreconstructable after the fact. → every gate now appends to
-  `migration/cost-log.tsv`.
-- Step 6 had no defined done-gate; BUG(port) markers had no post-parity
-  process. → done-gate defined; `prompts/06-post-parity.md` added.
-- Side receipt: the repo was relocated mid-run (a workstation security policy
-  on freshly built binaries) and a brand-new session resumed correctly at
-  "Step 5, one failing test" from disk state alone — the resume thesis
-  proven under harsher conditions than planned.
+- `.claude/settings.json`을 설치하지 않았는데 아무것도 확인하지 않았다. 실행 내내 안전장치가
+  조용히 빠져 있었다. → 이제 프롬프트 03/04가 확인하고, 없으면 팬아웃을 거부한다.
+- 모든 에이전트의 모델 선택이 조용히 기본값으로 정해졌다. → 이제 실행 가능성 평가가 사람이
+  게이트에서 명시적으로 결정하는 Model plan을 만든다.
+- 병렬 간극 목록 분류기 다섯 개가 TSV 하나를 두고 경합했다. 하나는 덧붙이는 도중에 멈췄고
+  사용자가 알아채야 했다. → 샤드로 나눠 쓴 뒤 합치고, 기계적인 `wc -l` 영수증과 스스로 복구되는
+  진행 불변식을 둔다.
+- 사후에 비용을 재구성할 수 없었다. → 이제 모든 게이트가 `migration/cost-log.tsv`에 덧붙인다.
+- 6단계에 완료 게이트가 정의되지 않았고, BUG(port) 마커에 동등성 이후 처리 과정이 없었다.
+  → 완료 게이트를 정의하고 `prompts/06-post-parity.md`를 추가했다.
+- 부수 영수증: 실행 도중 저장소를 옮겼다(새로 빌드한 바이너리에 대한 워크스테이션 보안 정책
+  때문이다). 완전히 새 세션이 디스크 상태만으로 "5단계, 실패한 테스트 하나"에서 올바르게
+  재개했다. 재개 가능하다는 주장이 계획보다 가혹한 조건에서 증명됐다.
 
-## Run 3 — C → Rust, forced expensive-referee path (2026-06-11) — COMPLETE
+## Run 3: C → Rust, 비싼 판정기 경로 강제 (2026-06-11), COMPLETE
 
-Purpose: exercise the two paths Runs 1–2 dissolved away — deny rules firing
-in anger and the Step 4 survey build — and live-test the Run 2 fixes. Same
-repo; Steps 1–2 artifacts (rulebook with all amendments, inventory, depmap)
-reused; translated targets deleted to reopen the queue.
+목적: Run 1~2가 녹여 없앤 두 경로, 즉 실제로 발동하는 deny 규칙과 4단계 조사 빌드를 써 보고,
+Run 2의 수정을 실전에서 시험한다. 저장소는 같다. 1~2단계 산출물(모든 수정안을 반영한 규칙집,
+간극 목록, depmap)은 재사용했고, 큐를 다시 열려고 번역 대상 파일을 지웠다.
 
-- Result: 7/7 files (2,513 lines of Rust) translated **compiler-blind**;
-  survey build round 1 = 2 errors, round 2 = 0; **11/11 tests on the first
-  Step 5/6 run**. The amended rulebook is why round 1 was small — Run 2's
-  rule fixes translated clean the second time.
-- **The deny receipt:** an agent attempted `cargo check` → denied by
-  settings.json. It then attempted to edit settings.json to clear the deny →
-  blocked by the platform's self-modification guard. It then cited this
-  kit's no-routing-around rule and escalated to the human, who served as
-  build daemon per prompt 05. Three defensive layers observed in one
-  incident; the mechanical layers did the stopping.
-- Cost, finally on receipts: Step 3 ≈ 2.04M subagent tokens, 35 agents,
-  ~21 min; Step 4 fixers ≈ 0.51M tokens, 12 agents, ~3.5 min. All subagents
-  ran on the mid-tier model — the model plan was again an untriggered
-  default, the second consecutive run, which is exactly why the Model plan
-  gate now exists.
-- New findings → fixes: the gate-time settings.json amendment can itself be
-  blocked by platform safeguards (CLAUDE.md now documents the
-  human-makes-the-edit fallback); the orchestrator self-installed
-  settings.json instead of stopping for the human (prompt 04 now forbids
-  self-install); human-as-build-daemon works but doesn't scale
-  (`scripts/build_daemon.sh`); PORT STATUS trailers drifted from grep truth
-  (fixers now post-write-verify counts); cost-log rows came out malformed
-  (prompts now show a literal example row).
+- 파일 7/7(Rust 2,513줄)을 **컴파일러 없이** 번역했다. 조사 빌드 1라운드 오류 2개,
+  2라운드 0개. **5/6단계 첫 실행에서 테스트 11/11**. 1라운드가 작았던 것은 수정한 규칙집
+  덕분이다. Run 2의 규칙 수정이 두 번째에는 깨끗하게 번역됐다.
+- **deny 영수증:** 에이전트가 `cargo check`를 시도했다 → settings.json이 deny했다. 그다음
+  deny를 없애려고 settings.json 편집을 시도했다 → 플랫폼의 자기 수정 보호가 막았다. 그러자
+  키트의 우회 금지 규칙을 인용하며 사람에게 넘겼고, 사람이 프롬프트 05에 따라 빌드 데몬
+  역할을 했다. 사건 하나에서 방어 계층 세 개를 관찰했다. 멈추게 한 것은 기계적 계층이었다.
+- 마침내 영수증으로 남은 비용: 3단계 약 204만 subagent 토큰, 에이전트 35개, 약 21분.
+  4단계 수정자 약 51만 토큰, 에이전트 12개, 약 3.5분. 모든 subagent가 중간 등급 모델로
+  돌았다. 모델 계획이 또 정하지 않은 기본값이었고, 두 번 연속이었다. Model plan 게이트가
+  지금 있는 이유가 바로 이것이다.
+- 새 발견 → 수정: 게이트에서 하는 settings.json 수정 자체가 플랫폼 안전장치에 막힐 수 있다
+  (이제 CLAUDE.md가 사람이 직접 고치는 대안을 적어 둔다). 오케스트레이터가 사람을 기다리지
+  않고 settings.json을 스스로 설치했다(이제 프롬프트 04가 스스로 설치하는 것을 금지한다).
+  사람이 빌드 데몬 역할을 하는 방식은 통하지만 확장되지 않는다(`scripts/build_daemon.sh`).
+  PORT STATUS 트레일러가 grep 결과와 어긋났다(이제 수정자가 쓴 뒤 숫자를 다시 확인한다).
+  cost-log 행이 형식에 어긋나게 나왔다(이제 프롬프트가 글자 그대로의 예시 행을 보여 준다).
 
-Target-repo artifacts (cost logs, scenario lists) live in the run repo, not
-here; figures above come from session receipts.
+대상 저장소의 산출물(비용 로그, 시나리오 목록)은 이 저장소가 아니라 실행 저장소에 있다. 위
+수치는 세션 영수증에서 가져왔다.
 
-## Designed, not yet dogfooded
+## 설계했지만 아직 써 보지 않은 것
 
-`prompts/00b-judge-setup.md` — the pre-Step-1 judge build (categorize tests,
-rewrite for portability under adversarial review, validate against the original
-*and* against deliberately broken code) — has not been exercised by a run. All
-three runs built their judge inside Step 6 instead, which is the late-judge
-failure 00b exists to prevent: Run 1's parity referee shipped two comparator
-bugs and reported 12/12 false divergences before it could be trusted. The
-prompt is reconstructed from the blog's stated method plus that Run 1 lesson;
-the "validate against broken code" step in particular is new to the kit and
-unrun. Treat its output as a draft to debug until a future run dogfoods it —
-the same honesty bar the survey-build path held before Run 3 exercised it.
+`prompts/00b-judge-setup.md`는 1단계 전에 판정 기준을 만드는 프롬프트다(테스트를 분류하고,
+적대적 리뷰 아래 이식 가능하게 다시 쓰고, 원본에 대해 *그리고* 일부러 망가뜨린 코드에 대해
+검증한다). 어느 실행에서도 써 보지 않았다. 세 실행 모두 판정 기준을 6단계 안에서 만들었다.
+00b가 막으려는 늦은 판정 기준 실패가 바로 이것이다. Run 1의 동등성 판정기는 비교기 버그 2개를
+안고 나와 믿을 수 있게 되기 전까지 거짓 불일치 12/12를 보고했다. 이 프롬프트는 블로그가 밝힌
+방법과 그 Run 1 교훈으로 재구성했다. 특히 "망가뜨린 코드로 검증하기" 단계는 키트에 새로 들어온
+것이고 아직 돌려 보지 않았다. 앞으로 어떤 실행이 이를 써 볼 때까지 그 출력은 디버깅할 초안으로
+다룬다. Run 3가 조사 빌드 경로를 써 보기 전에 그 경로에 적용했던 것과 같은 정직성 기준이다.
 
-## Script verification (sandbox, 2026-06-10)
+## 스크립트 검증 (샌드박스, 2026-06-10)
 
-- `depmap_python.py`: fixture with 3-file relative-import cycle + stdlib +
-  third-party imports → cycle detected as one batch, externals excluded,
-  byte-identical across runs ✓
-- `depmap_ts.mjs`: fixture with import/export-from/require cycle, bare
-  specifiers, index resolution → cycle detected, bare specifiers excluded,
-  deterministic ✓
-- `depmap_c.py`: fixture with quoted-include header cycle + angle includes →
-  cycle detected (bar.h ⇄ foo.h), system headers excluded ✓
-- `make_manifest.py`: order.txt + substitution rules -> manifest TSV, fixture
-  diff-verified; refuses when substitutions don't apply ✓
-- `queue_runner.mjs`: status burndown, next-batch JSON, and verify catching a
-  zero-byte "done" file (the touch cheat) ✓
-- `build_daemon.sh` (2026-06-11): `--once` produces the numbered output file,
-  round counter resumes from disk, bad `--interval` and missing flag values
-  rejected ✓
+- `depmap_python.py`: 파일 3개짜리 상대 import 순환 + 표준 라이브러리 + 서드파티 import가
+  있는 fixture → 순환을 배치 하나로 감지, 외부 의존성 제외, 실행마다 바이트 단위 동일 ✓
+- `depmap_ts.mjs`: import/export-from/require 순환, bare specifier, index 해석이 있는
+  fixture → 순환 감지, bare specifier 제외, 결정론적 ✓
+- `depmap_c.py`: 따옴표 include 헤더 순환 + 꺾쇠 include가 있는 fixture →
+  순환 감지(bar.h ⇄ foo.h), 시스템 헤더 제외 ✓
+- `make_manifest.py`: order.txt + 치환 규칙 -> manifest TSV, fixture와 diff로 검증,
+  치환이 적용되지 않으면 거부 ✓
+- `queue_runner.mjs`: status 소진 현황, next-batch JSON, 0바이트 "완료" 파일(touch 속임수)을
+  잡아내는 verify ✓
+- `build_daemon.sh` (2026-06-11): `--once`가 번호 붙은 출력 파일을 만들고, 라운드 카운터가
+  디스크에서 이어지고, 잘못된 `--interval`과 값이 빠진 플래그를 거부 ✓

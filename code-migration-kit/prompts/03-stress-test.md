@@ -1,94 +1,80 @@
-# 03 — Stress-test the rules
+# 03: 규칙 스트레스 테스트
 
-**When:** Step 2, after the rulebook, inventory, and dependency map are signed
-off. **Prerequisites:** committed RULEBOOK.md and inventory; this prompt is
-only valid for **structure-preserving** migrations — for redesigns the bakeoff
-measures your redesign, not your rules (see README, "If you're redesigning").
-**Placeholders:** `[3]` (file count), `[target language]`, `[target formatter]`,
-`[implementer model]`, `[reviewer model]` — the last two from the Model plan
-signed off at the feasibility gate.
+**언제:** 2단계, 규칙집과 간극 목록과 의존성 지도가 승인된 뒤. **선행 조건:** 커밋된
+RULEBOOK.md와 간극 목록. 이 프롬프트는 **구조 보존** 마이그레이션에서만 유효하다.
+재설계에서는 bakeoff가 규칙이 아니라 재설계를 재게 된다(README의 "재설계한다면"
+참고).
+**Placeholder:** `[3]`(파일 수), `[target language]`, `[target formatter]`,
+`[implementer model]`, `[reviewer model]`. 마지막 둘은 실행 가능성 게이트에서 승인한
+모델 계획에서 가져온다.
 
 ---
 
-Use a workflow. The **rulebook** has never met real code. Before any fan-out,
-stress-test it on [3] real files. Nothing translated here ships — the only
-output that survives is rule changes. Translating [3] files twice to throw
-both away is the cost; Run 1's bakeoff bought a both-wrong bug that would
-have replicated across the entire fan-out (RUN-NOTES).
+워크플로를 써라. **규칙집**는 아직 실제 코드를 만나 본 적이 없다. 팬아웃 전에 실제
+파일 [3]개로 규칙집을 스트레스 테스트한다. 여기서 번역한 것은 아무것도 출시하지
+않는다. 살아남는 산출물은 규칙 변경뿐이다. 파일 [3]개를 두 번 번역해 둘 다 버리는 것이
+비용이다. 1회차의 bakeoff는 팬아웃 전체에 복제될 뻔한 양쪽 모두 틀린 버그를 잡아냈다
+(RUN-NOTES).
 
-Before any fan-out, two checks. First: `.claude/settings.json`. Never
-install it yourself — installation is my act, because that's the moment I
-decide the referee price; Run 3's orchestrator detected the missing file and
-self-installed it, automating away exactly that decision. If it's missing,
-STOP and wait: tell me to install `templates/settings.json`, or record my
-explicit waiver in the deviation log — Run 2 ran end to end with the
-guardrails silently never installed. If it exists and carries deny rules for
-this migration's expensive commands — the template adapted per
-`templates/settings.README.md`, including any dissolve edit I made at a
-gate — proceed silently. Halt and ask only if it lacks deny rules entirely,
-or you can't tell whether I sanctioned what's there; never install, never
-overwrite. Second: set the model explicitly on every subagent call —
-translators and the pilot implementer on [implementer model], reviewers and
-the diff inspector on [reviewer model]; fixers ride [implementer model]
-unless the Model plan says otherwise. Inheriting the session default is a
-deviation; log it.
+팬아웃 전에 두 가지를 확인한다. 첫째, `.claude/settings.json`이다. 절대 직접 설치하지
+마라. 설치는 내가 하는 일이다. 그 순간이 내가 판정기 비용을 정하는 때이기 때문이다.
+3회차의 오케스트레이터는 파일이 없는 것을 알아채고 스스로 설치해서 바로 그 결정을
+자동화로 없애 버렸다. 파일이 없으면 STOP하고 기다린다. `templates/settings.json`을
+설치하라고 나에게 말하거나, 내가 명시적으로 면제한 것을 이탈 기록에 남긴다. 2회차는
+가드레일이 설치되지 않은 것을 아무도 모른 채 끝까지 돌았다. 파일이 있고 이
+마이그레이션의 비싼 명령을 막는 deny 규칙이 들어 있으면(`templates/settings.README.md`에
+따라 고친 템플릿, 내가 게이트에서 한 dissolve 편집 포함) 아무 말 없이 진행한다. deny
+규칙이 아예 없거나, 거기 있는 것을 내가 승인했는지 알 수 없을 때만 멈추고 묻는다. 절대
+설치하지 말고, 절대 덮어쓰지 마라. 둘째, 모든 subagent 호출에 모델을 명시한다.
+번역자와 파일럿 구현자는 [implementer model], 리뷰어와 diff 검사관은 [reviewer model]로
+돌린다. 수정자는 모델 계획에 다른 말이 없으면 [implementer model]을 쓴다. 세션 기본값을
+물려받으면 이탈이니 기록한다.
 
-Pick the files by criteria, not taste: score candidates by how many of the
-rulebook's riskiest sections and **gap inventory** rows they exercise, take
-the top [3], and write the selection — with its scores and file:line proof —
-to a report under `migration/stress-test/`, queueing its commit for me at
-the gate — commits are denied in-loop by design. Easy files make a clean
-diff and a useless step.
+파일은 취향이 아니라 기준으로 고른다. 후보마다 규칙집에서 가장 위험한 절과 **간극
+간극 목록** 행을 얼마나 많이 건드리는지로 점수를 매기고, 상위 [3]개를 고른다. 선택
+결과를 점수와 file:line 증거와 함께 `migration/stress-test/` 아래 보고서로 쓰고, 그
+커밋은 게이트에서 내가 하도록 대기열에 올린다. 루프 안의 커밋은 설계상 막혀 있다. 쉬운
+파일은 깨끗한 diff를 만들고 이 단계를 쓸모없게 만든다.
 
-Then the **dual translators**, in separate contexts and separate workspaces.
-Translator A works in a throwaway worktree on a branch that never merges. It
-follows the rulebook to the letter, citing the rule behind every nontrivial
-choice — and where the rulebook is silent, flags the silence inline instead of
-inventing policy. Translator B gets a scratch directory outside the repo
-containing only the [3] source files, copied out — not a checkout, so the
-rulebook and inventory aren't on disk to find — and one instruction: port
-these the way a fluent [target language] engineer would write them natively.
-B must never see the rulebook or learn it exists — one glimpse and it stops
-being a baseline.
+그다음 **이중 번역자**를 컨텍스트와 작업 공간을 분리해 돌린다. 번역자 A는 절대 병합하지
+않는 브랜치의 일회용 worktree에서 일한다. 규칙집을 글자 그대로 따르고, 사소하지 않은
+선택마다 근거 규칙을 인용한다. 규칙집이 침묵하는 곳에서는 정책을 지어내지 말고 그 침묵을
+그 자리에 표시한다. 번역자 B는 저장소 밖의 scratch 디렉터리를 받는다. 그 안에는 복사해
+온 원본 파일 [3]개만 있다. checkout이 아니므로 규칙집과 간극 목록이 디스크에 없어 찾을 수
+없다. 지시는 하나다. 능숙한 [target language] 엔지니어가 처음부터 그 언어로 쓰듯이
+포팅하라. B는 규칙집을 절대 보지 말아야 하고, 규칙집이 있다는 것도 몰라야 한다. 한 번만
+엿봐도 기준선 노릇을 못 한다.
 
-A third context, the **diff inspector**, sees everything. Run both outputs
-through [target formatter] first, so style noise never reaches it. Every
-remaining difference becomes one row: the quoted lines from both versions, the
-rule section it indicts — or the gap it exposes where the rulebook was silent —
-and a verdict with evidence: rulebook right, native right, both defensible, or
-both wrong. The rulebook is the defendant here, not the judge — but "native is
-wrong" must stay sayable: a difference the rulebook wins indicts nothing, and
-a report where every difference indicts a rule is as suspicious as one with
-none.
+세 번째 컨텍스트인 **diff 검사관**은 모든 것을 본다. 두 출력을 먼저 [target formatter]에
+통과시켜 스타일 잡음이 검사관에게 닿지 않게 한다. 남은 차이는 각각 한 행이 된다. 두 버전의
+해당 줄 인용, 그 차이가 문제 삼는 규칙 절(규칙집이 침묵한 곳이면 드러난 간극), 증거가 붙은
+판정을 적는다. 판정은 규칙집이 옳다, 네이티브가 옳다, 둘 다 타당하다, 둘 다 틀렸다 중
+하나다. 여기서 피고는 규칙집이고 판사가 아니다. 그래도 "네이티브가 틀렸다"는 말할 수
+있어야 한다. 규칙집이 이기는 차이는 아무것도 문제 삼지 않는다. 모든 차이가 규칙을 문제
+삼는 보고서는 차이가 하나도 없는 보고서만큼 수상하다.
 
-In parallel, run the same [3] files through the **pilot run**: the production
-pipeline exactly as the fan-out will use it — one **implementer**, two
-adversarial **reviewers**, one **fixer**, same prompts, no special pilot
-versions. The reviewers carry one extra standing question: did the implementer
-follow the rulebook — citing the section for every deviation. A translation
-that comes out right because the implementer quietly ignored the rules is a
-failed pilot; the fan-out depends on obedience, not on three files going well.
+동시에 같은 [3]개 파일을 **파일럿 실행**에 돌린다. 팬아웃이 쓸 운영 파이프라인을 그대로
+쓴다. **구현자** 하나, 적대적 **리뷰어** 둘, **수정자** 하나, 같은 프롬프트, 파일럿 전용
+버전은 없다. 리뷰어에게는 상시 질문이 하나 더 있다. 구현자가 규칙집을 따랐는가, 그리고
+이탈마다 해당 절을 인용한다. 구현자가 슬쩍 규칙을 무시해서 번역이 맞게 나왔다면 실패한
+파일럿이다. 팬아웃은 파일 세 개가 잘 풀리는 것이 아니라 규칙 준수에 기댄다.
 
-Queue every proposed rule change for me with its evidence — never edit the
-rulebook yourselves. Round 1 ends at the amendment queue: show me the queue
-and the adherence findings — not the translations — delete both workspaces —
-A's worktree and B's scratch directory — confirming the deletions in the
-report, and exit. Applying amendments is my act at the gate; a workflow that
-waits mid-run for me is forbidden (CLAUDE.md rule 3). After I apply them I
-re-paste this prompt, and it resumes from disk state: if round-1 artifacts
-already exist under `migration/stress-test/`, skip the settings check and
-the file selection and run the re-round — one more bakeoff on fresh files,
-weighted toward the sections that just changed (re-running the same files
-only proves the patch) — plus the pilot against the amended rules. Stop
-early if the same section gets re-amended twice; that needs a decision from
-me, not a third wording. The re-round ends at the same gate: amendment
-queue, adherence findings, and the round-over-round delta. No fan-out starts
-until I sign off. End the report with an estimated duration for the next
-step (the translation fan-out) — wall-clock and active-attention minutes,
-derived from the manifest size and the pilot's per-file timings.
-Append one timestamped line for this step to `migration/cost-log.tsv` —
-create it with header `step\ttimestamp\twall_clock_min\ttokens\tsubagents\tmodel`
-if absent; real values where available, `unknown` where not. Plain
-tab-separated values, no `key=` prefixes — a valid row looks exactly like:
+제안하는 규칙 변경은 모두 증거와 함께 나를 위해 대기열에 올린다. 규칙집을 직접 고치지
+마라. 1라운드는 개정 대기열에서 끝난다. 번역이 아니라 대기열과 준수 여부 발견 사항을
+보여 주고, 두 작업 공간(A의 worktree와 B의 scratch 디렉터리)을 지우고, 지운 것을
+보고서에서 확인한 뒤 종료한다. 개정 적용은 게이트에서 내가 하는 일이다. 실행 도중에 나를
+기다리는 워크플로는 금지다(CLAUDE.md 규칙 3). 내가 개정을 적용하면 이 프롬프트를 다시
+붙여 넣고, 프롬프트는 디스크 상태에서 이어 간다. `migration/stress-test/` 아래에 1라운드
+산출물이 이미 있으면 settings 확인과 파일 선택을 건너뛰고 재라운드를 돌린다. 방금 바뀐
+절에 무게를 둔 새 파일로 bakeoff를 한 번 더 하고(같은 파일을 다시 돌리면 패치만 증명된다),
+개정된 규칙으로 파일럿도 돌린다. 같은 절이 두 번 다시 개정되면 일찍 멈춘다. 세 번째 문구가
+아니라 내 결정이 필요한 일이다. 재라운드도 같은 게이트에서 끝난다. 개정 대기열, 준수 여부
+발견 사항, 라운드 간 변화량이다. 내가 승인하기 전에는 어떤 팬아웃도 시작하지 않는다.
+보고서 끝에는 다음 단계(번역 팬아웃)의 예상 기간을 적는다. manifest 크기와 파일럿의 파일당
+시간에서 끌어낸 경과 시간과 사람이 집중해야 하는 시간을 분 단위로 적는다.
+이 단계의 기록을 타임스탬프와 함께 `migration/cost-log.tsv`에 한 줄 덧붙인다.
+파일이 없으면 헤더 `step\ttimestamp\twall_clock_min\ttokens\tsubagents\tmodel`로
+만든다. 얻을 수 있는 값은 실제 값을, 없는 값은 `unknown`을 쓴다. `key=` 접두어 없이
+탭으로만 구분한다. 올바른 행은 정확히 이런 모양이다.
 `3	2026-06-11T14:02Z	21	2035336	35	claude-sonnet-4-6`
-(your step number and values vary; the format doesn't).
+(단계 번호와 값은 달라져도 형식은 그대로다.)

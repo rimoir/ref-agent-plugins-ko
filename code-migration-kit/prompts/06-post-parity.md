@@ -1,34 +1,32 @@
-# 06 — Post-parity burndown
+# 06: 동등성 이후 burndown
 
-**When:** only after the Step 6 done-gate — every parity test passing AND the
-original suite re-run clean on the original code, both counts documented (see
-README Step 6). Never alongside it. **Prerequisites:** Step 6 report with
-both counts. **Placeholders:** `[target tree]`, `[reviewer model]` (from the
-Model plan signed off at the feasibility gate).
+**언제:** 6단계 완료 게이트를 지난 뒤에만. 모든 동등성 테스트가 통과하고, 원래 테스트 묶음을
+원본 코드에 다시 돌려 깨끗하게 통과하고, 두 개수를 모두 기록했을 때다(README 6단계 참고).
+완료 게이트와 동시에 돌리지 않는다. **선행 조건:** 두 개수가 담긴 6단계 보고서.
+**Placeholder:** `[target tree]`, `[reviewer model]`(실행 가능성 게이트에서 승인한 모델 계획에서
+가져온다).
 
 ---
 
-Use a workflow. The port shipped bug-for-bug; the markers are everything it
-deferred. Collect every `BUG(port)`, `TODO(port)`, and `PERF(port)` marker
-from [target tree] — mechanical grep, not memory — and open the report with
-the per-marker counts as a receipt: the grep output, not a narrated total.
+워크플로를 써라. 포팅본은 버그까지 그대로 옮겨 출시했다. 마커는 그것이 미뤄 둔 모든 것이다.
+[target tree]에서 `BUG(port)`, `TODO(port)`, `PERF(port)` 마커를 모두 모은다. 기억이 아니라
+기계적인 grep으로 모은다. 보고서는 마커별 개수를 영수증으로 보여 주며 시작한다. 말로 정리한
+합계가 아니라 grep 출력이다.
 
-Classify every marker: **fix now** or **document and close**, one line of
-reasoning per call. Document-and-close rows get their resolution written next
-to the marker, and the marker comes out in one reviewed change.
+모든 마커를 **지금 고친다**와 **문서화하고 닫는다**로 분류하고, 판단마다 근거를 한 줄 단다.
+문서화하고 닫는 행은 마커 옆에 해결 내용을 적고, 마커는 리뷰받은 변경 하나로 한꺼번에 뺀다.
 
-Every fix-now ships as its own flagged change — one marker, one change. Each
-re-runs the parity referee and proves the ONLY behavior that changed is the
-marked defect; a fix that moves any other output is two changes, and a failed
-review. Reviewers run on [reviewer model], per the Model plan — inheriting
-the session default is a deviation; log it. A recurring marker pattern is a
-rulebook indictment, same as ever: queue the amendment for me.
+지금 고치는 것은 각각 플래그를 단 별도 변경으로 출시한다. 마커 하나에 변경 하나다. 변경마다
+동등성 판정기를 다시 돌려, 바뀐 동작이 표시된 결함 하나뿐임을 증명한다. 다른 출력을 하나라도
+움직이는 수정은 변경 두 개이고, 리뷰 실패다. 리뷰어는 모델 계획에 따라 [reviewer model]로
+돌린다. 세션 기본값을 물려받으면 이탈이니 기록한다. 되풀이되는 마커 패턴은 언제나처럼
+규칙집을 문제 삼을 일이다. 개정을 나를 위해 대기열에 올린다.
 
-Stop and show me the classification table and the per-fix parity results —
-nothing merges until I sign off.
-Append one timestamped line for this step to `migration/cost-log.tsv` —
-create it with header `step\ttimestamp\twall_clock_min\ttokens\tsubagents\tmodel`
-if absent; real values where available, `unknown` where not. Plain
-tab-separated values, no `key=` prefixes — a valid row looks exactly like:
+멈추고 분류 표와 수정별 동등성 결과를 보여 달라. 내가 승인하기 전에는 아무것도 병합하지
+않는다.
+이 단계의 기록을 타임스탬프와 함께 `migration/cost-log.tsv`에 한 줄 덧붙인다.
+파일이 없으면 헤더 `step\ttimestamp\twall_clock_min\ttokens\tsubagents\tmodel`로
+만든다. 얻을 수 있는 값은 실제 값을, 없는 값은 `unknown`을 쓴다. `key=` 접두어 없이
+탭으로만 구분한다. 올바른 행은 정확히 이런 모양이다.
 `3	2026-06-11T14:02Z	21	2035336	35	claude-sonnet-4-6`
-(your step number and values vary; the format doesn't).
+(단계 번호와 값은 달라져도 형식은 그대로다.)

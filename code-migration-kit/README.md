@@ -1,228 +1,208 @@
 # Claude Code Migration Kit
 
-A starter kit for running large-scale language migrations with Claude Code: the
-prompts, templates, and scripts behind the process described in
-**How Anthropic runs large-scale code migrations with Claude Code**.
+Claude Code로 대규모 언어 마이그레이션을 진행하는 스타터 키트다.
+**How Anthropic runs large-scale code migrations with Claude Code**에서 설명한
+과정 뒤에 있는 프롬프트, 템플릿, 스크립트를 담았다.
 
-This kit defaults to **structure-preserving migrations** — same architecture,
-same data structures, new language. That's the case where the process below is
-mechanical enough to template. If you're redesigning as you migrate, read
-[If you're redesigning](#if-youre-redesigning) first: parts of this kit change,
-and one part becomes invalid.
+이 키트의 기본값은 **구조 보존 마이그레이션**이다. 아키텍처와 자료구조는 그대로 두고
+언어만 바꾼다. 아래 과정을 템플릿으로 만들 만큼 기계적인 경우가 이것이다.
+옮기면서 재설계한다면 [재설계한다면](#if-youre-redesigning)을 먼저 읽는다.
+키트의 일부가 바뀌고, 한 부분은 쓸 수 없게 된다.
 
-> **Provenance:** these prompts are reconstructions — generalized and reviewed
-> against real production migrations, including Bun's 1M+ line Zig→Rust port,
-> not transcripts. The real artifacts were messier and more specific: the Bun
-> port's "prompt" was a 576-line rulebook
-> ([PORTING.md](https://github.com/oven-sh/bun/commit/46d3bc29f270fa881dd5730ef1549e88407701a5))
-> and a one-sentence kickoff.
+> **출처:** 이 프롬프트들은 대화 기록이 아니라 재구성한 것이다. 실제 프로덕션
+> 마이그레이션들에 비춰 일반화하고 검토했다. Bun의 100만 줄이 넘는 Zig→Rust 포팅도
+> 그중 하나다. 실제 산출물은 더 지저분하고 구체적이었다. Bun 포팅의 "프롬프트"는
+> 576줄짜리 규칙집
+> ([PORTING.md](https://github.com/oven-sh/bun/commit/46d3bc29f270fa881dd5730ef1549e88407701a5))과
+> 한 문장짜리 시작 지시였다.
 
-> **Status:** Reference code. This repo is a companion to the blog post and is
-> not actively maintained. Issues and PRs are not monitored.
+> **상태:** 참고용 코드다. 이 저장소는 블로그 글의 부속물이며 적극적으로 관리하지
+> 않는다. 이슈와 PR은 확인하지 않는다.
 
-## Quick start
+## 빠른 시작
 
-1. Clone the kit inside (or adjacent to) the repo you're migrating:
+1. 마이그레이션할 저장소 안(또는 옆)에 키트를 클론한다.
    `git clone <kit> ./migration-kit`.
-2. Copy or `@`-import the kit's `CLAUDE.md` into the target repo's `CLAUDE.md`
-   before the six steps below begin — it's the operating manual every session
-   reads.
-3. Optional: install the skill —
-   `cp -r migration-kit/skill ~/.claude/skills/code-migration`, then replace `[kit path]` inside the installed SKILL.md.
-4. Open Claude Code in the target repo and paste `prompts/00-feasibility.md`
-   with its placeholders filled.
-5. Make sure you have a judge before Step 1. If your existing test suite hits
-   the public surface (or already lives in a third language), it's your judge —
-   carry it into Step 6. If it imports internals that die with the old language,
-   run `prompts/00b-judge-setup.md` to build a portable parity harness and
-   validate it (against the original *and* against deliberately broken code)
-   before any translation. No judge, no exit condition.
-6. Before any translation fan-out (prompt 03 onward): copy
-   `templates/settings.json` to the target repo's `.claude/settings.json`
-   (see `templates/settings.README.md`) — installed by you before prompt 03
-   (Step 2's pilot needs the denies live), active through Step 4 (prompt 05),
-   test denies re-activated for Step 6's fix loops. Prompts 03 and 04 verify
-   it exists and stop without it — in one early test run this step was silently
-   skipped and nothing caught it.
-7. Then work `prompts/01`–`06` in order, one gate at a time.
+2. 아래 여섯 단계를 시작하기 전에 키트의 `CLAUDE.md`를 대상 저장소의 `CLAUDE.md`에
+   복사하거나 `@`로 가져온다. 모든 세션이 읽는 운영 매뉴얼이다.
+3. 선택 사항: 스킬을 설치한다.
+   `cp -r migration-kit/skill ~/.claude/skills/code-migration`을 실행한 뒤 설치한 SKILL.md 안의 `[kit path]`를 바꾼다.
+4. 대상 저장소에서 Claude Code를 열고 placeholder를 채운
+   `prompts/00-feasibility.md`를 붙여 넣는다.
+5. 1단계 전에 판정 기준(judge)이 있는지 확인한다. 기존 테스트 스위트가 공개 인터페이스를
+   호출한다면(또는 이미 제3의 언어로 되어 있다면) 그것이 판정 기준이다. 6단계까지
+   가져간다. 옛 언어와 함께 사라질 내부 구현을 import한다면
+   `prompts/00b-judge-setup.md`를 실행해 이식 가능한 동등성 하네스를 만들고, 번역을
+   시작하기 전에 원본에 대해서도 *그리고* 일부러 망가뜨린 코드에 대해서도 검증한다.
+   판정 기준이 없으면 종료 조건도 없다.
+6. 번역 팬아웃(프롬프트 03부터)을 시작하기 전에 `templates/settings.json`을 대상
+   저장소의 `.claude/settings.json`으로 복사한다(`templates/settings.README.md` 참고).
+   프롬프트 03 전에 사람이 직접 설치하고(2단계 파일럿에 deny가 살아 있어야 한다),
+   4단계(프롬프트 05)까지 켜 두고, 6단계의 수정 루프에서 테스트 deny를 다시 켠다.
+   프롬프트 03과 04는 이 파일이 있는지 확인하고 없으면 멈춘다. 초기 테스트 실행 한 번에서
+   이 단계를 조용히 건너뛰었는데 아무것도 잡아내지 못했다.
+7. 그다음 `prompts/01`~`06`을 순서대로, 게이트 하나씩 진행한다.
 
-## Should you migrate at all?
+## 마이그레이션을 해야 하나
 
-Start with `prompts/00-feasibility.md`. Paste it into Claude Code in your repo.
-It produces a read-only report: the case for leaving, three committed calls
-(structure-preserving or redesign, what verification costs, whether your tests
-survive), a sketch of the six steps for your repo, and a verdict. "Don't
-migrate" is a valid outcome. Nothing else in this kit matters until that
-report says go.
+`prompts/00-feasibility.md`로 시작한다. 저장소에서 Claude Code에 붙여 넣는다.
+읽기 전용 보고서가 나온다. 옮겨야 할 이유, 확정한 판단 세 가지(구조 보존인지 재설계인지,
+검증 비용이 얼마인지, 테스트가 살아남는지), 이 저장소에 맞춘 여섯 단계 스케치, 그리고
+결론이 담긴다. "마이그레이션하지 않는다"도 정당한 결론이다. 이 보고서가 진행하라고
+하기 전까지 키트의 나머지는 의미가 없다.
 
-## The six steps
+## 여섯 단계
 
-Every step below follows the same doctrine: **you don't fix the code — you fix
-the process that produced the code.** Individual failures get burned down by
-fixer agents; recurring failures indict a rule, and the rule gets amended.
+아래 모든 단계는 같은 원칙을 따른다. **코드를 고치지 말고, 코드를 만든 과정을
+고친다.** 개별 실패는 수정 에이전트가 처리한다. 되풀이되는 실패는 규칙의 책임이므로
+그 규칙을 고친다.
 
-| Step | What happens | Kit artifact |
+| 단계 | 하는 일 | 키트 산출물 |
 |---|---|---|
-| 1. Create the map and the rules | Dependency map orders the work; gap inventory traces what the target language demands; the rulebook decides every translation question once | `scripts/depmap_*`, `prompts/01`, `prompts/02`, `templates/RULEBOOK.md`, `templates/inventory.tsv` |
-| 2. Stress-test the rules | Dual-translation bakeoff + pilot run on a handful of nasty files; the only surviving output is rule changes | `prompts/03-stress-test.md` |
-| 3. Translate everything | Implementer + two adversarial reviewers + fixer per unit, fanned out over a mechanical queue; the compiler waits | `prompts/04-translation-kickoff.md`, `scripts/queue_runner.mjs` |
-| 4. Compile | One survey build grades everything; error list becomes a machine queue sliced by module; fixers work without compiler access | `prompts/05-survey-build.md`, `templates/settings.json` (the bans) |
-| 5. Run it | Hello world, then smoke tests — the cheap end-to-end proof before the expensive one | — |
-| 6. Match behavior | Inherited test suite burndown, or build a parity referee against the old code | your existing test suite is the artifact; `prompts/06-post-parity.md` after the gate |
+| 1. 지도와 규칙 만들기 | 의존성 지도로 작업 순서를 정한다. 간극 목록은 대상 언어가 요구하는 것을 추적한다. 규칙집은 모든 번역 질문을 한 번에 결정한다 | `scripts/depmap_*`, `prompts/01`, `prompts/02`, `templates/RULEBOOK.md`, `templates/inventory.tsv` |
+| 2. 규칙 스트레스 테스트 | 이중 번역 비교(bakeoff)와 까다로운 파일 몇 개로 하는 파일럿. 남는 산출물은 규칙 변경뿐이다 | `prompts/03-stress-test.md` |
+| 3. 전부 번역하기 | 단위마다 구현자 하나, 적대적 리뷰어 둘, 수정자 하나를 기계적인 큐 위에 팬아웃한다. 컴파일러는 기다린다 | `prompts/04-translation-kickoff.md`, `scripts/queue_runner.mjs` |
+| 4. 컴파일 | 조사 빌드 한 번으로 전체를 채점한다. 오류 목록은 모듈별로 나눈 기계 큐가 된다. 수정자는 컴파일러 없이 일한다 | `prompts/05-survey-build.md`, `templates/settings.json` (금지 목록) |
+| 5. 실행하기 | hello world, 그다음 스모크 테스트. 비싼 증명 전에 하는 값싼 종단 간 증명이다 | 없음 |
+| 6. 동작 맞추기 | 물려받은 테스트 스위트를 소진하거나, 옛 코드에 대한 동등성 판정기를 만든다 | 기존 테스트 스위트가 산출물이다. 게이트 뒤에는 `prompts/06-post-parity.md` |
 
-### Step 1 — Create the map and the rules
+### 1단계: 지도와 규칙 만들기
 
-Three artifacts, built in parallel, audited together:
+산출물 세 개를 병렬로 만들고 함께 감사한다.
 
-1. **The rulebook** (`templates/RULEBOOK.md` — copy it to
-   `migration/RULEBOOK.md` in the target repo): every decision a translator could
-   make two ways, decided once. The meta-rule: *if two agents could answer
-   differently, it goes in the rulebook.* Draft it in a conversation with
-   Claude, then have agents survey the codebase for the facts ("how many struct
-   fields," "how many uses tree-wide") and adversarial reviewers audit it — one
-   mistake class each.
-2. **The dependency map** (`scripts/depmap_*.py|.mjs` + `prompts/01`): a
-   deterministic script, not agent judgment. Orders the work, finds the cycles
-   — at file granularity AND at the target's package granularity. (Bun's port
-   had a clean file graph and still hit ~16K compile errors from package-level
-   cycles nobody had checked.)
-3. **The gap inventory** (`prompts/02` + `templates/inventory.tsv`): one flat
-   table of every site where the target language demands something the source
-   let you keep in your head — ownership, lifetimes, nullability, interface
-   contracts. Implementers grep it; nobody reads it top to bottom.
+1. **규칙집** (`templates/RULEBOOK.md`. 대상 저장소의 `migration/RULEBOOK.md`로
+   복사한다): 번역자가 두 가지로 내릴 수 있는 모든 결정을 한 번에 정해 둔다. 메타 규칙은
+   이렇다. *두 에이전트가 다르게 답할 수 있다면 규칙집에 넣는다.* Claude와 대화하며
+   초안을 쓰고, 에이전트들이 코드베이스에서 사실("구조체 필드가 몇 개인가", "트리 전체에서
+   몇 번 쓰이나")을 조사하게 한 뒤, 적대적 리뷰어들이 감사한다. 리뷰어 하나가 실수 유형
+   하나를 맡는다.
+2. **의존성 지도** (`scripts/depmap_*.py|.mjs` + `prompts/01`): 에이전트의 판단이 아니라
+   결정론적 스크립트다. 작업 순서를 정하고 순환을 찾는다. 파일 단위에서도, 대상 언어의
+   패키지 단위에서도 찾는다. (Bun 포팅은 파일 그래프가 깨끗했는데도 아무도 확인하지 않은
+   패키지 단위 순환 때문에 컴파일 오류 약 1만 6천 개를 만났다.)
+3. **간극 목록** (`prompts/02` + `templates/inventory.tsv`): 원본 언어에서는 머릿속에만
+   두면 됐지만 대상 언어가 명시를 요구하는 모든 지점을 담은 평평한 표 하나다. 소유권,
+   수명, null 가능성, 인터페이스 계약 같은 것이다. 구현자는 grep으로 찾아 쓰고, 처음부터
+   끝까지 읽는 사람은 없다.
 
-The sign-off gates in these prompts work like this: a workflow runs its phase
-to completion, returns the evidence, and exits. **Your sign-off is the act of
-kicking off the next one.** Every queue is defined by what exists on disk, so
-stopping is free and resuming is a re-invocation, not a recovery. When a
-prompt says "use a workflow," it means: run the phase as parallel subagents
-that complete and stop at the gate — in stock Claude Code, that's a Task/Agent
-fan-out.
+이 프롬프트들의 승인 게이트는 이렇게 동작한다. 워크플로가 자기 단계를 끝까지 돌리고,
+근거를 돌려주고, 종료한다. **사람의 승인은 다음 단계를 시작하는 행위 자체다.** 모든 큐는
+디스크에 있는 것으로 정의되므로 멈추는 데 비용이 들지 않고, 재개는 복구가 아니라 다시
+호출하는 것이다. 프롬프트가 "워크플로로 돌려라"라고 하면 그 단계를 병렬 subagent로 돌려
+게이트에서 끝내고 멈추라는 뜻이다. 기본 Claude Code에서는 Task/Agent 팬아웃이다.
 
-### Step 2 — Stress-test the rules
+### 2단계: 규칙 스트레스 테스트
 
-The rulebook has never met real code. Before any fan-out:
-**bakeoff** (two translators, separate contexts — one follows the rules, one
-never learns they exist; a diff inspector turns every difference into a verdict
-on a rule) and **pilot** (the production pipeline exactly as the fan-out will
-run it, graded on obedience, not output quality). Amendments are queued for
-you, never self-applied. See `prompts/03-stress-test.md`.
+규칙집은 아직 실제 코드를 만난 적이 없다. 팬아웃 전에 두 가지를 한다.
+**bakeoff**는 번역자 둘을 서로 다른 컨텍스트에 둔다. 하나는 규칙을 따르고, 하나는 규칙이
+있다는 것조차 모른다. diff 검사자가 모든 차이를 규칙에 대한 판정으로 바꾼다.
+**파일럿**은 팬아웃이 돌 방식 그대로 프로덕션 파이프라인을 돌리고, 출력 품질이 아니라
+규칙을 얼마나 따랐는지로 채점한다. 수정안은 사람에게 올리는 큐에 쌓이고, 스스로 적용하지
+않는다. `prompts/03-stress-test.md`를 본다.
 
-### Step 3 — Translate everything
+### 3단계: 전부 번역하기
 
-The kickoff prompt is deliberately short (`prompts/04`) because by now the
-rulebook is the prompt. The queue is mechanical: every manifest entry with no
-output file on disk yet (`scripts/queue_runner.mjs`) —
-`migration/manifest.tsv` is a Step 1 output, generated by prompt 01's
-closing action from the dependency map's order with
-`scripts/make_manifest.py`. Don't run the compiler — it grades everything next
-step. Ban the expensive operations by configuration, not request:
-`templates/settings.json`, copied to the target repo's `.claude/settings.json`
-by you before prompt 03 (Step 2's pilot needs the denies live), active
-through Step 4 (prompt 05), test denies re-activated for Step 6's fix loops
-(see `templates/settings.README.md`).
+시작 프롬프트(`prompts/04`)는 일부러 짧다. 이 시점에는 규칙집이 곧 프롬프트이기 때문이다.
+큐는 기계적이다. 디스크에 아직 출력 파일이 없는 모든 manifest 항목이다
+(`scripts/queue_runner.mjs`). `migration/manifest.tsv`는 1단계 산출물로, 프롬프트 01의
+마지막 작업이 의존성 지도의 순서를 바탕으로 `scripts/make_manifest.py`로 만든다.
+컴파일러는 돌리지 않는다. 다음 단계에서 전체를 채점한다. 비싼 작업은 요청이 아니라 설정으로
+금지한다. `templates/settings.json`을 프롬프트 03 전에 사람이 대상 저장소의
+`.claude/settings.json`으로 복사하고(2단계 파일럿에 deny가 살아 있어야 한다), 4단계
+(프롬프트 05)까지 켜 두고, 6단계의 수정 루프에서 테스트 deny를 다시 켠다
+(`templates/settings.README.md` 참고).
 
-### Step 4 — Compile
+### 4단계: 컴파일
 
-One scripted **survey build** runs the compiler across everything and emits the
-error list as a machine queue, sliced by module, leaves-to-root. Parallel
-fixers work the queue **without compiler access** — the daemon that owns the
-build is the only process that runs it. Repeat until clean.
-`prompts/05-survey-build.md` runs this step. With denies active the standard
-transport is `scripts/build_daemon.sh`: the human starts it once, it reruns
-the build when the tree changes, and fixers consume the numbered
-`migration/build-output-rN.txt` files. In one early test a human relayed every
-build by hand — fine for a couple of rounds, not for fifty.
+스크립트로 된 **조사 빌드** 한 번이 전체에 컴파일러를 돌리고, 오류 목록을 모듈별로 나눠
+잎에서 뿌리 순으로 정렬한 기계 큐로 내보낸다. 병렬 수정자들은 **컴파일러 없이** 큐를
+처리한다. 빌드를 소유한 데몬만 컴파일러를 돌린다. 깨끗해질 때까지 반복한다.
+`prompts/05-survey-build.md`가 이 단계를 돌린다. deny가 켜져 있을 때 표준 전달 방식은
+`scripts/build_daemon.sh`다. 사람이 한 번 띄우면 트리가 바뀔 때마다 빌드를 다시 돌리고,
+수정자들은 번호가 붙은 `migration/build-output-rN.txt` 파일을 받아 쓴다. 초기 테스트 한
+번에서는 사람이 빌드를 하나하나 손으로 전달했다. 두어 라운드는 괜찮지만 쉰 라운드는 안 된다.
 
-**If your target's typecheck is cheap (TypeScript, Go), this step dissolves
-into Step 3** — run the typechecker inside every unit's loop instead of
-batching it. The rule: every referee has a price, and the price decides its
-position in the loop. Dissolving is an edit to the installed
-`.claude/settings.json` at the gate — remove the typecheck denies so the loop
-may run it. If settings.json was never installed there is nothing to edit,
-and the dissolve silently proceeds with no guardrails at all — one early run did
-exactly that, end to end. Install first, then dissolve.
+**대상 언어의 타입 검사가 싸다면(TypeScript, Go) 이 단계는 3단계에 녹아든다.** 일괄로
+돌리지 말고 단위마다 루프 안에서 타입 검사기를 돌린다. 규칙은 이렇다. 모든 판정기에는
+가격이 있고, 그 가격이 루프 안 위치를 정한다. 녹여 넣는 것은 게이트에서 설치된
+`.claude/settings.json`을 고치는 일이다. 루프가 타입 검사를 돌릴 수 있도록 해당 deny를
+지운다. settings.json을 설치한 적이 없다면 고칠 것이 없고, 녹여 넣기는 안전장치 없이 조용히
+진행된다. 초기 실행 한 번이 처음부터 끝까지 정확히 그렇게 됐다. 먼저 설치하고, 그다음
+녹여 넣는다.
 
-### Step 5 — Run it
+### 5단계: 실행하기
 
-Hello world. Then the smallest end-to-end command your binary supports. Cheap
-proofs before expensive ones.
+hello world. 그다음 바이너리가 지원하는 가장 작은 종단 간 명령. 비싼 증명 전에 값싼
+증명부터 한다.
 
-### Step 6 — Match behavior
+### 6단계: 동작 맞추기
 
-This is where the judge you set up before Step 1 does its job. If your old tests
-hit the public surface (CLI, API, exported interface) they were your judge from
-the start — run them against the new code, triage every failure by also running
-it against the *old* code (regression / inherited / environment), and burn the
-queue down. If your tests import source-language internals, the portable parity
-harness you built with `prompts/00b-judge-setup.md` is the judge — run it against
-both old and new and diff the results. Either way the old code is the executable
-spec, the judge was validated against deliberately broken code before you trusted
-it, and you've kept it running the whole migration. **Keep it running until the
-end.**
+1단계 전에 마련한 판정 기준이 제 역할을 하는 곳이다. 옛 테스트가 공개 인터페이스(CLI, API,
+export된 인터페이스)를 호출한다면 처음부터 그것이 판정 기준이었다. 새 코드에 돌리고, 실패마다
+*옛* 코드에도 돌려 분류하고(회귀 / 물려받음 / 환경), 큐를 소진한다. 테스트가 원본 언어의
+내부 구현을 import한다면 `prompts/00b-judge-setup.md`로 만든 이식 가능한 동등성 하네스가
+판정 기준이다. 옛 코드와 새 코드 양쪽에 돌리고 결과를 비교한다. 어느 쪽이든 옛 코드가 실행
+가능한 명세이고, 판정 기준은 믿기 전에 일부러 망가뜨린 코드로 검증했고, 마이그레이션 내내
+돌려 왔다. **끝까지 계속 돌린다.**
 
-The done-gate is explicit: every test in the parity referee passes, AND the
-original suite has been re-run on the original code with zero inherited
-failures — both counts documented in the report. For redesign migrations with no inherited suite, the gate is the
-built parity referee's scenario list, signed off by the human. After the
-gate, `prompts/06-post-parity.md` burns down the deferred `BUG(port)` /
-`TODO(port)` / `PERF(port)` markers — each fix its own flagged change, proved
-by a parity re-run.
+완료 게이트는 명시적이다. 동등성 판정기의 모든 테스트가 통과하고, 원래 스위트를 원래 코드에
+다시 돌려 물려받은 실패가 0이어야 한다. 두 숫자 모두 보고서에 기록한다. 물려받은 스위트가
+없는 재설계 마이그레이션에서는 직접 만든 동등성 판정기의 시나리오 목록을 사람이 승인하는
+것이 게이트다. 게이트를 지나면 `prompts/06-post-parity.md`가 미뤄 둔 `BUG(port)` /
+`TODO(port)` / `PERF(port)` 마커를 소진한다. 수정 하나하나를 플래그를 단 별도 변경으로 내고,
+동등성 재실행으로 증명한다.
 
-One lesson from early testing: debug the referee before believing its verdicts.
-In one run, all reported divergences were false — traced to two comparator bugs
-(whitespace handling; JSON.stringify converting NaN/-Infinity to null), none to
-the port. A referee that fails everything is usually broken, not right.
+초기 테스트에서 얻은 교훈 하나. 판정기의 결론을 믿기 전에 판정기부터 디버깅한다. 한 실행에서
+보고된 불일치가 전부 거짓이었다. 원인은 포팅이 아니라 비교기 버그 두 개였다(공백 처리,
+JSON.stringify가 NaN/-Infinity를 null로 바꾸는 것). 모든 것을 실패시키는 판정기는 대개 옳은
+게 아니라 망가진 것이다.
 
-## If you're redesigning
+<a id="if-youre-redesigning"></a>
+## 재설계한다면
 
-Three things change and one thing breaks:
+세 가지가 바뀌고 한 가지가 깨진다.
 
-- The rulebook becomes a **design document** (what the new architecture is),
-  not a lookup table (how each construct translates).
-- The **bakeoff is invalid** — a diff between rule-following and native
-  translations measures your redesign, not your rules. Substitute: adversarial
-  review of the design doc itself, plus disposable full runs — run the whole
-  migration cheaply, review what came out, fix the rules, throw the run away.
-- The unit of work is a module or subsystem, not a file.
-- Behavior matching still works unchanged — it never sees your internals.
+- 규칙집이 조회표(각 구성 요소를 어떻게 번역하는가)가 아니라 **설계 문서**(새 아키텍처가
+  무엇인가)가 된다.
+- **bakeoff는 쓸 수 없다.** 규칙을 따른 번역과 자연스러운 번역의 diff는 규칙이 아니라
+  재설계를 잰다. 대신 설계 문서 자체를 적대적으로 리뷰하고, 버릴 전체 실행을 돌린다.
+  마이그레이션 전체를 싸게 돌리고, 나온 것을 리뷰하고, 규칙을 고치고, 그 실행은 버린다.
+- 작업 단위가 파일이 아니라 모듈이나 하위 시스템이다.
+- 동작 맞추기는 그대로 통한다. 내부 구현을 보지 않기 때문이다.
 
-## When you don't need this kit
+## 이 키트가 필요 없는 경우
 
-JavaScript→TypeScript is the most common migration by volume, and you mostly
-don't need any of this: TypeScript is a superset, adoption can be incremental,
-file by file, with no parallel codebase. Use this kit when the move is total —
-when every file must cross and the old language ends up deleted.
+양으로 보면 가장 흔한 마이그레이션은 JavaScript→TypeScript이고, 여기에는 이런 것이 대부분
+필요 없다. TypeScript는 상위 집합이라 병렬 코드베이스 없이 파일 하나씩 점진적으로 도입할 수
+있다. 이 키트는 전면 이동일 때 쓴다. 모든 파일이 건너가야 하고 옛 언어가 결국 지워지는
+경우다.
 
-## What's in the box
+## 구성
 
 ```
-prompts/         eight paste-ready prompts (00-feasibility, 00b-judge-setup → 06-post-parity)
-templates/       RULEBOOK.md, inventory.tsv, settings.json (+ why each rule exists)
-scripts/         dependency mappers (Python, JS/TS, C headers) + queue runner + manifest builder + build daemon
-fixtures/        test trees + expected outputs for every script
-skill/           a Claude Code skill that walks the six steps
-examples/        a complete example run — filled-in rulebook, inventory, diff report, parity scripts
-CLAUDE.md        the operating manual Claude Code reads when opened here
-RUN-NOTES.md     receipts from this kit's own test runs
+prompts/         붙여 넣어 바로 쓰는 프롬프트 8개 (00-feasibility, 00b-judge-setup → 06-post-parity)
+templates/       RULEBOOK.md, inventory.tsv, settings.json (+ 규칙마다 존재 이유)
+scripts/         의존성 매퍼(Python, JS/TS, C 헤더) + 큐 실행기 + manifest 생성기 + 빌드 데몬
+fixtures/        모든 스크립트의 테스트 트리와 기대 출력
+skill/           여섯 단계를 안내하는 Claude Code 스킬
+examples/        완전한 예시 실행. 채운 규칙집, 간극 목록, diff 보고서, 동등성 스크립트
+CLAUDE.md        여기서 Claude Code를 열면 읽는 운영 매뉴얼
+RUN-NOTES.md     이 키트 자체의 테스트 실행 기록
 ```
 
-## A note on cost and rate limits
+## 비용과 rate limit
 
-A production-scale port can consume billions of input tokens inside two weeks.
-The process
-works at any rate limit — the calendar doesn't. At standard API limits, expect
-the same steps across a longer wall clock. Budget with a visible
-multiplication: units of work × per-unit estimate, never a vibes number. And
-weigh the figure against what the spend buys: most of the multiplier is the
-review topology, and in testing that's where the catches came from (RUN-NOTES).
+프로덕션 규모의 포팅은 2주 안에 입력 토큰을 수십억 개 쓸 수 있다. 과정은 어떤 rate limit에서도
+돌아가지만 달력은 그렇지 않다. 표준 API 한도라면 같은 단계를 더 긴 시간에 걸쳐 밟는다고
+예상한다. 예산은 곱셈이 보이게 잡는다. 작업 단위 수 × 단위당 추정치다. 감으로 정한 숫자는 쓰지
+않는다. 그리고 그 금액을 무엇을 얻는지와 견준다. 곱해지는 몫의 대부분은 리뷰 구조에서 나오고,
+테스트에서 잡아낸 것도 대부분 거기서 나왔다(RUN-NOTES).
 
-## Contributing
+## 기여
 
-This is reference code published as a blog companion and is not accepting
-contributions. You're welcome to fork it and adapt the dependency mappers for
-your ecosystem.
+블로그 부속물로 공개한 참고용 코드이며 기여를 받지 않는다. 포크해서 의존성 매퍼를 자기
+생태계에 맞게 고쳐 써도 좋다.
 
-## License
+## 라이선스
 
-Apache-2.0 — see [LICENSE](LICENSE).
+Apache-2.0. [LICENSE](LICENSE)를 본다.

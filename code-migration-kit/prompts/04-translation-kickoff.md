@@ -1,63 +1,52 @@
-# 04 — Translation kickoff
+# 04: 번역 시작
 
-**When:** Step 3, after the stress test is signed off. **Prerequisites:**
-amended RULEBOOK.md, complete inventory, manifest at `migration/manifest.tsv`
-(source path → target path per the rulebook's naming rules), and
-`templates/settings.json` copied to the target repo's `.claude/settings.json`
-so the banned commands actually deny.
-**Placeholders:** `[100]` (batch size), `[TODO(port)]` (your
-greppable markers — TODO/PERF/BUG per rulebook §3), `[implementer model]`,
-`[reviewer model]` (from the Model plan signed off at the feasibility gate).
-Swap "file" for whatever your queue emits — modules, units.
+**언제:** 3단계, 스트레스 테스트가 승인된 뒤. **선행 조건:** 개정된 RULEBOOK.md, 완성된
+간극 목록, `migration/manifest.tsv`의 manifest(규칙집의 이름 규칙에 따른 원본 경로 → 대상
+경로), 금지 명령이 실제로 막히도록 대상 저장소의 `.claude/settings.json`에 복사한
+`templates/settings.json`.
+**Placeholder:** `[100]`(묶음 크기), `[TODO(port)]`(grep할 수 있는 마커. 규칙집 §3에 따른
+TODO/PERF/BUG), `[implementer model]`, `[reviewer model]`(실행 가능성 게이트에서 승인한 모델
+계획에서 가져온다). "파일"은 큐가 내놓는 단위(모듈, 유닛)로 바꿔 읽는다.
 
-This prompt is deliberately short. By Step 3 the rulebook is the prompt — if
-your kickoff needs to be longer than this, your rulebook isn't done.
+이 프롬프트는 일부러 짧다. 3단계쯤이면 규칙집이 곧 프롬프트다. 시작 프롬프트가 이보다
+길어야 한다면 규칙집이 덜 된 것이다.
 
 ---
 
-Before any fan-out, verify `.claude/settings.json`. Never install it
-yourself — installation is my act, because that's the moment I decide the
-referee price; Run 3's orchestrator detected the missing file and
-self-installed it, automating away exactly that decision. If it's missing,
-STOP and wait: tell me to install `templates/settings.json`, or record my
-explicit waiver in the deviation log — Run 2 ran end to end with the
-guardrails silently never installed. If it exists and carries deny rules for
-this migration's expensive commands — the template adapted per
-`templates/settings.README.md`, including any dissolve edit I made at a
-gate — proceed silently. Halt and ask only if it lacks deny rules entirely,
-or you can't tell whether I sanctioned what's there; never install, never
-overwrite. Set the model explicitly on every agent call: implementers on
-[implementer model], reviewers on [reviewer model]; fixers ride
-[implementer model] unless the Model plan says otherwise. Inheriting the
-session default is a deviation; log it.
+팬아웃 전에 `.claude/settings.json`을 확인한다. 절대 직접 설치하지 마라. 설치는 내가 하는
+일이다. 그 순간이 내가 판정기 비용을 정하는 때이기 때문이다. 3회차의 오케스트레이터는 파일이
+없는 것을 알아채고 스스로 설치해서 바로 그 결정을 자동화로 없애 버렸다. 파일이 없으면
+STOP하고 기다린다. `templates/settings.json`을 설치하라고 나에게 말하거나, 내가 명시적으로
+면제한 것을 이탈 기록에 남긴다. 2회차는 가드레일이 설치되지 않은 것을 아무도 모른 채 끝까지
+돌았다. 파일이 있고 이 마이그레이션의 비싼 명령을 막는 deny 규칙이 들어 있으면
+(`templates/settings.README.md`에 따라 고친 템플릿, 내가 게이트에서 한 dissolve 편집 포함)
+아무 말 없이 진행한다. deny 규칙이 아예 없거나, 거기 있는 것을 내가 승인했는지 알 수 없을
+때만 멈추고 묻는다. 절대 설치하지 말고, 절대 덮어쓰지 마라. 모든 에이전트 호출에 모델을
+명시한다. 구현자는 [implementer model], 리뷰어는 [reviewer model]로 돌린다. 수정자는 모델
+계획에 다른 말이 없으면 [implementer model]을 쓴다. 세션 기본값을 물려받으면 이탈이니
+기록한다.
 
-Use a workflow. The queue is every `migration/manifest.tsv` entry with no
-translated file on disk yet — so reruns resume for free. Work down it in
-batches of [100]. Every
-agent reads the **rulebook**; each implementer translates its one file —
-[TODO(port)] anything the rulebook doesn't decide, status trailer at the
-bottom. Two adversarial **reviewers** per file, separate contexts, assume it's
-wrong, touch nothing — every finding cites a rule or a source line; a third
-rules on anything they don't agree on, defaulting to not-confirmed. **Fix
-agents** apply confirmed findings only — can't fix it, flag it. Don't run the
-compiler — it grades everything next step (exception: if Step 4 has dissolved
-into this loop per README Step 4, the rulebook's §0 names the cheap in-loop
-referee). Four agents per file is the multiplier and the product: Run 1's
-catches came from adversarial review at the map, inventory, and bakeoff
-stages — and the one run that skipped this per-file pass ate the exact
-failure class it exists to catch in the compile step (RUN-NOTES, Run 1
-deviations).
+워크플로를 써라. 큐는 `migration/manifest.tsv` 항목 가운데 번역된 파일이 아직 디스크에 없는
+것 전부다. 그래서 다시 돌리면 공짜로 이어 간다. [100]개 묶음으로 큐를 내려간다. 모든
+에이전트가 **규칙집**를 읽는다. 구현자는 각자 파일 하나를 번역한다. 규칙집이 정하지 않은
+것은 모두 [TODO(port)]로 표시하고, 맨 아래에 상태 트레일러를 단다. 파일마다 적대적
+**리뷰어** 둘이 컨텍스트를 분리해, 틀렸다고 가정하고, 아무것도 건드리지 않는다. 모든 발견은
+규칙이나 소스 줄을 인용한다. 둘이 합의하지 못한 것은 세 번째가 판정하고, 기본값은 확인되지
+않음이다. **수정 에이전트**는 확인된 발견만 적용한다. 고칠 수 없으면 표시한다. 컴파일러는
+돌리지 마라. 다음 단계에서 컴파일러가 모든 것을 채점한다(예외: README 4단계에 따라 4단계가
+이 루프 안으로 녹아들었다면 규칙집 §0이 루프 안에서 쓸 값싼 판정기를 지정한다). 파일당
+에이전트 넷이 곱셈 인자이자 상품이다. 1회차가 잡아낸 것은 지도, 간극 목록, bakeoff 단계의
+적대적 리뷰에서 나왔다. 그리고 이 파일별 리뷰를 건너뛴 유일한 실행은 바로 그 리뷰가
+잡으려는 실패 유형을 컴파일 단계에서 고스란히 떠안았다(RUN-NOTES, 1회차 이탈).
 
-Progress invariant: translated-file count on disk must grow between polls.
-No growth from a worker for three minutes means treat it as failed — recover
-its output from the journal or disk, and report the stall. Stalls are yours
-to heal, not mine to notice. At each batch gate, report burndown plus an
-estimated duration for the next step (survey build — or Steps 5–6 if Step 4
-dissolved) — wall-clock and active-attention minutes, from the batch timings
-you just measured.
-Append one timestamped line for this step to `migration/cost-log.tsv` —
-create it with header `step\ttimestamp\twall_clock_min\ttokens\tsubagents\tmodel`
-if absent; real values where available, `unknown` where not. Plain
-tab-separated values, no `key=` prefixes — a valid row looks exactly like:
+진행 불변식: 디스크의 번역된 파일 수는 폴링 사이에 늘어나야 한다. 작업자에게서 3분 동안
+늘지 않으면 그 작업자를 실패로 보고, 저널이나 디스크에서 출력을 되살리고, 멈춤을 보고한다.
+멈춤은 내가 알아챌 일이 아니라 네가 고칠 일이다. 묶음 게이트마다 burndown과 다음 단계(survey
+build, 4단계가 녹아들었다면 5~6단계)의 예상 기간을 보고한다. 방금 잰 묶음 시간에서 끌어낸
+경과 시간과 사람이 집중해야 하는 시간을 분 단위로 적는다.
+이 단계의 기록을 타임스탬프와 함께 `migration/cost-log.tsv`에 한 줄 덧붙인다.
+파일이 없으면 헤더 `step\ttimestamp\twall_clock_min\ttokens\tsubagents\tmodel`로
+만든다. 얻을 수 있는 값은 실제 값을, 없는 값은 `unknown`을 쓴다. `key=` 접두어 없이
+탭으로만 구분한다. 올바른 행은 정확히 이런 모양이다.
 `3	2026-06-11T14:02Z	21	2035336	35	claude-sonnet-4-6`
-(your step number and values vary; the format doesn't).
+(단계 번호와 값은 달라져도 형식은 그대로다.)

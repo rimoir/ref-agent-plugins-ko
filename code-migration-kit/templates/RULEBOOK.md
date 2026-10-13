@@ -1,134 +1,128 @@
-# Translation Rulebook — [source language] → [target language]
+# 번역 규칙집: [source language] → [target language]
 
-> **The meta-rule: if two agents could answer a question differently, the
-> answer goes in this file.** This document is read by every implementer,
-> reviewer, and fixer before they touch code. It is read-only inside any loop —
-> amendments are queued for the human and applied between batches.
+> **메타 규칙: 두 에이전트가 한 질문에 서로 다르게 답할 수 있다면 그 답은 이
+> 파일에 둔다.** 모든 구현자, 리뷰어, 수정자는 코드를 건드리기 전에 이 문서를
+> 읽는다. 어떤 루프 안에서도 이 문서는 읽기 전용이다. 수정 제안은 사람에게
+> 올리는 대기열에 넣고 배치와 배치 사이에 반영한다.
 >
-> For a filled-in example at production scale, see Bun's
+> 실제 규모로 채운 예시는 Bun의
 > [PORTING.md](https://github.com/oven-sh/bun/commit/46d3bc29f270fa881dd5730ef1549e88407701a5)
-> (576 lines, Zig→Rust) — the shape below is that document, generalized.
+> (576줄, Zig→Rust)를 본다. 아래 형식은 그 문서를 일반화한 것이다.
 
-Read this whole document before writing any code.
+코드를 쓰기 전에 이 문서를 끝까지 읽는다.
 
-## 0. Scope and posture
+## 0. 범위와 기본 자세
 
-- This is a **structure-preserving** migration: same architecture, same data
-  structures, same file boundaries unless a rule below says otherwise. You are
-  translating, not improving. <!-- If redesigning, replace this section with
-  your ARCHITECTURE.md and delete the bakeoff from your Step 2. -->
-- Drafts do not need to compile. **Do not run the compiler** — it grades
-  everything in Step 4.
-  <!-- Cheap typechecker (tsc, go vet)? Replace this bullet with the cheap-referee variant — see README Step 4 and examples/run1-toml/RULEBOOK.md §0. -->
-- First pass optimizes for **correct translation**, not performance. Known
-  slow-but-faithful translations are fine: mark them `PERF(port):` with one
-  line on what the fast version would be, and move on.
+- 이 작업은 **구조를 보존하는** 마이그레이션이다. 아래 규칙이 따로 정하지
+  않는 한 아키텍처, 자료구조, 파일 경계를 그대로 둔다. 개선하는 것이 아니라
+  옮기는 것이다. <!-- 재설계라면 이 절을 ARCHITECTURE.md로 바꾸고 Step 2의 bakeoff를 지운다. -->
+- 초안은 컴파일되지 않아도 된다. **컴파일러를 돌리지 않는다.** 컴파일러는
+  Step 4에서 모든 것을 채점한다.
+  <!-- 타입 검사가 싸다면(tsc, go vet) 이 항목을 cheap-referee 변형으로 바꾼다. README 4단계와 examples/run1-toml/RULEBOOK.md §0을 본다. -->
+- 첫 패스는 성능이 아니라 **정확한 번역**을 목표로 한다. 느리지만 충실한
+  번역은 괜찮다. `PERF(port):`로 표시하고 빠른 버전이 무엇일지 한 줄 적은 뒤
+  넘어간다.
 
-## 1. Ecosystem adoption — what we use and what we ban
+## 1. 생태계 채택: 쓰는 것과 금지하는 것
 
-The target ecosystem will offer idiomatic alternatives for everything. Decide
-once, here, which are adopted and which are banned — or every agent decides
-differently and the codebase becomes a museum of styles.
+대상 생태계는 모든 것에 관용적인 대안을 내놓는다. 무엇을 채택하고 무엇을
+금지할지 여기서 한 번에 정한다. 그러지 않으면 에이전트마다 다르게 정하고
+코드베이스는 온갖 스타일의 박물관이 된다.
 
-| Area | Decision | Why |
+| 영역 | 결정 | 이유 |
 |---|---|---|
-| Async model | [e.g., BANNED: no async runtime; keep the source's threading model] | [why] |
-| Standard library I/O | [e.g., use X, never Y] | [why] |
-| String/bytes policy | [e.g., bytes everywhere internals, convert at boundaries] | [why] |
-| Third-party deps | [default: NONE without a rule here naming the crate/package] | [why] |
-| Error model | see §2 | |
+| 비동기 모델 | [예: BANNED. 비동기 런타임 없음. 원본의 스레딩 모델 유지] | [이유] |
+| 표준 라이브러리 I/O | [예: X를 쓰고 Y는 절대 쓰지 않음] | [이유] |
+| 문자열/바이트 정책 | [예: 내부는 모두 바이트, 경계에서 변환] | [이유] |
+| 서드파티 의존성 | [기본값: 여기에 crate/package를 명시한 규칙이 없으면 NONE] | [이유] |
+| 오류 모델 | §2 참고 | |
 
-## 2. Constructs with no equivalent — one canonical mapping each
+## 2. 대응물이 없는 구문: 구문마다 표준 매핑 하나
 
-Every source construct the target lacks gets exactly one translation, listed
-here. An implementer who invents a second mapping for a listed construct is
-violating a rule; a reviewer who sees an unlisted construct flags it for this
-table.
+대상 언어에 없는 원본 구문은 정확히 한 가지 번역을 갖고, 그 번역을 여기에
+적는다. 목록에 있는 구문에 두 번째 매핑을 만들어 낸 구현자는 규칙을 어긴
+것이다. 목록에 없는 구문을 본 리뷰어는 이 표에 추가하도록 표시한다.
 
-| Source construct | Canonical target translation | Notes / evidence |
+| 원본 구문 | 표준 대상 번역 | 메모 / 근거 |
 |---|---|---|
-| [e.g., error union / exceptions] | [e.g., Result<T, E> with this E] | |
-| [e.g., null / optional] | [e.g., Option<T>, never sentinel values] | |
-| [e.g., inheritance] | [e.g., trait + composition, this shape] | |
-| [e.g., out-of-bounds indexing] | [source raises / returns sentinel / UB — replicate the source's behavior explicitly; a target that silently returns undefined where the source raises is a defect factory] | |
-| `isalpha()` at identifier start — **example row, C-family sources** | [decide the identifier-start and continuation sets explicitly; never reach for the target's "is alphabetic" helper unchecked] | Target helpers disagree with C's `isalpha()` on underscore and locale — Run 2: `_` accepted at identifier start gave one-byte-off error offsets |
-| [add rows as the survey finds them] | | |
+| [예: error union / 예외] | [예: 이 E를 쓰는 Result<T, E>] | |
+| [예: null / optional] | [예: Option<T>, sentinel 값은 절대 쓰지 않음] | |
+| [예: 상속] | [예: trait + 합성, 이 형태] | |
+| [예: 범위를 벗어난 인덱싱] | [원본은 예외를 던지거나 sentinel을 반환하거나 UB다. 원본 동작을 명시적으로 재현한다. 원본이 예외를 던지는 곳에서 조용히 undefined를 반환하는 대상 언어는 결함 공장이다] | |
+| 식별자 시작 위치의 `isalpha()`: **예시 행, C 계열 원본** | [식별자 시작 문자 집합과 이어지는 문자 집합을 명시적으로 정한다. 대상 언어의 "is alphabetic" 헬퍼를 확인 없이 쓰지 않는다] | 대상 언어의 헬퍼는 밑줄과 로케일에서 C의 `isalpha()`와 다르게 동작한다. Run 2에서는 식별자 시작에 `_`를 받아들여 오류 오프셋이 한 바이트씩 어긋났다 |
+| [조사하면서 찾은 행을 추가한다] | | |
 
-**The BUG rule:** when the source's behavior is itself defective (malformed
-output, crash), reproduce it bug-for-bug and mark the site `BUG(port):` with a
-repro — behavior matching (Step 6) asserts the defective output; fixes ship
-only in a flagged post-parity change. The port's job is fidelity; improvement
-is a separate, reviewable commit.
+**BUG 규칙:** 원본 동작 자체가 결함일 때(잘못된 출력, 크래시) 버그까지 그대로
+재현하고 그 위치에 재현 방법과 함께 `BUG(port):`를 표시한다. 동작 일치 검사
+(Step 6)는 결함 있는 출력을 단언한다. 수정은 패리티를 맞춘 뒤 표시를 단 별도
+변경으로만 내보낸다. 포트의 일은 충실함이다. 개선은 따로 리뷰할 수 있는 커밋이다.
 
-**The error-recovery rule:** allocation-failure returns and structural-error
-returns often share one sentinel in the source (NULL, None, -1). They must
-not share one target construct: an allocation failure aborts the operation;
-a structural error records the error and returns whatever partial result the
-source returned. Every guard row in the inventory records which kind it is —
-`allocation-guard` or `precondition-guard` (see `templates/inventory.tsv`).
-Run 2 collapsed the two and got wrong error positions; the rule sweep that
-followed fixed three more sites no test covered.
+**오류 복구 규칙:** 원본에서는 할당 실패 반환과 구조 오류 반환이 같은 sentinel
+(NULL, None, -1)을 쓰는 일이 많다. 대상 언어에서는 둘이 같은 구문을 쓰면 안
+된다. 할당 실패는 작업을 중단한다. 구조 오류는 오류를 기록하고 원본이 반환한
+부분 결과를 그대로 반환한다. 간극 목록의 모든 guard 행은 어느 쪽인지
+`allocation-guard`나 `precondition-guard`로 기록한다(`templates/inventory.tsv`
+참고). Run 2는 둘을 합쳤다가 오류 위치가 틀렸다. 이어서 규칙을 전수 적용하자
+어떤 테스트도 덮지 않던 위치 세 곳이 더 고쳐졌다.
 
-**The UNKNOWN rule:** when neither this table nor the inventory decides a
-case, translate to the most conservative representation the target offers,
-mark it `TODO(port):` with the open question, and keep moving. UNKNOWN is an
-answer; a stalled batch is not.
+**UNKNOWN 규칙:** 이 표도 간극 목록도 어떤 경우를 정하지 못하면 대상 언어가
+제공하는 가장 보수적인 표현으로 옮기고, 열린 질문과 함께 `TODO(port):`를 표시한
+뒤 계속 진행한다. UNKNOWN은 답이다. 멈춘 배치는 답이 아니다.
 
-## 3. The sanctioned escape hatch
+## 3. 허용된 탈출구
 
-Translations that can't be expressed safely get exactly one pressure valve,
-used visibly:
+안전하게 표현할 수 없는 번역에는 압력 밸브를 딱 하나 주고, 눈에 띄게 쓴다.
 
-- [e.g., `unsafe` is allowed where the source was already unsafe — never to
-  silence the borrow checker on safe logic.]
-- Every use carries a justification comment: `// SAFETY: <why this is sound>`.
-- Every deferred decision carries a greppable marker: `TODO(port):`,
-  `PERF(port):`, `BUG(port):` (plus `SAFETY:` on every escape-hatch use).
-  These markers are the queue for later steps — the format is load-bearing,
-  do not vary it.
+- [예: `unsafe`는 원본이 이미 unsafe였던 곳에서만 허용한다. 안전한 로직에서
+  borrow checker를 잠재우려고 쓰지 않는다.]
+- 쓸 때마다 정당화 주석을 단다: `// SAFETY: <why this is sound>`.
+- 미룬 결정에는 모두 grep할 수 있는 마커를 단다: `TODO(port):`,
+  `PERF(port):`, `BUG(port):`(탈출구를 쓴 곳에는 `SAFETY:`도 단다).
+  이 마커가 이후 단계의 작업 대기열이다. 형식에 기능이 걸려 있으니 바꾸지
+  않는다.
 
-## 4. Naming and output paths
+## 4. 이름과 출력 경로
 
-Done-ness is detected by output files existing on disk, so these rules are
-what make the whole run resumable. They are not style preferences.
+완료 여부는 디스크에 출력 파일이 있는지로 판단한다. 그래서 전체 실행을 다시
+이어서 돌릴 수 있게 해 주는 것이 이 규칙들이다. 스타일 취향이 아니다.
 
-- Source `[path pattern]` → target `[path pattern]`. One source file, one
-  target file, no exceptions without a rule here.
-- [Module/package naming rule.]
-- [Test file naming rule.]
-- Import specifier convention for the target's module system (e.g., TS
-  nodenext requires `./mod.js` specifiers for `.ts` files — decide once or
-  every implementer rediscovers it).
-- Home module for every shared type and helper the translations import (the
-  canonical owner of the value union, type-dispatch helpers, repr emulation).
-  An unassigned shared type becomes N incompatible local copies.
+- 원본 `[path pattern]` → 대상 `[path pattern]`. 원본 파일 하나에 대상 파일
+  하나다. 여기에 규칙이 없으면 예외는 없다.
+- [모듈/패키지 이름 규칙]
+- [테스트 파일 이름 규칙]
+- 대상 언어 모듈 시스템의 import 지정자 규칙(예: TS nodenext는 `.ts` 파일에
+  `./mod.js` 지정자를 요구한다. 한 번 정해 두지 않으면 구현자마다 다시
+  알아낸다).
+- 번역본이 import하는 모든 공유 타입과 헬퍼의 소속 모듈(값 union, 타입
+  디스패치 헬퍼, repr 에뮬레이션의 정식 소유자). 소속이 정해지지 않은 공유
+  타입은 서로 호환되지 않는 지역 사본 N개가 된다.
 
-## 5. The gap inventory
+## 5. 간극 목록
 
-Decisions about [your gap — lifetimes, ownership, nullability] are **not made
-by implementers**. They are looked up: `migration/inventory.tsv`, one row per
-site. If your site isn't in the inventory, that's an inventory bug — flag it,
-apply the UNKNOWN rule, keep moving.
+[your gap: 수명, 소유권, nullability]에 관한 결정은 **구현자가 내리지 않는다.**
+찾아본다. `migration/inventory.tsv`에 위치마다 한 행씩 있다. 내 위치가 간극
+목록에 없으면 간극 목록의 버그다. 표시하고, UNKNOWN 규칙을 적용하고, 계속
+진행한다.
 
-## 6. Per-file obligations
+## 6. 파일별 의무
 
-Every translated file ends with a status trailer:
+번역한 파일은 모두 상태 트레일러로 끝난다.
 
 ```
 // PORT STATUS: confidence=[high|medium|low] todos=[N]
 ```
 
-Reviewers check the trailer against the file's actual `TODO(port)` count —
-a trailer that undercounts is a finding.
+리뷰어는 트레일러를 파일의 실제 `TODO(port)` 개수와 대조한다. 개수를 적게
+센 트레일러는 지적 사항이다.
 
-## 7. Deviation log
+## 7. 이탈 기록 (Deviation log)
 
-Every departure from the documented process gets one line here — skipped
-passes, waived checks, untriggered defaults. ID'd `DEV-001` style: ID, date,
-what was skipped or waived, who sanctioned it. Written at gates, by the
-human or with the human's sign-off. A deviation nobody logged is a deviation
-nobody approved — Run 1's skipped review pass is the model entry.
+문서화한 절차에서 벗어난 일은 모두 여기에 한 줄씩 적는다. 건너뛴 패스, 면제한
+검사, 발동하지 않은 기본값이 대상이다. `DEV-001` 형식의 ID를 붙이고 ID, 날짜,
+건너뛰거나 면제한 것, 승인한 사람을 적는다. 게이트에서 사람이 적거나 사람의
+승인을 받아 적는다. 아무도 기록하지 않은 이탈은 아무도 승인하지 않은 이탈이다.
+Run 1에서 리뷰 패스를 건너뛴 일이 모범 항목이다.
 
-| ID | Date | Deviation | Sanctioned by |
+| ID | 날짜 | 이탈 | 승인자 |
 |---|---|---|---|
-| DEV-001 | [date] | [e.g., Step 3 per-file review pass skipped — budget] | [who] |
+| DEV-001 | [날짜] | [예: Step 3 파일별 리뷰 패스 생략, 예산 부족] | [누구] |

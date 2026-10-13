@@ -1,57 +1,53 @@
-# Why each deny rule exists
+# deny 규칙마다 있는 이유
 
-`settings.json` goes in `.claude/settings.json` of the repo being migrated —
-installed by the human **before prompt 03** (Step 2's pilot needs the denies
-live), active **through Step 4** (prompt 05), with the test denies
-**re-activated for Step 6's fix loops** (fixers read failure evidence; only
-the build daemon re-runs tests). The install is a copy, not a suggestion:
-`cp templates/settings.json <target repo>/.claude/settings.json`. Prompts 03
-and 04 verify the file exists and refuse to fan out without it — in Run 2 the
-install was silently skipped and the deny rules were never active for the
-entire run. These are the in-loop bans from the process: banned
-by configuration, not by asking nicely. Remove or adjust them for the phases
-where the human (or the build daemon) needs the commands back. The deny list
-is a template — substitute your target's build/test commands. These rules are
-guardrails against accidental invocation inside loops, not a security boundary
-— a determined wrapper script can bypass pattern matching.
+`settings.json`은 마이그레이션하는 저장소의 `.claude/settings.json`에 둔다.
+사람이 **prompt 03 전에** 설치하고(Step 2의 파일럿이 deny가 켜져 있어야 한다),
+**Step 4까지**(prompt 05) 켜 둔다. 테스트 deny는 **Step 6의 수정 루프에서 다시
+켠다**(수정자는 실패 증거를 읽고, 테스트를 다시 돌리는 것은 빌드 데몬뿐이다).
+설치는 권고가 아니라 복사다:
+`cp templates/settings.json <target repo>/.claude/settings.json`. prompt 03과
+04는 파일이 있는지 확인하고 없으면 팬아웃을 거부한다. Run 2에서는 설치를
+조용히 건너뛰어 실행 내내 deny 규칙이 한 번도 켜지지 않았다. 이 규칙들은
+절차가 정한 루프 안 금지 사항이다. 정중히 부탁하는 것이 아니라 설정으로
+금지한다. 사람(또는 빌드 데몬)이 명령을 다시 써야 하는 단계에서는 지우거나
+조정한다. deny 목록은 템플릿이다. 대상 언어의 빌드·테스트 명령으로 바꿔 넣는다.
+이 규칙들은 루프 안에서 실수로 명령을 부르지 않게 막는 가드레일이지 보안
+경계가 아니다. 작정하고 만든 래퍼 스크립트는 패턴 매칭을 피해 갈 수 있다.
 
-## The git rules
+## git 규칙
 
-One agent running `git reset` or `git checkout` in a shared worktree destroys
-the in-flight work of every other agent in that worktree — with sixteen agents
-sharing a worktree, one reset destroys fifteen agents' in-flight work. Mutating git
-commands are denied; read-only ones (`status`, `diff`, `log`) stay allowed
-because reviewers use them as evidence. `git clean` is denied with special
-prejudice: translated outputs are untracked files until the batch commit, so
-it is the single most destructive command for a fan-out. Commits happen at
-batch boundaries, by the orchestrating session, not by loop agents.
+공유 worktree에서 에이전트 하나가 `git reset`이나 `git checkout`을 돌리면 그
+worktree에 있는 다른 모든 에이전트의 진행 중인 작업이 사라진다. 에이전트 열여섯이
+worktree 하나를 공유하면 reset 한 번에 열다섯 에이전트의 작업이 날아간다. 상태를
+바꾸는 git 명령은 막는다. 읽기 전용 명령(`status`, `diff`, `log`)은 리뷰어가
+증거로 쓰니 허용한다. `git clean`은 특히 엄하게 막는다. 번역 출력은 배치 커밋
+전까지 추적되지 않는 파일이라서, 팬아웃에서 이보다 파괴적인 명령은 없다. 커밋은
+배치 경계에서 오케스트레이션 세션이 하고, 루프 에이전트는 하지 않는다.
 
-## The compiler rules
+## 컴파일러 규칙
 
-The compiler is banned inside the translation loop for two reasons. The cheap
-reason: an expensive build run by 64 agents independently turns the machine
-into a space heater. The important reason: Step 3's contract is "drafts don't
-need to compile," and an agent that *can* compile will start optimizing for
-the compiler instead of the rulebook — playing it safe, translating less. The
-compiler gets its turn in Step 4, run once per round by a single survey-build
-script, and its error list arrives as a machine queue.
+번역 루프 안에서 컴파일러를 막는 이유는 두 가지다. 사소한 이유는 무거운 빌드를
+에이전트 64개가 각자 돌리면 기계가 난로가 된다는 것이다. 중요한 이유는 Step 3의
+계약이 "초안은 컴파일되지 않아도 된다"이고, 컴파일할 *수 있는* 에이전트는
+규칙집 대신 컴파일러에 맞춰 최적화하기 시작한다는 것이다. 몸을 사리고 덜
+옮긴다. 컴파일러 차례는 Step 4다. survey-build 스크립트 하나가 라운드마다 한 번
+돌리고, 오류 목록은 기계가 처리할 대기열로 들어온다.
 
-If your target's typecheck is cheap (tsc, go vet), delete those rules and run
-the typechecker inside the loop — see README: every referee has a price, and
-the price decides its position.
+대상 언어의 타입 검사가 싸다면(tsc, go vet) 이 규칙을 지우고 루프 안에서 타입
+검사기를 돌린다. README를 본다. 모든 판정기에는 값이 있고, 그 값이 판정기의 자리를
+정한다.
 
-## The test rules
+## 테스트 규칙
 
-Same logic as the compiler, applied to Step 6: fixers work read-only from
-failure evidence; only the build daemon re-runs tests. Long test commands run
-by parallel agents also exhaust sockets, disk, and process limits — heavy
-suites may need OS-level resource isolation (e.g., cgroups) on top of these
-denies. If your suite is heavy, consider the same.
+컴파일러와 같은 논리를 Step 6에 적용한다. 수정자는 실패 증거를 읽기만 하고,
+테스트를 다시 돌리는 것은 빌드 데몬뿐이다. 병렬 에이전트가 긴 테스트 명령을
+돌리면 소켓, 디스크, 프로세스 한도도 바닥난다. 무거운 테스트 스위트는 이 deny
+위에 OS 수준의 자원 격리(예: cgroups)가 더 필요할 수 있다. 스위트가 무겁다면
+같은 방법을 고려한다.
 
-## What's deliberately NOT here
+## 일부러 넣지 않은 것
 
-No deny rule for editing the rulebook — because permission rules can't express
-"read-only for loop agents, writable for the human." That rule is enforced by
-prompt contract (every kit prompt queues amendments instead of applying them)
-and by review: a diff touching RULEBOOK.md inside a batch is an automatic
-finding.
+규칙집 편집을 막는 deny 규칙은 없다. 권한 규칙으로는 "루프 에이전트에게는 읽기
+전용, 사람에게는 쓰기 가능"을 표현할 수 없기 때문이다. 이 규칙은 프롬프트
+계약(키트의 모든 프롬프트는 수정 제안을 직접 반영하지 않고 대기열에 넣는다)과
+리뷰로 지킨다. 배치 안에서 RULEBOOK.md를 건드린 diff는 자동으로 지적 사항이다.

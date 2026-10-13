@@ -1,69 +1,60 @@
 ---
 name: code-migration
 description: >
-  Run a large-scale language migration with the six-step process: create the
-  map and the rules, stress-test the rules, translate everything, compile, run
-  it, match behavior. Use when the user wants to migrate, port, or rewrite a
-  codebase from one language to another ("migrate this to Rust", "port our
-  Python CLI to TypeScript", "should we rewrite this in Go?"), or asks for a
-  migration feasibility assessment. Not for incremental JS→TS adoption — that
-  needs no machinery — or single-file conversions.
+  여섯 단계 과정으로 대규모 언어 마이그레이션을 진행한다. 지도와 규칙 만들기, 규칙
+  스트레스 테스트, 전부 번역하기, 컴파일, 실행하기, 동작 맞추기다. 사용자가 코드베이스를
+  한 언어에서 다른 언어로 마이그레이션, 포팅, 재작성하려 할 때("이거 Rust로 옮겨 줘",
+  "우리 Python CLI를 TypeScript로 포팅해 줘", "이거 Go로 다시 짜야 할까?"), 또는
+  마이그레이션 실행 가능성 평가를 요청할 때 쓴다. 점진적인 JS→TS 도입(별도 장치가 필요
+  없다)이나 파일 하나짜리 변환에는 쓰지 않는다.
 ---
 
-# Code migration (six-step process)
+# 코드 마이그레이션 (여섯 단계 과정)
 
-You are orchestrating a language migration using the Claude Code Migration
-Kit. [kit path]/README.md defines the process; [kit path]/CLAUDE.md defines
-your standing rules — read both before acting (set [kit path] when installing
-this skill). The standing rules override
-convenience: queues live on disk, sign-off gates end workflows, the rulebook
-is read-only inside loops, reviewers are adversarial and separate.
+Claude Code Migration Kit로 언어 마이그레이션을 지휘한다. 과정은
+[kit path]/README.md가 정의하고, 상시 규칙은 [kit path]/CLAUDE.md가 정의한다. 행동하기
+전에 둘 다 읽는다(이 스킬을 설치할 때 [kit path]를 정한다). 상시 규칙은 편의보다
+우선한다. 큐는 디스크에 두고, 승인 게이트에서 워크플로를 끝내고, 규칙집은 루프 안에서
+읽기 전용이고, 리뷰어는 적대적이며 서로 분리된다.
 
-## Routing
+## 분기
 
-1. **No migration artifacts exist yet** (`migration/` absent): run
-   `prompts/00-feasibility.md`. Produce the report, deliver the verdict, STOP.
-   Do not begin Step 1 in the same session, even if the verdict is "migrate
-   now" — the human kicks off each phase.
-1b. **Feasibility signed off, no judge yet:** before Step 1, confirm a judge
-   exists that runs against both old and new code through the public surface.
-   If the existing suite is public-surface (or already in a third language),
-   it's the judge — carry it to Step 6. If it imports internals, run
-   `prompts/00b-judge-setup.md` to build and validate a portable parity harness
-   (validated against the original AND deliberately broken code) and STOP at its
-   gate. Never start Step 1 without a judge — there's no exit condition without
-   one.
-2. **Feasibility and judge signed off, no map/rules:** run Step 1 — adapt a
-   `scripts/depmap_*` for the source ecosystem (`prompts/01`), copy
-   `templates/RULEBOOK.md` to `migration/RULEBOOK.md` and draft it with the
-   human (the policy decisions are theirs; survey the codebase for the facts),
-   then `prompts/02` for the gap inventory. Each ends at its own gate.
-3. **Step 1 signed off:** confirm the HUMAN has installed
-   `.claude/settings.json` from `templates/settings.json` — prompt 03
-   verifies it; never install it yourself — then run
-   `prompts/03-stress-test.md`. But FIRST check the rulebook's §0 posture:
-   if this is a redesign migration, the bakeoff is invalid; substitute
-   adversarial design-doc review and tell the human why.
-4. **Stress test signed off:** confirm `migration/manifest.tsv` exists
-   (prompt 01's closing action generates it), then run
-   `prompts/04-translation-kickoff.md` with `scripts/queue_runner.mjs` as the
-   queue — first check the referee price: if the target's typecheck is cheap,
-   the dissolve edit is the human's act at the gate — ask them to remove
-   those denies from settings.json; never edit it yourself (README Step 4
-   dissolves into Step 3).
-5. **Translation queue empty:** Step 4 via `prompts/05-survey-build.md`
-   (survey build → machine queue → fixers without compiler access; skip it
-   entirely if Step 4 dissolved into Step 3), then Step 5 (hello world,
-   smoke), then Step 6 (inherited suite burndown, or parity referee against
-   the old code).
-6. **Step 6 done-gate passed** (both counts documented — README Step 6): run
-   `prompts/06-post-parity.md` — collect the port markers, classify fix-now
-   vs document-and-close, ship each fix as its own flagged change proved by a
-   parity re-run. Ends at its own gate.
+1. **마이그레이션 산출물이 아직 없다** (`migration/` 없음): `prompts/00-feasibility.md`를
+   실행한다. 보고서를 만들고 결론을 전한 뒤 멈춘다. 결론이 "지금 마이그레이션하라"여도
+   같은 세션에서 1단계를 시작하지 않는다. 각 단계는 사람이 시작한다.
+1b. **실행 가능성은 승인됐고 판정 기준이 아직 없다:** 1단계 전에 공개 인터페이스를 거쳐
+   옛 코드와 새 코드 양쪽에 돌아가는 판정 기준이 있는지 확인한다. 기존 스위트가 공개
+   인터페이스를 쓴다면(또는 이미 제3의 언어라면) 그것이 판정 기준이다. 6단계까지 가져간다.
+   내부 구현을 import한다면 `prompts/00b-judge-setup.md`를 실행해 이식 가능한 동등성
+   하네스를 만들고 검증한 뒤(원본에 대해서도, 일부러 망가뜨린 코드에 대해서도) 그 게이트에서
+   멈춘다. 판정 기준 없이 1단계를 시작하지 않는다. 판정 기준이 없으면 종료 조건도 없다.
+2. **실행 가능성과 판정 기준은 승인됐고 지도와 규칙이 없다:** 1단계를 실행한다. 원본
+   생태계에 맞게 `scripts/depmap_*`를 고치고(`prompts/01`), `templates/RULEBOOK.md`를
+   `migration/RULEBOOK.md`로 복사해 사람과 함께 초안을 쓰고(정책 결정은 사람의 몫이다.
+   사실은 코드베이스를 조사해 얻는다), 그다음 `prompts/02`로 간극 목록을 만든다. 각각
+   자기 게이트에서 끝난다.
+3. **1단계가 승인됐다:** 사람이 `templates/settings.json`으로 `.claude/settings.json`을
+   설치했는지 확인한다. 프롬프트 03이 이를 검사한다. 직접 설치하지 않는다. 그다음
+   `prompts/03-stress-test.md`를 실행한다. 단, 그 전에 규칙집 §0의 방침을 확인한다.
+   재설계 마이그레이션이라면 bakeoff는 쓸 수 없다. 설계 문서를 적대적으로 리뷰하는 것으로
+   대신하고 사람에게 이유를 알린다.
+4. **스트레스 테스트가 승인됐다:** `migration/manifest.tsv`가 있는지 확인하고(프롬프트 01의
+   마지막 작업이 만든다), `scripts/queue_runner.mjs`를 큐로 삼아
+   `prompts/04-translation-kickoff.md`를 실행한다. 먼저 판정기 가격을 확인한다. 대상 언어의
+   타입 검사가 싸다면 녹여 넣는 편집은 게이트에서 사람이 할 일이다. settings.json에서 해당
+   deny를 지워 달라고 요청한다. 직접 고치지 않는다(README 4단계는 3단계에 녹아든다).
+5. **번역 큐가 비었다:** `prompts/05-survey-build.md`로 4단계를 진행한다(조사 빌드 → 기계
+   큐 → 컴파일러 없이 일하는 수정자. 4단계를 3단계에 녹였다면 통째로 건너뛴다). 그다음
+   5단계(hello world, 스모크), 그다음 6단계(물려받은 스위트 소진, 또는 옛 코드에 대한 동등성
+   판정기)를 진행한다.
+6. **6단계 완료 게이트를 통과했다** (두 숫자 모두 기록. README 6단계):
+   `prompts/06-post-parity.md`를 실행한다. 포팅 마커를 모으고, 지금 고칠 것과 기록하고 닫을
+   것으로 나누고, 수정 하나하나를 플래그를 단 별도 변경으로 내고 동등성 재실행으로 증명한다.
+   자기 게이트에서 끝난다.
 
-## Constant behaviors
+## 항상 지키는 것
 
-- Report progress as burndown numbers (`queue_runner.mjs status`), not prose.
-- A failure seen three times is a rule bug: stop fixing instances, queue the
-  amendment, propose regenerating the slice.
-- "Don't migrate" and "stop here" are valid recommendations at every gate.
+- 진행 상황은 산문이 아니라 소진 숫자(`queue_runner.mjs status`)로 보고한다.
+- 세 번 본 실패는 규칙 버그다. 개별 건 수정을 멈추고, 수정안을 큐에 올리고, 해당 부분을
+  다시 생성하자고 제안한다.
+- "마이그레이션하지 않는다"와 "여기서 멈춘다"는 모든 게이트에서 정당한 권고다.

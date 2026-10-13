@@ -1,75 +1,66 @@
-# 01 — Dependency map
+# 01: 의존성 지도
 
-**When:** Step 1, can start immediately. **Prerequisites:** none (feeds the
-work manifest and the rulebook's package map).
-**Placeholders:** `[your dependency mechanism]`, `[crate / package / module]`,
-`[reviewer model]` (from the Model plan signed off at the feasibility gate).
-**Note:** this kit ships starter scripts — `scripts/depmap_python.py`,
-`scripts/depmap_ts.mjs`, `scripts/depmap_c.py` — that implement the contract
-below. Adapt one instead of writing from scratch.
+**언제:** 1단계, 바로 시작해도 된다. **선행 조건:** 없음(작업 manifest와 규칙집의
+패키지 지도에 들어간다).
+**Placeholder:** `[your dependency mechanism]`, `[crate / package / module]`,
+`[reviewer model]`(실행 가능성 게이트에서 승인한 모델 계획에서 가져온다).
+**참고:** 이 키트에는 아래 계약을 구현한 시작용 스크립트
+`scripts/depmap_python.py`, `scripts/depmap_ts.mjs`, `scripts/depmap_c.py`가 들어
+있다. 처음부터 쓰지 말고 하나를 고쳐 쓴다.
 
 ---
 
-Use a workflow. Before we migrate anything, build the **dependency map** — the
-file that orders all the work, written for the agents that will read it.
+워크플로를 써라. 무엇이든 마이그레이션하기 전에 **의존성 지도**를 만든다. 모든
+작업의 순서를 정하는 파일이고, 그것을 읽을 에이전트를 위해 쓴다.
 
-Don't build it by having agents read files and report imports — you get a
-different map every run, and you can't verify a nondeterministic artifact.
-Write a deterministic script that parses [your dependency mechanism — imports,
-include directives, build files] and emits one edge per line. In-repo files
-only: third-party, vendored, and generated code are neither edges nor misses.
-Trial the script on five files and check its output by hand before running it
-on everything, and keep it fast — it will be re-run constantly. Commit the
-script and write the map to a known path.
+에이전트에게 파일을 읽고 import를 보고하게 해서 만들지 마라. 실행할 때마다 다른
+지도가 나오고, 비결정적인 산출물은 검증할 수 없다. [your dependency mechanism:
+imports, include directives, build files]를 파싱해 한 줄에 엣지 하나씩 내는
+결정적 스크립트를 쓴다. 저장소 안의 파일만 다룬다. 서드파티, vendored, 생성된
+코드는 엣지도 아니고 누락도 아니다. 모든 파일에 돌리기 전에 다섯 파일로 시험하고
+출력을 손으로 확인한다. 계속 다시 돌릴 테니 빠르게 유지한다. 스크립트를 커밋하고
+지도는 정해진 경로에 쓴다.
 
-From the graph, compute — in the script, not by judgment — the **migration
-order** (topological — files with no in-repo dependencies first, working
-upward) and the strongly connected components. Every component bigger than one
-file is a **cycle** and migrates as a single batch. Then condense the graph to
-the target's [crate / package / module] boundaries and check for cycles again —
-a clean file graph does not mean a clean partition, and the partition is the
-level the compiler enforces.
+그래프에서 판단이 아니라 스크립트로 **마이그레이션 순서**(위상 정렬. 저장소 안
+의존성이 없는 파일부터 위로 올라간다)와 강한 연결 요소를 계산한다. 파일이 둘 이상인
+요소는 모두 **순환**이고 한 묶음으로 마이그레이션한다. 그다음 그래프를 대상의
+[crate / package / module] 경계로 압축하고 순환을 다시 확인한다. 파일 그래프가
+깨끗하다고 분할이 깨끗한 것은 아니다. 컴파일러가 강제하는 수준은 분할이다.
 
-Then have two **skeptic reviewers**, in parallel with separate contexts and
-disjoint samples, verify the map. Run them on [reviewer model], per the
-Model plan — inheriting the session default is a deviation; log it. Each takes 20 files — half random, drawn
-from non-overlapping halves of the file list, and half adversarial, with the
-categories split between them: one reviewer takes the largest and most
-macro-heavy files, the other takes platform-specific variants and generated
-files (to confirm the script excludes them). For each file, list its direct
-in-repo dependencies from the source itself and return rows with file:line
-evidence — not a verdict. Diff the rows against the map in both directions:
-edges the script missed, and edges it invented. Check each discrepancy against
-the source line before touching the script — only one confirmed in the source
-counts. Two contexts cost double and are the point: the dogfood map and
-inventory catches came from adversarial review, not first drafts (RUN-NOTES).
+그다음 **회의적 리뷰어** 둘이 컨텍스트를 분리하고 겹치지 않는 표본으로 동시에 지도를
+검증한다. 리뷰어는 모델 계획에 따라 [reviewer model]로 돌린다. 세션 기본값을
+물려받으면 이탈이니 기록한다. 리뷰어마다 20개 파일을 맡는다. 절반은 무작위로,
+파일 목록을 겹치지 않게 반으로 나눈 쪽에서 각자 뽑는다. 나머지 절반은 적대적으로
+고르되 범주를 나눠 맡는다. 한 리뷰어는 가장 크고 매크로가 많은 파일을, 다른
+리뷰어는 플랫폼별 변형과 생성된 파일을 맡는다(스크립트가 이것들을 빼는지 확인하려는
+것이다). 파일마다 저장소 안 직접 의존성을 소스에서 직접 뽑아 file:line 증거가 붙은
+행으로 돌려준다. 판정이 아니다. 그 행을 지도와 양방향으로 비교한다. 스크립트가 놓친
+엣지와 지어낸 엣지다. 스크립트를 건드리기 전에 불일치마다 소스 줄과 대조한다. 소스에서
+확인된 것만 친다. 컨텍스트 둘은 비용이 두 배지만 그게 핵심이다. 직접 써 본 실행에서
+지도와 간극 목록의 오류를 잡은 것은 첫 초안이 아니라 적대적 리뷰였다(RUN-NOTES).
 
-Any confirmed discrepancy is a bug in the **script**, not the map — fix the
-script so it handles the pattern, not the caught files, then regenerate the
-whole map and resample with fresh reviewers and fresh files. A round is clean
-only when both reviewers come back empty in both directions. Stop after three
-failed rounds — or sooner if the same category keeps recurring — and bring me
-the misses themselves: that usually means the dependencies aren't statically
-discoverable, and what to do about that is my decision, not another script
-patch.
+확인된 불일치는 지도가 아니라 **스크립트**의 버그다. 잡힌 파일이 아니라 그 패턴을
+처리하도록 스크립트를 고치고, 지도 전체를 다시 생성하고, 새 리뷰어와 새 파일로 표본을
+다시 뽑는다. 두 리뷰어가 양방향 모두 빈손으로 돌아와야 그 회차가 깨끗하다. 세 회차를
+실패하면 멈춘다. 같은 범주가 계속 되풀이되면 더 일찍 멈춘다. 그리고 누락 자체를 나에게
+가져온다. 대개 의존성을 정적으로 찾을 수 없다는 뜻이고, 그때 무엇을 할지는 또 한 번의
+스크립트 패치가 아니라 내가 정할 일이다.
 
-Closing action, once a round is clean: generate the work manifest from the
-order —
+회차가 깨끗해지면 마무리 작업으로 순서에서 작업 manifest를 생성한다.
 `python3 scripts/make_manifest.py --order migration/depmap/order.txt
 --out migration/manifest.tsv --sub '<source prefix>=<target prefix>' --sub
-'<source ext>=<target ext>'` — substitutions encoding the rulebook's naming
-rules (§4) — and report the unit count from `wc -l`, not a narrated total.
-Prompt 04's queue reads `migration/manifest.tsv`; this is where it comes
-from.
+'<source ext>=<target ext>'`
+치환 규칙에는 규칙집의 이름 규칙(§4)을 담는다. 단위 수는 말로 정리한 합계가 아니라
+`wc -l` 결과로 보고한다. 프롬프트 04의 큐가 `migration/manifest.tsv`를 읽는다. 그
+파일이 여기서 나온다.
 
-Then stop and show me the counts, the cycle list at both granularities, and
-the file paths — not the whole map. Nothing downstream gets built until I
-sign off. End the report with an estimated duration for the next step (the
-gap inventory) — wall-clock and active-attention minutes, derived from the
-counts you just gathered.
-Append one timestamped line for this step to `migration/cost-log.tsv` —
-create it with header `step\ttimestamp\twall_clock_min\ttokens\tsubagents\tmodel`
-if absent; real values where available, `unknown` where not. Plain
-tab-separated values, no `key=` prefixes — a valid row looks exactly like:
+그다음 멈추고 지도 전체가 아니라 개수, 두 단위의 순환 목록, 파일 경로를 보여 달라.
+내가 승인하기 전에는 그 뒤의 어떤 것도 만들지 않는다. 보고서 끝에는 다음 단계(간극
+간극 목록)의 예상 기간을 적는다. 방금 모은 개수에서 끌어낸 경과 시간과 사람이
+집중해야 하는 시간을 분 단위로 적는다.
+이 단계의 기록을 타임스탬프와 함께 `migration/cost-log.tsv`에 한 줄 덧붙인다.
+파일이 없으면 헤더 `step\ttimestamp\twall_clock_min\ttokens\tsubagents\tmodel`로
+만든다. 얻을 수 있는 값은 실제 값을, 없는 값은 `unknown`을 쓴다. `key=` 접두어 없이
+탭으로만 구분한다. 올바른 행은 정확히 이런 모양이다.
 `3	2026-06-11T14:02Z	21	2035336	35	claude-sonnet-4-6`
-(your step number and values vary; the format doesn't).
+(단계 번호와 값은 달라져도 형식은 그대로다.)

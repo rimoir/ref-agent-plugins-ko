@@ -1,87 +1,74 @@
-# Operating manual for Claude Code sessions in this repository
+# 이 저장소의 Claude Code 세션 운영 매뉴얼
 
-You are working inside the Claude Code Migration Kit, or inside a repository
-that has adopted it. Read this before acting on any migration request.
+지금 작업하는 곳은 Claude Code Migration Kit이거나 이 키트를 도입한 저장소다.
+마이그레이션 요청을 처리하기 전에 이 문서를 읽는다.
 
-## What this kit is
+## 이 키트가 무엇인가
 
-A six-step process for migrating a codebase from one language to another:
-(1) create the map and the rules, (2) stress-test the rules, (3) translate
-everything, (4) compile, (5) run it, (6) match behavior. The README defines
-each step. The prompts in `prompts/` run them. Do not improvise a different
-process when a prompt exists for the step.
+코드베이스를 한 언어에서 다른 언어로 옮기는 여섯 단계 과정이다.
+(1) 지도와 규칙 만들기, (2) 규칙 스트레스 테스트, (3) 전부 번역하기, (4) 컴파일,
+(5) 실행하기, (6) 동작 맞추기. 각 단계는 README가 정의하고 `prompts/`의 프롬프트가
+실행한다. 해당 단계에 프롬프트가 있으면 다른 과정을 즉석에서 지어내지 않는다.
 
-## Standing rules — these override convenience
+## 상시 규칙 (편의보다 우선한다)
 
-1. **The rulebook is read-only inside any loop.** Implementers, reviewers, and
-   fixers cite it; they never edit it. Rulebook amendments are queued for the
-   human and applied between batches. The graded party does not relax its own
-   grader.
-2. **Queues live on disk.** A unit of work is done when its output file exists
-   at the path the naming rules dictate — never when an orchestrator remembers
-   it. If you find yourself tracking state in conversation, stop and write a
-   manifest instead (`scripts/queue_runner.mjs`).
-3. **Sign-off gates end the workflow.** When a prompt says "stop and show me"
-   or "no fan-out until I sign off," the phase is over: return the evidence and
-   exit. Do not proceed on inferred approval. The human re-invokes the next
-   phase; resumability is free because of rule 2.
-4. **Reviewers are adversarial, separate, and read-only.** Two reviewers per
-   unit, separate contexts, assume the work is wrong, touch nothing. Every
-   finding cites a rule or a source line. A third rules on disagreements,
-   defaulting to not-confirmed. Fixers apply confirmed findings only.
-5. **Banned operations are banned by configuration.** `templates/settings.json`
-   denies the expensive commands inside loops (mutating version control, the
-   compiler, long-running test commands). If a denied command blocks you, that
-   is the design working: flag it, don't route around it. Exception: a cheap
-   typecheck (tsc, go vet) may be promoted into the loop per README Step 4 —
-   that swap is made by editing settings.json at a gate, never by routing
-   around a live deny. If the platform's own safeguards block you from
-   editing settings.json (self-modification protection), that is not an
-   error to work around: the human makes the edit manually, or serves as
-   build daemon per prompts/05. Routing around a live deny is forbidden no
-   matter which layer enforces it — Run 3's agent was blocked at exactly
-   this point and correctly escalated.
-6. **Recurring failures move upstream.** Fix one instance, fine. See the same
-   failure twice more, stop fixing instances: write up which rule produced it,
-   queue the rulebook amendment, and propose regenerating the slice that rule
-   touched.
-7. **The old code is the spec.** It stays runnable until behavior matching is
-   done. When a test fails on the new code, run it on the old code before
-   classifying: old-fails-too = inherited, not yours. Never skip, delete, or
-   weaken a test to make a queue shrink; slow-but-passing goes in a ledger,
-   not a commit.
-8. **Unknown is an answer.** When neither the rulebook nor the inventory
-   decides a question, translate to the most conservative representation the
-   target offers, leave a greppable TODO marker, and keep moving. A searchable
-   artifact beats a stalled batch.
+1. **규칙집은 어떤 루프 안에서도 읽기 전용이다.** 구현자, 리뷰어, 수정자는 규칙집을
+   인용만 하고 고치지 않는다. 규칙집 수정안은 사람에게 올리는 큐에 쌓고 배치 사이에
+   적용한다. 채점받는 쪽이 자기 채점 기준을 느슨하게 만들지 않는다.
+2. **큐는 디스크에 둔다.** 작업 단위는 명명 규칙이 정한 경로에 출력 파일이 있을 때
+   끝난 것이다. 오케스트레이터가 기억한다고 끝난 것이 아니다. 대화 안에서 상태를 추적하고
+   있다면 멈추고 manifest를 쓴다(`scripts/queue_runner.mjs`).
+3. **승인 게이트에서 워크플로가 끝난다.** 프롬프트가 "멈추고 보여 줘"나 "내가 승인하기
+   전에는 팬아웃하지 마"라고 하면 그 단계는 끝난 것이다. 근거를 돌려주고 종료한다.
+   승인을 짐작해서 진행하지 않는다. 다음 단계는 사람이 다시 호출한다. 규칙 2 덕분에
+   재개하는 데 비용이 들지 않는다.
+4. **리뷰어는 적대적이고, 서로 분리되고, 읽기 전용이다.** 단위마다 리뷰어 둘을 서로 다른
+   컨텍스트에 두고, 작업이 틀렸다고 가정하게 하고, 아무것도 건드리지 않게 한다. 모든
+   지적은 규칙이나 원본 줄을 인용한다. 의견이 갈리면 세 번째가 판정하며, 기본값은
+   확인되지 않음이다. 수정자는 확인된 지적만 반영한다.
+5. **금지된 작업은 설정으로 금지한다.** `templates/settings.json`은 루프 안에서 비싼 명령
+   (버전 관리를 바꾸는 명령, 컴파일러, 오래 걸리는 테스트 명령)을 deny한다. deny된 명령에
+   막혔다면 설계대로 동작하는 것이다. 표시만 하고 우회하지 않는다. 예외로, 값싼 타입 검사
+   (tsc, go vet)는 README 4단계에 따라 루프 안으로 올릴 수 있다. 이 교체는 게이트에서
+   settings.json을 고쳐서 하며, 살아 있는 deny를 우회해서 하지 않는다. 플랫폼 자체의
+   안전장치(자기 수정 보호)가 settings.json 편집을 막는다면 우회할 오류가 아니다. 사람이
+   직접 고치거나, prompts/05에 따라 사람이 빌드 데몬 역할을 한다. 어느 계층이 막든 살아 있는
+   deny를 우회하는 것은 금지다. Run 3의 에이전트가 정확히 이 지점에서 막혔고 올바르게
+   사람에게 넘겼다.
+6. **되풀이되는 실패는 상류로 올린다.** 한 건을 고치는 것은 괜찮다. 같은 실패를 두 번 더
+   보면 개별 건 수정을 멈춘다. 어떤 규칙이 그 실패를 만들었는지 적고, 규칙집 수정안을 큐에
+   올리고, 그 규칙이 닿은 부분을 다시 생성하자고 제안한다.
+7. **옛 코드가 명세다.** 동작 맞추기가 끝날 때까지 옛 코드는 실행 가능한 상태로 둔다.
+   새 코드에서 테스트가 실패하면 분류하기 전에 옛 코드에서 돌려 본다. 옛 코드도 실패하면
+   물려받은 것이지 이번 작업 탓이 아니다. 큐를 줄이려고 테스트를 건너뛰거나 지우거나
+   약하게 만들지 않는다. 느리지만 통과하는 테스트는 커밋이 아니라 대장에 적는다.
+8. **모른다는 것도 답이다.** 규칙집도 간극 목록도 질문을 결정하지 못하면 대상 언어가
+   제공하는 가장 보수적인 표현으로 번역하고, grep으로 찾을 수 있는 TODO 마커를 남기고,
+   계속 진행한다. 검색 가능한 산출물이 멈춘 배치보다 낫다.
 
-## Where things live
+## 무엇이 어디에 있나
 
-| Artifact | Path | Created by |
+| 산출물 | 경로 | 만드는 곳 |
 |---|---|---|
-| Rulebook | `migration/RULEBOOK.md` (copy from `templates/`) | Step 1 |
-| Dependency map | `migration/depmap/` (edges.tsv, order.txt, cycles.txt) | `scripts/depmap_*` |
-| Gap inventory | `migration/inventory.tsv` | Step 1, prompt 02 |
-| Work manifest | `migration/manifest.tsv` | Step 1, prompt 01's closing action (`scripts/make_manifest.py`) → Step 3 input |
-| Stress-test report | `migration/stress-test/` | Step 2 |
-| Translated output | path per the rulebook's naming rules | Step 3 |
-| Cost log | `migration/cost-log.tsv` | every prompt, one line per gate |
-| Deviation log | `migration/RULEBOOK.md`, Deviation log section | written at gates |
+| 규칙집 | `migration/RULEBOOK.md` (`templates/`에서 복사) | 1단계 |
+| 의존성 지도 | `migration/depmap/` (edges.tsv, order.txt, cycles.txt) | `scripts/depmap_*` |
+| 간극 목록 | `migration/inventory.tsv` | 1단계, 프롬프트 02 |
+| 작업 manifest | `migration/manifest.tsv` | 1단계, 프롬프트 01의 마지막 작업(`scripts/make_manifest.py`) → 3단계 입력 |
+| 스트레스 테스트 보고서 | `migration/stress-test/` | 2단계 |
+| 번역 결과 | 규칙집의 명명 규칙이 정한 경로 | 3단계 |
+| 비용 로그 | `migration/cost-log.tsv` | 모든 프롬프트, 게이트마다 한 줄 |
+| 이탈 기록 | `migration/RULEBOOK.md`의 Deviation log 절 | 게이트에서 기록 |
 
-If these paths don't exist yet, the migration hasn't started: run
-`prompts/00-feasibility.md` first and stop at its verdict.
+이 경로들이 아직 없다면 마이그레이션은 시작하지 않은 것이다. 먼저
+`prompts/00-feasibility.md`를 실행하고 그 결론에서 멈춘다.
 
-## Model guidance
+## 모델 선택 지침
 
-Token spend concentrates in loops; blast radius decides the tier, not task
-prestige. Rulebook authorship and amendments: largest available model —
-one-time work, and every error replicates into every translated file.
-Skeptic reviewers: largest or mid tier, depending on gap complexity.
-High-volume translation implementers: mid or small tier — two reviewers and
-a compiler stand behind them. Fixers: mid tier — the compiler is the real
-referee. The model plan is the human's decision, made at the feasibility
-gate (prompt 00's Model plan section), and it binds every post-feasibility
-prompt — 01 through 06 take the chosen tiers as explicit `[model]`
-placeholders. Running subagents on an untriggered default is a process
-violation — log it in the deviation log (RULEBOOK.md, Deviation log
-section).
+토큰은 루프에서 집중적으로 쓰인다. 등급은 작업의 위신이 아니라 피해 범위가 정한다.
+규칙집 작성과 수정: 쓸 수 있는 가장 큰 모델. 한 번만 하는 작업이고, 오류 하나가 번역된
+모든 파일로 복제된다. 회의적 리뷰어: 간극의 복잡도에 따라 가장 큰 등급이나 중간 등급.
+대량 번역 구현자: 중간이나 작은 등급. 뒤에 리뷰어 둘과 컴파일러가 버티고 있다. 수정자:
+중간 등급. 진짜 판정기는 컴파일러다. 모델 계획은 사람이 실행 가능성 게이트(프롬프트 00의
+Model plan 절)에서 정하며, 실행 가능성 이후의 모든 프롬프트를 구속한다. 01부터 06까지는
+고른 등급을 명시적인 `[model]` placeholder로 받는다. 정하지 않은 기본값으로 subagent를
+돌리는 것은 과정 위반이다. 이탈 기록(RULEBOOK.md의 Deviation log 절)에 남긴다.

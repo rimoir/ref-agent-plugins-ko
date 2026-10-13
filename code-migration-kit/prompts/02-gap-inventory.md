@@ -1,77 +1,65 @@
-# 02 — Gap inventory
+# 02: 간극 목록
 
-**When:** Step 1, after a draft rulebook exists. **Prerequisites:** draft
-RULEBOOK.md committed (the inventory records what its defaults won't cover).
-**Placeholders:** `[name your gap]` — the thing the target language demands
-that the source let you keep in your heads: ownership and lifetimes (→ Rust),
-interface contracts, nullability (→ TypeScript strict), error propagation —
-and `[reviewer model]` (from the Model plan signed off at the feasibility
-gate).
-**Template:** `templates/inventory.tsv` defines the columns.
+**언제:** 1단계, 규칙집 초안이 생긴 뒤. **선행 조건:** 커밋된 RULEBOOK.md
+초안(간극 목록은 그 기본값이 다루지 못하는 것을 기록한다).
+**Placeholder:** `[name your gap]`은 대상 언어는 요구하지만 원본 언어에서는 머릿속에만
+담아 둘 수 있었던 것이다. 소유권과 수명(Rust로), 인터페이스 계약, nullability
+(TypeScript strict로), 오류 전파 같은 것이다. `[reviewer model]`(실행 가능성 게이트에서
+승인한 모델 계획에서 가져온다)도 있다.
+**템플릿:** `templates/inventory.tsv`가 열을 정의한다.
 
 ---
 
-Use a workflow. Before we migrate anything, build the **gap inventory** — one
-flat table the implementers will grep before translating a file, not a
-document anyone reads top to bottom. One row per site: file, symbol, source
-construct, classification, the answer (target translation), the evidence, the
-status. It captures whatever the target language
-demands that the source let us keep in our heads: [name your gap]. A draft
-rulebook should exist first; the inventory records what its defaults won't
-cover.
+워크플로를 써라. 무엇이든 마이그레이션하기 전에 **간극 목록**를 만든다. 구현자가
+파일을 번역하기 전에 grep하는 평평한 표 하나다. 누군가 처음부터 끝까지 읽는 문서가
+아니다. 사이트 하나에 한 행이다. 파일, 심볼, 원본 구문, 분류, 답(대상 언어 번역),
+증거, 상태를 적는다. 대상 언어는 요구하지만 원본 언어에서는 머릿속에만 담아 둘 수
+있었던 것, 곧 [name your gap]을 담는다. 규칙집 초안이 먼저 있어야 한다. 간극 목록은
+그 기본값이 다루지 못하는 것을 기록한다.
 
-Start with a sweep: enumerate every site where the gap appears — by grep and
-script, not judgment — and write the list to a file with a count. Put the
-inventory at a fixed, committed path and queue a rulebook rule that
-delegates these decisions to the inventory by path — applied by me with the
-first amendment batch, never by you — because the rulebook is how every
-implementer finds out the inventory exists. That list is the definition of
-done: the inventory is complete when every site on it has a row, and not
-before.
+먼저 훑는다. 간극이 나타나는 사이트를 판단이 아니라 grep과 스크립트로 모두 나열하고,
+그 목록을 개수와 함께 파일에 쓴다. 간극 목록은 정해진 경로에 두고 커밋한다. 이 결정들을
+경로로 간극 목록에 맡기는 규칙집 규칙을 대기열에 올린다. 그 규칙은 첫 개정 묶음과 함께
+내가 적용한다. 너는 절대 적용하지 마라. 모든 구현자는 규칙집을 보고 간극 목록이 있다는
+것을 알게 되기 때문이다. 그 목록이 완료의 정의다. 목록의 모든 사이트에 행이 있어야
+간극 목록이 완성된 것이고, 그 전에는 아니다.
 
-Then work the list, complex cases first. For each site, trace how the value
-actually flows through the code and propose the answer, citing the call sites
-that prove it — where it's created, where it changes, where it escapes. Then
-two **skeptic reviewers** attack the entries, batched by file or struct — in
-parallel, in separate contexts, neither seeing the other's verdict, each
-required to cite the line that justifies their call. Run them on
-[reviewer model], per the Model plan — inheriting the session default is a
-deviation; log it. Two reviewers per batch double the
-spend; Run 1's skeptic round bought seven evidence defects in twenty
-otherwise-confirmed rows (RUN-NOTES). If a reviewer refutes
-with evidence, revise once and resubmit; still contested, the row is UNKNOWN.
-No guessing: UNKNOWN rows go into the table with the question I need answered
-— and UNKNOWN still gets a deterministic translation: the most conservative
-representation the target language offers, plus a greppable TODO marker, so an
-implementer who hits one ports it mechanically and the open question survives
-as a searchable artifact, not a stalled batch.
+그다음 목록을 복잡한 경우부터 처리한다. 사이트마다 값이 코드에서 실제로 어떻게
+흐르는지 추적하고 답을 제안한다. 그것을 증명하는 호출 지점을 인용한다. 값이 만들어지는
+곳, 바뀌는 곳, 빠져나가는 곳이다. 그다음 **회의적 리뷰어** 둘이 파일이나 struct 단위
+묶음으로 항목을 공격한다. 동시에, 컨텍스트를 분리해서, 서로의 판정을 보지 않고,
+각자 판정을 뒷받침하는 줄을 인용해야 한다. 리뷰어는 모델 계획에 따라 [reviewer model]로
+돌린다. 세션 기본값을 물려받으면 이탈이니 기록한다. 묶음마다 리뷰어 둘이면 비용이 두
+배다. 1회차의 회의적 리뷰 라운드는 달리 확인된 20행에서 증거 결함 일곱 개를 잡아냈다
+(RUN-NOTES). 리뷰어가 증거를 들어 반박하면 한 번 고쳐서 다시 낸다. 그래도 다툼이 남으면
+그 행은 UNKNOWN이다. 추측하지 마라. UNKNOWN 행은 내가 답해야 할 질문과 함께 표에
+넣는다. UNKNOWN이어도 결정적인 번역은 받는다. 대상 언어가 제공하는 가장 보수적인 표현에
+grep할 수 있는 TODO 마커를 붙인다. 그러면 그 행을 만난 구현자는 기계적으로 포팅하고,
+열린 질문은 멈춘 묶음이 아니라 검색할 수 있는 산출물로 남는다.
 
-Do the first 20 rows, then stop and show me before fanning out.
+처음 20행을 하고, 팬아웃하기 전에 멈추고 보여 달라.
 
-When you fan out, parallel agents never contend on one file — same disk-state
-pattern as the translation queue. Each classifier writes its own shard,
-`migration/inventory.<category>.tsv`; the orchestrator merges them at the
-end: dedupe on (file, symbol, source_construct) keys — so a partial write costs nothing
-on retry — sort deterministically, and report a mechanical receipt, the
-`wc -l` output of the merged file, not a narrated total (Run 2's narrated
-total didn't reconcile; the count is the audit). Progress invariant while
-workers run: shard row counts must grow between polls — no growth for three
-minutes means treat that worker as failed, recover its rows from the journal
-or disk, and report the stall. Stalls are yours to heal, not mine to notice.
+팬아웃할 때 병렬 에이전트는 절대 한 파일을 두고 다투지 않는다. 번역 큐와 같은 디스크
+상태 패턴이다. 분류기마다 자기 shard `migration/inventory.<category>.tsv`에 쓴다.
+오케스트레이터가 마지막에 합친다. (file, symbol, source_construct) 키로 중복을 없애서
+재시도할 때 부분 쓰기가 아무 비용도 남기지 않게 하고, 결정적으로 정렬하고, 기계적 영수증을
+보고한다. 말로 정리한 합계가 아니라 합친 파일의 `wc -l` 출력이다(2회차의 말로 정리한
+합계는 맞아떨어지지 않았다. 개수가 곧 감사다). 작업자가 도는 동안의 진행 불변식은 이렇다.
+shard 행 수는 폴링 사이에 늘어나야 한다. 3분 동안 늘지 않으면 그 작업자를 실패로 보고,
+저널이나 디스크에서 행을 되살리고, 멈춤을 보고한다. 멈춤은 내가 알아챌 일이 아니라 네가
+고칠 일이다.
 
-When every site has a row, run the **joint audit**: adversarial agents read
-the gap inventory and the **rulebook** together and hunt for contradictions —
-a row the rules would translate wrong, a rule no row exercises. Each conflict
-must name the rule, the row, and the concrete translation that goes wrong — no
-contradiction without an example. Write it into the file with a proposed fix;
-apply confirmed fixes on the inventory side, but queue rulebook changes for me
-— don't apply them. Then stop and show me the counts, the UNKNOWN rows, and
-the conflict list. No implementer starts until I sign off. End the report
-with an estimated duration for the next step (the stress test) — wall-clock
-and active-attention minutes, derived from the row counts you just produced.
-Append one timestamped line for this step to `migration/cost-log.tsv` —
-create it with header `step\ttimestamp\twall_clock_min\ttokens\tsubagents\tmodel`
-if absent; real values where available, `unknown` where not. Plain
-tab-separated values, no `key=` prefixes — a valid row looks exactly like:
+모든 사이트에 행이 생기면 **합동 감사**를 돌린다. 적대적 에이전트가 간극 목록과
+**규칙집**를 함께 읽고 모순을 찾는다. 규칙대로라면 잘못 번역될 행, 어떤 행도 쓰지 않는
+규칙 같은 것이다. 충돌마다 규칙, 행, 잘못되는 구체적인 번역을 밝혀야 한다. 예시 없는
+모순은 없다. 제안하는 수정과 함께 파일에 적는다. 확인된 수정은 간극 목록 쪽에 적용하되,
+규칙집 변경은 나를 위해 대기열에 올린다. 적용하지 마라. 그다음 멈추고 개수, UNKNOWN 행,
+충돌 목록을 보여 달라. 내가 승인하기 전에는 어떤 구현자도 시작하지 않는다. 보고서 끝에는
+다음 단계(스트레스 테스트)의 예상 기간을 적는다. 방금 만든 행 수에서 끌어낸 경과 시간과
+사람이 집중해야 하는 시간을 분 단위로 적는다.
+이 단계의 기록을 타임스탬프와 함께 `migration/cost-log.tsv`에 한 줄 덧붙인다.
+파일이 없으면 헤더 `step\ttimestamp\twall_clock_min\ttokens\tsubagents\tmodel`로
+만든다. 얻을 수 있는 값은 실제 값을, 없는 값은 `unknown`을 쓴다. `key=` 접두어 없이
+탭으로만 구분한다. 올바른 행은 정확히 이런 모양이다.
 `3	2026-06-11T14:02Z	21	2035336	35	claude-sonnet-4-6`
-(your step number and values vary; the format doesn't).
+(단계 번호와 값은 달라져도 형식은 그대로다.)

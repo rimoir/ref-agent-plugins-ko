@@ -11,10 +11,10 @@ ponytail이 의도적으로 단순화한 부분에는 모두 `shortcut:` 주석�
 
 ## 검색
 
-저장소에서 주석 표식을 grep으로 찾는다. `node_modules`, `.git`, 빌드 결과물은
-건너뛴다.
+저장소에서 주석 표식을 grep으로 찾는다. `.git`과 `.gitignore` 파일이 무시하는 모든 것(의존성,
+빌드 결과물, 캐시. 스택은 가리지 않는다)은 건너뛴다.
 
-`grep -rnE --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=build '(#|//|/[*]) ?(shortcut|ponytail):' .`  (쓰는 스택에 다른 주석 접두사가 있으면 추가한다)
+`git grep --no-index --exclude-standard -nE '(#|//|/[*]) ?(shortcut|ponytail):'`  (쓰는 스택에 다른 주석 접두사가 있으면 추가한다)
 
 사용자가 자기 표식 단어를 지정하면(`/ponytail-debt TODO`) 그 단어를 대신 찾는다.
 

@@ -114,18 +114,23 @@ Qoder는 저장소 루트의 `AGENTS.md`를 항상 켜진 컨텍스트로 자동
 
 ## Antigravity CLI
 
-Google은 Gemini CLI의 이름을 Antigravity CLI(`agy` 바이너리)로 바꾸는 중이다. 같은 확장이 그대로 설치된다.
-
 ```bash
 agy plugin install https://github.com/DietrichGebert/ponytail
 ```
 
-이 저장소의 `gemini-extension.json`을 그대로 쓴다. 다른 점이 하나 있다. Antigravity는 `/ponytail` 명령을 스킬로 바꾸므로 슬래시 메뉴에서 고르지 않고 채팅에 직접 입력한다 (예: `/ponytail-review`를 메시지로 보낸다). 이전이 끝날 때까지(2026년 6월 18일 무렵) `gemini extensions install`도 동작한다. 항상 켜진 규칙으로 쓰려면 규칙 세트를 `.agents/rules/`에 넣는다.
+스킬 여섯 개를 설치한다. Antigravity는 `/ponytail` 명령도 스킬로 바꾸므로 `/ponytail-review` 같은 [슬래시 명령으로 부른다](https://www.antigravity.google/docs/skills#slash-command-conversion). 수명 주기 훅이 없어서 레벨이 유지되지 않는다. 항상 켜진 규칙 세트를 쓰려면 [`AGENTS.md`](AGENTS.md)를 프로젝트에 복사한다. Antigravity는 이 파일을 [작업 공간 규칙으로 읽는다](https://www.antigravity.google/docs/rules). Antigravity CLI 1.3.3에서 설치를 확인했다.
 
 ## Hermes Agent
 
 ```bash
 hermes plugins install DietrichGebert/ponytail --enable
+```
+
+`plugin.json declares an unsupported or missing Agent Plugins schema`로 멈추면 Hermes의 설치 검사 때문이다(수정은 [NousResearch/hermes-agent#125937](https://github.com/NousResearch/hermes-agent/pull/125937)에서 대기 중이다). 반영될 때까지 플러그인을 직접 클론한다. Hermes는 평소처럼 `plugin.yaml`에서 플러그인을 불러온다(Hermes Agent v0.21.7에서 확인했다).
+
+```bash
+git clone https://github.com/DietrichGebert/ponytail.git ~/.hermes/plugins/ponytail
+hermes plugins enable ponytail
 ```
 
 설치 후 Hermes를 재시작한다. 플러그인은 LLM 턴마다 그 전에 현재 Ponytail 모드를 주입하고, 함께 든 스킬을 `ponytail:<skill>`로 등록하며, `/ponytail`, `/ponytail-review`, `/ponytail-audit`, `/ponytail-debt`, `/ponytail-gain`, `/ponytail-help`를 추가한다. 공유 게이트웨이에서는 Hermes의 슬래시 명령 접근 제어로 `/ponytail`을 신뢰하는 사용자만 쓰도록 제한한다. 실행 중 모드는 프로세스 안에서만 유지된다.

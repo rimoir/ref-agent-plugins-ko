@@ -28,7 +28,7 @@ disable-model-invocation: true
 
 - 작업 전에 검증 하네스를 만들고, 변경 전 상태에서 기준선을 잡아 검사가 "옛 값 대 새 값"으로 읽히게 한다.
 - 되돌릴 수 없는 설계 결정에는 **architect** 스킬을 돌린다(이 스킬은 **arena**를 돌린다). 모양이 이미 구체적인 기계적 작업에는 건너뛴다. 이미 정해진 설계에 arena를 또 돌리는 것은 과잉 설계다(**laziness-protocol** principle 스킬).
-- 무엇을 팬아웃할지 정한다. 이음매를 따라서만 병렬화하고, 각 worker에게 자기 worktree나 브랜치를 준다(**separate-before-serializing-shared-state** principle 스킬). 과하게 펼치지 않는다.
+- 무엇을 팬아웃할지 정한다. 이음매를 따라서만 병렬화하고, 각 worker에게 자기 worktree나 브랜치를 준다(**separate-before-serializing-shared-state** principle 스킬). 과하게 펼치지 않는다. 각 subagent의 추론 수준과 속도(fast 또는 표준)는 **poteto-mode** 스킬의 Subagents 절에 따라 작업에 맞게 고른다.
 - 설계한 단계 목록을 적어 둔다. 사람이 검토하는 것은 그 목록이다.
 
 그런 다음 설계를 실행한다. 설계의 단계를 Phase C와 Phase D 항목 사이에 구체적인 항목으로 todolist에 추가한다. 각 단계를 Phase C의 루프 규율에 따라 돌리고, 기록 전체를 끝까지 미루지 말고 단계가 착지할 때마다 한 줄씩 Phase D 로그를 엮어 넣는다.

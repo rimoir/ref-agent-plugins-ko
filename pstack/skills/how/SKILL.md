@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 코드베이스를 탐색해 "X는 어떻게 동작하나?" 질문에 답한다. 시니어 엔지니어가 하위 시스템에 온보딩할 때 듣는 수준의 아키텍처 설명을 만든다. 쓸 만한 멘탈 모델을 세우기에 충분하되, 주석 단 소스 코드처럼 읽힐 만큼 많지는 않게 한다.
 
-모든 spawn은 `subagent_type: generalPurpose`, `readonly: true`인 Task subagent다. 탐색자는 `pstack-models.mdc` rule의 `how explorer` 줄(기본값 `grok-4.7-xhigh-fast`)을, 모든 설명자는 `how explainer` 줄(기본값 `claude-opus-5-5-xhigh`)을 쓴다. `model`을 그 줄의 값으로, rule이나 그 줄이 없으면 기본값으로 설정한다. 값이 `auto`나 `inherit-parent`이면 `model`을 설정하지 않는다. Task 도구가 slug를 거부하면 기본값을 쓰고 그렇다고 말한다. 기본값도 거부하면 에러 메시지에서 같은 계열의 가장 가까운 유효한 slug를 쓴다.
+모든 spawn은 `subagent_type: generalPurpose`, `readonly: true`인 Task subagent다. 탐색자는 `pstack-models.mdc` rule의 `how explorer` 줄(기본값 `grok-4.7-xhigh-fast`)을, 모든 설명자는 `how explainer` 줄(기본값 `claude-opus-5-5-xhigh`)을 쓴다. `model`을 그 줄의 값으로, rule이나 그 줄이 없으면 기본값으로 설정한다. 값이 `auto`나 `inherit-parent`이면 `model`을 설정하지 않는다. Task 도구가 slug를 거부하면 기본값을 쓰고 그렇다고 말한다. 기본값도 거부하면 에러 메시지에서 같은 계열의 가장 가까운 유효한 slug를 쓴다. 각 subagent의 추론 수준과 속도(fast 또는 표준)는 **poteto-mode** 스킬의 Subagents 절에 따라 작업에 맞게 고른다.
 
 ## 1. 복잡도 판단
 

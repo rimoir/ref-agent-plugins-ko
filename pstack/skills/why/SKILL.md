@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 코드 뒤에 있는 동기와 의도를 조사한다. 짝이 되는 `how` 스킬은 코드가 무엇을 하고 어떻게 동작하는지 답한다. `why`는 어떤 힘이 그 모양을 만들었는지 답한다.
 
-아래의 각 spawn은 `pstack-models.mdc` 규칙의 역할 줄 하나와 기본값을 지정한다. `model`은 그 줄의 값으로 설정하고, 규칙이나 그 줄이 없으면 기본값으로 설정한다. 값이 `auto`나 `inherit-parent`면 `model`을 비워 둔다. Task 도구가 slug를 거부하면 기본값을 쓰고 그 사실을 밝힌다. 기본값마저 거부하면 오류 메시지에 나온 같은 계열의 가장 가까운 유효 slug를 쓴다.
+아래의 각 spawn은 `pstack-models.mdc` 규칙의 역할 줄 하나와 기본값을 지정한다. `model`은 그 줄의 값으로 설정하고, 규칙이나 그 줄이 없으면 기본값으로 설정한다. 값이 `auto`나 `inherit-parent`면 `model`을 비워 둔다. Task 도구가 slug를 거부하면 기본값을 쓰고 그 사실을 밝힌다. 기본값마저 거부하면 오류 메시지에 나온 같은 계열의 가장 가까운 유효 slug를 쓴다. 각 subagent의 추론 수준과 속도(fast 또는 표준)는 **poteto-mode** 스킬의 Subagents 절에 따라 작업에 맞게 고른다.
 
 모든 spawn은 `generalPurpose`에 `readonly: false`(agent 모드)로 띄운다. **readonly/Ask 모드를 쓰지 않는다.** MCP 접근이 사라져 MCP 기반 조사자와 synthesizer의 인용 표본 검증이 동작하지 않는다. 그래도 조사자는 아무것도 쓰지 않아야 한다.
 

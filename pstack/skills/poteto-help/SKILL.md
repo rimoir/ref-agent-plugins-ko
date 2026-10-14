@@ -63,11 +63,13 @@ pstack은 Cursor용으로 만들었다. 스킬이 Agent Skills 형식이라 다�
 | 사용자가 원하는 것 | 스킬 |
 |---|---|
 | 사소하지 않은 작업을 엄밀하게 하기 | [`/poteto-mode`](../poteto-mode/SKILL.md) |
+| 에이전트가 시작하기 전에 내 목표와 문제를 이해했는지 확인하기 | [`/in-your-own-words`](../in-your-own-words/SKILL.md) |
+| 시작하기 전에 작업을 더 높이 겨냥하기. 더 전문가답게, 더 결과 중심으로, 과하게 명세하지 않고 | [`/sharpen`](../sharpen/SKILL.md) |
 | 코드가 지금 어떻게 동작하는지, 새 코드를 어디에 둘지 알기 | [`/how`](../how/SKILL.md) |
 | 코드가 왜 이런 모양인지, 숫자가 어디서 왔는지 알기 | [`/why`](../why/SKILL.md) |
 | 변경이나 하위 시스템을 쉬운 말로 이해하기 | [`/teach`](../teach/SKILL.md) |
 | 어떤 주제의 최근 내 작업 따라잡기 | [`/recall`](../recall/SKILL.md) |
-| 내 마지막 메시지 이후 이 채팅의 모든 것을 따라잡고, 실행 항목마다 결정할 만큼의 맥락 받기 | [`/ketchup`](../ketchup/SKILL.md) |
+| 내 마지막 메시지 이후 이 채팅에서 바뀐 것을 쉬운 문장 몇 개와 작은 시각 자료로 따라잡고, 실행 항목마다 결정할 만큼의 맥락 받기 | [`/ketchup`](../ketchup/SKILL.md) |
 | 작은 diff가 그 바깥에서 무엇을 깨뜨릴 수 있는지 알기 | [`/blast-radius`](../blast-radius/SKILL.md) |
 | 함수 경계를 넘는 코드 전에 타입과 모듈 모양 정하기 | [`/architect`](../architect/SKILL.md) |
 | 지시 하나에 여러 시도를 받아 가장 좋은 것으로 합치기 | [`/arena`](../arena/SKILL.md) |

@@ -14,7 +14,7 @@ disable-model-invocation: true
 
 1. 각 후보가 만들어 낼 산출물을 밝힌다.
 2. 채점 기준(rubric)을 끌어낸다. *이* 작업에서 성공이 어떤 모습인지를 채점할 수 있는 구체적인 기준 3~6개로 적는다. 채점 기준은 Phase D에서 고르는 쪽의 도구다. 후보는 작업만 본다.
-3. 실행자(runner)를 고른다. `~/.cursor/rules/pstack-models.mdc`의 `arena runners` 줄을 쓴다. 규칙 파일이나 그 줄이 없으면 기본으로 `claude-opus-5-5-xhigh`와 `grok-4.7-xhigh-fast`에 하나씩 띄운다. 이 줄이나 cross-judge 줄의 `auto`나 `inherit-parent` 항목은 부모 모델을 뜻하므로 그 항목에는 `model`을 생략한다. Task 도구가 설정된 항목을 거부하면 그 자리는 같은 계열의 기본 모델로 돌리고 그렇게 했다고 밝힌다. 계열은 접두사로 나눈다. `claude-*`와 `grok-*`다. 맞는 계열이 없으면 `claude-opus-5-5-xhigh`를 쓴다. 기본 모델을 거부하면 오류 메시지에서 같은 계열의 가장 가까운 유효 slug를 쓴다. arena가 설계 방향 여러 개를 다루면 실행자를 더 띄운다. 작업이 판단보다 생성량에 좌우되면 같은 모델을 N번 쓴다.
+3. 실행자(runner)를 고른다. `~/.cursor/rules/pstack-models.mdc`의 `arena runners` 줄을 쓴다. 규칙 파일이나 그 줄이 없으면 기본으로 `claude-opus-5-5-xhigh`와 `grok-4.7-xhigh-fast`에 하나씩 띄운다. 이 줄이나 cross-judge 줄의 `auto`나 `inherit-parent` 항목은 부모 모델을 뜻하므로 그 항목에는 `model`을 생략한다. Task 도구가 설정된 항목을 거부하면 그 자리는 같은 계열의 기본 모델로 돌리고 그렇게 했다고 밝힌다. 계열은 접두사로 나눈다. `claude-*`가 한 계열이고, `grok-*`는 `cursor-grok-*`, `composer-*`와 한 계열이다. 거부된 `composer-*` 항목은 `grok-4.7-xhigh-fast`로 돌린다. 맞는 계열이 없으면 `claude-opus-5-5-xhigh`를 쓴다. 기본 모델을 거부하면 오류 메시지에서 같은 계열의 가장 가까운 유효 slug를 쓴다. arena가 설계 방향 여러 개를 다루면 실행자를 더 띄운다. 작업이 판단보다 생성량에 좌우되면 같은 모델을 N번 쓴다. 각 subagent의 추론 수준과 속도(fast 또는 표준)는 **poteto-mode** 스킬의 Subagents 절에 따라 작업에 맞게 고른다.
 4. **separate-before-serializing-shared-state** 원칙 스킬에 따라 후보마다 자기 출력 위치(가능하면 git worktree, 아니면 `/tmp/arena-<slug>/candidate-<n>/`)를 준다.
 
 ## Phase B: Fan out

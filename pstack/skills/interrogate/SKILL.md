@@ -33,9 +33,9 @@ Task 도구로 모든 리뷰어를 메시지 하나에서 띄운다. `~/.cursor/
 
 리뷰어마다 `subagent_type: generalPurpose`, `readonly: true`를 주고, `model`은 설정된 항목으로, 설정된 줄이 없으면 표의 기본값으로 둔다. `auto`나 `inherit-parent` 항목이면 `model`을 생략해 그 리뷰어가 부모 모델로 돌게 한다.
 
-Task 도구가 설정된 항목을 거부하면 그 리뷰어를 같은 계열의 표 기본값으로 돌리고 그렇다고 알린다. 계열은 접두사로 구분한다. `claude-*`와 `grok-*`. 맞는 계열이 없으면 Reviewer A의 기본값을 쓴다. 표 기본값이 거부되면 오류 메시지의 유효한 slug 가운데 가장 가까운 대응(같은 계열과 같은 추론 등급을 선호)으로 띄우고, 기본값 표를 갱신하는 PR을 따로 연다. slug 문제로 리뷰를 막지 않는다. 별칭 항목은 절대 거부된 slug로 다루지 않고, 어느 대체 규칙도 적용하지 않는다.
+Task 도구가 설정된 항목을 거부하면 그 리뷰어를 같은 계열의 표 기본값으로 돌리고 그렇다고 알린다. 계열은 접두사로 구분한다. `claude-*`가 한 계열이고, `grok-*`는 `cursor-grok-*`, `composer-*`와 한 계열이다. 거부된 `composer-*` 항목은 Reviewer B의 기본값으로 돌린다. 맞는 계열이 없으면 Reviewer A의 기본값을 쓴다. 표 기본값이 거부되면 오류 메시지의 유효한 slug 가운데 가장 가까운 대응(같은 계열과 같은 추론 등급을 선호)으로 띄우고, 기본값 표를 갱신하는 PR을 따로 연다. slug 문제로 리뷰를 막지 않는다. 별칭 항목은 절대 거부된 slug로 다루지 않고, 어느 대체 규칙도 적용하지 않는다.
 
-`references/reviewer-prompt.md`를 읽고 모든 리뷰어에게 같은 템플릿을 밝힌 의도, diff나 파일 내용, `references/rubric.md`의 루브릭, `references/code-quality-review.md`의 코드 품질 관점으로 채워 준다.
+`references/reviewer-prompt.md`를 읽고 모든 리뷰어에게 같은 템플릿을 밝힌 의도, diff나 파일 내용, `references/rubric.md`의 루브릭, `references/code-quality-review.md`의 코드 품질 관점으로 채워 준다. 각 subagent의 추론 수준과 속도(fast 또는 표준)는 **poteto-mode** 스킬의 Subagents 절에 따라 작업에 맞게 고른다.
 
 ## 4단계, 종합하기
 

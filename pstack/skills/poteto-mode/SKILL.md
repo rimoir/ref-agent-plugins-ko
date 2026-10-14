@@ -2,10 +2,8 @@
 name: Poteto Mode
 description: "간결하면서도 자세한 응답, 신중한 subagent 활용, 슬롭 없는 문장, 단순한 코드, 검증된 작업을 지향하는 poteto의 에이전트 스타일. poteto, /poteto-mode, 또는 이 스타일로 작업해 달라는 요청에 쓴다."
 disable-model-invocation: true
-mode: true
 icon: crown
 color: yellow
-reminder: "새 작업인가? 플레이북에 맞거나 엄밀함이 필요하면 /poteto-mode를 적용한다. 가벼운 대화이거나 사용자가 원하지 않으면 적용하지 않는다."
 ---
 
 # Poteto 모드
@@ -92,9 +90,11 @@ reminder: "새 작업인가? 플레이북에 맞거나 엄밀함이 필요하면
 
 ## Subagent
 
-**플레이북 단계 안에서 띄우는 모든 subagent에는 `subagent_type: "poteto-agent"`를 쓴다**(코드 작성 위임, 임시 도우미). 플레이북은 `/poteto-mode`를 받은 채팅이 돌린다. 플레이북 자체를 돌리려고 `poteto-agent`를 띄우지 않는다. `/poteto-mode`와 `poteto-agent`는 같은 래퍼를 거친다. 라우팅되는 워크플로 스킬(`how`, `why`, `interrogate`, `reflect`, `swarm`)은 다양한 모델로 리뷰하려고 자체 `subagent_type`을 정한다. 스킬이 정한 대로 두고 `poteto-agent`로 덮어쓰지 않는다.
+**플레이북 단계 안에서 띄우는 모든 subagent에는 `subagent_type: "poteto-agent"`를 쓴다**(코드 작성 위임, 임시 도우미). 플레이북은 `/poteto-mode`를 받은 채팅이 돌린다. 플레이북 자체를 돌리려고 `poteto-agent`를 띄우지 않는다. 라우팅되는 워크플로 스킬(`how`, `why`, `interrogate`, `reflect`, `swarm`)은 다양한 모델로 리뷰하려고 자체 `subagent_type`을 정한다. 스킬이 정한 대로 두고 `poteto-agent`로 덮어쓰지 않는다.
 
 **모든 `Task` 호출의 기본값.** `run_in_background: true`, 에이전트 모드(readonly는 MCP를 떼어 낸다), 컨텍스트를 인라인하지 말고 파일 포인터로, 역할마다 명시적인 모델(`/setup-pstack`으로 설정 가능. 기본값은 코드에 `grok-4.7-xhigh-fast`, 산문과 판단에 `claude-opus-5-5-xhigh`). 코드 위임은 난이도별로 등급을 나눈다. 가장 어려운 변경(여러 곳에 걸친 설계, 까다로운 동시성, 미묘한 알고리즘)은 가장 강한 판단 모델(`claude-opus-5-5-xhigh`)에 맡긴다. 모호한 의도에 판단이 필요한 작업이든, 글자 그대로 실행할 정밀하게 명세된 단계든 마찬가지다. 사소한 기계적 편집은 빠른 코드 모델에 맡긴다. `/setup-pstack` 규칙의 역할별 줄은 이 기본값과 라우팅되는 스킬(`how`, `why`, `arena`, `swarm`, `architect`, `interrogate`, `reflect`)의 모델 선택을 덮어쓴다. 줄이 없는 역할은 기본값을 유지하고, 역할 줄이 `inherit-parent`나 `auto`이면 그 역할은 부모 채팅 모델로 돈다(Task `model`을 생략한다). 코드 플레이북마다 설정된 모델은 해당 줄(`feature, refactoring`, `bug-fix`, `perf-issue`, `hillclimb`)에서 오고, 가장 어려운 변경은 `hardest tasks`를 읽는다. 산문과 판단은 `judgment and prose`를 읽는다.
+
+**모델을 작업에 맞춘다.** 띄우기 전마다 역할의 줄이나 기본값에서 시작해, 작업에 필요한 추론 수준과 속도를 고른다. `/setup-pstack` 예산이 역할마다 시작 수준을 정하며, 기본은 xhigh다. 가장 어렵거나 미묘한 작업이면 한 단계 올리되 max를 넘지 않는다. 판단 작업이면 한 단계, 일상적인 작업이면 두 단계 이상 내린다. fast 모드는 급할 때만 쓴다. CI나 trunk가 빨간불이거나 지금 사람이 그 결과를 기다리며 막혀 있는 경우다. 그 밖에는 표준 속도, 즉 `-fast`를 뺀 같은 slug를 쓴다. 검증은 예외라서 `swarm workers` 모델과 속도(기본 `grok-4.7-xhigh-fast`)를 그대로 쓴다. effort 수준과 slug의 fast 여부만 바꾸고 역할이 정한 계열은 유지해서, 다양한 패널이 다양하게 남게 한다. 그 계열에 해당 수준과 속도의 slug가 없으면 가장 가까운 slug를 쓴다. `auto`나 `inherit-parent`인 역할은 부모 모델을 그대로 쓴다. Task 도구가 조정한 slug를 거부하면 다른 조정 slug를 시도하지 않는다. 역할의 줄이나 기본값을 쓰고 그렇다고 알린다.
 
 subagent의 작업은 모두 내 책임이다. diff를 리뷰하고 요약은 직접 쓴다. subagent가 한 말을 그대로 넘기지 않는다. 두 번째 의견은 같은 프롬프트를 다른 모델에 돌린 것이다. 둘이 일치하면 강한 신호다.
 

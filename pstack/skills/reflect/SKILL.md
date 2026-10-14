@@ -24,7 +24,7 @@ ls -t <agent-transcripts>/*.jsonl <agent-transcripts>/*/*.jsonl <agent-transcrip
 
 메시지 하나에 `Task` 호출 셋, `subagent_type: generalPurpose`, 에이전트 모드(`readonly: false`)로 띄운다. 리뷰어는 대화 기록이 참조하는 티켓, 채팅 스레드, 관측성 트레이스를 조회하려면 MCP 접근이 필요하고, readonly는 MCP를 빼 버린다.
 
-각 리뷰어와 종합자(synthesizer)는 `pstack-models.mdc` 규칙의 역할 줄 하나와 기본값을 가진다. `model`을 그 줄의 값으로 설정하고, 규칙이나 줄이 없으면 기본값으로 설정한다. 값이 `auto`나 `inherit-parent`이면 `model`을 설정하지 않는다. Task 도구가 slug를 거부하면 기본값을 쓰고 그 사실을 밝힌다. 기본값마저 거부하면 오류 메시지에 나온 같은 계열의 가장 가까운 유효 slug를 쓴다.
+각 리뷰어와 종합자(synthesizer)는 `pstack-models.mdc` 규칙의 역할 줄 하나와 기본값을 가진다. `model`을 그 줄의 값으로 설정하고, 규칙이나 줄이 없으면 기본값으로 설정한다. 값이 `auto`나 `inherit-parent`이면 `model`을 설정하지 않는다. Task 도구가 slug를 거부하면 기본값을 쓰고 그 사실을 밝힌다. 기본값마저 거부하면 오류 메시지에 나온 같은 계열의 가장 가까운 유효 slug를 쓴다. 각 subagent의 추론 수준과 속도(fast 또는 표준)는 **poteto-mode** 스킬의 Subagents 절에 따라 작업에 맞게 고른다.
 
 | 관점 | 역할 줄 | 기본 `model` | 프롬프트 템플릿 |
 |---|---|---|---|

@@ -33,6 +33,8 @@ AI가 슬롭(slop) 코드를 너무 많이 쓴다는 인식이 점점 커지고 
 
 작업을 시작할 때 [`/poteto-mode`](./skills/poteto-mode/SKILL.md)를 쓴다. 요청을 읽고 플레이북(playbook) 묶음 중 하나를 고른 뒤, 단계에 필요한 다른 스킬을 실행한다.
 
+작업을 입력하기 전에 `/` 메뉴에서 `/poteto-mode`를 고른다. 그래야 cursor가 그 스킬을 메시지에 붙인다.
+
 ### 그냥 [`/poteto-mode`](./skills/poteto-mode/SKILL.md)를 써라
 
 이 스킬이 주된 지름길이다. 에이전트에게 엄격한 엔지니어링 작업을 맡겨야 할 때마다 쓴다. 플레이북 스물세 개가 함께 들어 있다.
@@ -111,10 +113,12 @@ AI가 슬롭(slop) 코드를 너무 많이 쓴다는 인식이 점점 커지고 
 |---|---|
 | [`/poteto-mode`](./skills/poteto-mode/SKILL.md) | 사소하지 않은 모든 작업의 기본 진입점. |
 | [`/poteto-help`](./skills/poteto-help/SKILL.md) | pstack이 처음이거나 어떤 스킬, 플레이북, 원칙이 맞는지 모를 때. 무엇을 하려는지 알아낸 뒤 그 부분에 답하고, 입력할 프롬프트를 건넨다. `/poteto-help`를 입력할 때만 실행된다. |
+| [`/in-your-own-words`](./skills/in-your-own-words/SKILL.md) | 에이전트가 시작하기 전에 내 목표와 문제를 다시 말해 주기를 바랄 때. `/in-your-own-words`를 입력할 때만 실행된다. |
+| [`/sharpen`](./skills/sharpen/SKILL.md) | 과하게 명세하거나 내 선택을 대신 정하지 않으면서, 최고 전문가가 접근할 방식으로 내가 정말 원하는 것을 겨냥해 작업하게 하고 싶을 때. |
 | [`/how`](./skills/how/SKILL.md) | 하위 시스템이 어떻게 동작하는지 차근차근 설명을 듣고 싶을 때. |
 | [`/why`](./skills/why/SKILL.md) | 무언가가 왜 이렇게 만들어졌는지 알고 싶을 때. 실행 시점에 사용 가능한 MCP를 찾아 증거 범주(소스 관리, 이슈 트래커, 장문 문서, 실시간 채팅, 인프라 관측, 에러 추적, 분석 웨어하우스)마다 병렬로 조회한다. |
 | [`/recall`](./skills/recall/SKILL.md) | 작업을 시작하거나 재개하면서, 한 주제에 대한 최근 맥락을 자기 채팅 기록과 공유 기록에서 다시 세워 짧은 현재 상태 브리핑으로 받고 싶을 때. |
-| [`/ketchup`](./skills/ketchup/SKILL.md) | 내 마지막 메시지 이후 이 채팅에서 일어난 모든 것을 쉬운 말로 받고, 결정을 내릴 수 있게 실행 항목마다 요약을 받고 싶을 때. |
+| [`/ketchup`](./skills/ketchup/SKILL.md) | 내 마지막 메시지 이후 이 채팅에서 바뀐 것을 쉬운 문장 몇 개와 작은 시각 자료로 받고, 실행 항목마다 결정을 내릴 만큼의 맥락만 받고 싶을 때. |
 | [`/blast-radius`](./skills/blast-radius/SKILL.md) | 작아 보이는 변경이 무엇을 더 망가뜨릴 수 있는지 알고 싶을 때. 안전하다는 근거가 되는 사실 하나를 주장이 아니라 실행한 코드로 증명한다. |
 | [`/architect`](./skills/architect/SKILL.md) | 함수 경계를 넘는 코드를 쓰기 직전에 호출자의 사용법, 타입, 모듈 형태를 먼저 정하고 싶을 때. |
 | [`/arena`](./skills/arena/SKILL.md) | 같은 일을 N번 병렬로 시도하고 각각에서 가장 좋은 부분을 가져오고 싶을 때. |

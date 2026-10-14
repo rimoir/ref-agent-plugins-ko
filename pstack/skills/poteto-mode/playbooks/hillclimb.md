@@ -9,7 +9,7 @@
 3. **show-me-your-work** 스킬로 결정 로그를 연다. `decision.tsv`에 시도 하나당 한 행을 쓴다. 열은 id, 가설, 변경, 전, 후, 차이, 테스트, 판정(유지 또는 되돌림), 메모다. 시도마다 먼저 읽는다. 트리 밖에 둔다(gitignore 처리).
 4. 각 가설은 1단계의 아키텍처 모델에 근거를 두어 "무언가를 메모이즈해 보자"가 아니라 구체적인 메커니즘("X가 첫 페인트를 막으니 부트 경로에서 뒤로 미룬다")을 밝히게 한다. 성능 메트릭이라면 Perf issue 플레이북(`playbooks/perf-issue.md`) 2단계의 성능 주문(mantra) 순서대로 가설을 세운다. 그 순서만 빌리고 그 단계의 중단 규칙은 빌리지 않는다.
 5. 반복마다 가설 하나로 루프를 돈다.
-   - 설정한 hillclimb 모델(기본 `grok-4.7-xhigh-fast`)을 쓰는 subagent에 범위를 좁혀 변경을 넘긴다. 직접 타이핑하지 말고 diff를 감독하고 검토한다(**guard-the-context-window** 원칙 스킬). 독립적인 가설이 여럿 살아 있으면 각자 자기 worktree에서 도는 병렬 subagent로 펼친다(**separate-before-serializing-shared-state** 원칙 스킬).
+   - 설정한 hillclimb 모델(기본 `grok-4.7-xhigh-fast`)을 쓰는 subagent에 범위를 좁혀 변경을 넘긴다. 각 subagent의 추론 수준과 속도(fast 또는 표준)는 Subagents 절에 따라 작업에 맞게 고른다. 직접 타이핑하지 말고 diff를 감독하고 검토한다(**guard-the-context-window** 원칙 스킬). 독립적인 가설이 여럿 살아 있으면 각자 자기 worktree에서 도는 병렬 subagent로 펼친다(**separate-before-serializing-shared-state** 원칙 스킬).
    - 고정한 하네스로 전후를 측정하고 회귀 관문을 돌린다.
    - 메트릭이 잡음을 넘어 움직이고 관문이 초록으로 남을 때만 받아들인다. 아니면 변경을 전부 되돌린다. "도움이 될지도 모르는" 조정은 남기지 않는다.
    - 받아들인 수정마다 커밋 하나를 만들고, 바꾼 파일만 스테이징한다(`git add <files>`, `-A`는 절대 쓰지 않는다). 유지든 되돌림이든 행은 기록한다.

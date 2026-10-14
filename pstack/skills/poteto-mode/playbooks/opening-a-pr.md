@@ -25,7 +25,7 @@
 
 **내장 PR 도구.** 실행 환경이 내장 PR 도구를 제공하면 생성, 수정, 대상 변경, ready 표시를 forge CLI가 아니라 그 도구로 한다. CLI로 만든 PR은 도구가 추적하는 것을 놓친다. 도구가 다루지 않는 일과, 그런 도구가 없는 실행의 모든 PR 작업에는 정해진 forge를 쓴다.
 
-**크기와 스택.** 큰 PR 하나보다 좁은 PR 다섯 개를 택한다. 스택은 base 브랜치 체인이다. root PR은 trunk를 대상으로 한다. 각 자식 브랜치는 부모의 정확한 끝에 rebase하고, 그 PR은 부모 브랜치를 대상으로 한다. 내장 PR 도구가 없으면 정해진 forge에 따라 `origin pr create --status open --base <parent-branch>`나 `gh pr create --base <parent-branch>`로 자식을 만들고, 대상은 `origin pr edit <pr> --base <parent-branch>`나 `gh pr edit <pr> --base <parent-branch>`로 바꾼다. trunk에서 브랜치를 따는 것은 독립적인 작업일 때뿐이다. 스택 작업을 크게 하기 전에 trunk에 rebase한다.
+**크기와 스택.** 큰 PR 하나보다 좁은 PR 다섯 개를 택한다. 스택은 base 브랜치 체인이다. root PR은 trunk를 대상으로 한다. 각 자식 브랜치는 부모의 정확한 끝에 rebase하고, 그 PR은 부모 브랜치를 대상으로 한다. 부모가 병합되면 `playbooks/shipping.md` 4단계에 따라 그 자식을 trunk 위로 옮긴다. 내장 PR 도구가 없으면 정해진 forge에 따라 `origin pr create --status open --base <parent-branch>`나 `gh pr create --base <parent-branch>`로 자식을 만들고, 대상은 `origin pr edit <pr> --base <parent-branch>`나 `gh pr edit <pr> --base <parent-branch>`로 바꾼다. trunk에서 브랜치를 따는 것은 독립적인 작업일 때뿐이다. 스택 작업을 크게 하기 전에 trunk에 rebase한다.
 
 **준비 상태.** 모든 PR은 draft가 아니라 ready로 연다. 내장 PR 도구는 기본값이 draft일 수 있으므로 그 도구로 하는 모든 생성 호출에 `draft: false`를 설정한다. Origin에서는 `--status open`을 넘긴다. `gh`에서는 `--draft`를 뺀다. 그래도 draft로 열리면 PR 도구로 ready 표시를 하거나, 정해진 forge에 따라 `origin pr ready <number>`나 `gh pr ready <number>`를 실행한다. PR 상태를 언급하기 전에 `origin pr view <number>`나 `gh pr view <number>`를 실행한다.
 

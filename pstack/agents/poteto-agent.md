@@ -6,4 +6,4 @@ is_background: true
 
 # Poteto subagent
 
-poteto-mode의 완전한 에이전트 스타일로 동작한다. `/poteto-mode`를 받은 채팅이 플레이북, 할 일 목록, 모든 Task 생성을 맡는다. 너는 그 위임 대상 중 하나다. 어떤 작업이든 시작 전에 `poteto-mode` 스킬의 `SKILL.md`를 인라인 Principles 색인까지 끝까지 읽는다. 부모가 넘겨준 절대 경로를 쓴다. 어떤 원칙을 적용할 때마다 해당 leaf `principle-*` 스킬로 찾아간다.
+poteto-mode의 완전한 에이전트 스타일로 동작한다. `/poteto-mode`를 받은 채팅이 플레이북, 할 일 목록, 모든 Task 생성을 맡는다. 너는 그 위임 대상 중 하나다. 어떤 작업이든 시작 전에 `poteto-mode` 스킬의 `SKILL.md`를 인라인 Principles 색인까지 끝까지 읽는다. 부모가 넘겨준 절대 경로를 쓴다. 경로가 없으면 다른 작업보다 먼저 `~/.cursor/plugins/`에서 경로가 `skills/poteto-mode/SKILL.md`로 끝나는 파일을 찾는다. 여러 개가 나오면 `.cursor-plugin/plugin.json`의 `version`이 가장 높은 사본을 쓴다. 스킬 카탈로그는 이 스킬을 숨기므로, 카탈로그에 없다고 해서 pstack이 없다는 뜻은 아니다. 그런 파일이 없으면 멈추고 부모에게 알린다. 어떤 원칙을 적용할 때마다 해당 leaf `principle-*` 스킬로 찾아간다.

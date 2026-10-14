@@ -1,135 +1,135 @@
-# Worst-Case Catalog
+# 최악의 경우(worst case) 카탈로그
 
-Realistic values that break UI, grouped by what kind of value the component renders. Use the rows that apply to the fields in your Phase 1 table. Each value is something a real user could produce; the note says what it tends to break.
+UI를 깨뜨리는 현실적인 값을 컴포넌트가 렌더링하는 값의 종류별로 묶었다. 1단계 표의 필드에 해당하는 행을 쓴다. 모든 값은 실제 사용자가 만들어 낼 수 있는 것이다. 옆 칸의 설명에는 그 값이 흔히 깨뜨리는 것을 적었다.
 
-Use `example.com`, `example.org`, or `.test` domains for emails and URLs, so the fixture never points at a real inbox or site.
+이메일과 URL에는 `example.com`, `example.org`, `.test` 도메인을 써서 픽스처가 실제 메일함이나 사이트를 가리키지 않게 한다.
 
 ---
 
-## People and names
+## 사람과 이름
 
-| Value | Breaks |
+| 값 | 깨지는 것 |
 | --- | --- |
-| `Aleksandra Wiśniewska-Kowalczyk` | Long, hyphenated, diacritics; wraps to two lines, and the hyphen is a line-break point |
-| `Christopher Alexander Montgomery III` | Long with a suffix; naive first + last initials give `CI` |
-| `Konstantin Oberhauser-Wettstein` | Long and compound; overflows single-line rows |
-| `Jo` | Two letters; leaves the name column mostly empty, and naive initials give `J` |
-| `J` | One letter; single-character initials, very short click target if the name is the link |
-| `Ólafur Darri Ólafsson` | Leading accented capital; uppercase/sort logic, initials `ÓÓ` |
-| `Đặng Thị Ngọc Hân` | Stacked Vietnamese diacritics; clipped by tight `line-height` + `overflow: hidden` |
-| `王秀英` | CJK, no spaces; "first + last word" initials logic finds one word, and CJK breaks anywhere |
-| `نور الهدى عبد الرحمن` | RTL; punctuation and icons land on the wrong side without `dir="auto"` |
-| `Seán O'Brien-Ó Súilleabháin` | Apostrophe and accents; escaping, initials, search |
-| `María José de la Cruz y Fernández` | Lowercase particles; initials `Md` or `MF`, sorting by "last name" |
-| `dana` | All lowercase; initials should still be uppercase |
-| `🦊 Fox` | Emoji first; `.charAt(0)` returns half a surrogate pair (`�`) |
-| `👩🏽‍💻 Priya` | ZWJ emoji sequence; `.length` is 7+, slicing breaks it into pieces |
-| `  Sam   Lee ` | Leading, trailing, and repeated spaces; initials from empty words, odd gaps |
-| *(missing)* | No name at all, only an email; the UI must fall back to something |
+| `Aleksandra Wiśniewska-Kowalczyk` | 길고 하이픈과 발음 구별 기호가 있음. 두 줄로 줄바꿈되고 하이픈이 줄바꿈 지점이 됨 |
+| `Christopher Alexander Montgomery III` | 길고 접미사가 붙음. 첫 단어 + 마지막 단어로 만드는 단순한 이니셜은 `CI`가 됨 |
+| `Konstantin Oberhauser-Wettstein` | 길고 복합 성씨임. 한 줄짜리 행에서 넘침 |
+| `Jo` | 두 글자. 이름 열이 거의 비어 보이고 단순한 이니셜은 `J`가 됨 |
+| `J` | 한 글자. 이니셜도 한 글자이고 이름이 링크라면 클릭 영역이 아주 짧음 |
+| `Ólafur Darri Ólafsson` | 악센트 붙은 대문자로 시작함. 대문자 변환/정렬 로직, 이니셜 `ÓÓ` |
+| `Đặng Thị Ngọc Hân` | 베트남어 발음 구별 기호가 겹겹이 쌓임. 빡빡한 `line-height` + `overflow: hidden`에 잘림 |
+| `王秀英` | CJK, 공백 없음. "first + last word" 이니셜 로직이 단어를 하나만 찾고 CJK는 아무 데서나 줄바꿈됨 |
+| `نور الهدى عبد الرحمن` | RTL. `dir="auto"`가 없으면 문장부호와 아이콘이 반대쪽에 놓임 |
+| `Seán O'Brien-Ó Súilleabháin` | 아포스트로피와 악센트. 이스케이프, 이니셜, 검색 |
+| `María José de la Cruz y Fernández` | 소문자 연결어. 이니셜 `Md`나 `MF`, "성" 기준 정렬 |
+| `dana` | 모두 소문자. 그래도 이니셜은 대문자여야 함 |
+| `🦊 Fox` | 이모지로 시작함. `.charAt(0)`이 서로게이트 쌍의 절반(`�`)을 돌려줌 |
+| `👩🏽‍💻 Priya` | ZWJ 이모지 시퀀스. `.length`가 7 이상이고 잘라 내면 조각조각 깨짐 |
+| `  Sam   Lee ` | 앞뒤 공백과 연속 공백. 빈 단어로 만든 이니셜, 이상한 간격 |
+| *(missing)* | 이름이 아예 없고 이메일만 있음. UI가 무언가로 대체해야 함 |
 
-## Emails, URLs, identifiers
+## 이메일, URL, 식별자
 
-Unbreakable strings: they have no spaces, so the browser has nowhere to wrap them.
+끊을 수 없는 문자열이다. 공백이 없어서 브라우저가 줄을 바꿀 자리가 없다.
 
-| Value | Breaks |
+| 값 | 깨지는 것 |
 | --- | --- |
-| `bartholomew.fitzgerald@northwind-industries-holdings.example.com` | The classic. Pushes every sibling off the row without `overflow-wrap: anywhere` |
-| `a@b.co` | Shortest realistic; layout that assumed a long email looks empty |
-| `first.last+billing-notifications@example.com` | Plus-addressing; validation that rejects `+`, display that truncates the meaningful part |
-| `ops@sub.department.region.example.co.uk` | Many subdomains, two-part TLD; "domain" extraction logic |
-| `https://example.com/workspaces/acme/projects/q3-launch/docs/9f8e7d6c5b4a?tab=comments&filter=unresolved` | Long URL; overflow, and end-truncation hides the part that differs |
-| `9f8e7d6c-5b4a-4c3d-8e2f-1a0b9c8d7e6f` | UUID; monospace width, middle-truncation candidate |
-| `Q3 Board Deck — FINAL (revised) v12 [approved by legal].pdf` | File name; end-truncation hides the version and extension, brackets and dashes in paths |
-| `IMG_20250914_183022_HDR_portrait_edited_edited.HEIC` | Camera file name; unbreakable, uppercase extension |
-| `@a` / `@thisisaverylongusernamethatisallowed` | Handle extremes |
+| `bartholomew.fitzgerald@northwind-industries-holdings.example.com` | 고전적인 사례. `overflow-wrap: anywhere`가 없으면 형제 요소를 모두 행 밖으로 밀어냄 |
+| `a@b.co` | 현실적으로 가장 짧은 값. 긴 이메일을 가정한 레이아웃이 텅 비어 보임 |
+| `first.last+billing-notifications@example.com` | 플러스 주소. `+`를 거부하는 검증, 의미 있는 부분을 말줄임하는 표시 |
+| `ops@sub.department.region.example.co.uk` | 하위 도메인이 많고 TLD가 두 부분. "도메인" 추출 로직 |
+| `https://example.com/workspaces/acme/projects/q3-launch/docs/9f8e7d6c5b4a?tab=comments&filter=unresolved` | 긴 URL. 넘침, 그리고 끝 말줄임이 서로 다른 부분을 가림 |
+| `9f8e7d6c-5b4a-4c3d-8e2f-1a0b9c8d7e6f` | UUID. 고정폭 글꼴 너비, 가운데 말줄임 후보 |
+| `Q3 Board Deck — FINAL (revised) v12 [approved by legal].pdf` | 파일 이름. 끝 말줄임이 버전과 확장자를 가림, 경로 속 대괄호와 대시 |
+| `IMG_20250914_183022_HDR_portrait_edited_edited.HEIC` | 카메라 파일 이름. 끊을 수 없음, 대문자 확장자 |
+| `@a` / `@thisisaverylongusernamethatisallowed` | 핸들의 양 극단 |
 
-## Labels, titles, and copy from data
+## 데이터에서 오는 라벨, 제목, 문구
 
-| Value | Breaks |
+| 값 | 깨지는 것 |
 | --- | --- |
-| `Senior Product Design Engineer, Platform Infrastructure` | Long job title; wraps to three lines in a secondary slot |
-| `Invitation expired 12 days ago` | Long status badge; badge wraps or squeezes the name column |
-| `Benachrichtigungseinstellungen` | German compound (30 chars, no spaces); label overflow, unbreakable |
-| `Paramètres de confidentialité et de sécurité` | French expansion of "Privacy & security"; UI copy runs ~30% longer in translation |
-| Twelve tags on one item: `design`, `frontend`, `q3`, `urgent`, `needs-review`, … | Tag rows that wrap into a wall; needs a `+8` overflow |
-| A tag named `customer-feedback-from-enterprise-onboarding` | One tag wider than its container |
-| `Untitled` / empty string / `   ` | Title missing; collapsed heading, zero-height row |
-| `<script>alert(1)</script>` / `&amp;` / `**bold**` | Escaping; must render as literal text |
-| `Line one` + newline + `Line two` | Newline in a single-line field; doubles row height or is silently dropped |
-| A 2,000-character pasted description | Clamps, "show more", and textarea growth |
+| `Senior Product Design Engineer, Platform Infrastructure` | 긴 직함. 부차적인 자리에서 세 줄로 줄바꿈됨 |
+| `Invitation expired 12 days ago` | 긴 상태 배지. 배지가 줄바꿈되거나 이름 열을 짓누름 |
+| `Benachrichtigungseinstellungen` | 독일어 합성어(30자, 공백 없음). 라벨 넘침, 끊을 수 없음 |
+| `Paramètres de confidentialité et de sécurité` | "Privacy & security"의 프랑스어 번역. 번역하면 UI 문구가 ~30% 길어짐 |
+| Twelve tags on one item: `design`, `frontend`, `q3`, `urgent`, `needs-review`, … | 태그 행이 줄바꿈되며 벽처럼 쌓임. `+8` 같은 넘침 표시가 필요함 |
+| A tag named `customer-feedback-from-enterprise-onboarding` | 컨테이너보다 넓은 태그 하나 |
+| `Untitled` / empty string / `   ` | 제목 없음. 무너진 헤딩, 높이 0인 행 |
+| `<script>alert(1)</script>` / `&amp;` / `**bold**` | 이스케이프. 문자 그대로 렌더링돼야 함 |
+| `Line one` + newline + `Line two` | 한 줄 필드 속 줄바꿈 문자. 행 높이가 두 배가 되거나 아무 표시 없이 버려짐 |
+| A 2,000-character pasted description | 줄 수 제한, "show more", textarea 늘어남 |
 
-## Numbers and money
+## 숫자와 금액
 
-| Value | Breaks |
+| 값 | 깨지는 것 |
 | --- | --- |
-| `0` | Zero states: "0 members", empty progress bar, division by zero in percentages |
-| `1` | Plurals: "1 members", "1 days ago" |
-| `1284` | Needs a thousands separator: `1,284` |
-| `1000000` | Width of the count badge; consider compact form `1M` where precision doesn't matter |
-| `12345678.9` as currency | `$12,345,678.90`; overflows totals columns |
-| `-42.5` | Negative sign, red color logic, parentheses in accounting formats |
-| `0.1 + 0.2` | `0.30000000000000004` rendered raw |
-| `142%` / `-3%` | Progress bars and meters past their bounds |
-| `null` / `undefined` / `NaN` | Rendered literally |
-| `1.284` in `de-DE` vs `1,284` in `en-US` | Locale formatting; hardcoded separators are wrong for half the world |
-| A value that changes live (`99` → `100`) | Width jump and jitter without `tabular-nums` |
+| `0` | 0일 때의 상태: "0 members", 빈 진행 막대, 퍼센트 계산의 0 나누기 |
+| `1` | 복수형: "1 members", "1 days ago" |
+| `1284` | 천 단위 구분 기호가 필요함: `1,284` |
+| `1000000` | 개수 배지의 너비. 정밀도가 중요하지 않은 곳에서는 `1M` 같은 축약형을 고려 |
+| `12345678.9` as currency | `$12,345,678.90`. 합계 열을 넘침 |
+| `-42.5` | 음수 부호, 빨간색 표시 로직, 회계 형식의 괄호 |
+| `0.1 + 0.2` | `0.30000000000000004`가 그대로 렌더링됨 |
+| `142%` / `-3%` | 범위를 넘어선 진행 막대와 미터 |
+| `null` / `undefined` / `NaN` | 글자 그대로 렌더링됨 |
+| `1.284` in `de-DE` vs `1,284` in `en-US` | 로캘 형식. 하드코딩한 구분 기호는 세계의 절반에서 틀림 |
+| A value that changes live (`99` → `100`) | `tabular-nums`가 없으면 너비가 튀고 흔들림 |
 
-## Collections
+## 컬렉션
 
-| Value | Breaks |
+| 값 | 깨지는 것 |
 | --- | --- |
-| 0 items | The empty state, and whether one exists at all |
-| 1 item | Grids that look broken with one card; "1 of 1" |
-| Exactly page size, and page size + 1 | Off-by-one in "Showing 40 of 40", pagination that shows an empty page 2 |
-| 1,000+ items, unpaginated | Scroll performance, render time, memory; also "Showing 40 of 1,284" copy |
-| One item 10× the size of the others | Masonry and grid rows stretching to the tallest item |
-| Items with identical names | Lists where the name is the only distinguishing field |
+| 0 items | 빈 상태, 그리고 빈 상태가 있기는 한지 |
+| 1 item | 카드 하나만 있으면 깨져 보이는 그리드. "1 of 1" |
+| Exactly page size, and page size + 1 | "Showing 40 of 40"의 off-by-one 오류, 빈 2페이지를 보여 주는 페이지 나누기 |
+| 1,000+ items, unpaginated | 스크롤 성능, 렌더링 시간, 메모리. "Showing 40 of 1,284" 문구도 |
+| One item 10× the size of the others | 가장 큰 항목에 맞춰 늘어나는 메이슨리와 그리드 행 |
+| Items with identical names | 이름이 유일한 구분 필드인 목록 |
 
-## Time
+## 시간
 
-| Value | Breaks |
+| 값 | 깨지는 것 |
 | --- | --- |
-| Now | "0 seconds ago" instead of "just now" |
-| 12 days ago, 11 months ago, 3 years ago | Relative-time thresholds; switch to an absolute date after a week or so |
-| A future date | "in 3 days" vs "-3 days ago" |
-| `1970-01-01` | A zero timestamp shown as a real date |
-| `2025-12-31T23:30:00-08:00` | Shows as a different day in UTC and the user's timezone |
-| Very long duration (`1,284 hours`) | Duration formatting that never rolls up to days |
+| Now | "just now" 대신 "0 seconds ago"가 나옴 |
+| 12 days ago, 11 months ago, 3 years ago | 상대 시간 임곗값. 일주일쯤 지나면 절대 날짜로 바꿈 |
+| A future date | "in 3 days" 대 "-3 days ago" |
+| `1970-01-01` | 0 타임스탬프가 실제 날짜처럼 보임 |
+| `2025-12-31T23:30:00-08:00` | UTC와 사용자 시간대에서 서로 다른 날로 보임 |
+| Very long duration (`1,284 hours`) | 일 단위로 올려 표시하지 않는 기간 형식 |
 
-Use `Intl.RelativeTimeFormat` and `Intl.DateTimeFormat`, not hand-built strings.
+손으로 조립한 문자열 말고 `Intl.RelativeTimeFormat`과 `Intl.DateTimeFormat`을 쓴다.
 
-## Images and media
+## 이미지와 미디어
 
-| Value | Breaks |
+| 값 | 깨지는 것 |
 | --- | --- |
-| Avatar URL that 404s | Broken-image icon instead of the initials fallback |
-| No avatar at all | The fallback itself: initials, color, size parity with real avatars |
-| 4000×200 panorama as avatar or cover | Distortion without `object-fit: cover` |
-| 200×4000 tall image | Same, other axis; can also blow out a card's height |
-| Transparent PNG logo, dark logo on dark mode | Invisible on the background |
-| Slow-loading image | Layout shift without fixed dimensions or `aspect-ratio` |
+| Avatar URL that 404s | 이니셜 대체 대신 깨진 이미지 아이콘 |
+| No avatar at all | 대체 표시 자체: 이니셜, 색, 실제 아바타와 같은 크기 |
+| 4000×200 panorama as avatar or cover | `object-fit: cover`가 없으면 일그러짐 |
+| 200×4000 tall image | 같은 문제, 다른 축. 카드 높이를 터뜨릴 수도 있음 |
+| Transparent PNG logo, dark logo on dark mode | 배경에 묻혀 안 보임 |
+| Slow-loading image | 고정 크기나 `aspect-ratio`가 없으면 레이아웃이 밀림 |
 
-## States
+## 상태
 
-| Value | Breaks |
+| 값 | 깨지는 것 |
 | --- | --- |
-| Loading | Skeletons that don't match final layout, spinners that shift content |
-| Error from the API | No error state, or a raw error message (`TypeError: Cannot read properties of undefined`) |
-| Partial data | Some optional fields filled, others not, in the same list; misaligned rows |
-| Every status at once | All enum values in one list (`active`, `invited`, `expired`, `suspended`); badge widths vary |
-| No permission | Disabled actions; does the row still lay out the same? |
-| The current user in the list | "You" labels, actions that shouldn't apply to yourself |
+| Loading | 최종 레이아웃과 맞지 않는 스켈레톤, 콘텐츠를 밀어내는 스피너 |
+| Error from the API | 오류 상태가 없거나 가공하지 않은 오류 메시지(`TypeError: Cannot read properties of undefined`)가 그대로 보임 |
+| Partial data | 같은 목록 안에서 어떤 선택 필드는 채워져 있고 어떤 것은 비어 있음. 행이 어긋남 |
+| Every status at once | 모든 enum 값이 한 목록에 있음(`active`, `invited`, `expired`, `suspended`). 배지 너비가 제각각 |
+| No permission | 비활성화된 동작. 그래도 행의 레이아웃이 같은가? |
+| The current user in the list | "You" 라벨, 자기 자신에게는 적용되면 안 되는 동작 |
 
-## Environment
+## 환경
 
-Not data, but checked the same way: flip to the worst case, then change these.
+데이터는 아니지만 같은 방식으로 확인한다. 최악의 경우로 바꾼 뒤 아래 조건을 바꾼다.
 
-| Condition | Breaks |
+| 조건 | 깨지는 것 |
 | --- | --- |
-| Container at 320px | Every overflow above, at once |
-| Narrow sidebar placement | Components designed full-width, reused in a 280px column |
-| 2560px wide | Lines too long to read, content stranded on one side |
-| Browser zoom 200% / large text setting | Fixed heights that clip growing text |
-| Dark mode | Hardcoded colors, invisible borders and logos |
-| `dir="rtl"` | Icons, chevrons, padding, and the order of trailing actions |
-| Touch device | Hover-only actions (the ••• that appears on hover) are unreachable |
+| Container at 320px | 위의 모든 넘침이 한꺼번에 |
+| Narrow sidebar placement | 전체 너비로 디자인한 컴포넌트를 280px 열에 재사용 |
+| 2560px wide | 읽기에 너무 긴 줄, 한쪽에 고립된 콘텐츠 |
+| Browser zoom 200% / large text setting | 커지는 텍스트를 잘라 내는 고정 높이 |
+| Dark mode | 하드코딩된 색, 보이지 않는 테두리와 로고 |
+| `dir="rtl"` | 아이콘, 셰브론, 패딩, 행 끝 동작의 순서 |
+| Touch device | hover에만 나타나는 동작(hover 때 나타나는 •••)에 닿을 수 없음 |

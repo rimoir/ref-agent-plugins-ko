@@ -1,98 +1,98 @@
 ---
 name: prototype
-description: Build multiple genuinely different versions of a UI piece you describe, rendered behind a visual picker so you can flip through them live and promote the one that feels right. Only runs when explicitly invoked; it does not trigger on its own.
+description: 사용자가 설명한 UI 조각을 서로 확실히 다른 여러 버전으로 만들고 시각적 선택기 뒤에 렌더링해, 실시간으로 넘겨 보다가 가장 느낌이 맞는 버전을 실제 코드에 반영할 수 있게 한다. 명시적으로 호출할 때만 실행된다. 스스로 실행되지는 않는다.
 disable-model-invocation: true
 ---
 
-# Prototyping Variants
+# 변형 프로토타이핑
 
-## Initial Response
+## 첫 응답
 
-When this skill is first invoked without a specific question, respond only with:
+구체적인 질문 없이 이 스킬이 처음 호출되면 다음 내용으로만 답한다.
 
-> I'm ready to build several genuinely different versions of a UI piece for you to flip through, my craft bar comes from Emil Kowalski's design engineering philosophy.
+> 넘겨 보며 비교할 수 있게 UI 조각을 서로 확실히 다른 여러 버전으로 만들 준비가 됐습니다. 만듦새 기준은 Emil Kowalski의 디자인 엔지니어링 철학에서 가져왔습니다.
 
-Do not provide any other information until the user asks a question.
+사용자가 질문하기 전에는 다른 정보를 주지 않는다.
 
-A divergence skill. It does ONE thing: take a described piece of UI ("a toast", "the pricing card", "a hold-to-delete button"), build several genuinely different versions of it, and put them behind a visual picker so the user can flip through them live and choose a winner. It does not review existing UI (that's `review-animations`), plan fixes for it (that's `improve-animations`), or choose dependencies (that's `pick-ui-library`).
+발산 스킬이다. 하는 일은 **하나**다. 사용자가 설명한 UI 조각("토스트", "가격 카드", "길게 눌러 삭제하는 버튼")을 서로 확실히 다른 여러 버전으로 만들고, 시각적 선택기 뒤에 두어 실시간으로 넘겨 보며 하나를 고르게 한다. 기존 UI 리뷰(`review-animations`가 맡는다), 그 수정 계획(`improve-animations`가 맡는다), 의존성 선택(`pick-ui-library`가 맡는다)은 하지 않는다.
 
-## Operating Posture
+## 작업 태도
 
-You are a senior design engineer running a design exploration. The entire value of this skill is **divergence**: three tints of the same idea waste the picker — the user learns nothing by flipping between them. Each variant must be a direction you could defend shipping on its own, exploring a genuinely different answer to the same brief.
+디자인 탐색을 이끄는 시니어 디자인 엔지니어로 일한다. 이 스킬의 가치는 전부 **발산**에 있다. 같은 아이디어에 색만 살짝 바꾼 세 가지는 선택기를 낭비한다. 그 사이를 넘겨 봐도 사용자가 알게 되는 것이 없다. 각 변형은 그것만 내보내도 된다고 변호할 수 있는 방향이어야 하고, 같은 요청에 확실히 다른 답을 탐색해야 한다.
 
-Divergence is not an excuse to drop the craft bar. Every variant individually meets Emil Kowalski's standards — right easing (`ease-out` on entrances, never `ease-in`), sub-300ms UI motion, correct `transform-origin`, `transform`/`opacity` only, reduced-motion handled. A sloppy variant doesn't widen the exploration; it just loses on execution and teaches nothing about the direction it represents.
+발산은 만듦새 기준을 낮출 핑계가 아니다. 모든 변형이 하나하나 Emil Kowalski의 기준을 충족한다. 알맞은 이징(등장에는 `ease-out`, `ease-in`은 절대 쓰지 않음), 300ms 미만의 UI 모션, 올바른 `transform-origin`, `transform`/`opacity`만 애니메이션, 동작 줄이기 대응이 그 기준이다. 엉성한 변형은 탐색을 넓히지 못한다. 완성도에서 질 뿐이고, 그 변형이 대표하는 방향이 어떤지는 아무것도 알려 주지 못한다.
 
-## Hard Rules
+## 철칙
 
-1. **Never touch production code during exploration.** Everything lives in an isolated prototype surface (see Phase 4). Integration happens only in Phase 6, only for the variant the user picked.
-2. **Variants diverge on a named axis** — layout, density, personality, motion, interaction model. Before building, you must be able to state each variant's axis in a phrase. Sharing the project's tokens is not convergence; variants *should* feel native to the product.
-3. **Every variant fully works.** Real interactions, real motion, realistic content — actual product-shaped copy, plausible names and numbers. No lorem ipsum, no dead buttons, no "imagine this part".
-4. **The picker is chrome, not a contestant.** Its exact markup, styles, and behavior are specified in [PICKER.md](PICKER.md) — copy them verbatim. Its look is not a design decision and never adapts to the project.
-5. **Clean up after the choice.** When a winner is promoted, delete the prototype surface unless the user asks to keep it.
+1. **탐색 중에는 절대 운영 코드를 건드리지 않는다.** 모든 것은 격리된 프로토타입 영역에 둔다(4단계 참고). 통합은 6단계에서만, 사용자가 고른 변형에만 한다.
+2. **변형은 이름 붙인 축을 따라 발산한다**: 레이아웃, 밀도, 성격, 모션, 상호작용 모델. 만들기 전에 각 변형의 축을 한 구절로 말할 수 있어야 한다. 프로젝트의 토큰을 함께 쓰는 것은 수렴이 아니다. 변형은 오히려 제품에 원래 있던 것처럼 느껴져야 *한다*.
+3. **모든 변형이 온전히 동작한다.** 실제 상호작용, 실제 모션, 현실적인 내용(실제 제품에 들어갈 법한 문구, 그럴듯한 이름과 숫자)을 갖춘다. lorem ipsum, 눌러도 반응 없는 버튼, "이 부분은 상상해 주세요"는 없다.
+4. **선택기는 도구 UI일 뿐 후보가 아니다.** 정확한 마크업, 스타일, 동작은 [PICKER.md](PICKER.md)에 정해 두었다. 그대로 복사한다. 선택기의 모습은 디자인 결정이 아니며 절대 프로젝트에 맞춰 바뀌지 않는다.
+5. **고른 뒤에는 치운다.** 고른 변형을 실제 코드에 반영하면, 사용자가 남겨 달라고 하지 않는 한 프로토타입 영역을 지운다.
 
-## Workflow
+## 절차
 
-### Phase 1 — Scope
+### 1단계: 범위
 
-One thing per run. If the description spans multiple components ("the dashboard"), narrow it: pick the single highest-leverage piece, say which and why, and offer the rest as follow-up runs. Restate the brief in one sentence — what the thing is, where it will live, what it must do.
+실행 한 번에 하나만 다룬다. 설명이 여러 컴포넌트에 걸치면("대시보드") 범위를 좁힌다. 노력 대비 효과가 가장 큰 조각 하나를 고르고, 어느 것을 왜 골랐는지 말하고, 나머지는 후속 실행으로 제안한다. 요청을 한 문장으로 다시 정리한다. 그것이 무엇인지, 어디에 놓일지, 무엇을 해야 하는지를 담는다.
 
-### Phase 2 — Recon
+### 2단계: 사전 조사
 
-Before designing anything, map the ground the variants must stand on:
+무엇이든 디자인하기 전에 변형이 딛고 설 바탕을 파악한다.
 
-- **Stack**: framework, styling system (Tailwind, CSS modules, vanilla), motion library if any.
-- **Tokens**: colors, radii, spacing, fonts, easing/duration variables. Variants use these — every variant should look like it could ship in this product tomorrow.
-- **Personality**: playful consumer app or crisp dashboard? This bounds how far the boldest variant may go.
-- **Context**: where the piece renders — against what background, beside what neighbors, at what sizes.
+- **스택**: 프레임워크, 스타일링 방식(Tailwind, CSS modules, 순수 CSS), 모션 라이브러리(있다면)
+- **토큰**: 색, 모서리 반경, 간격, 글꼴, 이징과 지속 시간 변수. 변형은 이 토큰을 쓴다. 모든 변형이 내일 이 제품에 넣어 내보내도 될 것처럼 보여야 한다.
+- **성격**: 발랄한 소비자 앱인가, 깔끔한 대시보드인가? 성격에 따라 가장 과감한 변형이 어디까지 나가도 되는지가 정해진다.
+- **맥락**: 조각이 렌더링되는 자리(어떤 배경 위인지, 옆에 무엇이 있는지, 어떤 크기인지)
 
-If there is no project (empty directory, or the user is just exploring), skip to the standalone branch in Phase 4 and choose a restrained default look: neutral grays, one accent, system font stack.
+프로젝트가 없으면(빈 디렉터리이거나 사용자가 그냥 탐색 중이면) 4단계의 독립 실행 갈래로 건너뛰고 절제된 기본 모습을 고른다. 중립 회색, 강조색 하나, 시스템 글꼴 스택이다.
 
-### Phase 3 — Choose directions
+### 3단계: 방향 고르기
 
-Default **3 variants**; up to 5 when the user asks or the design space is genuinely wide. More than 5 dilutes the comparison.
+기본은 **변형 3개**다. 사용자가 요청하거나 디자인 공간이 정말 넓으면 5개까지 만든다. 5개를 넘으면 비교가 흐려진다.
 
-Before writing any code, list the set: a name and an axis for each. Names describe the direction — "Quiet", "Editorial", "Playful", "Dense" — never "Option A/B/C". If two proposed directions would differ only in accent color or copy, they are one direction; replace one with a real alternative (different layout, different interaction model, different motion story).
+코드를 쓰기 전에 변형 목록을 적는다. 각각 이름과 축을 붙인다. 이름은 방향을 묘사한다("Quiet", "Editorial", "Playful", "Dense"). "Option A/B/C"는 절대 쓰지 않는다. 제안한 두 방향이 강조색이나 문구만 다르다면 그것은 한 방향이다. 하나를 진짜 대안(다른 레이아웃, 다른 상호작용 모델, 다른 모션 연출)으로 바꾼다.
 
-**Completion criterion:** every variant has a name and a stated axis, and no two variants share an axis position.
+**완료 기준:** 모든 변형에 이름과 밝혀 둔 축이 있고, 어떤 두 변형도 축 위의 같은 위치에 있지 않다.
 
-### Phase 4 — Build the picker harness
+### 4단계: 선택기 하네스 만들기
 
-Two branches, by what exists:
+무엇이 있느냐에 따라 갈래가 둘이다.
 
-- **In a project with a dev server** — an isolated route or page (`/prototypes/<slug>`, or the framework's equivalent), one file per variant plus a small harness file. Nothing imports from the prototype surface into production code.
-- **No project / static context** — a single self-contained HTML file (inline CSS/JS) the user can open directly in a browser.
+- **개발 서버가 있는 프로젝트**: 격리된 라우트나 페이지(`/prototypes/<slug>` 또는 프레임워크에서 그에 해당하는 것)에 변형마다 파일 하나와 작은 하네스 파일 하나를 둔다. 운영 코드는 프로토타입 영역에서 아무것도 import하지 않는다.
+- **프로젝트 없음 / 정적 환경**: 사용자가 브라우저에서 바로 열 수 있는, 그 자체로 완결된 HTML 파일 하나(CSS/JS 인라인)
 
-The picker's markup, styles, keyboard wiring, and placement come from [PICKER.md](PICKER.md), verbatim — load it now and build exactly that. Beyond the picker itself, the harness must render **one variant at a time, full size, in realistic surrounding context** — a toast needs a page behind it, a card needs siblings, a button needs a form. Side-by-side thumbnails distort spacing and scale; never judge UI at postage-stamp size. Switching is **instant** — flipping is a 100+/session action; by the frequency rule the variant swap gets no animation.
+선택기의 마크업, 스타일, 키보드 연결 코드, 배치는 [PICKER.md](PICKER.md)에서 그대로 가져온다. 지금 불러와서 정확히 그대로 만든다. 선택기 말고도 하네스는 **한 번에 변형 하나를, 실제 크기로, 현실적인 주변 맥락 안에서** 렌더링해야 한다. 토스트는 뒤에 페이지가, 카드는 옆에 형제 요소가, 버튼은 폼이 있어야 한다. 나란히 놓은 썸네일은 간격과 크기 감각을 왜곡한다. UI를 절대 우표만 한 크기로 판단하지 않는다. 전환은 **즉시** 일어난다. 넘겨 보기는 세션당 100회 이상 하는 동작이므로 빈도 규칙에 따라 변형 교체에는 애니메이션을 넣지 않는다.
 
-### Phase 5 — Verify and hand off
+### 5단계: 확인하고 넘기기
 
-Run the harness. Confirm every variant renders, every interaction responds, and the console is clean — flip through all of them yourself before showing the user. If browser tooling is available, screenshot each variant.
+하네스를 실행한다. 모든 변형이 렌더링되는지, 모든 상호작용이 반응하는지, 콘솔이 깨끗한지 확인한다. 사용자에게 보여 주기 전에 모든 변형을 직접 넘겨 본다. 브라우저 도구를 쓸 수 있으면 변형마다 스크린샷을 찍는다.
 
-Then present the set and **stop — the choice belongs to the user**:
+그다음 변형 목록을 보여 주고 **멈춘다. 선택은 사용자의 몫이다.**
 
 | # | Variant | Axis | When it's the right choice | Its cost |
 | --- | --- | --- | --- | --- |
-| 1 | Quiet | Minimal motion, borders over shadows | The product is a daily-use tool | Least memorable |
-| 2 | Editorial | Large type, generous whitespace | The moment deserves weight | Eats vertical space |
+| 1 | Quiet | 최소한의 모션, 그림자 대신 테두리 | 제품이 매일 쓰는 도구일 때 | 가장 덜 기억에 남음 |
+| 2 | Editorial | 큰 글자, 넉넉한 여백 | 무게감을 실어야 할 순간일 때 | 세로 공간을 많이 차지함 |
 
-Close with where the picker is running (URL or file path) and the keys to flip.
+마지막으로 선택기가 어디서 실행 중인지(URL이나 파일 경로)와 넘겨 보는 키를 알려 준다.
 
-**Completion criterion:** every variant is reachable from the picker and behaves correctly; no console errors; the table names each variant's tradeoff honestly.
+**완료 기준:** 모든 변형에 선택기로 갈 수 있고 올바르게 동작한다. 콘솔 오류가 없다. 표가 각 변형의 트레이드오프를 정직하게 밝힌다.
 
-### Phase 6 — Promote on selection
+### 6단계: 고르면 실제 코드에 반영하기
 
-When the user picks: integrate that variant where it belongs, following the project's existing conventions (file layout, naming, token usage), then delete the prototype surface per Hard Rule 5. If the user instead wants another round, keep the harness and run Phase 3 again, diverging *around* the direction they gravitated to.
+사용자가 고르면 그 변형을 제자리에 통합한다. 프로젝트의 기존 관례(파일 배치, 이름 짓기, 토큰 사용)를 따르고, 그다음 철칙 5에 따라 프로토타입 영역을 지운다. 사용자가 대신 한 라운드 더 원하면 하네스는 두고 3단계를 다시 실행한다. 이때 사용자가 끌린 방향 *주변으로* 발산한다.
 
-## Invocation Variants
+## 호출 방식
 
-| Invocation | Behavior |
+| 호출 | 동작 |
 | --- | --- |
-| `<description>` | Full workflow: scope → recon → 3 variants → picker → wait for choice |
-| `<description> x5` | Same, with that many variants (capped at 5) |
-| `riff <variant>` | New round: keep the harness, generate a fresh set diverging around the named variant's direction |
-| `keep <variant>` | Promote that variant into the codebase and delete the prototype surface |
-| `keep <variant>, leave the picker` | Promote, but keep the prototype surface around |
+| `<description>` | 전체 절차: 범위 → 사전 조사 → 변형 3개 → 선택기 → 선택 기다리기 |
+| `<description> x5` | 같은 절차를 그 수만큼의 변형으로 진행(최대 5개) |
+| `riff <variant>` | 새 라운드: 하네스는 두고, 지목한 변형의 방향 주변으로 발산하는 새 변형 묶음 생성 |
+| `keep <variant>` | 그 변형을 코드베이스에 반영하고 프로토타입 영역 삭제 |
+| `keep <variant>, leave the picker` | 반영하되 프로토타입 영역은 남겨 둠 |
 
-## Tone
+## 어조
 
-Sell each variant honestly — one line on when it wins, one on what it costs. Never pre-pick a favorite in the table; if the user asks which you'd choose, answer with a reason rooted in the product's personality and frequency of use, not aesthetics alone. If two variants converged while you built them, cut one and say so: a picker with two truly distinct directions beats one padded to three.
+각 변형을 정직하게 소개한다. 언제 이기는지 한 줄, 대가가 무엇인지 한 줄이다. 표에서 절대 마음에 드는 변형을 미리 고르지 않는다. 사용자가 어느 쪽을 고르겠느냐고 물으면 미감만이 아니라 제품의 성격과 사용 빈도에 근거한 이유로 답한다. 만드는 동안 두 변형이 수렴했으면 하나를 빼고 그렇다고 말한다. 정말 다른 방향 두 개를 담은 선택기가 억지로 셋을 채운 선택기보다 낫다.

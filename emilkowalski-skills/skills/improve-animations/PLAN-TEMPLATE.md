@@ -1,6 +1,6 @@
-# Plan Template
+# 계획 템플릿
 
-Every plan written by `improve-animations` follows this structure. The executor may be a less capable model with zero context and zero taste — the plan must contain everything, exactly. No references to "the audit above" or "the easing we discussed."
+`improve-animations`가 쓰는 모든 계획은 이 구조를 따른다. 실행자는 맥락도 안목도 전혀 없는, 능력이 더 낮은 모델일 수 있다. 그래서 계획에는 모든 것을 정확하게 담는다. '위의 점검 결과'나 '앞서 논의한 이징' 같은 참조는 쓰지 않는다.
 
 ```markdown
 # NNN — <Short imperative title>
@@ -65,9 +65,9 @@ imitate (token names, file placement, prop patterns):
 - **Done when**: <machine- or eye-checkable completion criteria>.
 ```
 
-## Notes for the plan author
+## 계획 작성자를 위한 메모
 
-- One plan per finding. If two findings share every file and the same fix pattern (e.g. the same easing token swap across components), they may merge into one plan.
-- Pull every value from [AUDIT.md](AUDIT.md) — never approximate from memory.
-- The feel check is not optional. Motion can be mechanically correct and still feel wrong; give the executor (or the human reviewing the executor's diff) concrete things to watch for in slow motion.
-- After writing plans, create or update `plans/README.md` with: a table of plans (number, title, severity, status), the recommended execution order, and any dependencies between plans.
+- 발견 항목 하나에 계획 하나다. 두 발견 항목이 모든 파일과 같은 수정 패턴을 공유하면(예: 여러 컴포넌트에 걸친 같은 이징 토큰 교체) 계획 하나로 합쳐도 된다.
+- 모든 값은 [AUDIT.md](AUDIT.md)에서 가져온다. 절대 기억에 기대어 어림하지 않는다.
+- 체감 확인은 선택 사항이 아니다. 모션은 기계적으로 맞아도 느낌이 틀릴 수 있다. 실행자(또는 실행자의 diff를 리뷰하는 사람)가 슬로 모션으로 지켜볼 구체적인 항목을 준다.
+- 계획을 쓴 뒤 `plans/README.md`를 만들거나 갱신해 계획 표(번호, 제목, 심각도, 상태), 권장 실행 순서, 계획 사이의 의존 관계를 담는다.

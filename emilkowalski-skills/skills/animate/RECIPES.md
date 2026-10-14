@@ -1,14 +1,14 @@
-# Animation Recipes
+# 애니메이션 레시피
 
-Ready-to-build implementations for the cases that come up most. Start from the recipe, then adapt — don't rebuild from scratch.
+가장 자주 나오는 경우를 바로 만들 수 있는 구현이다. 레시피에서 시작해 맞게 고친다. 처음부터 다시 만들지 않는다.
 
-Curves are the `--ease-out`, `--ease-in-out`, and `--ease-drawer` tokens defined in SKILL.md.
+곡선은 SKILL.md에 정의한 `--ease-out`, `--ease-in-out`, `--ease-drawer` 토큰이다.
 
 ---
 
-## Button press
+## 버튼 누름
 
-Any pressable element. Instant feedback that the interface heard the user.
+누를 수 있는 모든 요소에 쓴다. 인터페이스가 사용자의 입력을 받았다고 바로 알려 준다.
 
 ```css
 .button {
@@ -20,19 +20,19 @@ Any pressable element. Instant feedback that the interface heard the user.
 }
 ```
 
-`scale()` scales children too — the label and icons come along, which is what makes it read as a physical press.
+`scale()`은 자식의 크기도 함께 바꾼다. 라벨과 아이콘이 같이 움직이고, 그래서 물리적으로 누른 것처럼 읽힌다.
 
-No hover gating needed here: `:active` is a real press on touch. Gate any `:hover` styling separately.
+여기에는 hover 제한이 필요 없다. 터치에서 `:active`는 실제 누름이다. `:hover` 스타일은 따로 제한한다.
 
 ---
 
-## Dropdown, popover, menu, select
+## 드롭다운, 팝오버, 메뉴, 셀렉트
 
-Scales out of its trigger, not out of thin air.
+허공이 아니라 트리거에서 커져 나온다.
 
 ```css
 .popover {
-  transform-origin: var(--transform-origin); /* Base UI supplies this */
+  transform-origin: var(--transform-origin); /* Base UI가 이 값을 넣어 준다 */
   transition:
     opacity 200ms var(--ease-out),
     transform 200ms var(--ease-out);
@@ -45,13 +45,13 @@ Scales out of its trigger, not out of thin air.
 }
 ```
 
-The `transform-origin` is the whole point — the panel should look like it came out of the thing you clicked.
+핵심은 `transform-origin`이다. 패널은 클릭한 대상에서 나온 것처럼 보여야 한다.
 
 ---
 
-## Tooltip
+## 툴팁
 
-Same shape as a popover, faster, plus the detail most implementations miss.
+팝오버와 모양은 같고 더 빠르다. 여기에 대부분의 구현이 놓치는 디테일이 하나 더 있다.
 
 ```css
 .tooltip {
@@ -67,23 +67,23 @@ Same shape as a popover, faster, plus the detail most implementations miss.
   transform: scale(0.97);
 }
 
-/* Once one tooltip is open, neighbours open instantly */
+/* 툴팁 하나가 열리면 이웃 툴팁은 즉시 열린다 */
 .tooltip[data-instant] {
   transition-duration: 0ms;
 }
 ```
 
-The initial delay prevents accidental activation. After that, skipping both the delay and the animation makes the whole toolbar feel faster.
+첫 지연은 실수로 열리는 것을 막는다. 그 뒤로 지연과 애니메이션을 모두 건너뛰면 툴바 전체가 더 빠르게 느껴진다.
 
 ---
 
-## Modal
+## 모달
 
-The one popover that stays centered.
+가운데에 머무는 유일한 팝오버다.
 
 ```css
 .modal {
-  transform-origin: center; /* exempt — not anchored to a trigger */
+  transform-origin: center; /* 예외, 트리거에 붙어 있지 않다 */
   transition:
     opacity 250ms var(--ease-out),
     transform 250ms var(--ease-out);
@@ -100,11 +100,11 @@ The one popover that stays centered.
 }
 ```
 
-Animate the backdrop's opacity alongside it so they read as one surface.
+백드롭의 opacity도 함께 애니메이션해 둘이 한 면으로 읽히게 한다.
 
 ---
 
-## Drawer / sheet
+## 드로어 / 시트
 
 ```css
 .drawer {
@@ -117,13 +117,13 @@ Animate the backdrop's opacity alongside it so they read as one surface.
 }
 ```
 
-This is how Vaul hides a drawer before animating it in.
+Vaul은 이렇게 드로어를 숨겨 두었다가 애니메이션으로 들여온다.
 
-Add drag and it becomes a gesture problem — see **Drag to dismiss** below.
+드래그를 더하면 제스처 문제가 된다. 아래 **끌어서 닫기**를 참고한다.
 
 ---
 
-## Toast
+## 토스트
 
 ```css
 .toast {
@@ -140,19 +140,19 @@ Add drag and it becomes a gesture problem — see **Drag to dismiss** below.
 }
 ```
 
-- `ease` rather than `ease-out`, slightly slower than typical UI: Sonner reads as elegant partly because its motion is tuned to the component's personality rather than to the generic UI budget.
-- If `@starting-style` isn't available, fall back to the mount flag:
+- `ease`를 쓰고(`ease-out`이 아니다) 보통 UI보다 조금 느리게 한다. Sonner가 우아하게 읽히는 이유 중 하나는 모션을 일반적인 UI 예산이 아니라 컴포넌트의 성격에 맞췄기 때문이다.
+- `@starting-style`을 쓸 수 없으면 마운트 플래그로 대신한다.
 
 ```jsx
 useEffect(() => { setMounted(true); }, []);
 // <div data-mounted={mounted}>
 ```
 
-When toasts stack and the list reflows, the opacity change has to work against the height change. There's no formula for that pair — adjust until it feels right, then check it again the next day.
+토스트가 쌓이고 목록이 다시 배치되면 opacity 변화와 높이 변화의 균형을 맞춰야 한다. 이 둘의 조합에는 공식이 없다. 느낌이 맞을 때까지 조정하고, 다음 날 다시 확인한다.
 
 ---
 
-## Accordion / collapse
+## 아코디언 / 접기
 
 ```css
 .content {
@@ -163,13 +163,13 @@ When toasts stack and the list reflows, the opacity change has to work against t
 }
 ```
 
-Keep it short — this is one of the few animations that costs layout on every frame, so a long duration is expensive as well as sluggish. Measure the content height in JS (or use a headless primitive that supplies it) rather than animating to `auto`.
+짧게 둔다. 매 프레임 레이아웃 비용이 드는 몇 안 되는 애니메이션이라, 지속 시간이 길면 굼뜰 뿐 아니라 비싸다. `auto`로 애니메이션하지 말고 JS로 콘텐츠 높이를 잰다(아니면 그 값을 넣어 주는 헤드리스 프리미티브를 쓴다).
 
 ---
 
-## Stagger a group entrance
+## 그룹 등장에 스태거 넣기
 
-For a list or grid the user sees occasionally — not for a list they scroll past all day.
+사용자가 가끔 보는 목록이나 그리드에 쓴다. 하루 종일 스크롤하며 지나치는 목록에는 쓰지 않는다.
 
 ```css
 .item {
@@ -190,23 +190,23 @@ For a list or grid the user sees occasionally — not for a list they scroll pas
 }
 ```
 
-Stagger is decorative — it must never block interaction while it plays.
+스태거는 장식이다. 재생되는 동안 절대 상호작용을 막지 않는다.
 
 ---
 
-## Hold to confirm
+## 길게 눌러 확인
 
-For destructive actions where a plain click is too easy to fire by accident.
+그냥 클릭하면 실수로 실행하기 너무 쉬운 파괴적인 동작에 쓴다.
 
 ```css
 .overlay {
   clip-path: inset(0 100% 0 0);
-  transition: clip-path 200ms var(--ease-out); /* release: snappy */
+  transition: clip-path 200ms var(--ease-out); /* 뗄 때: 재빠르게 */
 }
 
 .button:active .overlay {
   clip-path: inset(0 0 0 0);
-  transition: clip-path 2s linear;             /* press: slow and deliberate */
+  transition: clip-path 2s linear;             /* 누를 때: 느리고 신중하게 */
 }
 
 .button:active {
@@ -214,30 +214,30 @@ For destructive actions where a plain click is too easy to fire by accident.
 }
 ```
 
-`linear` is correct here — the fill is a progress indicator, and progress shouldn't ease.
+여기서는 `linear`가 맞다. 채워지는 부분은 진행 표시이고, 진행에는 이징을 넣으면 안 된다.
 
 ---
 
-## Tab indicator with a color transition
+## 색 전환이 있는 탭 인디케이터
 
-Timing individual color transitions across a tab list never quite lands. Clip instead.
+탭 목록 전체에서 색 전환을 하나하나 타이밍 맞추면 끝내 딱 맞아떨어지지 않는다. 대신 잘라서 보여 준다.
 
-Duplicate the tab list. Style the copy as the active state — different background, different text color. Clip the copy so only the active tab shows, and animate the clip on change:
+탭 목록을 복제한다. 복제본은 활성 상태로 스타일링한다(다른 배경, 다른 글자 색). 활성 탭만 보이도록 복제본을 잘라 내고, 탭이 바뀌면 잘라 낸 영역을 애니메이션한다.
 
 ```css
 .tabs-active-copy {
-  clip-path: inset(0 60% 0 20%); /* driven by the active tab's position */
+  clip-path: inset(0 60% 0 20%); /* 활성 탭의 위치에 따라 정해진다 */
   transition: clip-path 250ms var(--ease-in-out);
 }
 ```
 
-The text and background change together, in perfect sync, because they're one element being revealed rather than two colors being interpolated.
+글자와 배경이 완벽하게 맞춰 함께 바뀐다. 두 색을 보간하는 것이 아니라 요소 하나를 드러내는 것이기 때문이다.
 
 ---
 
-## Scroll reveal
+## 스크롤 등장
 
-Marketing surfaces only. Don't do this to functional UI a user visits daily.
+마케팅 화면에만 쓴다. 사용자가 매일 찾는 기능 UI에는 하지 않는다.
 
 ```css
 .reveal {
@@ -250,16 +250,16 @@ Marketing surfaces only. Don't do this to functional UI a user visits daily.
 }
 ```
 
-Trigger with `IntersectionObserver`, or Motion's `useInView` with `{ once: true, margin: "-100px" }`. Fire it once — re-animating on every scroll-by is an interface fighting its reader.
+`IntersectionObserver`로 트리거하거나, Motion의 `useInView`에 `{ once: true, margin: "-100px" }`를 넘겨 트리거한다. 한 번만 실행한다. 스크롤로 지나칠 때마다 다시 애니메이션하면 인터페이스가 읽는 사람과 싸우는 꼴이다.
 
 ---
 
-## Drag to dismiss
+## 끌어서 닫기
 
-The gesture recipe. Springs, not durations, because the user can reverse mid-motion.
+제스처 레시피다. 사용자가 움직이는 도중에 방향을 되돌릴 수 있으니 지속 시간이 아니라 스프링을 쓴다.
 
 ```js
-// Dismiss on a flick, not just on distance
+// 거리만이 아니라 플릭으로도 닫는다
 const timeTaken = Date.now() - dragStartTime.current;
 const velocity = Math.abs(swipeAmount) / timeTaken;
 
@@ -269,19 +269,19 @@ if (Math.abs(swipeAmount) >= SWIPE_THRESHOLD || velocity > 0.11) {
 ```
 
 ```js
-// Set transform on the dragged element directly.
-// Driving it through a CSS variable on the parent recalcs styles for every child.
+// 드래그하는 요소에 transform을 직접 설정한다.
+// 부모의 CSS 변수로 움직이면 자식마다 스타일을 다시 계산한다.
 element.style.transform = `translateY(${distance}px)`;
 ```
 
-Four details that separate a good drag from a bad one:
+좋은 드래그와 나쁜 드래그는 다음 네 가지 디테일에서 갈린다.
 
-- **Pointer capture** once the drag starts, so it continues when the pointer leaves the element's bounds.
-- **Multi-touch protection** — `if (isDragging) return` on new touch points, or switching fingers mid-drag makes the element jump.
-- **Damping past boundaries** — dragging beyond a natural edge moves the element less the further it goes. Real things slow before they stop.
-- **Friction, not a wall** — allow the over-drag with rising resistance rather than refusing it.
+- **포인터 캡처**: 드래그가 시작되면 건다. 그래야 포인터가 요소 경계를 벗어나도 드래그가 이어진다.
+- **멀티터치 보호**: 새 터치 지점에서는 `if (isDragging) return`을 둔다. 그러지 않으면 드래그 중에 손가락을 바꿀 때 요소가 튄다.
+- **경계 너머 감쇠**: 자연스러운 가장자리를 넘어 끌면 멀리 갈수록 요소가 덜 움직인다. 실제 사물은 멈추기 전에 느려진다.
+- **벽이 아니라 마찰**: 지나치게 끄는 것을 거부하지 말고, 저항을 키우며 허용한다.
 
-Settle with a spring so an interrupted drag keeps its velocity:
+중단된 드래그가 속도를 유지하도록 스프링으로 자리를 잡게 한다.
 
 ```js
 { type: "spring", duration: 0.5, bounce: 0.2 }
@@ -289,9 +289,9 @@ Settle with a spring so an interrupted drag keeps its velocity:
 
 ---
 
-## Masking a crossfade that won't settle
+## 끝내 어색한 크로스페이드 가리기
 
-When two states overlap visibly during a transition and no amount of easing or duration tuning fixes it, blur the seam:
+전환 중에 두 상태가 눈에 띄게 겹치고 이징이나 지속 시간을 아무리 조정해도 고쳐지지 않으면 이음매를 블러로 흐린다.
 
 ```css
 .content {
@@ -306,13 +306,13 @@ When two states overlap visibly during a transition and no amount of easing or d
 }
 ```
 
-Without blur the eye reads two distinct objects swapping. Blur blends them into one perceived transformation. Keep it under 20px — heavy blur is expensive, especially in Safari.
+블러가 없으면 눈은 서로 다른 두 물체가 맞바뀌는 것으로 읽는다. 블러는 둘을 섞어 하나의 변화로 느끼게 한다. 20px 미만으로 둔다. 강한 블러는 비싸고, 특히 Safari에서 그렇다.
 
 ---
 
-## Programmatic, without a library
+## 라이브러리 없이 프로그래밍 방식으로
 
-When the motion needs JS control but not a dependency, WAAPI gives you CSS-grade performance:
+모션에 JS 제어는 필요하지만 의존성은 필요 없을 때, WAAPI는 CSS 수준의 성능을 낸다.
 
 ```js
 element.animate(
@@ -321,4 +321,4 @@ element.animate(
 );
 ```
 
-Hardware-accelerated, interruptible, no bundle cost.
+하드웨어 가속되고, 중단 가능하고(interruptible), 번들 비용이 없다.

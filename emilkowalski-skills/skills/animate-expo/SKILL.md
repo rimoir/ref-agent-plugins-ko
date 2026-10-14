@@ -1,193 +1,193 @@
 ---
 name: animate-expo
-description: Build animations in React Native and Expo, making the decisions in the order that determines whether they feel right — should it animate, which thread it runs on, which properties, spring or timing, how the gesture hands off, how it degrades. Writes the implementation with Reanimated, Gesture Handler, Expo Router and expo-haptics. Use when animating anything in an Expo app, adding gestures, sheets, screen transitions, press feedback or haptics, or fixing motion that stutters on device. For web animation use `animate`.
+description: React Native와 Expo에서 애니메이션을 만든다. 결정은 느낌이 맞는지를 좌우하는 순서대로 내린다. 애니메이션을 넣을지, 어느 스레드에서 돌릴지, 어떤 속성을 쓸지, 스프링인지 타이밍인지, 제스처에서 애니메이션으로 어떻게 넘길지, 모션을 어떻게 줄여 대응할지가 그 순서다. 구현은 Reanimated, Gesture Handler, Expo Router, expo-haptics로 쓴다. Expo 앱에서 무엇이든 애니메이션을 넣을 때, 제스처, 시트, 화면 전환, 누름 피드백, 햅틱을 더할 때, 기기에서 끊기는 모션을 고칠 때 쓴다. 웹 애니메이션에는 `animate`를 쓴다.
 ---
 
-# Building Animations in Expo
+# Expo에서 애니메이션 만들기
 
-## Initial Response
+## 첫 응답
 
-When this skill is first invoked without a specific question, respond only with:
+구체적인 질문 없이 이 스킬이 처음 호출되면 다음 내용으로만 답한다.
 
-> I'm ready to build animations in Expo and React Native that feel right on a real device, my knowledge comes from Emil Kowalski's animation philosophy.
+> 실제 기기에서 느낌이 맞는 Expo와 React Native 애니메이션을 만들 준비가 됐습니다. Emil Kowalski의 애니메이션 철학을 바탕으로 합니다.
 
-Do not provide any other information until the user asks a question.
+사용자가 질문하기 전에는 다른 정보를 주지 않는다.
 
-A construction skill for React Native. It turns a request for motion into an implementation that survives a strict review on a real device — not in the simulator, not on a flagship phone in dev mode.
+React Native용 제작 스킬이다. 모션 요청을 실제 기기에서 엄격한 리뷰를 버티는 구현으로 바꾼다. 시뮬레이터도 아니고 개발 모드로 돌린 플래그십 휴대폰도 아닌, 실제 기기에서다.
 
-Mobile changes three things about animation, and everything in this skill follows from them:
+모바일은 애니메이션에서 세 가지를 바꾸고, 이 스킬의 모든 내용은 거기서 나온다.
 
-1. **There is no hover.** Every affordance the web puts in hover has to live in press, position, or nothing.
-2. **There are two runtimes.** Worklets (Reanimated 4) makes this explicit: the React Native runtime, where React renders and your app logic runs, and the UI runtime, where worklets run every frame (plus optional worker runtimes for background work). An animation that touches the RN runtime stutters the moment the app does anything else. The whole craft is keeping motion on the UI runtime.
-3. **The user's finger is on the element.** Gestures are the primary input, so interruptibility and velocity handoff aren't polish — they're the baseline.
+1. **hover가 없다.** 웹이 hover에 두던 어포던스는 모두 누름이나 위치로 옮기거나, 아예 없애야 한다.
+2. **런타임이 둘이다.** Worklets (Reanimated 4)는 이 구분을 드러낸다. 하나는 React가 렌더링하고 앱 로직이 도는 React Native 런타임이고, 다른 하나는 워클릿이 매 프레임 도는 UI 런타임이다(백그라운드 작업용 워커 런타임을 더 둘 수도 있다). RN 런타임을 건드리는 애니메이션은 앱이 다른 일을 하는 순간 끊긴다. 모션을 UI 런타임에 두는 것이 이 기술의 전부다.
+3. **사용자의 손가락이 요소 위에 있다.** 제스처가 주된 입력이라서 중단 가능성(interruptibility)과 속도 인계(velocity handoff)는 다듬기가 아니라 기본이다.
 
-## Operating Posture
+## 작업 태도
 
-You are a senior mobile engineer building the animation yourself. Make the call, state the reasoning in one line, write the code. Never present motion options as a menu.
+애니메이션을 직접 만드는 시니어 모바일 엔지니어로 일한다. 결정하고, 이유를 한 줄로 밝히고, 코드를 쓴다. 모션 선택지를 메뉴처럼 늘어놓지 않는다.
 
-Two failure modes, and the first is worse:
+실패 유형은 두 가지이고, 첫 번째가 더 나쁘다.
 
-1. **Animating something that shouldn't animate.** The gate below exists to produce zero lines of code sometimes.
-2. **Animating the right thing on the wrong thread** — a `setState` per frame, a `PanResponder`, an animated `height`. It looks fine in dev on your phone and drops to 20fps on a three-year-old Android.
+1. **애니메이션을 넣으면 안 되는 것에 애니메이션을 넣기.** 아래 관문은 때로 코드 0줄을 내놓으려고 있다.
+2. **맞는 대상에 애니메이션을 넣되 틀린 스레드에서 돌리기**: 프레임마다 부르는 `setState`, `PanResponder`, 애니메이션하는 `height`. 자기 휴대폰에서 개발 모드로 보면 멀쩡하지만 3년 된 Android에서는 20fps로 떨어진다.
 
-## Hard Rules
+## 철칙
 
-1. **Run the sequence in order.** Steps 1 and 2 gate everything.
-2. **Reanimated, not core `Animated`.** Core `Animated` can't be driven by a gesture without crossing the bridge, and `useNativeDriver` refuses anything but transform and opacity anyway. Reanimated worklets run on the UI thread and keep running while JS is busy.
-3. **No approximated values.** Curves and spring configs come from the tables below.
-4. **Reduced motion ships with the animation**, not as a follow-up.
-5. **Feel is judged on a release build on the slowest device you support.** Nothing else counts as verified.
+1. **순서대로 진행한다.** 1단계와 2단계를 통과해야 나머지로 넘어간다.
+2. **코어 `Animated`가 아니라 Reanimated를 쓴다.** 코어 `Animated`는 브리지를 건너지 않고는 제스처로 구동할 수 없고, 어차피 `useNativeDriver`는 transform과 opacity 말고는 받지 않는다. Reanimated 워클릿은 UI 스레드에서 돌고 JS가 바빠도 계속 돈다.
+3. **어림한 값을 쓰지 않는다.** 곡선과 스프링 설정은 아래 표에서 가져온다.
+4. **동작 줄이기 대응은 애니메이션과 함께 내보낸다.** 후속 작업으로 미루지 않는다.
+5. **느낌은 지원하는 가장 느린 기기의 릴리스 빌드에서 판단한다.** 그 밖의 것은 검증으로 치지 않는다.
 
-## The Build Sequence
+## 만드는 순서
 
-### 1. Should this animate at all?
+### 1. 애니메이션을 넣어야 하나?
 
-| Frequency | Decision |
+| 빈도 | 결정 |
 | --- | --- |
-| 100+ times/day — tab switches, keyboard open/close, scrolling, toggles in settings | **No animation.** Platform default or nothing. Stop here. |
-| Tens of times/day — press feedback, list navigation, row selection | Near-imperceptible only: under 150ms, or nothing |
-| Occasional — sheets, modals, toasts, onboarding steps | Standard animation |
-| Rare / first-time — success states, empty-state illustrations, celebration | The delight budget lives here |
+| 하루 100회 이상(탭 전환, 키보드 열기/닫기, 스크롤, 설정의 토글) | **애니메이션 없음.** 플랫폼 기본값을 쓰거나 아무것도 넣지 않는다. 여기서 멈춘다. |
+| 하루 수십 회(누름 피드백, 목록 탐색, 행 선택) | 거의 느껴지지 않을 정도만(150ms 미만, 아니면 아예 없이) |
+| 가끔(시트, 모달, 토스트, 온보딩 단계) | 표준 애니메이션 |
+| 드묾 / 처음(성공 상태, 빈 상태 일러스트, 축하) | 즐거움 예산은 여기에 쓴다 |
 
-**Tab switches never slide.** Tabs are peers, not a hierarchy — sliding implies depth that isn't there, and the user pays for it dozens of times a session. `animation: 'none'`.
+**탭 전환은 절대 슬라이드하지 않는다.** 탭은 계층이 아니라 동등한 관계다. 슬라이드는 있지도 않은 깊이를 암시하고, 사용자는 세션마다 수십 번 그 대가를 치른다. `animation: 'none'`.
 
-If the request fails this gate, say so and don't write it.
+요청이 이 관문을 통과하지 못하면 그렇다고 말하고 쓰지 않는다.
 
-### 2. What is the purpose?
+### 2. 목적은 무엇인가?
 
-Name it in one word before continuing: **feedback**, **spatial consistency**, **state indication**, **preventing a jarring change**, **explanation**, or **delight** (rare tier only).
+넘어가기 전에 한 단어로 이름을 붙인다. **피드백(feedback)**, **공간적 일관성(spatial consistency)**, **상태 표시(state indication)**, **거슬리는 변화 막기(preventing a jarring change)**, **설명(explanation)**, **즐거움(delight)**(드묾 등급만) 중 하나다.
 
-Can't name it? Don't build it.
+이름을 대지 못하면 만들지 않는다.
 
-### 3. Pick the tool — cheapest that works
+### 3. 도구 고르기: 충분한 것 중 가장 가벼운 것
 
-Walk down; stop at the first that fits.
+위에서부터 내려가며 처음 맞는 것에서 멈춘다.
 
-| Need | Tool |
+| 필요 | 도구 |
 | --- | --- |
-| A state-driven change with no gesture — press, toggle, color, a value flipping | **Reanimated CSS transition** (`transitionProperty` in the style) |
-| Loop, multi-stage, or plays on mount with no state change | **Reanimated CSS animation** (`animationName` keyframes) |
-| An element mounting or unmounting, or a list reflowing | **Layout animations** (`entering` / `exiting` / `itemLayoutAnimation`) |
-| Anything a finger touches, or anything derived from scroll | **`useSharedValue` + `Gesture` + `useAnimatedStyle`** |
-| Screen to screen | **Native stack options in Expo Router.** Never hand-roll this |
-| A bottom sheet that is its own screen | **`presentation: 'formSheet'`** — it's a real UISheetPresentationController, free and correct |
-| Tab bar | **`NativeTabs`** (from `expo-router/unstable-native-tabs`) — the platform's real tab bar, its behaviors and transitions included |
-| Context menu, press-and-hold preview | **`Link.Menu` / `Link.Preview`** (Expo Router, iOS-only) — native menus and peek, never rebuilt in JS |
-| Header that collapses into a large title | **`headerLargeTitleEnabled`** on the native stack (iOS-only; `headerLargeTitle` is deprecated) — not a scroll worklet |
-| Pull to refresh | **`RefreshControl`** — hand-roll only when it's a signature interaction (see the threshold recipe) |
-| UI that tracks the keyboard | **`react-native-keyboard-controller`** — the keyboard's real position, frame by frame, on the UI thread |
-| Vector illustration, celebration, empty state | **Lottie** — for illustration only, never for UI state |
-| A huge animated scene, freeform drawing | **`@shopify/react-native-skia`** — a canvas, for when the view hierarchy itself is the bottleneck |
+| 제스처 없는 상태 기반 변화(누름, 토글, 색, 뒤집히는 값) | **Reanimated CSS 트랜지션** (스타일의 `transitionProperty`) |
+| 반복, 여러 단계, 또는 상태 변화 없이 마운트 때 재생 | **Reanimated CSS 애니메이션** (`animationName` 키프레임) |
+| 요소의 마운트나 언마운트, 목록의 재배치 | **레이아웃 애니메이션** (`entering` / `exiting` / `itemLayoutAnimation`) |
+| 손가락이 닿는 모든 것, 스크롤에서 파생되는 모든 것 | **`useSharedValue` + `Gesture` + `useAnimatedStyle`** |
+| 화면에서 화면으로 | **Expo Router의 네이티브 스택 옵션.** 절대 직접 만들지 않는다 |
+| 그 자체로 한 화면인 바텀 시트 | **`presentation: 'formSheet'`**. 진짜 UISheetPresentationController라서 공짜이고 정확하다 |
+| 탭 바 | **`NativeTabs`** (`expo-router/unstable-native-tabs`에서 가져온다). 플랫폼의 진짜 탭 바이고 동작과 전환까지 포함한다 |
+| 컨텍스트 메뉴, 길게 눌러 미리 보기 | **`Link.Menu` / `Link.Preview`** (Expo Router, iOS 전용). 네이티브 메뉴와 미리 보기(peek)이고, JS로 절대 다시 만들지 않는다 |
+| 큰 제목으로 접히는 헤더 | 네이티브 스택의 **`headerLargeTitleEnabled`** (iOS 전용, `headerLargeTitle`은 지원 중단). 스크롤 워클릿이 아니다 |
+| 당겨서 새로 고침 | **`RefreshControl`**. 앱을 대표하는 상호작용일 때만 직접 만든다(임곗값 레시피 참고) |
+| 키보드를 따라가는 UI | **`react-native-keyboard-controller`**. 키보드의 실제 위치를 프레임마다 UI 스레드에서 받는다 |
+| 벡터 일러스트, 축하, 빈 상태 | **Lottie**. 일러스트에만 쓰고 UI 상태에는 절대 쓰지 않는다 |
+| 거대한 애니메이션 장면, 자유 드로잉 | **`@shopify/react-native-skia`**. 뷰 계층 자체가 병목일 때 쓰는 캔버스 |
 
-Reach for a shared value only when the value is continuous or interruptible. A press scale is a CSS transition; a drag is a shared value. Using a worklet for a two-state toggle is the mobile equivalent of installing a motion library for a fade.
+공유 값은 값이 연속적이거나 중단 가능할 때만 꺼낸다. 누름 scale은 CSS 트랜지션이다. 드래그는 공유 값이다. 두 상태짜리 토글에 워클릿을 쓰는 것은 페이드 하나에 모션 라이브러리를 설치하는 일의 모바일 판이다.
 
-**Dependencies.** Install with `npx expo install <package>` — it resolves the version that matches the project's SDK, which plain `npm install` won't:
+**의존성.** `npx expo install <package>`로 설치한다. 프로젝트 SDK에 맞는 버전을 찾아 주는데, 그냥 `npm install`은 그러지 않는다.
 
-| Need | Package |
+| 필요 | 패키지 |
 | --- | --- |
-| Animation | `react-native-reanimated` + `react-native-worklets` |
-| Gestures | `react-native-gesture-handler` |
-| Navigation, sheets, native tabs, menus | `expo-router` |
-| Haptics | `expo-haptics` |
-| Keyboard-following UI | `react-native-keyboard-controller` (needs `KeyboardProvider` at the root — see the keyboard recipe) |
-| Illustration, celebration | `lottie-react-native` |
-| Very large animated scenes, custom drawing | `@shopify/react-native-skia` |
+| 애니메이션 | `react-native-reanimated` + `react-native-worklets` |
+| 제스처 | `react-native-gesture-handler` |
+| 내비게이션, 시트, 네이티브 탭, 메뉴 | `expo-router` |
+| 햅틱 | `expo-haptics` |
+| 키보드를 따라가는 UI | `react-native-keyboard-controller` (루트에 `KeyboardProvider`가 필요하다. 키보드 레시피 참고) |
+| 일러스트, 축하 | `lottie-react-native` |
+| 아주 큰 애니메이션 장면, 커스텀 드로잉 | `@shopify/react-native-skia` |
 
-### 4. Pick the properties
+### 4. 속성 고르기
 
-- **`transform` and `opacity` are free.** Everything else is a layout pass. `width`, `height`, `margin`, `padding`, `flex`, `top`, `left`, `gap` re-run Yoga on every frame for that node *and its siblings*.
-- **The one exception: an absolutely positioned element with no children** — a tab pill, a progress bar fill. It's out of flow, so nothing else re-lays-out, and animating `width` keeps the corner radius that `scaleX` would smear.
-- **Never `scale(0)`.** Start from `scale(0.9–0.97)` + `opacity: 0`. Nothing in the real world appears from nothing.
-- **`transform` is an array and order matters** — `[{ translateY }, { scale }]` scales after moving; reversed, the translate gets scaled too. Keep translate first unless you want the multiplication.
-- **Android shadows are `elevation`, and animating elevation re-renders the shadow every frame.** Animate opacity of a pre-shadowed layer instead.
-- **Never animate `BlurView` intensity.** On Android it re-renders the blur each frame. Crossfade the opacity of a static `BlurView` instead.
-- **Percentages work in `translate`** and are relative to the element's own size — `translateY('100%')` moves a sheet by its own height whatever its content.
+- **`transform`과 `opacity`는 공짜다.** 나머지는 모두 레이아웃 계산을 거친다. `width`, `height`, `margin`, `padding`, `flex`, `top`, `left`, `gap`은 매 프레임 그 노드*와 형제 노드까지* Yoga를 다시 돌린다.
+- **유일한 예외는 자식이 없는 절대 위치 요소다.** 탭의 알약 모양 인디케이터나 진행 막대의 채움 부분이 그렇다. 흐름 밖에 있어서 다른 것이 다시 배치되지 않고, `width`를 애니메이션하면 `scaleX`가 뭉갤 모서리 반경이 그대로 남는다.
+- **절대 `scale(0)`을 쓰지 않는다.** `scale(0.9–0.97)` + `opacity: 0`에서 시작한다. 현실에서 아무것도 없는 데서 나타나는 것은 없다.
+- **`transform`은 배열이고 순서가 중요하다.** `[{ translateY }, { scale }]`은 이동한 뒤 크기를 바꾼다. 순서를 뒤집으면 이동 거리에도 scale이 곱해진다. 곱해지는 효과를 원하지 않으면 translate를 앞에 둔다.
+- **Android 그림자는 `elevation`이고, elevation을 애니메이션하면 매 프레임 그림자를 다시 렌더링한다.** 대신 그림자를 미리 입힌 레이어의 opacity를 애니메이션한다.
+- **`BlurView` 강도는 절대 애니메이션하지 않는다.** Android에서는 매 프레임 블러를 다시 렌더링한다. 대신 정적인 `BlurView`의 opacity를 크로스페이드한다.
+- **`translate`에는 퍼센트 값이 통하고**, 기준은 요소 자신의 크기다. `translateY('100%')`는 내용이 무엇이든 시트를 자기 높이만큼 옮긴다.
 
-### 5. Timing or spring
+### 5. 타이밍 또는 스프링
 
-**If a finger was involved, use a spring.** Springs carry velocity through an interruption; timing curves restart. Everything else uses timing.
+**손가락이 관여했으면 스프링을 쓴다.** 스프링은 중단을 거쳐도 속도를 이어 가고, 타이밍 곡선은 처음부터 다시 시작한다. 그 밖에는 모두 타이밍을 쓴다.
 
-Reanimated's spring takes Apple's two designer parameters directly — use this form, not mass/stiffness/damping:
+Reanimated 스프링은 Apple의 디자이너용 매개변수 두 개를 그대로 받는다. 질량/강성/감쇠가 아니라 이 형태를 쓴다.
 
-| Interaction | Config |
+| 상호작용 | 설정 |
 | --- | --- |
-| Default settle, no overshoot | `{ duration: 400, dampingRatio: 1 }` |
-| Reposition / snap back after a drag | `{ duration: 400, dampingRatio: 0.8, velocity }` |
-| Sheet, drawer | `{ duration: 300, dampingRatio: 0.8, velocity }` |
-| Must not pass a hard edge | add `overshootClamping: true` |
+| 기본 자리 잡기, 오버슈트 없음 | `{ duration: 400, dampingRatio: 1 }` |
+| 드래그 후 위치 이동 / 제자리로 튕겨 돌아오기 | `{ duration: 400, dampingRatio: 0.8, velocity }` |
+| 시트, 드로어 | `{ duration: 300, dampingRatio: 0.8, velocity }` |
+| 단단한 가장자리를 넘으면 안 됨 | `overshootClamping: true` 추가 |
 
-**Bounce only when the gesture carried momentum.** Overshoot on a menu that faded in feels wrong; overshoot on a card you flicked feels right.
+**바운스는 제스처에 관성이 실렸을 때만 쓴다.** 페이드로 나타난 메뉴의 오버슈트는 느낌이 어긋난다. 플릭한 카드의 오버슈트는 느낌이 맞다.
 
-**Easing**, for everything without a finger on it:
+**이징**은 손가락이 닿지 않는 모든 것에 쓴다.
 
-| Situation | Easing |
+| 상황 | 이징 |
 | --- | --- |
-| Entering or exiting | `ease-out` |
-| Moving / morphing on screen | `ease-in-out` |
-| Constant motion (progress, marquee) | `linear` |
-| Default | `ease-out` |
+| 등장이나 퇴장 | `ease-out` |
+| 화면 안 이동 / 모핑 | `ease-in-out` |
+| 일정한 모션(진행 표시, 마키) | `linear` |
+| 기본 | `ease-out` |
 
-**Never `ease-in` on UI.** It starts slow, delaying the exact moment the user is watching. Reanimated's built-ins are as weak as CSS's — use these:
+**UI에는 절대 `ease-in`을 쓰지 않는다.** 느리게 시작해서 사용자가 지켜보는 바로 그 순간을 늦춘다. Reanimated 기본 이징은 CSS 기본 이징만큼 약하다. 아래 값을 쓴다.
 
 ```js
 import { Easing } from 'react-native-reanimated';
 
-const EASE_OUT = Easing.bezier(0.23, 1, 0.32, 1);      // strong ease-out for UI
-const EASE_IN_OUT = Easing.bezier(0.77, 0, 0.175, 1);  // on-screen movement
-const EASE_SHEET = Easing.bezier(0.32, 0.72, 0, 1);    // iOS sheet curve
+const EASE_OUT = Easing.bezier(0.23, 1, 0.32, 1);      // UI용 강한 ease-out
+const EASE_IN_OUT = Easing.bezier(0.77, 0, 0.175, 1);  // 화면 안 이동
+const EASE_SHEET = Easing.bezier(0.32, 0.72, 0, 1);    // iOS 시트 곡선
 ```
 
-**Duration:**
+**지속 시간:**
 
-| Element | Duration |
+| 요소 | 지속 시간 |
 | --- | --- |
-| Press feedback | 100–150ms |
-| Toggle, chip, small state change | 150–200ms |
-| Sheet, modal, drawer | spring, ~300ms perceived |
-| Screen transition | the platform default — don't override it |
+| 누름 피드백 | 100–150ms |
+| 토글, 칩, 작은 상태 변화 | 150–200ms |
+| 시트, 모달, 드로어 | 스프링, 체감 ~300ms |
+| 화면 전환 | 플랫폼 기본값. 덮어쓰지 않는다 |
 
-Mobile UI animations stay under 300ms, same as web. The platform's own transitions are longer (iOS push is 350ms); match the platform for navigation, beat it everywhere else.
+모바일 UI 애니메이션도 웹과 같이 300ms 미만으로 둔다. 플랫폼 자체 전환은 더 길다(iOS push는 350ms). 내비게이션은 플랫폼에 맞추고, 나머지에서는 플랫폼보다 빠르게 한다.
 
-### 6. Keep it off the JS thread
+### 6. JS 스레드에서 떼어 두기
 
-This is the mobile-specific craft, and it's where most React Native motion dies.
+모바일에만 있는 기술이고, 대부분의 React Native 모션이 무너지는 곳이다.
 
-- **Never `setState` from a gesture or scroll handler.** One React render per frame is the single biggest cause of jank in RN apps. Shared value → `useAnimatedStyle`, and React never re-renders at all.
-- **Never schedule back to the RN runtime inside `onUpdate` or a scroll handler.** `scheduleOnRN(fn, ...args)` from `react-native-worklets` — the Reanimated 4 replacement for the deprecated `runOnJS(fn)(...args)` — queues an RN-runtime call, and in `onUpdate` that's 60–120× per second. It belongs in `onEnd`, or in a `useAnimatedReaction` that fires when a value crosses a threshold.
-- **Never read a shared value during render** (`translateY.get()` in JSX). It's a snapshot that never updates and it silently desyncs. **Never write one during render either** — it fires mid-reconciliation, and a re-render you didn't cause replays the write. Touch shared values only in worklets, handlers, and effects.
-- **Use `.get()` / `.set()`, not `.value`.** Same API, but direct `.value` access is the form the React Compiler can't see through — the Reanimated docs call `get`/`set` the compiler-safe way. `set` also takes a functional update: `sv.set((v) => v + 1)`.
-- **Functions called from a worklet need `'worklet'`** as their first line, or they throw at runtime on device while working fine in the debugger.
+- **제스처나 스크롤 핸들러에서 절대 `setState`를 부르지 않는다.** 프레임마다 React 렌더링이 한 번씩 일어나는 것이 RN 앱 버벅임의 가장 큰 원인이다. 공유 값 → `useAnimatedStyle`로 가면 React는 아예 다시 렌더링하지 않는다.
+- **`onUpdate`나 스크롤 핸들러 안에서 절대 RN 런타임 호출을 예약하지 않는다.** `react-native-worklets`의 `scheduleOnRN(fn, ...args)`(지원 중단된 `runOnJS(fn)(...args)`를 대신하는 Reanimated 4의 방식)는 RN 런타임 호출을 큐에 넣고, `onUpdate`에서는 그것이 초당 60–120번이다. 이 호출은 `onEnd`나, 값이 임곗값을 넘을 때 실행되는 `useAnimatedReaction`에 둔다.
+- **렌더링 중에 공유 값을 절대 읽지 않는다**(JSX 안의 `translateY.get()`). 절대 갱신되지 않는 스냅숏이라 소리 없이 어긋난다. **렌더링 중에 쓰지도 않는다.** 재조정 도중에 실행되고, 직접 일으키지 않은 리렌더링이 그 쓰기를 다시 실행한다. 공유 값은 워클릿, 핸들러, Effect에서만 건드린다.
+- **`.value` 말고 `.get()` / `.set()`을 쓴다.** 같은 API지만 `.value`에 직접 접근하는 형태는 React Compiler가 꿰뚫어 보지 못한다. Reanimated 문서는 `get`/`set`을 컴파일러에 안전한 방식이라고 부른다. `set`은 `sv.set((v) => v + 1)`처럼 함수형 업데이트도 받는다.
+- **워클릿에서 부르는 함수는 첫 줄에 `'worklet'`이 있어야 한다.** 없으면 디버거에서는 잘 돌다가 기기에서는 런타임에 예외를 던진다.
 
-### 7. Press, not hover
+### 7. hover가 아니라 누름
 
-Every hover affordance from the web has to be redesigned, not ported.
+웹의 hover 어포던스는 옮겨 오지 말고 모두 새로 설계해야 한다.
 
-- **Feedback on press-in, commit on press-out.** Waiting for the tap to complete before showing anything feels dead — this is the latency the user actually perceives.
-- **`scale: 0.97` in 100–150ms** on any pressable, `Pressable` + a CSS transition. `scale` takes the label and icons with it, which is what makes it read as physical.
-- **44×44pt minimum touch target** (48dp Android). If the visual is smaller, add `hitSlop` — don't grow the visual.
-- **`pressRetentionOffset`** so a finger drifting a few pixels doesn't cancel a press the user meant.
-- **Android ripple only in a Material-styled app.** In a custom-designed app, the same scale on both platforms is more coherent than a ripple on one.
+- **피드백은 누를 때, 확정은 뗄 때.** 탭이 끝날 때까지 기다렸다가 무언가를 보여 주면 죽은 느낌이 난다. 사용자가 실제로 체감하는 지연이 바로 이것이다.
+- 누를 수 있는 모든 요소에 **`scale: 0.97`을 100–150ms 동안** 준다. `Pressable` + CSS 트랜지션이다. `scale`은 라벨과 아이콘까지 함께 줄이고, 그래서 물리적으로 읽힌다.
+- **터치 영역은 최소 44×44pt**(Android는 48dp). 보이는 크기가 더 작으면 `hitSlop`을 더한다. 보이는 요소를 키우지 않는다.
+- **`pressRetentionOffset`을 둬서** 손가락이 몇 픽셀 흘러도 사용자가 의도한 누름이 취소되지 않게 한다.
+- **Android 리플은 Material 스타일 앱에서만 쓴다.** 직접 디자인한 앱에서는 한 플랫폼에만 리플을 넣기보다 두 플랫폼에 같은 scale을 쓰는 편이 더 일관성 있다.
 
-### 8. Haptics
+### 8. 햅틱
 
-Mobile has a sense the web doesn't. Use it sparingly and it becomes the thing that makes the app feel expensive; use it everywhere and users turn it off.
+모바일에는 웹에 없는 감각이 있다. 아껴 쓰면 앱이 고급스럽게 느껴지게 만드는 요소가 되고, 아무 데나 쓰면 사용자가 꺼 버린다.
 
-| Moment | Call |
+| 순간 | 호출 |
 | --- | --- |
-| A value ticks past a step — picker, slider detent, segmented control | `Haptics.selectionAsync()` |
-| Something snaps home, a sheet detent catches, a drag commits | `Haptics.impactAsync(ImpactFeedbackStyle.Light)` |
-| A heavy object lands, a destructive action fires | `Haptics.impactAsync(ImpactFeedbackStyle.Medium)` |
-| Operation succeeded or failed | `Haptics.notificationAsync(NotificationFeedbackType.Success / Error)` |
+| 값이 한 단계를 넘어갈 때(피커, 슬라이더 디텐트, 세그먼트 컨트롤) | `Haptics.selectionAsync()` |
+| 무언가가 제자리에 붙을 때, 시트 디텐트가 걸릴 때, 드래그가 확정될 때 | `Haptics.impactAsync(ImpactFeedbackStyle.Light)` |
+| 무거운 물체가 내려앉을 때, 파괴적인 동작이 실행될 때 | `Haptics.impactAsync(ImpactFeedbackStyle.Medium)` |
+| 작업이 성공하거나 실패했을 때 | `Haptics.notificationAsync(NotificationFeedbackType.Success / Error)` |
 
-Three rules, and they're absolute:
+규칙은 세 가지이고 예외가 없다.
 
-- **Same frame as the visual.** A haptic that lags its animation reads as a glitch, not as feedback. Fire it at the causal moment — the detent catching — not when the animation finishes.
-- **One per user action.** Never on scroll, never per frame, never on an entrance animation the user didn't cause.
-- **Never the only feedback.** Haptics are off system-wide for many users, and silent on most Android hardware. The visual has to stand alone.
+- **시각 효과와 같은 프레임.** 애니메이션보다 늦은 햅틱은 피드백이 아니라 결함으로 읽힌다. 애니메이션이 끝날 때가 아니라 원인이 되는 순간(디텐트가 걸리는 순간)에 실행한다.
+- **사용자 동작 하나에 한 번.** 스크롤에도, 프레임마다도, 사용자가 일으키지 않은 등장 애니메이션에도 절대 쓰지 않는다.
+- **유일한 피드백으로 쓰지 않기.** 많은 사용자가 햅틱을 시스템 전체에서 꺼 두고, 대부분의 Android 기기에서는 느껴지지 않는다. 시각 효과만으로도 성립해야 한다.
 
-From a worklet, haptics must be scheduled back to the RN runtime: `scheduleOnRN(Haptics.selectionAsync)`.
+워클릿에서는 햅틱을 RN 런타임으로 넘겨 예약해야 한다. `scheduleOnRN(Haptics.selectionAsync)`.
 
-### 9. Reduced motion and accessibility
+### 9. 동작 줄이기와 접근성
 
 ```jsx
 import { useReducedMotion, ReduceMotion, withSpring } from 'react-native-reanimated';
@@ -195,69 +195,69 @@ import { useReducedMotion, ReduceMotion, withSpring } from 'react-native-reanima
 const reduced = useReducedMotion();
 const y = useSharedValue(reduced ? 0 : SHEET_HEIGHT);
 
-// or let each animation decide
+// 또는 애니메이션마다 정하게 한다
 withSpring(0, { duration: 300, dampingRatio: 0.8, reduceMotion: ReduceMotion.System });
 ```
 
-Reduced motion means **fewer and gentler**, not zero: keep opacity and color changes that explain a state change, drop translation, scale, parallax and overshoot. Screen transitions become `animation: 'fade'`.
+동작 줄이기는 모션을 0으로 만드는 것이 아니라 **더 적고 더 부드럽게** 만든다는 뜻이다. 상태 변화를 설명하는 opacity와 색 변화는 남기고, 이동, scale, 패럴랙스, 오버슈트는 뺀다. 화면 전환은 `animation: 'fade'`가 된다.
 
-**Text scales.** `allowFontScaling` is on by default, so any height you measured at default type size is wrong at 200%. Never animate to a hardcoded height — measure with `onLayout`, or animate a transform instead.
+**글자 크기는 바뀐다.** `allowFontScaling`이 기본으로 켜져 있어서, 기본 글자 크기에서 잰 높이는 200%에서 모두 틀린다. 하드코딩한 높이로 애니메이션하지 않는다. `onLayout`으로 재거나, 대신 transform을 애니메이션한다.
 
-## Setup that silently breaks motion
+## 모션을 소리 없이 망가뜨리는 설정
 
-Check these first when "the animation just doesn't run":
+"애니메이션이 그냥 안 돈다"면 이것부터 확인한다.
 
-- Install through Expo so versions match the SDK: `npx expo install react-native-reanimated react-native-worklets`. In an Expo project, `babel-preset-expo` configures the worklets Babel plugin automatically — no `babel.config.js` step. Only a bare RN project without that preset adds the plugin manually, and there it must be last in the list. A missing or misplaced plugin doesn't silently fall back anymore — it throws `Failed to create a worklet` at runtime.
-- `GestureHandlerRootView` must wrap the app, or gestures do nothing with no error.
-- Reanimated 4 requires the New Architecture.
-- **Expo Go is not a performance environment.** Judge feel in a release build; a dev build's JS thread is slow enough to hide exactly the problems you're looking for.
+- SDK와 버전이 맞도록 Expo를 거쳐 설치한다. `npx expo install react-native-reanimated react-native-worklets`. Expo 프로젝트에서는 `babel-preset-expo`가 worklets Babel 플러그인을 자동으로 설정하므로 `babel.config.js` 단계가 없다. 그 프리셋이 없는 bare RN 프로젝트만 플러그인을 직접 추가하고, 그때는 목록의 맨 마지막에 둬야 한다. 플러그인이 없거나 자리가 틀리면 이제는 조용히 대체 동작으로 넘어가지 않고, 런타임에 `Failed to create a worklet`을 던진다.
+- `GestureHandlerRootView`가 앱을 감싸야 한다. 그렇지 않으면 제스처가 오류 없이 아무것도 하지 않는다.
+- Reanimated 4는 New Architecture가 필요하다.
+- **Expo Go는 성능 환경이 아니다.** 느낌은 릴리스 빌드에서 판단한다. 개발 빌드의 JS 스레드는 찾으려는 바로 그 문제를 가릴 만큼 느리다.
 
 ## 120fps
 
-On ProMotion iPhones, third-party animations are capped at 60fps unless `CADisableMinimumFrameDurationOnPhone` is set. Recent Expo SDKs set it by default — confirm it's there, and add it if not:
+ProMotion iPhone에서는 `CADisableMinimumFrameDurationOnPhone`을 설정하지 않으면 서드파티 애니메이션이 60fps로 제한된다. 최근 Expo SDK는 기본으로 설정한다. 있는지 확인하고 없으면 추가한다.
 
 ```json
 { "expo": { "ios": { "infoPlist": { "CADisableMinimumFrameDurationOnPhone": true } } } }
 ```
 
-Then the frame budget is 8ms, not 16. This is also why a UI-thread animation matters more on mobile than it does on web.
+그러면 프레임 예산은 16이 아니라 8ms다. UI 스레드 애니메이션이 웹보다 모바일에서 더 중요한 이유이기도 하다.
 
-## Recipes
+## 레시피
 
-For ready-to-build implementations — press feedback, drag-to-dismiss sheet, swipe-to-delete, collapsing header, list entrances, keyboard-synced UI, tab indicator, screen transitions — see [RECIPES.md](RECIPES.md). Load it whenever the request matches one; start from the recipe rather than from a blank file.
+바로 만들 수 있는 구현(누름 피드백, 끌어서 닫는 시트, 밀어서 삭제, 접히는 헤더, 목록 등장, 키보드와 맞물린 UI, 탭 인디케이터, 화면 전환)은 [RECIPES.md](RECIPES.md)에 있다. 요청이 그중 하나와 맞을 때마다 불러온다. 빈 파일이 아니라 레시피에서 시작한다.
 
-## Never Ship
+## 절대 내보내지 말 것
 
-| Never | Instead |
+| 금지 | 대신 |
 | --- | --- |
-| `PanResponder` | `Gesture.Pan()` from gesture-handler |
-| `setState` in a gesture or scroll handler | shared value + `useAnimatedStyle` |
-| `runOnJS` (deprecated in Reanimated 4) | `scheduleOnRN` from `react-native-worklets` |
-| `scheduleOnRN` per frame | `onEnd`, or `useAnimatedReaction` at a threshold |
-| Reading or writing a shared value during render | `.get()` / `.set()` in worklets, handlers, effects |
-| Core `Animated` for anything a finger touches | Reanimated |
-| Animating `height` / `width` / `margin` / `flex` / `top` | `transform` + `opacity` (absolute, childless elements exempt) |
-| Animating `BlurView` intensity or Android `elevation` | crossfade a static layer |
-| `entering` on a virtualized list row | animate the container, or `itemLayoutAnimation` |
-| A screen transition rebuilt in JS | native stack `animation` |
-| Sliding between tabs | `animation: 'none'` |
-| `Easing.in(...)` on a UI element | `Easing.bezier(0.23, 1, 0.32, 1)` |
-| `scale(0)` entrance | `scale(0.95)` + `opacity: 0` |
-| Distance-only dismissal threshold | velocity **or** distance — a flick is enough |
-| Hard stop at a boundary | rubber-band resistance |
-| A haptic per frame, or as the only feedback | one per commit, always paired with a visual |
-| Judging feel in Expo Go or the simulator | release build, slowest supported device |
+| `PanResponder` | gesture-handler의 `Gesture.Pan()` |
+| 제스처나 스크롤 핸들러 안의 `setState` | 공유 값 + `useAnimatedStyle` |
+| `runOnJS`(Reanimated 4에서 지원 중단) | `react-native-worklets`의 `scheduleOnRN` |
+| 프레임마다 부르는 `scheduleOnRN` | `onEnd`, 또는 임곗값에서 `useAnimatedReaction` |
+| 렌더링 중 공유 값 읽기나 쓰기 | 워클릿, 핸들러, Effect 안의 `.get()` / `.set()` |
+| 손가락이 닿는 요소에 코어 `Animated` | Reanimated |
+| `height` / `width` / `margin` / `flex` / `top` 애니메이션 | `transform` + `opacity`(자식 없는 절대 위치 요소는 예외) |
+| `BlurView` 강도나 Android `elevation` 애니메이션 | 정적 레이어 크로스페이드 |
+| 가상화 목록 행의 `entering` | 컨테이너에 애니메이션, 또는 `itemLayoutAnimation` |
+| JS로 다시 만든 화면 전환 | 네이티브 스택 `animation` |
+| 탭 사이 슬라이드 | `animation: 'none'` |
+| UI 요소의 `Easing.in(...)` | `Easing.bezier(0.23, 1, 0.32, 1)` |
+| `scale(0)` 등장 | `scale(0.95)` + `opacity: 0` |
+| 거리만 보는 닫기 임곗값 | 속도 **또는** 거리. 플릭이면 충분하다 |
+| 경계에서 급정지 | 러버밴딩(rubber-band) 저항 |
+| 프레임마다, 또는 유일한 피드백으로 쓰는 햅틱 | 확정마다 한 번, 늘 시각 효과와 짝지어 |
+| Expo Go나 시뮬레이터에서 느낌 판단 | 릴리스 빌드, 지원하는 가장 느린 기기 |
 
-## Output
+## 출력
 
-Write the code. Then, in at most a few lines:
+코드를 쓴다. 그다음 많아야 몇 줄로 다음을 적는다.
 
-- **The gate result** — frequency tier and named purpose. Say what you rejected and why.
-- **The ingredients** — tool, properties, spring or curve + duration, thread.
-- **What to feel-check on device** — gestures, velocity handoff and haptic timing cannot be judged from code. Name what to try: flick it, interrupt it mid-flight, reverse it, run it on the slowest Android you have.
+- **관문 결과**: 빈도 등급과 이름 붙인 목적. 무엇을 거절했고 왜인지 말한다.
+- **재료**: 도구, 속성, 스프링 또는 곡선 + 지속 시간, 스레드.
+- **기기에서 체감 확인할 것**: 제스처, 속도 인계, 햅틱 타이밍은 코드로 판단할 수 없다. 해 볼 것을 적는다. 플릭해 보고, 움직이는 도중에 끊어 보고, 방향을 뒤집어 보고, 가진 것 중 가장 느린 Android에서 돌려 본다.
 
-The code is the deliverable. Don't pad it into a report.
+산출물은 코드다. 보고서로 부풀리지 않는다.
 
-## Tone
+## 어조
 
-Opinionated and brief. When the honest answer is "this shouldn't animate," or "this needs a real device before I can tell you if it's right," give it.
+의견은 분명하게, 말은 짧게 한다. 솔직한 답이 "이건 애니메이션을 넣으면 안 된다"나 "맞는지 말하려면 실제 기기가 필요하다"라면 그대로 답한다.

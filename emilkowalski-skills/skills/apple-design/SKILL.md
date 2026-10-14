@@ -1,218 +1,218 @@
 ---
 name: apple-design
-description: Apple's approach to interface design and fluid, physical motion, translated for the web. Use when building or reviewing gesture-driven UI, spring animations, drag/swipe/sheet interactions, momentum and interruptible transitions, translucent materials and depth, typography (optical sizing, tracking, leading), reduced-motion, or the design foundations (feedback, spatial consistency, restraint) behind Apple-style interfaces.
+description: Apple이 인터페이스 디자인과 유려하고 물리적인 모션을 다루는 방식을 웹에 맞게 옮긴다. 제스처로 움직이는 UI, 스프링 애니메이션, 드래그/스와이프/시트 상호작용, 관성과 중단 가능한 전환, 반투명 재질과 깊이감, 타이포그래피(광학 크기 조정, 자간, 행간), 동작 줄이기, 또는 Apple 스타일 인터페이스 밑에 깔린 디자인 기초(피드백, 공간적 일관성, 절제)를 만들거나 리뷰할 때 쓴다.
 ---
 
-# Apple Design
+# Apple 디자인
 
-## Initial Response
+## 첫 응답
 
-When this skill is first invoked without a specific question, respond only with:
+구체적인 질문 없이 이 스킬이 처음 호출되면 다음 내용으로만 답한다.
 
-> I'm ready to help you build fluid, Apple-style interfaces on the web, my knowledge comes from Apple's WWDC design talks, translated for the web.
+> 웹에서 Apple 스타일의 유려한 인터페이스를 만들도록 도울 준비가 됐습니다. Apple의 WWDC 디자인 세션을 웹에 맞게 옮긴 내용을 바탕으로 합니다.
 
-Do not provide any other information until the user asks a question.
+사용자가 질문하기 전에는 다른 정보를 주지 않는다.
 
-How Apple builds interfaces that stop feeling like a computer and start feeling like an extension of you. This knowledge comes from Apple's WWDC design talks — chiefly *Designing Fluid Interfaces* (WWDC 2018) — distilled and translated into the web platform (CSS, Pointer Events, `requestAnimationFrame`, spring libraries like Motion/Framer Motion).
+컴퓨터 같은 느낌이 사라지고 내 몸의 연장처럼 느껴지는 인터페이스를 Apple이 어떻게 만드는지 다룬다. 이 지식은 Apple의 WWDC 디자인 세션(주로 *Designing Fluid Interfaces*, WWDC 2018)에서 추려 웹 플랫폼(CSS, Pointer Events, `requestAnimationFrame`, Motion/Framer Motion 같은 스프링 라이브러리)에 맞게 옮긴 것이다.
 
-The through-line: **an interface feels alive when motion starts from the current on-screen value, inherits the user's velocity, projects momentum forward, and can be grabbed and reversed at any instant.** Springs are the tool that makes all of this natural, because they are inherently interruptible and velocity-aware.
+관통하는 원칙은 이것이다. **모션이 현재 화면에 보이는 값에서 시작하고, 사용자의 속도를 이어받고, 관성이 이끌 곳을 예측하고, 언제든 붙잡아 되돌릴 수 있을 때 인터페이스는 살아 있다고 느껴진다.** 스프링은 본래 중단 가능하고(interruptible) 속도를 반영하므로 이 모든 것을 자연스럽게 만드는 도구다.
 
-## The Core Idea
+## 핵심 아이디어
 
-> "When we align the interface to the way we think and move, something magical happens — it stops feeling like a computer and starts feeling like a seamless extension of us."
+> "인터페이스를 우리가 생각하고 움직이는 방식에 맞추면 마법 같은 일이 일어난다. 더는 컴퓨터처럼 느껴지지 않고 우리 몸의 매끄러운 연장처럼 느껴지기 시작한다."
 
-An interface is fluid when it behaves like the physical world: things respond instantly, move continuously, carry momentum, resist at boundaries, and can be redirected mid-motion. Everything below is a way to get closer to that.
+인터페이스는 물리 세계처럼 동작할 때 유려하다. 사물이 즉시 반응하고, 끊김 없이 움직이고, 관성을 지니고, 경계에서 저항하고, 움직이는 도중에 방향을 바꿀 수 있다. 아래 내용은 모두 거기에 더 가까이 가는 방법이다.
 
-Apple frames design as serving four human needs: **safety/predictability, understanding, achievement, and joy.** Every rule here serves one of them.
+Apple은 디자인을 사람의 네 가지 욕구를 채우는 일로 본다. **안전과 예측 가능성, 이해, 성취, 기쁨**이다. 여기 있는 규칙은 모두 이 가운데 하나를 위한 것이다.
 
-## 1. Response — kill latency
+## 1. 반응: 지연 없애기
 
-The moment lag appears, the feeling of directness "falls off a cliff." Response is the foundation everything else is built on.
+지연이 생기는 순간 직접 다루는 느낌은 "절벽에서 떨어지듯 무너진다." 반응은 다른 모든 것이 올라서는 토대다.
 
-- **Respond on pointer-down, not on release.** Highlight a button the instant it's pressed. Waiting for `click`/touch-up to show feedback feels dead.
-- **Be vigilant about every latency.** Audit debounces, artificial timers, transition waits, and the ~300ms tap delay. Anything on the input path that isn't essential is a regression.
-- **Feedback must be continuous *during* the interaction, not just at the end.** For a drag, slider, or drawer, update the UI 1:1 with the pointer the whole way through — never animate only when the gesture completes.
+- **손을 뗄 때가 아니라 pointer-down에서 반응한다.** 버튼은 눌리는 순간 강조한다. 피드백을 보여 주려고 `click`/touch-up을 기다리면 죽은 느낌이 든다.
+- **모든 지연을 경계한다.** 디바운스, 인위적인 타이머, 트랜지션 대기, ~300ms 탭 지연을 점검한다. 입력 경로에 있는 것 중 꼭 필요하지 않은 것은 모두 회귀다.
+- **피드백은 끝에서만이 아니라 상호작용하는 *동안* 계속 이어져야 한다.** 드래그, 슬라이더, 드로어는 처음부터 끝까지 포인터에 맞춰 UI를 1:1로 갱신한다. 제스처가 끝났을 때만 애니메이션하는 방식은 절대 쓰지 않는다.
 
 ```css
-/* Feedback lives on the press, and it's instant */
+/* 피드백은 누르는 순간에 있고 즉각적이다 */
 .button:active {
   transform: scale(0.97);
   transition: transform 100ms ease-out;
 }
 ```
 
-## 2. Direct manipulation — 1:1 tracking
+## 2. 직접 조작: 1:1 추적
 
-> "Touch and content should move together."
+> "터치와 콘텐츠는 함께 움직여야 한다."
 
-When the user drags something, it must stay glued to the finger — and respect the offset from *where they grabbed it*. Snapping to the element's center on grab breaks the illusion immediately.
+사용자가 무언가를 드래그하면 그것은 손가락에 딱 붙어 있어야 하고, *사용자가 잡은 위치*의 오프셋도 지켜야 한다. 잡는 순간 요소의 중심으로 스냅하면 환상이 바로 깨진다.
 
-- Use Pointer Events with `setPointerCapture` so tracking continues even when the pointer leaves the element's bounds.
-- Track a short **velocity/position history** (last few `pointermove` events), not just the current point — you'll need velocity at release.
+- Pointer Events와 `setPointerCapture`를 써서 포인터가 요소 경계를 벗어나도 추적이 이어지게 한다.
+- 현재 지점만이 아니라 짧은 **속도/위치 기록**(최근 `pointermove` 이벤트 몇 개)을 추적한다. 손을 뗄 때 속도가 필요하다.
 
 ```js
 el.addEventListener('pointerdown', (e) => {
   el.setPointerCapture(e.pointerId);
-  const grabOffset = e.clientY - el.getBoundingClientRect().top; // respect where they grabbed
-  // ...track position + timestamp history for velocity
+  const grabOffset = e.clientY - el.getBoundingClientRect().top; // 사용자가 잡은 위치를 지킨다
+  // ...속도 계산용으로 위치 + 타임스탬프 기록을 추적
 });
 ```
 
-## 3. Interruptibility — the single most important principle
+## 3. 중단 가능성: 가장 중요한 단 하나의 원칙
 
-> "The thought and the gesture happen in parallel."
+> "생각과 제스처는 동시에 일어난다."
 
-Every animation must be interruptible and redirectable at any moment. A user must be able to grab a moving element mid-flight and reverse it without waiting for the animation to finish. A closing modal the user grabs again should follow the finger — not finish closing first, then reopen.
+모든 애니메이션은 언제든 중단하고 방향을 바꿀 수 있어야 한다. 사용자는 움직이는 요소를 도중에 붙잡아, 애니메이션이 끝나기를 기다리지 않고 되돌릴 수 있어야 한다. 닫히던 모달을 사용자가 다시 잡으면 모달은 손가락을 따라가야 한다. 먼저 다 닫힌 뒤 다시 열리면 안 된다.
 
-- **Never lock out input during a transition.**
-- **Always animate from the *presentation* (current) value, never the target value.** On interrupt, read the element's live on-screen transform and start the new animation from there. Starting from the logical/target value causes a visible jump.
-- **Avoid CSS transitions and `@keyframes` for anything gesture-driven** — they can't be smoothly grabbed and reversed mid-flight. Springs animate from the current value by default, which is exactly what interruption needs.
-- **When a gesture reverses, blend velocity — don't hard-cut it.** Replacing one animation with another at a reversal creates a velocity discontinuity, a "brick wall." Spring libraries that carry velocity through a re-target avoid it. (This is what iOS's *additive animations* do natively; on the web, choose a spring library that re-targets from the current velocity.)
-- **Decompose 2D motion into independent X and Y springs.** A single spring on a 2D distance desyncs when X and Y have different velocities.
+- **전환 중에 입력을 절대 막지 않는다.**
+- **항상 *프레젠테이션*(현재) 값에서 애니메이션하고, 절대 목표 값에서 시작하지 않는다.** 중단되면 요소가 지금 화면에 그려진 transform을 읽고 거기서 새 애니메이션을 시작한다. 논리 값/목표 값에서 시작하면 눈에 보이게 튄다.
+- **제스처로 움직이는 것에는 CSS 트랜지션과 `@keyframes`를 피한다.** 도중에 매끄럽게 잡아 되돌릴 수 없기 때문이다. 스프링은 기본으로 현재 값에서 애니메이션하고, 중단에 필요한 것이 바로 그것이다.
+- **제스처 방향이 바뀌면 속도를 섞는다. 뚝 끊지 않는다.** 방향이 바뀌는 순간 애니메이션을 다른 애니메이션으로 갈아 끼우면 속도가 불연속이 되어 "벽돌 벽"에 부딪힌다. 목표를 다시 잡을 때 속도를 이어 가는 스프링 라이브러리는 이 문제를 피한다. (iOS의 *가산 애니메이션*(additive animations)이 네이티브로 하는 일이 이것이다. 웹에서는 현재 속도에서 목표를 다시 잡는 스프링 라이브러리를 고른다.)
+- **2D 모션은 서로 독립된 X 스프링과 Y 스프링으로 나눈다.** 2D 거리에 스프링 하나만 걸면 X와 Y의 속도가 다를 때 어긋난다.
 
-## 4. Behavior over animation — use springs
+## 4. 애니메이션보다 동작: 스프링 쓰기
 
-> "Think of animation as a conversation between you and the object, not something prescribed by the interface."
+> "애니메이션을 인터페이스가 정해 둔 무언가가 아니라 나와 사물 사이의 대화로 생각한다."
 
-A pre-scripted, fixed-duration animation can't respond to new input. A spring can — new input just changes the target, and the motion stays continuous. Reach for springs for anything a user can touch.
+미리 짜 둔 고정 지속 시간 애니메이션은 새 입력에 반응하지 못한다. 스프링은 반응한다. 새 입력은 목표만 바꾸고 모션은 끊기지 않고 이어진다. 사용자가 만질 수 있는 것에는 스프링을 쓴다.
 
-Apple deliberately replaced the physics triplet (mass/stiffness/damping) with two designer-friendly parameters. Think in these:
+Apple은 물리 매개변수 세 개(질량/강성/감쇠)를 디자이너가 다루기 쉬운 매개변수 두 개로 일부러 바꿨다. 이 둘로 생각한다.
 
-- **Damping ratio** — controls overshoot. `1.0` = critically damped, no bounce, smooth settle. `< 1.0` = overshoots and oscillates. Lower = bouncier.
-- **Response** — how quickly the value reaches the target, in seconds. Lower = snappier. **This is not "duration"** — a spring has no fixed duration; its settle time emerges from the parameters.
+- **감쇠비(damping ratio)**: 오버슈트를 조절한다. `1.0` = 임계 감쇠, 바운스 없음, 부드럽게 자리를 잡음. `< 1.0` = 오버슈트하며 진동함. 낮을수록 더 통통 튄다.
+- **응답 시간(response)**: 값이 목표에 얼마나 빨리 닿는지를 초 단위로 나타낸다. 낮을수록 재빠르다. **이것은 "지속 시간"이 아니다.** 스프링에는 고정된 지속 시간이 없다. 자리를 잡는 시간은 매개변수에서 저절로 정해진다.
 
-**Defaults:**
-- Start most UI at **damping `1.0`** (critically damped) — graceful and non-distracting.
-- Add bounce (**damping ~`0.8`**) **only when the gesture itself carried momentum** (a flick, a throw, a drag release). Overshoot on a menu that just faded in feels wrong; overshoot on a card you flicked feels right.
+**기본값:**
+- 대부분의 UI는 **감쇠비 `1.0`**(임계 감쇠)에서 시작한다. 우아하고 시선을 빼앗지 않는다.
+- 바운스(**감쇠비 ~`0.8`**)는 **제스처 자체에 관성이 실렸을 때만** 넣는다(플릭, 던지기, 드래그 후 놓기). 그냥 페이드인한 메뉴가 오버슈트하면 어색하다. 손가락으로 튕긴 카드가 오버슈트하면 느낌이 맞다.
 
-**Concrete values Apple ships:**
+**Apple이 실제로 쓰는 값:**
 
-| Interaction | Damping | Response |
+| 상호작용 | 감쇠비 | 응답 시간 |
 | --- | --- | --- |
-| Move / reposition (e.g. PiP) | `1.0` | `0.4` |
-| Rotation | `0.8` | `0.4` |
-| Drawer / sheet | `0.8` | `0.3` |
+| 이동 / 위치 변경 (예: PiP) | `1.0` | `0.4` |
+| 회전 | `0.8` | `0.4` |
+| 드로어 / 시트 | `0.8` | `0.3` |
 
-**Web mapping (Motion / Framer Motion):** the `bounce` + `duration` spring API maps closely to Apple's damping + response. A safe house style is `damping: 1.0` springs everywhere by default; reserve bounce for momentum-driven, physical interactions.
+**웹 대응 (Motion / Framer Motion):** `bounce` + `duration` 스프링 API는 Apple의 감쇠비 + 응답 시간에 거의 그대로 대응한다. 무난한 기본 스타일은 어디서나 `damping: 1.0` 스프링을 쓰는 것이다. 바운스는 관성이 실린 물리적 상호작용에만 남겨 둔다.
 
 ```js
 import { animate } from 'motion';
 
-// Critically damped default (no overshoot)
+// 임계 감쇠 기본값 (오버슈트 없음)
 animate(el, { y: 0 }, { type: 'spring', bounce: 0, duration: 0.4 });
 
-// Momentum interaction — a little bounce, only because a flick preceded it
+// 관성 상호작용, 앞서 플릭이 있었을 때만 바운스를 조금 준다
 animate(el, { y: target }, { type: 'spring', bounce: 0.2, duration: 0.4 });
 ```
 
-## 5. Velocity handoff — the seam between drag and animation
+## 5. 속도 인계(velocity handoff): 드래그와 애니메이션 사이의 이음매
 
-When a gesture ends, the animation must **continue at the finger's exact velocity**, so there's no visible seam between dragging and animating. This is the detail that most separates "fluid" from "fine."
+제스처가 끝나면 애니메이션은 **손가락의 속도 그대로 이어져야** 한다. 그래야 드래그와 애니메이션 사이에 이음매가 보이지 않는다. "유려한" 것과 "그럭저럭 괜찮은" 것을 가장 크게 가르는 디테일이 이것이다.
 
-Pass the pointer's release velocity as the spring's initial velocity. Some spring APIs want **relative** velocity — normalize it by the remaining distance to the target:
+포인터를 놓을 때의 속도를 스프링의 초기 속도로 넘긴다. 일부 스프링 API는 **상대** 속도를 받는다. 이때는 목표까지 남은 거리로 정규화한다.
 
 ```
 relativeVelocity = gestureVelocity / (targetValue − currentValue)
 ```
 
-Example: element at `y=50`, target `y=150` (100px to go), finger moving 50px/s → initial spring velocity = `50 / 100 = 0.5`. Framer Motion / Motion take absolute px/s velocity directly (`velocity` option), so you usually hand it the raw value.
+예: 요소가 `y=50`, 목표가 `y=150`(남은 거리 100px), 손가락이 50px/s로 움직이면 스프링 초기 속도 = `50 / 100 = 0.5`. Framer Motion / Motion은 px/s 단위 절대 속도를 바로 받으므로(`velocity` 옵션) 보통 원래 값을 그대로 넘긴다.
 
-## 6. Momentum projection — animate to where the gesture is *going*
+## 6. 관성 예측: 제스처가 *향하는* 곳으로 애니메이션하기
 
-> "Take a small input and make a big output."
+> "작은 입력을 받아 큰 출력을 만든다."
 
-Don't snap to the nearest boundary from the *release point*. Use velocity to **project the resting position** — exactly like scroll deceleration — then snap to the target nearest that projected point. This is what makes a flick feel like it throws the element.
+*놓은 지점*에서 가장 가까운 경계로 스냅하지 않는다. 속도로 **멈출 위치를 예측하고**(스크롤 감속과 똑같다), 그 예측 지점에서 가장 가까운 목표로 스냅한다. 플릭이 요소를 던지는 것처럼 느껴지는 것은 이 때문이다.
 
-Apple's exact projection function (from the *Designing Fluid Interfaces* sample code):
+Apple의 예측 함수를 그대로 옮기면 다음과 같다(*Designing Fluid Interfaces* 샘플 코드).
 
 ```js
-// decelerationRate ≈ 0.998 for normal scroll feel; 0.99 for snappier
+// decelerationRate ≈ 0.998이면 보통 스크롤 느낌, 0.99면 더 재빠르다
 function project(initialVelocity /* px/s */, decelerationRate = 0.998) {
   return (initialVelocity / 1000) * decelerationRate / (1 - decelerationRate);
 }
 
 const projectedEndpoint = currentPosition + project(releaseVelocity);
-const target = nearestSnapPoint(projectedEndpoint);   // choose target from the projection
-animateSpringTo(target, { velocity: releaseVelocity }); // then hand off velocity (§5)
+const target = nearestSnapPoint(projectedEndpoint);   // 예측 지점으로 목표를 고른다
+animateSpringTo(target, { velocity: releaseVelocity }); // 그다음 속도를 넘긴다 (§5)
 ```
 
-Note: the physics-textbook `v²/(2·decel)` is *not* what Apple ships — use the exponential-decay form above. This is the standard behavior in good bottom-sheets and carousels (Vaul, Embla).
+참고: 물리 교과서의 `v²/(2·decel)`은 Apple이 쓰는 식이 *아니다*. 위의 지수 감쇠 형태를 쓴다. 잘 만든 바텀 시트와 캐러셀(Vaul, Embla)은 이렇게 동작하는 것이 표준이다.
 
-## 7. Spatial consistency — symmetric paths, anchored origins
+## 7. 공간적 일관성: 대칭 경로, 고정된 원점
 
-> "If something disappears one way, we expect it to emerge from where it came."
+> "무언가가 한쪽으로 사라지면, 우리는 그것이 왔던 곳에서 다시 나타나리라 기대한다."
 
-- **Enter and exit along the same path.** A panel that slides in from the right must dismiss to the right. In-from-right / out-the-bottom feels disconnected and confusing.
-- **Anchor interactions to their source.** A menu, popover, or sheet should originate from the element that triggered it — set `transform-origin` to the trigger, so the spatial relationship between button and content is obvious. (This is the same origin-awareness point as popovers scaling from their trigger, not their center.)
-- **Mirror the easing on reversible transitions** so the outbound path matches the return path (use inverse cubic-bézier control points for the two directions).
+- **같은 경로로 등장하고 퇴장한다.** 오른쪽에서 밀려 들어온 패널은 오른쪽으로 닫혀야 한다. 오른쪽에서 들어와 아래로 나가면 연결이 끊긴 듯하고 헷갈린다.
+- **상호작용을 출발점에 고정한다.** 메뉴, 팝오버, 시트는 그것을 연 요소에서 나와야 한다. `transform-origin`을 트리거에 맞춰 버튼과 콘텐츠의 공간 관계가 분명히 보이게 한다. (팝오버가 중심이 아니라 트리거에서 커져야 한다는, 원점을 트리거에 맞추는 원칙과 같은 이야기다.)
+- **되돌릴 수 있는 전환에서는 이징을 거울처럼 뒤집어** 나가는 경로와 돌아오는 경로가 맞게 한다(두 방향에 역 cubic-bézier 제어점을 쓴다).
 
-## 8. Hint in the direction of the gesture
+## 8. 제스처 방향으로 암시하기
 
-Humans predict a final state from a trajectory. Intermediate motion should telegraph where things are going — Control Center modules "grow up and out toward your finger." Make the in-between frames point at the outcome, not just interpolate blindly to it.
+사람은 궤적을 보고 최종 상태를 예측한다. 중간 모션은 사물이 어디로 가는지 미리 알려야 한다. 제어 센터 모듈은 "손가락 쪽으로 위로, 바깥으로 커진다." 중간 프레임이 결과를 향해 맹목적으로 보간만 하지 말고 결과를 가리키게 한다.
 
-## 9. Rubber-banding — soft boundaries
+## 9. 러버밴딩(rubber-banding): 부드러운 경계
 
-At an edge, resist progressively instead of stopping hard. A hard stop reads as "frozen"; continuous resistance reads as "responsive, but there's nothing more here." Apply damping that increases the further past the boundary the user drags.
+가장자리에서는 급정지하지 말고 점점 더 저항한다. 급정지는 "얼어붙은" 것으로 읽힌다. 계속 이어지는 저항은 "반응은 하지만 여기에 더는 없다"로 읽힌다. 사용자가 경계를 넘어 더 멀리 끌수록 커지는 감쇠를 건다.
 
 ```js
-// The further past the bound, the less the element follows — real things slow before they stop
+// 경계를 넘어 멀리 갈수록 요소는 덜 따라온다. 실제 사물은 멈추기 전에 느려진다
 function rubberband(overshoot, dimension, constant = 0.55) {
   return (overshoot * dimension * constant) / (dimension + constant * Math.abs(overshoot));
 }
 ```
 
-## 10. Gesture design details (the "feel" checklist)
+## 10. 제스처 디자인 디테일 ("느낌" 체크리스트)
 
-- **Tap:** highlight on touch-*down* (instant), commit on touch-*up*. Add ~10px of hysteresis/hit padding around the target, and allow cancel-by-dragging-away and back.
-- **Drag/swipe:** require a small movement threshold (hysteresis, ~10px) before committing to a direction, then track 1:1.
-- **Detect all plausible gestures in parallel from the first move**, then confidently cancel the losers once intent is clear. Avoid recognizers that only report a *final* state (`swipeleft`-type events) — they throw away the continuous tracking you need for feedback.
-- **Minimize disambiguation delays.** Double-tap detection unavoidably delays single taps; only pay that cost where double-tap truly exists.
+- **탭:** touch-*down*에서 강조하고(즉시), touch-*up*에서 확정한다. 대상 둘레에 ~10px의 히스테리시스/터치 여유 영역을 두고, 끌어서 벗어나면 취소되고 다시 돌아오면 되살아나게 한다.
+- **드래그/스와이프:** 방향을 확정하기 전에 작은 이동 임곗값(히스테리시스, ~10px)을 요구하고 그다음 1:1로 추적한다.
+- **첫 움직임부터 가능성 있는 제스처를 모두 동시에 감지하고**, 의도가 분명해지면 나머지는 과감히 취소한다. *최종* 상태만 알려 주는 인식기(`swipeleft` 같은 이벤트)는 피한다. 피드백에 필요한 연속 추적 정보를 버리기 때문이다.
+- **제스처 구분 지연을 최소화한다.** 더블 탭을 감지하면 싱글 탭이 어쩔 수 없이 늦어진다. 더블 탭이 정말 있는 곳에서만 그 비용을 치른다.
 
-## 11. Frame-level smoothness
+## 11. 프레임 단위의 부드러움
 
-Smoothness is about *what's in the frames*, not just the frame rate.
+부드러움은 프레임 레이트만이 아니라 *프레임 안에 무엇이 있는지*에 달렸다.
 
-- Keep the per-frame positional change below the perception threshold to avoid strobing.
-- For very fast motion, a subtle **motion blur / stretch** encodes speed and reads better than a hard sharp streak.
-- `requestAnimationFrame` is the web's display-synced clock (Apple uses `CADisplayLink`). Animate only compositor-friendly properties — `transform` and `opacity` — and hint with `will-change` where motion is imminent.
+- 프레임당 위치 변화를 지각 임곗값 아래로 유지해 스트로빙을 막는다.
+- 아주 빠른 모션에는 은은한 **모션 블러 / 늘이기**가 속도를 전달하고, 선명하고 딱딱한 궤적보다 잘 읽힌다.
+- `requestAnimationFrame`은 웹에서 디스플레이와 동기화된 시계다(Apple은 `CADisplayLink`를 쓴다). 합성기가 처리하기 좋은 속성(`transform`과 `opacity`)만 애니메이션하고, 모션이 곧 시작될 곳에는 `will-change`로 미리 알린다.
 
-## 12. Materials & depth — translucency conveys hierarchy
+## 12. 재질과 깊이: 위계를 전달하는 반투명
 
-Apple uses translucent materials as a floating functional layer that brings structure without stealing focus. On the web, approximate with `backdrop-filter`.
+Apple은 반투명 재질을 떠 있는 기능 레이어로 써서 시선을 빼앗지 않으면서 구조를 만든다. 웹에서는 `backdrop-filter`로 비슷하게 만든다.
 
-- **Build nav/toolbars/sheets as translucent layers** (`backdrop-filter: blur()` + a semi-transparent background) with content scrolling underneath — not opaque bars that consume a fixed strip.
-- **Material weight encodes hierarchy:** darker/heavier materials separate structural regions (sidebars); lighter materials draw attention to interactive elements (buttons). **Never stack a light translucent surface on another** — legibility collapses.
-- **Bigger surfaces should read as thicker:** stronger blur + a deeper shadow than small chips. Consider context-aware shadow — heavier over busy/text content for separation, lighter over plain backgrounds.
-- **Dim to focus, separate to keep flow.** A modal task pairs the surface with a dimming scrim and pushes the background back/down. A parallel, non-blocking panel uses translucency and offset *without* a scrim so the flow isn't broken. For stacked sheets, progressively dim and push back each parent layer.
-- **Vibrancy keeps text legible over changing backgrounds.** Over blurred/translucent surfaces, don't use flat gray text — use higher-contrast, slightly heavier weight, and a small letter-spacing bump. Put color on a solid layer, not the translucent foreground.
-- **Scroll edge effects, not hard dividers.** Instead of a 1px border under a sticky header, fade a small blur/gradient mask where content meets floating chrome — only where floating UI actually overlaps content.
-- **Materialize, don't just fade.** For glass/blur surfaces, animate blur radius and scale together on enter/exit, so the surface reads as a real material arriving rather than a plain opacity fade.
+- **내비게이션/툴바/시트는 반투명 레이어로 만들고**(`backdrop-filter: blur()` + 반투명 배경) 콘텐츠가 그 밑으로 스크롤되게 한다. 고정된 띠를 차지하는 불투명 막대로 만들지 않는다.
+- **재질의 무게가 위계를 나타낸다:** 더 어둡고 무거운 재질은 구조 영역(사이드바)을 나누고, 더 가벼운 재질은 상호작용 요소(버튼)로 시선을 끈다. **가벼운 반투명 면 위에 또 다른 가벼운 반투명 면을 절대 겹치지 않는다.** 가독성이 무너진다.
+- **큰 면일수록 더 두껍게 보여야 한다:** 작은 칩보다 블러를 강하게 + 그림자를 깊게 준다. 맥락에 맞춘 그림자도 고려한다. 복잡한 콘텐츠나 텍스트 위에서는 구분되도록 더 진하게, 단순한 배경 위에서는 더 옅게 준다.
+- **집중시키려면 어둡게, 흐름을 지키려면 떼어 놓는다.** 모달 작업은 면에 어두운 스크림을 함께 깔고 배경을 뒤/아래로 밀어낸다. 흐름을 막지 않고 나란히 쓰는 패널은 스크림 *없이* 반투명과 오프셋만 써서 흐름이 끊기지 않게 한다. 시트가 겹치면 부모 레이어마다 점점 더 어둡게 하고 뒤로 민다.
+- **비브런시(vibrancy)는 바뀌는 배경 위에서도 텍스트를 읽기 쉽게 한다.** 블러가 걸린 반투명 면 위에는 밋밋한 회색 텍스트를 쓰지 않는다. 대비를 높이고, 굵기를 조금 올리고, 자간을 살짝 넓힌다. 색은 반투명 전경이 아니라 불투명 레이어에 둔다.
+- **딱딱한 구분선 대신 스크롤 가장자리 효과를 쓴다.** sticky 헤더 아래 1px 테두리 대신, 콘텐츠가 떠 있는 UI와 만나는 곳에 작은 블러/그라디언트 마스크를 흐리게 깐다. 떠 있는 UI가 실제로 콘텐츠와 겹치는 곳에만 쓴다.
+- **그냥 페이드하지 말고 재질이 생겨나게 한다.** 유리/블러 면은 등장과 퇴장에서 블러 반경과 크기를 함께 애니메이션한다. 그래야 면이 단순한 opacity 페이드가 아니라 실제 재질이 도착하는 것처럼 보인다.
 
 ```css
 .toolbar {
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(20px) saturate(180%);
-  border-top: 1px solid rgba(255, 255, 255, 0.4); /* bright top edge = light catching the material */
+  border-top: 1px solid rgba(255, 255, 255, 0.4); /* 밝은 위쪽 가장자리 = 재질에 빛이 맺힌 모습 */
 }
 ```
 
-## 13. Multimodal feedback — motion + sound + haptics
+## 13. 멀티모달 피드백: 모션 + 소리 + 햅틱
 
-Three rules for combining senses (from *Designing Audio-Haptic Experiences*):
+여러 감각을 함께 쓰는 규칙은 세 가지다(*Designing Audio-Haptic Experiences*에서).
 
-1. **Causality** — it must be obvious what caused the feedback. Trigger it on the actual causal event (the toggle flipping, the item snapping home), and match its character to the action's physicality.
-2. **Harmony** — the visual, the sound, and the haptic must fire on the **same frame**. Latency between them destroys the illusion. Don't let a CSS transition lag the audio/haptic (Vibration API).
-3. **Utility** — add feedback only where it earns its place. Reserve haptics/sound for meaningful moments (success, error, commit, snap). Over-feedback trains users to ignore all of it.
+1. **인과성(Causality)**: 무엇이 피드백을 일으켰는지 분명해야 한다. 실제 원인이 된 사건(토글이 넘어가는 순간, 항목이 제자리에 딱 맞는 순간)에 피드백을 일으키고 그 성격을 동작의 물리감에 맞춘다.
+2. **조화(Harmony)**: 시각, 소리, 햅틱은 **같은 프레임**에 나가야 한다. 그 사이에 지연이 있으면 환상이 깨진다. CSS 트랜지션이 소리/햅틱(Vibration API)보다 늦지 않게 한다.
+3. **유용성(Utility)**: 피드백은 제 몫을 하는 곳에만 넣는다. 햅틱/소리는 의미 있는 순간(성공, 오류, 확정, 스냅)에만 쓴다. 피드백이 지나치면 사용자는 피드백을 전부 무시하게 된다.
 
-## 14. Reduced motion & accessibility
+## 14. 동작 줄이기와 접근성
 
-Reduced motion doesn't mean *no* feedback — it means a gentler, non-vestibular equivalent. Respond to three independent signals and bake them into your components:
+동작 줄이기는 피드백을 *없앤다*는 뜻이 아니다. 더 부드럽고 전정 기관을 자극하지 않는 대체 피드백을 준다는 뜻이다. 서로 독립된 신호 세 가지에 반응하고 이를 컴포넌트에 처음부터 넣어 둔다.
 
-- **`prefers-reduced-motion: reduce`** — replace slides/springs/parallax with short opacity **cross-fades or static transitions**. Drop elastic/overshoot. Keep opacity/color changes that aid comprehension.
-- **`prefers-reduced-transparency: reduce`** — make translucent surfaces frostier/solid: raise background opacity, drop the blur.
-- **`prefers-contrast: more`** — near-solid backgrounds with a defined, contrasting border.
+- **`prefers-reduced-motion: reduce`**: 슬라이드/스프링/패럴랙스를 짧은 opacity **크로스페이드나 정적 전환**으로 바꾼다. 탄성/오버슈트는 뺀다. 이해를 돕는 opacity/색 변화는 남긴다.
+- **`prefers-reduced-transparency: reduce`**: 반투명 면을 더 뿌옇게 하거나 불투명하게 만든다. 배경 불투명도를 올리고 블러를 뺀다.
+- **`prefers-contrast: more`**: 거의 불투명한 배경에 또렷하고 대비되는 테두리를 쓴다.
 
-Also: avoid full-viewport moving backgrounds, slow looping oscillations (near 0.2 Hz / one cycle per 5s), and abrupt brightness jumps (ease dark↔light theme changes). Make large moving objects semi-transparent while they travel, and fade big surfaces out during a large reposition and back in once settled.
+그 밖에 뷰포트 전체를 채우며 움직이는 배경, 느리게 반복되는 진동(0.2 Hz 안팎, 5초에 한 주기), 갑작스러운 밝기 변화(다크↔라이트 테마 전환은 부드럽게)를 피한다. 크게 움직이는 물체는 이동하는 동안 반투명하게 하고, 큰 면은 위치가 크게 바뀌는 동안 페이드아웃했다가 자리를 잡으면 다시 페이드인한다.
 
 ```css
 @media (prefers-reduced-motion: reduce) {
@@ -223,68 +223,68 @@ Also: avoid full-viewport moving backgrounds, slow looping oscillations (near 0.
 }
 ```
 
-## 15. Typography — optical sizing, tracking, leading
+## 15. 타이포그래피: 광학 크기 조정, 자간, 행간
 
-Apple designs type to change shape with size; the same discipline applies on the web. (From *The Details of UI Typography*, WWDC 2020.)
+Apple은 글자가 크기에 따라 모양을 바꾸도록 디자인한다. 웹에도 같은 원칙이 적용된다. (*The Details of UI Typography*, WWDC 2020에서.)
 
-- **Tracking (letter-spacing) is size-specific — never one value for all sizes.** Large display text wants *negative* tracking (letters read too far apart as they grow); small text wants slightly *positive* tracking for legibility. A fixed `letter-spacing` is wrong somewhere. Tighten headings, leave body near `0`.
-- **Leading (line-height) tracks size inversely.** Tight on large headings, looser on body copy. Increase it for scripts with tall ascenders/descenders; tighten it for dense, information-heavy UI.
-- **Build hierarchy from weight + size + leading as a set,** not size alone. Emphasize with weight — it adds presence without taking more space.
-- **Respect the user's text-size setting** (Dynamic Type). Scale layout *with* the text — spacing in `rem`/`em`, not fixed px — so a larger font doesn't break the layout.
-- **Default to the platform's system font** before a custom face; it already ships optical sizing, tracking tables, and legibility tuning. Override only with a reason.
+- **자간(tracking, letter-spacing)은 크기마다 다르다. 모든 크기에 한 값을 절대 쓰지 않는다.** 큰 디스플레이 텍스트에는 *음수* 자간이 필요하다(글자가 커질수록 사이가 너무 벌어져 보인다). 작은 텍스트에는 가독성을 위해 살짝 *양수* 자간이 필요하다. 고정된 `letter-spacing`은 어딘가에서 틀린다. 제목은 좁히고 본문은 `0` 근처로 둔다.
+- **행간(leading, line-height)은 크기에 반비례한다.** 큰 제목에서는 좁게, 본문에서는 더 넓게 둔다. 어센더/디센더가 긴 문자 체계에서는 늘리고 정보가 빽빽한 UI에서는 좁힌다.
+- **크기 하나가 아니라 굵기 + 크기 + 행간을 한 묶음으로 써서 위계를 만든다.** 강조는 굵기로 한다. 공간을 더 차지하지 않고 존재감을 더한다.
+- **사용자의 글자 크기 설정을 존중한다**(Dynamic Type). 레이아웃을 텍스트와 *함께* 키운다(간격은 고정 px가 아니라 `rem`/`em`으로). 그래야 글꼴이 커져도 레이아웃이 깨지지 않는다.
+- **커스텀 서체보다 먼저 플랫폼의 시스템 글꼴을 기본으로 쓴다.** 시스템 글꼴에는 광학 크기 조정(optical sizing), 자간 표, 가독성 조정이 이미 들어 있다. 이유가 있을 때만 바꾼다.
 
 ```css
-:root { font: 100%/1.5 system-ui, sans-serif; } /* body: system font, comfortable leading */
+:root { font: 100%/1.5 system-ui, sans-serif; } /* 본문: 시스템 글꼴, 편안한 행간 */
 
 .display {
   font-size: clamp(2rem, 5vw, 4rem);
-  line-height: 1.05;        /* tight leading for large text */
-  letter-spacing: -0.02em;  /* negative tracking as it grows */
+  line-height: 1.05;        /* 큰 텍스트에는 좁은 행간 */
+  letter-spacing: -0.02em;  /* 커질수록 음수 자간 */
   font-optical-sizing: auto;
 }
 ```
 
-## 16. Design foundations — the eight principles
+## 16. 디자인 기초: 여덟 가지 원칙
 
-The motion and craft above serve Apple's eight design principles (*Principles of Great Design*, WWDC 2026). Use these as the names you reason with:
+위의 모션과 만듦새는 Apple의 여덟 가지 디자인 원칙(*Principles of Great Design*, WWDC 2026)을 위한 것이다. 판단할 때는 이 이름들로 생각한다.
 
-1. **Purpose.** Make with intention; decide what *not* to build. Every feature asks for the user's time, attention, and trust — spend that budget only where it pays off.
-2. **Agency.** Keep people in control: offer choices, don't force a single path. Back it with forgiveness — easy undo for slips, a confirmation dialog only for genuinely destructive, irreversible actions (use sparingly; overusing it trains people to click through).
-3. **Responsibility.** Act in the user's interest. Privacy: ask at the right moment, only for what's needed, transparently. Safety: anticipate misuse and harm — especially with AI (an allergy-aware recipe app must not suggest a harmful ingredient). Add previews, confirmations, disclaimers; cut a feature whose risk outweighs its value.
-4. **Familiarity.** Build on what people already know. Use metaphors that are neither too literal nor too abstract (a trash can means delete), and honor their physics. Be consistent: things that look the same must behave the same and live in the same place (close is always top-left on macOS) so people can predict what happens next. Only break a familiar pattern if you can prove it's better — then test it, don't assume.
-5. **Flexibility.** Design for different contexts, devices, and the full range of abilities. Adapt to the platform (iPhone = quick touch; desktop = deep workflows with precise pointer control) and to the situation. Design inclusively (age, language, expertise, accessibility). When no single layout fits everyone, let people personalize — rearrange controls, hide what they don't use.
-6. **Simplicity — not minimalism.** Strip the unnecessary so the core purpose shines; burying everything in one place looks minimal but isn't simple. Be concise (plain language, no jargon, fewer steps) and clear (use hierarchy — order, spacing, contrast — so the most important thing is the most obvious). Every element earns its place; sometimes *adding* context simplifies (a video scrubber that shows time remaining). Show the common path first, advanced options one level deeper.
-7. **Craft.** Uncompromising attention to detail builds trust. Beautiful typography, colors that adapt to light/dark, clear iconography, and responsive animations that give immediate, natural feedback. Nothing is random — every spacing, timing, and alignment value is a deliberate choice you can defend. Jittery scroll, misaligned icons, and layouts that break on rotation read as carelessness. Craft needs iteration and longevity — keep evolving the design as features and hardware change.
-8. **Delight.** The result of getting the other seven right, not confetti tacked on top. Decide the emotion you want people to feel (calm, confident, excited) and reinforce it in every decision.
+1. **목적(Purpose).** 의도를 갖고 만든다. 무엇을 만들지 *않을지* 정한다. 모든 기능은 사용자의 시간, 주의, 신뢰를 요구한다. 그 예산은 값어치를 하는 곳에만 쓴다.
+2. **주도권(Agency).** 사람이 통제권을 쥐게 한다. 선택지를 주고 한 가지 길을 강요하지 않는다. 실수 허용으로 이를 뒷받침한다. 실수는 쉽게 되돌리게 하고, 확인 대화상자는 정말로 파괴적이고 되돌릴 수 없는 동작에만 쓴다(아껴 쓴다. 남발하면 사람들이 읽지 않고 클릭해 넘기는 버릇이 든다).
+3. **책임(Responsibility).** 사용자에게 이로운 쪽으로 행동한다. 개인정보: 알맞은 때에, 필요한 것만, 투명하게 요청한다. 안전: 오용과 해를 미리 내다본다. AI라면 더 그렇다(알레르기를 고려하는 레시피 앱은 해로운 재료를 제안하면 안 된다). 미리 보기, 확인, 고지를 더한다. 위험이 가치보다 큰 기능은 뺀다.
+4. **친숙함(Familiarity).** 사람들이 이미 아는 것 위에 쌓는다. 너무 직설적이지도 너무 추상적이지도 않은 은유를 쓰고(휴지통은 삭제를 뜻한다), 그 은유의 물리 법칙을 지킨다. 일관성을 지킨다. 똑같아 보이는 것은 똑같이 동작하고 같은 자리에 있어야 한다(macOS에서 닫기는 늘 왼쪽 위다). 그래야 사람들이 다음에 무슨 일이 일어날지 예측할 수 있다. 익숙한 패턴은 더 낫다고 증명할 수 있을 때만 깬다. 그때도 짐작하지 말고 테스트한다.
+5. **유연성(Flexibility).** 서로 다른 맥락과 기기, 그리고 능력이 저마다 다른 모든 사람을 위해 디자인한다. 플랫폼(iPhone = 빠른 터치, 데스크톱 = 정밀한 포인터 조작이 따르는 깊은 작업 흐름)과 상황에 맞춘다. 포용적으로 디자인한다(나이, 언어, 숙련도, 접근성). 한 가지 레이아웃이 모두에게 맞지 않으면 사람들이 직접 맞추게 한다. 컨트롤을 재배치하고 쓰지 않는 것은 숨기게 한다.
+6. **단순함(Simplicity), 미니멀리즘이 아니다.** 불필요한 것을 걷어 내 핵심 목적이 드러나게 한다. 모든 것을 한곳에 묻어 두면 미니멀해 보이지만 단순하지는 않다. 간결하게(쉬운 말, 전문 용어 없이, 더 적은 단계), 그리고 명확하게(순서, 간격, 대비 같은 위계를 써서 가장 중요한 것이 가장 눈에 띄게) 만든다. 모든 요소는 제자리를 스스로 증명해야 한다. 때로는 맥락을 *더하는* 것이 단순하게 만든다(남은 시간을 보여 주는 동영상 탐색 막대). 흔한 경로를 먼저 보여 주고 고급 옵션은 한 단계 안쪽에 둔다.
+7. **만듦새(Craft).** 디테일에 타협 없이 기울인 주의가 신뢰를 쌓는다. 아름다운 타이포그래피, 라이트/다크에 맞춰 바뀌는 색, 명확한 아이콘, 즉각적이고 자연스러운 피드백을 주는 반응성 좋은 애니메이션이 그렇다. 아무것도 무작위가 아니다. 간격, 타이밍, 정렬 값 하나하나가 근거를 댈 수 있는 의도된 선택이다. 떨리는 스크롤, 어긋난 아이콘, 화면을 돌리면 깨지는 레이아웃은 부주의로 읽힌다. 만듦새에는 반복과 긴 호흡이 필요하다. 기능과 하드웨어가 바뀌면 디자인도 계속 발전시킨다.
+8. **즐거움(Delight).** 나머지 일곱 가지를 제대로 해낸 결과이지, 위에 덧붙인 색종이 조각이 아니다. 사람들이 느끼기를 바라는 감정(차분함, 자신감, 설렘)을 정하고 모든 결정에서 그 감정을 강화한다.
 
-Tactical rules that serve these:
+이 원칙들을 받치는 실전 규칙은 다음과 같다.
 
-- **Feedback comes in four kinds:** status, completion, warning, error. Confirm meaningful actions, expose ongoing status, warn before problems, validate inline (not on submit).
-- **Wayfinding.** Every screen should answer: Where am I? Where can I go? What's there? How do I get out? Never trap the user.
-- **Grouping & mapping.** Proximity implies relationship; place a control near what it affects and arrange controls to mirror what they change. If you need a label to explain a control, the mapping is weak.
-- **Direct, specific labels beat safe generic ones.** Name nav items for their contents ("Progress", "Library"), not vague umbrellas ("Home"). Specificity creates predictability.
+- **피드백은 네 종류다:** 상태, 완료, 경고, 오류. 의미 있는 동작은 확인해 주고, 진행 중인 상태는 드러내고, 문제가 생기기 전에 경고하고, 검증은 제출할 때가 아니라 입력하는 자리에서 한다.
+- **길 찾기.** 모든 화면은 이 질문에 답해야 한다. 나는 어디에 있나? 어디로 갈 수 있나? 거기에 무엇이 있나? 어떻게 나가나? 사용자를 절대 가두지 않는다.
+- **묶기와 매핑.** 가까이 있으면 관계가 있다는 뜻이다. 컨트롤은 그것이 영향을 주는 대상 가까이에 두고, 바꾸는 대상의 배치를 따라 컨트롤을 배열한다. 컨트롤을 설명하는 라벨이 필요하다면 매핑이 약한 것이다.
+- **직접적이고 구체적인 라벨이 무난하고 일반적인 라벨보다 낫다.** 내비게이션 항목은 막연한 포괄 이름("홈")이 아니라 내용에 맞춰("진행", "보관함") 짓는다. 구체성이 예측 가능성을 만든다.
 
-## 17. Process
+## 17. 작업 과정
 
-- **Prototype interactively — an interactive demo is worth "a million static designs."** You discover the interface by building and playing with it; a working prototype also sets a concrete bar that prevents a mediocre final implementation.
-- **Design interaction and visuals together.** "You shouldn't be able to tell where one ends and the other begins." Motion is not a layer added after the pixels.
-- **Test with real people in real context**, and review motion with fresh eyes — play it in slow motion / frame-by-frame to catch what's invisible at full speed.
+- **상호작용하는 프로토타입을 만든다. 상호작용하는 데모 하나는 "정적인 디자인 백만 개"의 값어치가 있다.** 인터페이스는 만들고 만져 보면서 발견한다. 동작하는 프로토타입은 구체적인 기준도 세워 주어 최종 구현이 평범해지는 것을 막는다.
+- **상호작용과 시각 요소를 함께 디자인한다.** "어디서 하나가 끝나고 다른 하나가 시작되는지 알 수 없어야 한다." 모션은 픽셀을 다 그린 뒤에 얹는 레이어가 아니다.
+- **실제 사람과 실제 맥락에서 테스트하고**, 모션은 새로운 눈으로 리뷰한다. 슬로 모션이나 프레임 단위로 재생해 정상 속도에서는 보이지 않는 것을 잡는다.
 
-## Quick Reference
+## 빠른 참조
 
-| Need | Technique | Concrete value |
+| 필요 | 기법 | 구체적인 값 |
 | --- | --- | --- |
-| Default UI spring | Critically damped, no overshoot | `damping 1.0`, `response 0.3–0.4` |
-| Momentum / flick spring | Under-damped, slight bounce | `damping ~0.8`, `response 0.3–0.4` |
-| Gesture → spring velocity | Hand off release velocity | `gestureVelocity / (target − current)` if normalized |
-| Flick landing point | Project momentum | `current + (v/1000)·d/(1−d)`, `d ≈ 0.998` |
-| Interrupt cleanly | Start from presentation (live) value | read the on-screen transform |
-| Avoid reversal "brick wall" | Carry velocity through re-target | spring that blends velocity |
-| Reversible transition | Mirror the easing curve | inverse cubic-bézier |
-| Decide reverse vs. commit | Use velocity **sign**, not position | at release |
-| 1:1 drag | Pointer Events + capture | respect the grab offset |
-| Feedback | On pointer-down, continuous | never only at the end |
-| Boundary | Rubber-band, don't hard-stop | progressive resistance |
-| Translucent chrome | `backdrop-filter` layer | content scrolls under |
-| Type tracking | Size-specific, never fixed | tighten large text (`-0.02em`), body near `0` |
-| Reduced motion | Cross-fade, not slide/spring | `@media (prefers-reduced-motion)` |
+| 기본 UI 스프링 | 임계 감쇠, 오버슈트 없음 | `damping 1.0`, `response 0.3–0.4` |
+| 관성 / 플릭 스프링 | 저감쇠, 약간의 바운스 | `damping ~0.8`, `response 0.3–0.4` |
+| 제스처 → 스프링 속도 | 놓을 때의 속도를 넘김 | 정규화한다면 `gestureVelocity / (target − current)` |
+| 플릭 도착 지점 | 관성 예측 | `current + (v/1000)·d/(1−d)`, `d ≈ 0.998` |
+| 깔끔하게 중단 | 프레젠테이션(현재) 값에서 시작 | 화면에 그려진 transform 읽기 |
+| 방향 전환 시 "벽돌 벽" 피하기 | 목표를 다시 잡을 때 속도 이어 가기 | 속도를 섞는 스프링 |
+| 되돌릴 수 있는 전환 | 이징 곡선을 거울처럼 뒤집기 | 역 cubic-bézier |
+| 되돌릴지 확정할지 결정 | 위치가 아니라 속도의 **부호**로 판단 | 놓는 순간 |
+| 1:1 드래그 | Pointer Events + 캡처 | 잡은 위치 오프셋 존중 |
+| 피드백 | pointer-down에서, 계속 이어지게 | 끝에서만 주지 않음 |
+| 경계 | 러버밴딩, 급정지 금지 | 점진적 저항 |
+| 반투명 UI | `backdrop-filter` 레이어 | 콘텐츠가 그 밑으로 스크롤 |
+| 자간 | 크기마다 다르게, 절대 고정하지 않음 | 큰 텍스트는 좁힘(`-0.02em`), 본문은 `0` 근처 |
+| 동작 줄이기 | 슬라이드/스프링 대신 크로스페이드 | `@media (prefers-reduced-motion)` |

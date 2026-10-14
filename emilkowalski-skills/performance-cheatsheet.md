@@ -1,14 +1,14 @@
-# Performance Cheatsheet
+# 성능 치트시트
 
-| Problem                             | Solution                                                  |
+| 문제                                | 해결                                                      |
 | ----------------------------------- | --------------------------------------------------------- |
-| Animation stutters                  | Animate `transform`/`opacity`, not `width`/`top`          |
-| Long list scrolls slowly            | Virtualize — only render what's visible                   |
-| Blur causes perf issues             | Keep animated `blur()` under 20px                         |
-| Motion's `x`/`y` drops frames       | Animate the full `transform` string instead               |
-| Random properties animate           | Don't do `transition: all`, list exact properties         |
-| React re-renders every frame        | Write to `ref.current.style`, not state                   |
-| Element shifts 1px as motion starts | `will-change: transform` (only once you see it)           |
+| 애니메이션이 끊김                   | `width`/`top`이 아니라 `transform`/`opacity`를 애니메이션 |
+| 긴 목록의 스크롤이 느림             | 가상화(보이는 것만 렌더링)                                |
+| 블러가 성능 문제를 일으킴           | 애니메이션하는 `blur()`는 20px 미만으로 유지              |
+| Motion의 `x`/`y`가 프레임을 놓침    | 대신 `transform` 문자열 전체를 애니메이션                 |
+| 엉뚱한 속성까지 애니메이션됨        | `transition: all`은 쓰지 않고 속성을 정확히 나열          |
+| React가 프레임마다 다시 렌더링함    | 상태가 아니라 `ref.current.style`에 씀                    |
+| 모션이 시작될 때 요소가 1px 밀림    | `will-change: transform` (밀림이 실제로 보일 때만)        |
 
 
 

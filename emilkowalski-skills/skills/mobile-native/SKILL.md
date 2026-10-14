@@ -1,62 +1,62 @@
 ---
 name: mobile-native
-description: Make a web app feel native on a phone — the small CSS and meta-tag fixes that separate "a website in a browser" from something that feels installed. Covers sticky hover states, tap highlight flashes, the 100vh bug, inputs that zoom the page, laggy taps, pull-to-refresh hijacking scroll, content under the notch, long-press selecting button text, carousels that scroll the wrong way, mismatched status bars, and the rule that you test on real hardware. Use when a web app is being built for or reviewed on mobile, when something "works in Chrome but feels wrong on my phone", when building a PWA, a bottom sheet, a carousel, a full-screen layout, or any touch interaction. For motion itself use animate; for React Native use animate-expo.
+description: 웹 앱이 휴대폰에서 네이티브 앱처럼 느껴지게 만든다. "브라우저 안의 웹사이트"와 설치된 앱처럼 느껴지는 것을 가르는 작은 CSS와 메타 태그 수정이 대상이다. 탭한 뒤 남는 hover 상태, 탭 하이라이트 깜빡임, 100vh 버그, 페이지를 확대하는 입력 필드, 반응이 늦은 탭, 스크롤을 가로채는 당겨서 새로 고침, 노치 아래의 콘텐츠, 길게 누르면 선택되는 버튼 글자, 엉뚱한 방향으로 스크롤되는 캐러셀, 맞지 않는 상태 표시줄, 실제 기기에서 테스트한다는 규칙까지 다룬다. 웹 앱을 모바일용으로 만들거나 모바일에서 리뷰할 때, "works in Chrome but feels wrong on my phone"(Chrome에선 되는데 폰에서는 느낌이 이상해) 같은 일이 생길 때, PWA, 바텀 시트, 캐러셀, 전체 화면 레이아웃, 터치 상호작용을 만들 때 쓴다. 모션 자체에는 animate를, React Native에는 animate-expo를 쓴다.
 ---
 
-# Feeling Native On Mobile
+# 모바일에서 네이티브처럼 느껴지게 하기
 
-## Initial Response
+## 첫 응답
 
-When this skill is first invoked without a specific question, respond only with:
+구체적인 질문 없이 이 스킬이 처음 호출되면 다음 내용으로만 답한다.
 
-> I'm ready to make your web app feel native on mobile, my knowledge comes from Emil Kowalski's design engineering philosophy.
+> 웹 앱이 모바일에서 네이티브 앱처럼 느껴지게 만들 준비가 됐습니다. Emil Kowalski의 디자인 엔지니어링 철학을 바탕으로 합니다.
 
-Do not provide any other information until the user asks a question.
+사용자가 질문하기 전에는 다른 정보를 주지 않는다.
 
-A fix-it skill. It does ONE thing: take a web app that feels like a website on a phone and remove, one by one, the tells that give it away. It does not design motion (that's `animate`), review motion (that's `review-animations`), or build for React Native (that's `animate-expo`). The rules here are about the platform layer — viewport, touch, scroll, safe areas, the browser chrome — where a handful of lines decide whether the app feels installed or embedded.
+고치는 스킬이다. 하는 일은 **하나**다. 휴대폰에서 웹사이트처럼 느껴지는 웹 앱을 받아, 웹사이트라는 정체를 드러내는 티를 하나씩 없앤다. 모션 설계(`animate`가 맡는다), 모션 리뷰(`review-animations`가 맡는다), React Native용 개발(`animate-expo`가 맡는다)은 하지 않는다. 여기 규칙은 플랫폼 계층(뷰포트, 터치, 스크롤, 안전 영역, 브라우저 UI)을 다룬다. 이 계층에서는 코드 몇 줄로 앱이 설치된 것처럼 느껴질지, 브라우저 안에 끼워 넣은 것처럼 느껴질지가 갈린다.
 
-## Operating Posture
+## 작업 태도
 
-You are a senior design engineer who has shipped drawers, sheets, and gesture-driven UI to real phones and has been burned by every item below. You know that a desktop browser with the device toolbar on is not a phone. You know that most "the app feels janky on mobile" reports are not animation problems — they're a 300ms tap delay, a gray flash on tap, or a hover state that won't let go.
+드로어, 시트, 제스처로 움직이는 UI를 실제 휴대폰에 내보냈고 아래 항목 하나하나에 데어 본 시니어 디자인 엔지니어로 일한다. 기기 툴바를 켠 데스크톱 브라우저가 휴대폰이 아니라는 것을 안다. "모바일에서 앱이 버벅인다"는 보고 대부분이 애니메이션 문제가 아니라는 것도 안다. 대개는 300ms 탭 지연, 탭할 때 번쩍이는 회색, 풀리지 않는 hover 상태다.
 
-The user's phone is the source of truth. If you can't run it on hardware, say which of the fixes below you can verify from code and which need a real device.
+기준은 사용자의 휴대폰이다. 실제 기기에서 돌려 볼 수 없으면, 아래 수정 중 어느 것을 코드로 확인할 수 있고 어느 것에 실제 기기가 필요한지 말한다.
 
-Two failure modes, and the first is worse:
+실패 유형은 두 가지이고, 첫 번째가 더 나쁘다.
 
-1. **Fixing what the desktop shows you.** The bugs in this skill don't reproduce in Chrome's device emulation. If you only test there, you ship all of them.
-2. **Reaching for JavaScript when CSS or a meta tag does it.** Almost every item here is one declaration. A `useIsTouchDevice()` hook to hide hover states is the wrong tool; a media query is the right one.
+1. **데스크톱이 보여 주는 것만 고친다.** 이 스킬이 다루는 버그는 Chrome 기기 에뮬레이션에서 재현되지 않는다. 거기서만 테스트하면 버그를 전부 그대로 내보낸다.
+2. **CSS나 메타 태그로 되는 일에 JavaScript를 꺼낸다.** 여기 나오는 항목은 거의 다 선언 한 줄이다. hover 상태를 숨기려고 `useIsTouchDevice()` 훅을 쓰는 것은 잘못된 도구다. 맞는 도구는 미디어 쿼리다.
 
-## Hard Rules
+## 철칙
 
-1. **Every fix ships with the reason.** Each rule below has a *why*. Apply it where the why applies, not globally out of habit — `user-select: none` on body text is a defect, on a button it's correct.
-2. **Media queries over device sniffing.** `(hover: hover)`, `(pointer: fine)`, `env()`, `dvh` — the platform tells you what it can do. Never branch on user agent strings or screen width to guess at touch.
-3. **Touch and mouse are not exclusive.** iPads with trackpads, laptops with touchscreens, phones with a mouse. Write for both at once; gate by capability, not by device.
-4. **Never disable zoom.** `user-scalable=no` and `maximum-scale=1` are accessibility failures. Fix the input font size instead, which is what was causing the zoom.
-5. **Test on hardware before calling it done.** Connect the phone, open the dev server by IP, use Safari's Web Inspector or Chrome remote debugging. Emulation cannot reproduce sticky hover, tap delay, rubber-banding, safe areas, or the keyboard.
+1. **모든 수정에는 이유를 붙여 내보낸다.** 아래 규칙에는 저마다 *이유*가 있다. 습관처럼 전역에 적용하지 말고 그 이유가 들어맞는 곳에 적용한다. 본문 텍스트에 `user-select: none`을 주면 결함이고 버튼에 주면 맞다.
+2. **기기 스니핑보다 미디어 쿼리.** 플랫폼은 `(hover: hover)`, `(pointer: fine)`, `env()`, `dvh`로 자기가 무엇을 할 수 있는지 알려 준다. 터치 여부를 짐작하려고 user agent 문자열이나 화면 너비로 절대 분기하지 않는다.
+3. **터치와 마우스는 배타적이지 않다.** 트랙패드를 단 iPad, 터치스크린 노트북, 마우스를 연결한 휴대폰이 있다. 둘을 한꺼번에 고려해 쓴다. 기기가 아니라 기능으로 제한한다.
+4. **확대를 절대 막지 않는다.** `user-scalable=no`와 `maximum-scale=1`은 접근성 실패다. 대신 확대를 일으킨 진짜 원인인 입력 필드 글꼴 크기를 고친다.
+5. **끝났다고 하기 전에 실제 기기에서 테스트한다.** 휴대폰을 연결하고 IP로 개발 서버를 연 뒤 Safari의 Web Inspector나 Chrome 원격 디버깅을 쓴다. 에뮬레이션은 풀리지 않는 hover, 탭 지연, 러버밴딩(rubber-banding), 안전 영역, 키보드를 재현하지 못한다.
 
-## The Symptom Table
+## 증상 표
 
-Start here. Match what the user is seeing, then read the matching section for the why and the exact code.
+여기서 시작한다. 사용자가 보는 증상을 표에서 찾은 뒤, 해당 절에서 이유와 정확한 코드를 읽는다.
 
-| Problem | Solution |
+| 문제 | 해결 |
 | --- | --- |
-| Hover state stuck after tap | Wrap in `@media (hover: hover) and (pointer: fine)` |
-| Gray/blue flash on tap | Kill `-webkit-tap-highlight-color` |
-| Layout has wrong height | `100dvh` (app) or `100svh` (hero) |
-| Page zooms into input | Input font size 16px at the minimum |
-| Tap feels laggy | Feedback on pointer-down + `touch-action: manipulation` |
-| Pull-to-refresh hijacks scroll | `overscroll-behavior: none` on `html, body` |
-| Content stops at the notch | `viewport-fit=cover` + `env(safe-area-inset-*)` |
-| Long-press selects button text | Add `user-select: none` |
-| Carousel scrolls vertically | `touch-action: pan-y` on the gesture surface |
-| Status bar color doesn't match | `theme-color` per color scheme |
-| Right in Chrome, wrong on phone | Test on real hardware |
+| 탭한 뒤 남는 hover 상태 | `@media (hover: hover) and (pointer: fine)`로 감싸기 |
+| 탭할 때 번쩍이는 회색/파란색 | `-webkit-tap-highlight-color` 없애기 |
+| 틀린 레이아웃 높이 | `100dvh`(앱) 또는 `100svh`(히어로) |
+| 입력 필드로 확대되는 페이지 | 입력 필드 글꼴 크기 최소 16px |
+| 반응이 늦은 탭 | pointer-down 시점의 피드백 + `touch-action: manipulation` |
+| 스크롤을 가로채는 당겨서 새로 고침 | `html, body`에 `overscroll-behavior: none` |
+| 노치 앞에서 멈추는 콘텐츠 | `viewport-fit=cover` + `env(safe-area-inset-*)` |
+| 길게 누르면 선택되는 버튼 글자 | `user-select: none` 추가 |
+| 세로로 스크롤되는 캐러셀 | 제스처 영역에 `touch-action: pan-y` |
+| 맞지 않는 상태 표시줄 색 | 색 구성표마다 `theme-color` |
+| Chrome에서는 맞고 휴대폰에서는 어긋남 | 실제 기기에서 테스트 |
 
-## The Fixes
+## 수정 방법
 
-### 1. Hover state stuck after tap
+### 1. 탭한 뒤 남는 hover 상태
 
-Touch has no hover, so browsers fake one: the first tap on an element applies `:hover` and leaves it there until the user taps somewhere else. A button that scales up on hover stays scaled up after being tapped. Gate every hover style behind a capability query.
+터치에는 hover가 없어서 브라우저가 흉내를 낸다. 요소를 처음 탭하면 `:hover`가 적용되고 사용자가 다른 곳을 탭할 때까지 그대로 남는다. hover 때 커지는 버튼은 탭한 뒤에도 커진 채로 있다. 모든 hover 스타일은 기능 쿼리로 제한한다.
 
 ```css
 @media (hover: hover) and (pointer: fine) {
@@ -67,13 +67,13 @@ Touch has no hover, so browsers fake one: the first tap on an element applies `:
 }
 ```
 
-Both conditions matter. `(hover: hover)` means the primary input can hover. `(pointer: fine)` means it's precise, like a mouse — it rules out styluses and the odd Android device that claims hover support. In Tailwind v4 the `hover:` variant already compiles to `@media (hover: hover)`; in v3 set `future.hoverOnlyWhenSupported`.
+두 조건 모두 중요하다. `(hover: hover)`는 주 입력 장치가 hover할 수 있다는 뜻이다. `(pointer: fine)`은 마우스처럼 정밀하다는 뜻이다. 이 조건이 스타일러스를 걸러 내고, hover를 지원한다고 주장하는 드문 Android 기기도 걸러 낸다. Tailwind v4에서는 `hover:` 변형이 이미 `@media (hover: hover)`로 컴파일된다. v3에서는 `future.hoverOnlyWhenSupported`를 설정한다.
 
-Touch users still need press feedback. Give it to them through `:active` (see §5), which works on every input type.
+터치 사용자에게도 누름 피드백은 필요하다. 모든 입력 방식에서 동작하는 `:active`로 준다(§5 참고).
 
-### 2. Gray/blue flash on tap
+### 2. 탭할 때 번쩍이는 회색/파란색
 
-iOS Safari and Android Chrome paint a translucent highlight over any tapped element that has a click handler. It's the single loudest "this is a website" signal, and it fights whatever press feedback you designed.
+iOS Safari와 Android Chrome은 클릭 핸들러가 있는 요소를 탭하면 그 위에 반투명한 하이라이트를 칠한다. "이건 웹사이트다"라고 가장 크게 외치는 신호이고 직접 설계한 누름 피드백과 충돌한다.
 
 ```css
 html {
@@ -81,33 +81,33 @@ html {
 }
 ```
 
-Set it once, globally. Then make sure every tappable element has its own `:active` state, because you've just removed the only feedback the browser was giving.
+전역에 한 번만 설정한다. 그런 다음 탭할 수 있는 모든 요소에 자체 `:active` 상태가 있는지 확인한다. 브라우저가 주던 유일한 피드백을 방금 없앴기 때문이다.
 
-### 3. Layout has the wrong height
+### 3. 틀린 레이아웃 높이
 
-`100vh` on mobile is the *largest* viewport — the height with the browser chrome collapsed. On page load the URL bar is visible, so a `100vh` element overflows by the height of that bar, and a bottom-pinned button sits under it. Use the dynamic and small units instead:
+모바일에서 `100vh`는 *가장 큰* 뷰포트, 즉 브라우저 UI가 접혔을 때의 높이다. 페이지를 불러올 때는 주소창이 보이므로 `100vh` 요소는 주소창 높이만큼 넘치고 아래쪽에 고정한 버튼은 주소창에 가려진다. 대신 동적 단위와 작은 단위를 쓴다.
 
 ```css
-/* App shell, drawers, anything that should track the visible area as chrome shows/hides */
+/* 앱 셸, 드로어 등 브라우저 UI가 나타나고 사라질 때 보이는 영역을 따라가야 하는 모든 것 */
 .app { height: 100dvh; }
 
-/* Heroes and first screens — the smallest the viewport gets, so nothing is ever cut off */
+/* 히어로와 첫 화면. 뷰포트의 가장 작은 크기라서 어떤 것도 잘리지 않는다 */
 .hero { min-height: 100svh; }
 ```
 
-`dvh` resizes as the URL bar collapses, which is right for an app shell but causes layout shifts on marketing content mid-scroll. `svh` is stable and never overflows, which is right for a hero. `lvh` is the old `vh` — you almost never want it. Keep a `100vh` fallback line above for old browsers only if the project's support matrix demands it.
+`dvh`는 주소창이 접히면서 크기가 바뀐다. 앱 셸에는 맞지만 마케팅 콘텐츠에서는 스크롤 도중 레이아웃이 밀린다. `svh`는 안정적이고 절대 넘치지 않아서 히어로에 맞다. `lvh`는 예전 `vh`와 같다. 쓸 일이 거의 없다. 오래된 브라우저용 `100vh` 대체 줄은 프로젝트의 지원 범위가 요구할 때만 위에 둔다.
 
-### 4. Page zooms into the input
+### 4. 입력 필드로 확대되는 페이지
 
-iOS Safari zooms the page when focus lands on an input whose font size is under 16px, and it does not zoom back out on blur. The user is left looking at a cropped, drifted layout. This is the reason people reach for `maximum-scale=1`, which is the wrong fix (Hard Rule 4).
+iOS Safari는 글꼴 크기가 16px 미만인 입력 필드에 포커스가 가면 페이지를 확대하고 포커스가 빠져도 다시 축소하지 않는다. 사용자는 잘리고 옆으로 밀린 레이아웃을 보게 된다. 사람들이 `maximum-scale=1`을 꺼내는 이유가 이것이다. 하지만 잘못된 수정이다(철칙 4).
 
 ```css
 input, textarea, select {
-  font-size: 16px; /* the minimum; 1rem at the default root size */
+  font-size: 16px; /* 최솟값, 기본 루트 크기에서 1rem */
 }
 ```
 
-If the design calls for smaller text in inputs on desktop, scale it up only where it matters:
+디자인상 데스크톱 입력 필드에 더 작은 글자가 필요하면, 필요한 곳에서만 키운다.
 
 ```css
 @media (pointer: coarse) {
@@ -115,13 +115,13 @@ If the design calls for smaller text in inputs on desktop, scale it up only wher
 }
 ```
 
-While you're in the inputs, set the keyboard: `inputmode="numeric"` for codes, `inputmode="decimal"` for amounts, `type="email"` and `type="tel"` for their fields, `autocapitalize="none"` and `autocorrect="off"` on usernames and codes, `enterkeyhint="send"` / `"search"` / `"done"` so the return key says what it does.
+입력 필드를 손보는 김에 키보드도 맞춘다. 인증 코드에는 `inputmode="numeric"`, 금액에는 `inputmode="decimal"`, 이메일 필드와 전화번호 필드에는 각각 `type="email"`과 `type="tel"`, 사용자 이름과 인증 코드에는 `autocapitalize="none"`과 `autocorrect="off"`를 쓴다. 리턴 키가 하는 일을 보여 주도록 `enterkeyhint="send"` / `"search"` / `"done"`도 쓴다.
 
-### 5. Tap feels laggy
+### 5. 반응이 늦은 탭
 
-Two separate causes stack here.
+서로 다른 두 원인이 겹친다.
 
-**The 300ms click delay.** Browsers wait after a tap to see whether a second tap is coming, because double-tap zooms. Modern browsers skip the wait when the viewport is `width=device-width`, but not in every case (iOS Safari still delays on some elements). `touch-action: manipulation` tells the browser this element never double-tap-zooms, so it fires `click` immediately:
+**300ms 클릭 지연.** 두 번 탭하면 확대되므로, 브라우저는 탭한 뒤 두 번째 탭이 오는지 기다린다. 최신 브라우저는 뷰포트가 `width=device-width`로 설정되어 있으면 기다리지 않지만 모든 경우는 아니다(iOS Safari는 일부 요소에서 아직 지연한다). `touch-action: manipulation`은 이 요소가 두 번 탭으로 확대되는 일이 없다고 브라우저에 알려서 `click`이 바로 발생하게 한다.
 
 ```css
 button, a, [role="button"], .tappable {
@@ -129,7 +129,7 @@ button, a, [role="button"], .tappable {
 }
 ```
 
-**Feedback on release instead of press.** Native buttons respond the instant your finger lands. A web button that only changes on `click` responds when your finger *leaves*, which reads as lag even at 0ms. Style `:active`, and if you need JavaScript, listen to `pointerdown`, not `click`:
+**누를 때가 아니라 뗄 때 오는 피드백.** 네이티브 버튼은 손가락이 닿는 순간 반응한다. `click`에서만 바뀌는 웹 버튼은 손가락이 *떨어질 때* 반응하므로, 0ms여도 지연으로 느껴진다. `:active`에 스타일을 주고 JavaScript가 필요하면 `click`이 아니라 `pointerdown`에 리스너를 단다.
 
 ```css
 .button {
@@ -141,11 +141,11 @@ button, a, [role="button"], .tappable {
 }
 ```
 
-Keep press feedback at 100–160ms and `ease-out`. If the codebase uses the `animate` skill's tokens, use them; don't fork a new curve.
+누름 피드백은 100–160ms와 `ease-out`으로 유지한다. 코드베이스가 `animate` 스킬의 토큰을 쓰고 있으면 그 토큰을 쓴다. 새 곡선을 따로 만들지 않는다.
 
-### 6. Pull-to-refresh hijacks scroll
+### 6. 스크롤을 가로채는 당겨서 새로 고침
 
-Scrolling past the top of the page triggers pull-to-refresh on Android Chrome and the whole-page rubber band on iOS. Fine on a document. Wrong in an app with its own scroll containers, a drawer the user drags down, or a canvas.
+페이지 맨 위를 넘어 스크롤하면 Android Chrome에서는 당겨서 새로 고침이, iOS에서는 페이지 전체 러버밴딩이 일어난다. 문서라면 괜찮다. 자체 스크롤 컨테이너가 있는 앱, 사용자가 아래로 끌어내리는 드로어, 캔버스라면 잘못된 동작이다.
 
 ```css
 html, body {
@@ -153,7 +153,7 @@ html, body {
 }
 ```
 
-Then, on any inner scrollable — a sheet's content, a chat list, a sidebar — stop scroll from chaining to the page when it hits the end:
+그런 다음 안쪽의 스크롤 영역(시트 내용, 채팅 목록, 사이드바)마다 끝에 닿았을 때 스크롤이 페이지로 이어지지 않게 막는다.
 
 ```css
 .sheet-content {
@@ -162,11 +162,11 @@ Then, on any inner scrollable — a sheet's content, a chat list, a sidebar — 
 }
 ```
 
-`contain` keeps the container's own bounce (which feels native) but stops the page behind it from moving. Use `none` on the root, `contain` on children. Never reach for a `touchmove` + `preventDefault()` listener for this — it blocks scrolling entirely and makes the listener non-passive, which costs frames.
+`contain`은 컨테이너 자체의 바운스(네이티브처럼 느껴진다)는 남기고 뒤의 페이지가 움직이지 않게 한다. 루트에는 `none`, 자식에는 `contain`을 쓴다. 이 목적으로 `touchmove` + `preventDefault()` 리스너를 절대 쓰지 않는다. 스크롤을 완전히 막고 리스너를 passive가 아니게 만들어 프레임을 놓친다.
 
-### 7. Content stops at the notch
+### 7. 노치 앞에서 멈추는 콘텐츠
 
-By default the browser letterboxes your page inside the safe area, leaving the notch, Dynamic Island, and home-indicator zones the body's background color. A native app paints edge to edge and pads its *content* away from those zones. Two steps:
+브라우저는 기본적으로 페이지를 안전 영역 안에 레터박스로 넣는다. 그래서 노치, Dynamic Island, 홈 인디케이터 영역은 body의 배경색으로 남는다. 네이티브 앱은 화면 가장자리까지 칠하고 *콘텐츠*만 그 영역에서 떨어지게 여백을 준다. 두 단계로 한다.
 
 ```html
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -184,45 +184,45 @@ By default the browser letterboxes your page inside the safe area, leaving the n
 }
 ```
 
-`viewport-fit=cover` lets the page under the notch; `env(safe-area-inset-*)` gives you the insets to pad back out. Without the meta tag the `env()` values are all `0px`. Fixed headers, bottom tab bars, toasts, and sheets are the elements that need this; normal page content usually gets it for free through the header's padding. Give `env()` a fallback (`env(safe-area-inset-bottom, 0px)`) when the value is used in a calc.
+`viewport-fit=cover`는 페이지를 노치 아래까지 펼친다. `env(safe-area-inset-*)`는 다시 안쪽으로 여백을 줄 인셋 값을 알려 준다. 메타 태그가 없으면 `env()` 값은 모두 `0px`이다. 이 처리가 필요한 요소는 고정 헤더, 하단 탭 바, 토스트, 시트다. 일반 페이지 콘텐츠는 보통 헤더의 패딩 덕분에 따로 할 일이 없다. 값을 calc 안에서 쓸 때는 `env()`에 대체값(`env(safe-area-inset-bottom, 0px)`)을 준다.
 
-### 8. Long-press selects button text
+### 8. 길게 누르면 선택되는 버튼 글자
 
-Hold a finger on a web button and iOS selects its label, or pops the copy/share callout on a link. Native controls never do that. Text that is a *control* shouldn't be selectable; text that is *content* must stay selectable.
+웹 버튼에 손가락을 대고 있으면 iOS가 버튼 글자를 선택하거나 링크라면 복사/공유 콜아웃을 띄운다. 네이티브 컨트롤은 절대 그러지 않는다. *컨트롤*인 텍스트는 선택되면 안 된다. *콘텐츠*인 텍스트는 반드시 선택할 수 있어야 한다.
 
 ```css
 button, [role="button"], .tab, .chip, .drag-handle {
   user-select: none;
-  -webkit-user-select: none;   /* Safari still needs the prefix */
-  -webkit-touch-callout: none; /* no long-press callout on links/images used as controls */
+  -webkit-user-select: none;   /* Safari는 아직 접두사가 필요하다 */
+  -webkit-touch-callout: none; /* 컨트롤로 쓰는 링크/이미지에는 길게 누르기 콜아웃을 띄우지 않는다 */
 }
 ```
 
-Never put `user-select: none` on `body`. Users copy addresses, error messages, and order numbers; that is content.
+`body`에 `user-select: none`을 절대 넣지 않는다. 사용자는 주소, 오류 메시지, 주문 번호를 복사한다. 그것은 콘텐츠다.
 
-### 9. Carousel scrolls vertically
+### 9. 세로로 스크롤되는 캐러셀
 
-A horizontal swipe on a carousel is ambiguous to the browser — it doesn't know whether you're scrolling the page or the track, so it guesses, and the guess is often the page jittering up while the carousel moves. Tell it which axes the element owns:
+캐러셀 위의 가로 스와이프는 브라우저에게 모호하다. 페이지를 스크롤하는지 트랙을 스크롤하는지 몰라서 짐작하는데, 캐러셀이 움직이는 동안 페이지가 위로 들썩이는 쪽으로 짐작하는 일이 잦다. 요소가 어느 축을 맡는지 알려 준다.
 
 ```css
 .carousel {
-  touch-action: pan-y; /* the carousel handles horizontal; the browser keeps vertical */
+  touch-action: pan-y; /* 가로는 캐러셀이 처리하고, 세로는 브라우저가 맡는다 */
 }
 .drag-surface {
-  touch-action: none;  /* a custom gesture (a drag-to-dismiss sheet, a slider) owns every axis */
+  touch-action: none;  /* 커스텀 제스처(끌어서 닫는 시트, 슬라이더)가 모든 축을 맡는다 */
 }
 .vertical-sheet-handle {
-  touch-action: pan-x; /* the sheet handles vertical drags; horizontal stays with the browser */
+  touch-action: pan-x; /* 세로 드래그는 시트가 처리하고, 가로는 브라우저에 남긴다 */
 }
 ```
 
-The values name what the *browser* may still do. `pan-y` on a horizontal carousel means "browser, you keep vertical panning; I'm handling horizontal". `none` means the element handles everything — use it only on elements that really do, or the user won't be able to scroll past them.
+이 값은 *브라우저*가 여전히 해도 되는 일을 가리킨다. 가로 캐러셀의 `pan-y`는 "브라우저야, 세로 이동은 네가 맡아. 가로는 내가 처리할게"라는 뜻이다. `none`은 요소가 모든 것을 처리한다는 뜻이다. 정말 그런 요소에만 쓴다. 그렇지 않으면 사용자가 그 요소를 지나 스크롤할 수 없다.
 
-If the carousel is native scroll rather than a JS gesture, prefer `scroll-snap-type: x mandatory` on the track and `scroll-snap-align: start` on slides — the browser's own physics beat a hand-rolled spring, and `touch-action` becomes unnecessary.
+캐러셀이 JS 제스처가 아니라 네이티브 스크롤이라면 트랙에 `scroll-snap-type: x mandatory`, 슬라이드에 `scroll-snap-align: start`를 쓰는 편이 낫다. 브라우저 자체의 물리가 손으로 짠 스프링보다 뛰어나고 `touch-action`도 필요 없어진다.
 
-### 10. Status bar color doesn't match
+### 10. 맞지 않는 상태 표시줄 색
 
-The status bar and the browser chrome take their color from `theme-color`. One value means light mode gets a dark bar or dark mode gets a white one. Give each scheme its own:
+상태 표시줄과 브라우저 UI는 `theme-color`에서 색을 가져온다. 값이 하나뿐이면 라이트 모드에 어두운 막대가 생기거나 다크 모드에 흰 막대가 생긴다. 구성표마다 따로 값을 준다.
 
 ```html
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
@@ -230,22 +230,22 @@ The status bar and the browser chrome take their color from `theme-color`. One v
 <meta name="color-scheme" content="light dark" />
 ```
 
-Match the value to the color at the very top of your page — the header background, not the brand color. In Next.js set it through the `viewport` export (`themeColor: [{ media, color }]`). If the app switches theme with a class rather than the OS setting, update the tag from JavaScript on toggle. For an installed PWA, `apple-mobile-web-app-status-bar-style` and the manifest's `theme_color`/`background_color` are the same decision.
+값은 페이지 맨 위의 색에 맞춘다. 브랜드 색이 아니라 헤더 배경색이다. Next.js에서는 `viewport` export(`themeColor: [{ media, color }]`)로 설정한다. 앱이 OS 설정이 아니라 클래스로 테마를 바꾼다면, 토글할 때 JavaScript로 태그를 갱신한다. 설치된 PWA라면 `apple-mobile-web-app-status-bar-style`과 매니페스트의 `theme_color`/`background_color`도 같은 결정이다.
 
-### 11. Right in Chrome, wrong on phone
+### 11. Chrome에서는 맞고 휴대폰에서는 어긋남
 
-Nothing above reproduces in device emulation. Sticky hover, the tap highlight, the URL bar's effect on `vh`, input zoom, the click delay, overscroll, safe areas, the software keyboard — every one is a real-hardware behavior.
+위 내용은 어느 것도 기기 에뮬레이션에서 재현되지 않는다. 풀리지 않는 hover, 탭 하이라이트, 주소창이 `vh`에 주는 영향, 입력 필드 확대, 클릭 지연, 오버스크롤, 안전 영역, 소프트웨어 키보드는 모두 실제 기기에서만 나오는 동작이다.
 
-- Connect the phone over USB, run the dev server on `0.0.0.0`, open it by the machine's LAN IP.
-- iOS: Safari → Develop → the device. Android: `chrome://inspect`.
-- Test on a phone that's a few years old, not the newest one on your desk. Test with the keyboard open. Test in landscape once.
-- Test as an installed PWA if that's a target; standalone mode changes viewport, safe areas, and status bar behavior.
+- 휴대폰을 USB로 연결하고 개발 서버를 `0.0.0.0`에서 돌린 뒤 컴퓨터의 LAN IP로 연다.
+- iOS: Safari → Develop → 해당 기기. Android: `chrome://inspect`.
+- 책상 위의 최신 휴대폰 말고 몇 년 된 휴대폰으로 테스트한다. 키보드를 연 상태로 테스트한다. 가로 모드로도 한 번 테스트한다.
+- 설치형 PWA가 대상이면 설치한 상태로도 테스트한다. standalone 모드에서는 뷰포트, 안전 영역, 상태 표시줄 동작이 달라진다.
 
-The Xcode Simulator is a step up from emulation but still misses touch feel. Real hardware is the bar.
+Xcode Simulator는 에뮬레이션보다 한 단계 낫지만 여전히 터치 느낌은 놓친다. 기준은 실제 기기다.
 
-## Baseline
+## 기본 설정
 
-When starting a mobile-facing app, this is the floor. Ship it before the first component:
+모바일 사용자를 대상으로 하는 앱을 시작할 때 이것이 최소한이다. 첫 컴포넌트보다 먼저 내보낸다.
 
 ```html
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
@@ -256,7 +256,7 @@ When starting a mobile-facing app, this is the floor. Ship it before the first c
 ```css
 html {
   -webkit-tap-highlight-color: transparent;
-  -webkit-text-size-adjust: 100%; /* no font inflation in landscape */
+  -webkit-text-size-adjust: 100%; /* 가로 모드에서 글꼴 확대 없음 */
   overscroll-behavior: none;
 }
 
@@ -271,41 +271,41 @@ button, a, [role="button"] {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  /* all :hover rules live here */
+  /* 모든 :hover 규칙은 여기에 둔다 */
 }
 ```
 
-`interactive-widget=resizes-content` makes the software keyboard shrink the layout viewport on Android Chrome, so `100dvh` and bottom-pinned inputs react to it the way they do on iOS. Drop `overscroll-behavior: none` from `html` if the app is a scrolling document where pull-to-refresh is welcome.
+`interactive-widget=resizes-content`를 주면 Android Chrome에서 소프트웨어 키보드가 레이아웃 뷰포트를 줄인다. 그래서 `100dvh`와 아래에 고정한 입력 필드가 iOS에서처럼 키보드에 반응한다. 앱이 당겨서 새로 고침을 반기는 스크롤 문서라면 `html`에서 `overscroll-behavior: none`을 뺀다.
 
-## Never Ship
+## 절대 내보내지 말 것
 
-Self-check before you finish.
+끝내기 전에 스스로 확인한다.
 
-| Never | Instead |
+| 금지 | 대신 |
 | --- | --- |
-| `user-scalable=no` or `maximum-scale=1` | 16px inputs — fix the cause |
-| Ungated `:hover` | `@media (hover: hover) and (pointer: fine)` |
-| `100vh` for an app shell or bottom-pinned UI | `100dvh` |
-| `100dvh` on a marketing hero | `100svh` (no layout shift on scroll) |
-| Press feedback on `click` only | `:active` / `pointerdown` |
-| `touchmove` + `preventDefault()` to stop overscroll | `overscroll-behavior` |
-| `user-select: none` on `body` | Only on controls |
-| `touch-action: none` on something the user needs to scroll past | `pan-x` / `pan-y` |
-| `env(safe-area-inset-*)` without `viewport-fit=cover` | Add the meta tag or the value is `0` |
-| One `theme-color` for both schemes | One per `prefers-color-scheme` |
-| User-agent sniffing to detect touch | `(hover)` / `(pointer)` media queries |
-| Declaring it fixed from device emulation | Real hardware |
+| `user-scalable=no` 또는 `maximum-scale=1` | 16px 입력 필드로 원인 해결 |
+| 제한하지 않은 `:hover` | `@media (hover: hover) and (pointer: fine)` |
+| 앱 셸이나 아래에 고정한 UI에 `100vh` | `100dvh` |
+| 마케팅 히어로에 `100dvh` | `100svh`(스크롤할 때 레이아웃 밀림 없음) |
+| `click`에만 거는 누름 피드백 | `:active` / `pointerdown` |
+| 오버스크롤을 막으려는 `touchmove` + `preventDefault()` | `overscroll-behavior` |
+| `body`에 `user-select: none` | 컨트롤에만 |
+| 사용자가 지나 스크롤해야 하는 요소에 `touch-action: none` | `pan-x` / `pan-y` |
+| `viewport-fit=cover` 없이 쓰는 `env(safe-area-inset-*)` | 메타 태그 추가(없으면 값이 `0`) |
+| 두 구성표에 `theme-color` 하나 | `prefers-color-scheme`마다 하나 |
+| 터치를 감지하려는 user agent 스니핑 | `(hover)` / `(pointer)` 미디어 쿼리 |
+| 기기 에뮬레이션만 보고 고쳤다고 선언 | 실제 기기 |
 
-## Output
+## 출력
 
-Apply the fixes. Then, in at most a few lines:
+수정을 적용한다. 그다음 많아야 몇 줄로 다음을 적는다.
 
-- **What was wrong** — the symptom matched from the table, and the one-line why.
-- **What changed** — file and declaration, one line each.
-- **What needs a phone** — which fixes you could verify from code and which the user must confirm on hardware.
+- **무엇이 잘못됐나**: 표에서 찾은 증상과 한 줄짜리 이유
+- **무엇을 바꿨나**: 파일과 선언, 각각 한 줄
+- **휴대폰이 필요한 것**: 코드로 확인할 수 있었던 수정과 사용자가 실제 기기에서 확인해야 하는 수정
 
-Don't pad this into a report. The code is the deliverable.
+이것을 보고서로 부풀리지 않는다. 산출물은 코드다.
 
-## Tone
+## 어조
 
-Opinionated and brief. Most of these are one line; say the line and the reason and move on. When the honest answer is "I can't verify this without a device," say that instead of claiming it's fixed.
+의견은 분명하게, 말은 짧게 한다. 여기 항목은 대부분 한 줄이다. 그 한 줄과 이유를 말하고 넘어간다. 솔직한 답이 "기기 없이는 이걸 확인할 수 없다"라면 고쳤다고 주장하지 말고 그렇게 말한다.

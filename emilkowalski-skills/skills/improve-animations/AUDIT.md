@@ -1,115 +1,115 @@
-# Animation Audit Playbook
+# 애니메이션 점검 플레이북
 
-The eight audit categories, what to look for in each, and the exact target values to cite in findings and plans. Distilled from Emil Kowalski's design engineering philosophy ([emilkowal.ski](https://emilkowal.ski/)). Never approximate a value that appears here — copy it.
+점검 범주 여덟 가지, 범주마다 찾을 것, 발견 항목과 계획에 인용할 정확한 목표 값을 담는다. Emil Kowalski의 디자인 엔지니어링 철학([emilkowal.ski](https://emilkowal.ski/))에서 추렸다. 여기 나온 값은 절대 어림하지 않는다. 그대로 옮겨 적는다.
 
-## 1. Purpose & frequency
+## 1. 목적과 빈도
 
-Every animation must answer "why does this animate?" — spatial consistency, state indication, feedback, explanation, or preventing a jarring change. "It looks cool" on a frequently-seen element is not a purpose.
+모든 애니메이션은 반드시 "왜 애니메이션을 넣나?"라는 질문에 답한다. 답은 공간적 일관성(spatial consistency), 상태 표시(state indication), 피드백(feedback), 설명(explanation), 거슬리는 변화 막기(preventing a jarring change) 중 하나다. 자주 보이는 요소에서 "멋져 보인다"는 목적이 아니다.
 
-| Frequency | Decision |
+| 빈도 | 결정 |
 | --- | --- |
-| 100+ times/day (keyboard shortcuts, command palette toggle) | No animation. Ever. |
-| Tens of times/day (hover effects, list navigation) | Remove or drastically reduce |
-| Occasional (modals, drawers, toasts) | Standard animation |
-| Rare / first-time (onboarding, feedback, celebrations) | Can add delight |
+| 하루 100회 이상(키보드 단축키, 명령 팔레트 토글) | 애니메이션 없음. 절대로. |
+| 하루 수십 회(hover 효과, 목록 탐색) | 없애거나 크게 줄임 |
+| 가끔(모달, 드로어, 토스트) | 표준 애니메이션 |
+| 드묾 / 처음(온보딩, 피드백, 축하) | 즐거움을 더해도 됨 |
 
-Hunt for: animations on keyboard-initiated actions, command palettes with open/close transitions (Raycast has none — correct), decorative motion on list items or hover states hit constantly. The strongest fix is often **delete the animation**.
+찾을 것: 키보드로 시작하는 동작의 애니메이션, 열기/닫기 전환이 있는 명령 팔레트(Raycast에는 없다. 맞는 선택이다), 끊임없이 마주치는 목록 항목이나 hover 상태의 장식용 모션. 가장 강력한 수정은 **애니메이션 삭제**인 경우가 많다.
 
-## 2. Easing & duration
+## 2. 이징과 지속 시간
 
-Decision order for easing:
+이징은 이 순서로 정한다.
 
-- Entering or exiting → **`ease-out`** (starts fast, feels responsive)
-- Moving / morphing on screen → **`ease-in-out`**
-- Hover / color change → **`ease`**
-- Constant motion (marquee, progress) → **`linear`**
-- Default → **`ease-out`**
+- 등장이나 퇴장 → **`ease-out`**(빠르게 시작해 반응이 빠르게 느껴진다)
+- 화면 안에서 이동 / 모핑 → **`ease-in-out`**
+- hover / 색 변화 → **`ease`**
+- 일정한 모션(마키, 진행 표시) → **`linear`**
+- 기본 → **`ease-out`**
 
-**`ease-in` on UI is always a finding** — it starts slow, delaying the exact moment the user is watching. Built-in CSS easings are too weak for deliberate motion; plans should introduce strong custom curves (as tokens, matching repo conventions):
+**UI의 `ease-in`은 언제나 발견 항목이다.** 느리게 시작해서 사용자가 지켜보는 바로 그 순간을 늦춘다. CSS 기본 이징은 의도한 모션에 쓰기에는 너무 약하다. 계획에는 강한 커스텀 곡선을 저장소 관례에 맞춘 토큰으로 들인다.
 
 ```css
---ease-out: cubic-bezier(0.23, 1, 0.32, 1);        /* strong ease-out for UI */
---ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);    /* strong ease-in-out for on-screen movement */
---ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);     /* iOS-like drawer curve */
+--ease-out: cubic-bezier(0.23, 1, 0.32, 1);        /* UI용 강한 ease-out */
+--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);    /* 화면 안 이동용 강한 ease-in-out */
+--ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);     /* iOS 같은 드로어 곡선 */
 ```
 
-Duration budgets — **UI animations stay under 300ms**:
+지속 시간 예산: **UI 애니메이션은 300ms 미만으로 둔다**.
 
-| Element | Duration |
+| 요소 | 지속 시간 |
 | --- | --- |
-| Button press feedback | 100–160ms |
-| Tooltips, small popovers | 125–200ms |
-| Dropdowns, selects | 150–250ms |
-| Modals, drawers | 200–500ms |
-| Marketing / explanatory | Can be longer |
+| 버튼 누름 피드백 | 100–160ms |
+| 툴팁, 작은 팝오버 | 125–200ms |
+| 드롭다운, 셀렉트 | 150–250ms |
+| 모달, 드로어 | 200–500ms |
+| 마케팅 / 설명용 | 더 길어도 됨 |
 
-Hunt for: `ease-in` anywhere, bare `ease`/`linear` on entrances, durations > 300ms on UI elements, tooltip delay + animation on every tooltip in a toolbar (after the first, they should be instant).
+찾을 것: 어디에 있든 `ease-in`, 등장에 그대로 쓴 `ease`/`linear`, UI 요소의 300ms 넘는 지속 시간, 툴바의 모든 툴팁에 붙은 툴팁 지연 + 애니메이션(첫 툴팁 다음부터는 즉시 떠야 한다).
 
-## 3. Physicality & origin
+## 3. 물리감과 원점
 
-- **Never `scale(0)`** — nothing in the real world appears from nothing. Target: `scale(0.9–0.97)` + `opacity: 0`.
-- **Popovers/dropdowns/tooltips scale from their trigger**, not center:
+- **절대 `scale(0)`을 쓰지 않는다.** 현실에서 아무것도 없는 데서 나타나는 것은 없다. 목표: `scale(0.9–0.97)` + `opacity: 0`.
+- **팝오버/드롭다운/툴팁은 가운데가 아니라 트리거에서부터 커진다.**
   ```css
   .popover { transform-origin: var(--transform-origin); } /* Base UI */
   ```
-  **Modals are exempt** — they appear centered; `transform-origin: center` is correct there. Do not report it.
-- **Press feedback**: `transform: scale(0.97)` on `:active` with `transition: transform 160ms ease-out`. Keep it subtle (0.95–0.98).
+  **모달은 예외다.** 가운데에 나타나므로 거기서는 `transform-origin: center`가 맞다. 보고하지 않는다.
+- **누름 피드백**: `:active`에서 `transform: scale(0.97)`을 `transition: transform 160ms ease-out`과 함께 쓴다. 은은하게 둔다(0.95–0.98).
 
-Hunt for: `scale(0)`, pure-fade entrances with no initial transform, `transform-origin: center` (or none) on trigger-anchored elements, pressable elements with no press feedback.
+찾을 것: `scale(0)`, 초기 transform 없이 페이드만 하는 등장, 트리거에 붙은 요소의 `transform-origin: center`(또는 지정 없음), 누름 피드백이 없는 누를 수 있는 요소.
 
-## 4. Interruptibility
+## 4. 중단 가능성
 
-CSS **transitions** retarget from the current state mid-animation; **keyframes** restart from zero. Anything triggered rapidly or reversible mid-motion (toasts stacking, toggles, drags, expand/collapse) must use transitions or springs.
+CSS **트랜지션**은 애니메이션 도중에 현재 상태에서 목표를 다시 잡는다. **키프레임**은 0부터 다시 시작한다. 빠르게 연달아 일어나거나 움직이는 도중에 되돌릴 수 있는 것(쌓이는 토스트, 토글, 드래그, 펼치기/접기)은 반드시 트랜지션이나 스프링을 쓴다.
 
-- Entry without JS: `@starting-style` (legacy fallback: a `data-mounted` attribute set in `useEffect`).
-- Gesture-driven motion should use springs — they carry velocity when interrupted.
-- Spring configs, Apple-style (recommended): `{ type: "spring", duration: 0.5, bounce: 0.2 }`. Keep bounce subtle (0.1–0.3); reserve visible bounce for drag-to-dismiss and playful moments.
-- **Asymmetric timing**: deliberate phases (press, hold, destructive confirm) animate slower; the system's response snaps. Symmetric timing on press-and-release is a finding.
+- JS 없는 등장: `@starting-style`(예전 환경용 대체 방식: `useEffect`에서 설정하는 `data-mounted` 속성)
+- 제스처로 움직이는 모션에는 스프링을 쓴다. 중단되어도 속도를 이어 가기 때문이다.
+- 스프링 설정은 Apple 방식(권장): `{ type: "spring", duration: 0.5, bounce: 0.2 }`. 바운스는 은은하게 둔다(0.1–0.3). 눈에 띄는 바운스는 끌어서 닫기와 발랄한 순간에만 쓴다.
+- **비대칭 타이밍**: 사용자가 의도해서 하는 구간(누르기, 길게 누르기, 파괴적 동작 확인)은 더 느리게 움직이고, 시스템의 응답은 재빠르다. 누르고 떼는 동작의 타이밍이 대칭이면 발견 항목이다.
 
-Hunt for: `@keyframes` on toasts/toggles/rapidly-triggered UI, gesture handlers that tween with fixed-duration keyframes, drags without velocity-based dismissal (dismiss on `Math.abs(distance)/elapsedMs > ~0.11`, not distance thresholds alone), hard stops at drag boundaries instead of rising friction.
+찾을 것: 토스트/토글/빠르게 연달아 일어나는 UI의 `@keyframes`, 고정 지속 시간 키프레임으로 트윈하는 제스처 핸들러, 속도 기반 닫기가 없는 드래그(거리 임곗값만 보지 말고 `Math.abs(distance)/elapsedMs > ~0.11`이면 닫는다), 마찰을 점점 키우지 않고 드래그 경계에서 급정지하는 것.
 
-## 5. Performance
+## 5. 성능
 
-- **Animate `transform` and `opacity` only.** `width`/`height`/`margin`/`padding`/`top`/`left` trigger layout + paint + composite.
-- **`transition: all`** animates unintended properties off-GPU — always a finding.
-- **Framer Motion `x`/`y`/`scale` shorthands are not hardware-accelerated** — they run on the main thread and drop frames under load. Target: the full transform string, `animate={{ transform: "translateX(100px)" }}`.
-- **Don't drive child transforms via a CSS variable on the parent** — it recalcs styles for all children. Set `transform` directly on the element.
-- CSS (and WAAPI) beat rAF-based JS under load — use CSS for predetermined motion, JS/springs for dynamic and gesture-driven motion.
-- Keep transition-time `filter: blur()` under 20px — heavy blur is expensive, especially in Safari.
+- **`transform`과 `opacity`만 애니메이션한다.** `width`/`height`/`margin`/`padding`/`top`/`left`는 레이아웃 + 페인트 + 합성을 일으킨다.
+- **`transition: all`**은 의도하지 않은 속성까지 GPU 밖에서 애니메이션한다. 언제나 발견 항목이다.
+- **Framer Motion의 `x`/`y`/`scale` 단축 속성은 하드웨어 가속되지 않는다.** 메인 스레드에서 돌기 때문에 부하가 걸리면 프레임을 놓친다. 목표: transform 문자열 전체, `animate={{ transform: "translateX(100px)" }}`.
+- **부모의 CSS 변수로 자식의 transform을 움직이지 않는다.** 모든 자식의 스타일을 다시 계산하게 된다. `transform`은 해당 요소에 직접 설정한다.
+- 부하가 걸리면 CSS(와 WAAPI)가 rAF 기반 JS보다 낫다. 미리 정해진 모션에는 CSS를, 동적이거나 제스처로 움직이는 모션에는 JS/스프링을 쓴다.
+- 전환 중 `filter: blur()`는 20px 미만으로 둔다. 강한 블러는 비용이 크고, Safari에서는 특히 그렇다.
 
-Hunt for: `transition: all`, animated layout properties, Framer Motion shorthand props on busy pages, `setProperty('--x', …)` driving child transforms, rAF loops doing what CSS could.
+찾을 것: `transition: all`, 애니메이션하는 레이아웃 속성, 복잡한 페이지의 Framer Motion 단축 속성 prop, 자식 transform을 움직이는 `setProperty('--x', …)`, CSS로 할 수 있는 일을 하는 rAF 루프.
 
-## 6. Accessibility
+## 6. 접근성
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-  .element { animation: fade 0.2s ease; } /* keep opacity/color, drop movement */
+  .element { animation: fade 0.2s ease; } /* opacity/색은 두고 움직임은 뺀다 */
 }
 @media (hover: hover) and (pointer: fine) {
-  .element:hover { transform: scale(1.05); } /* touch fires false hovers on tap */
+  .element:hover { transform: scale(1.05); } /* 터치는 탭할 때 가짜 hover를 일으킨다 */
 }
 ```
 
-Reduced motion means fewer and gentler animations, **not zero** — keep transitions that aid comprehension, remove position changes. In JS: `useReducedMotion()` and branch transform values.
+동작 줄이기는 애니메이션을 더 적고 더 부드럽게 만든다는 뜻이지 **0으로 만든다는 뜻이 아니다**. 이해를 돕는 트랜지션은 남기고 위치 변화는 없앤다. JS에서는 `useReducedMotion()`을 쓰고 transform 값을 분기한다.
 
-Hunt for: movement with no `prefers-reduced-motion` handling, ungated `:hover` motion, reduced-motion implementations that nuke all feedback.
+찾을 것: `prefers-reduced-motion` 처리가 없는 움직임, 제한하지 않은 `:hover` 모션, 모든 피드백을 날려 버리는 동작 줄이기 구현.
 
-## 7. Cohesion & tokens
+## 7. 통일성과 토큰
 
-- Motion should match the product's personality — playful can be bouncier, a dashboard stays crisp. Mismatched personality across components is a finding.
-- Curves and durations should live as shared tokens. Five hand-typed cubic-beziers that almost match is a consolidation finding.
-- Everything-at-once group entrances where a **30–80ms stagger** belongs. Stagger is decorative — it must never block interaction.
-- A jarring crossfade that shows two overlapping states can be masked with subtle `filter: blur(2px)` during the transition.
+- 모션은 제품의 성격에 맞아야 한다. 발랄한 제품은 더 통통 튀어도 되고, 대시보드는 깔끔하게 둔다. 컴포넌트마다 성격이 어긋나면 발견 항목이다.
+- 곡선과 지속 시간은 공유 토큰으로 둔다. 거의 같은데 손으로 따로 입력한 cubic-bezier 다섯 개는 통합해야 할 발견 항목이다.
+- **30–80ms 스태거**가 어울리는 곳에서 모든 요소가 한꺼번에 나타나는 묶음 등장. 스태거는 장식이므로 절대 상호작용을 막지 않는다.
+- 겹친 두 상태가 보이는 거슬리는 크로스페이드는 전환 중에 은은한 `filter: blur(2px)`로 가릴 수 있다.
 
-Hunt for: duplicated near-identical easings/durations, one bouncy component in a crisp app, list/grid entrances with no stagger, crossfades that visibly double-expose.
+찾을 것: 거의 같은 이징/지속 시간의 중복, 깔끔한 앱 속의 통통 튀는 컴포넌트 하나, 스태거 없는 목록/그리드 등장, 이중 노출이 눈에 보이는 크로스페이드.
 
-## 8. Missed opportunities
+## 8. 놓친 기회
 
-The additive category — places that don't animate but should:
+더하는 범주다. 애니메이션이 없지만 있어야 할 곳을 찾는다.
 
-- State changes that teleport (content swaps, layout jumps) where a brief transition would prevent a jarring change.
-- Spatially-connected UI (a panel that appears from a trigger) with no motion explaining where it came from.
-- Rare, high-emotion moments (first-run, success, celebration) rendered with none of the delight budget they're allowed.
-- `translate` percentages (`translateY(100%)` = element's own height) and `clip-path: inset()` reveals as tools for these — no hardcoded pixel offsets.
+- 짧은 전환이 있으면 거슬리는 변화를 막을 수 있는데 순간이동하는 상태 변화(내용 교체, 레이아웃 점프)
+- 어디서 왔는지 설명하는 모션이 없는, 공간적으로 연결된 UI(트리거에서 나타나는 패널)
+- 허용된 즐거움 예산을 하나도 쓰지 않은 채 렌더링된, 드물고 감정이 큰 순간(첫 실행, 성공, 축하)
+- 이런 곳에 쓸 도구인 `translate` 퍼센트 값(`translateY(100%)` = 요소 자신의 높이)과 `clip-path: inset()` 드러내기. 픽셀 오프셋은 하드코딩하지 않는다.
 
-Report at most a handful, grounded in actual UX seams you observed — not a wishlist.
+실제로 관찰한 UX 이음매에 근거한 몇 개만 보고한다. 희망 목록이 아니다.

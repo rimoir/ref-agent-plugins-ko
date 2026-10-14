@@ -1,52 +1,52 @@
 ---
 name: write-swift
-description: How to write modern Swift well — modeling with value types, Swift 6 data-race safety and approachable concurrency (@concurrent, main-actor-by-default, actors, task groups), protocols and generics (some vs any), API design, performance and ARC, Swift Testing, macros, and the modern language features agents don't know about yet. Use when writing, reviewing, or migrating Swift, or when a concurrency error, a hang, a data race, a retain cycle, or a performance problem needs fixing.
+description: 모던 Swift를 잘 쓰는 방법을 다룬다. 값 타입 모델링, Swift 6 데이터 경쟁 안전성과 approachable concurrency(@concurrent, 기본 메인 액터 격리, 액터, 태스크 그룹), 프로토콜과 제네릭(some vs any), API 설계, 성능과 ARC, Swift Testing, 매크로, 에이전트가 아직 모르는 최신 언어 기능까지 포함한다. Swift 코드를 쓰거나 리뷰하거나 마이그레이션할 때, 또는 동시성 오류, 멈춤(hang), 데이터 경쟁, 순환 참조, 성능 문제를 고쳐야 할 때 쓴다.
 ---
 
-# Write Swift
+# Swift 쓰기
 
-## Initial Response
+## 첫 응답
 
-When this skill is first invoked without a specific question, respond only with:
+구체적인 질문 없이 이 스킬이 처음 호출되면 다음 내용으로만 답한다.
 
-> I'm ready to help you write modern Swift, the way the language wants to be written.
+> 언어가 의도한 방식대로 모던 Swift를 쓰도록 도울 준비가 됐습니다.
 
-Do not provide any other information until the user asks a question.
+사용자가 질문하기 전에는 다른 정보를 주지 않는다.
 
-How to write Swift the way the language wants to be written, current through Swift 6.4.
+언어가 의도한 방식대로 Swift를 쓰는 방법을 다룬다. Swift 6.4까지 반영했다.
 
-**Toolchain baseline: Swift 6.3** (current release as of August 2026). Everything here compiles on 6.3 unless marked ⚠, which flags unreleased Swift 6.4 features. Concurrency guidance assumes the Swift 6.2 model — if the project is on 6.1 or earlier, §3's rules about `async` and `@concurrent` do not apply.
+**툴체인 기준: Swift 6.3**(2026년 8월 기준 최신 릴리스). ⚠ 표시가 없으면 여기 나온 코드는 모두 6.3에서 컴파일된다. ⚠는 아직 릴리스되지 않은 Swift 6.4 기능을 뜻한다. 동시성 지침은 Swift 6.2 모델을 전제한다. 프로젝트가 6.1 이하라면 `async`와 `@concurrent`에 관한 §3의 규칙은 적용되지 않는다.
 
-The through-line: **Swift is a progressive-disclosure language. Start with the simplest, most static, most single-threaded thing that works, and buy dynamism — concurrency, reference semantics, existentials, unsafe pointers — only where you can point at the reason.** Every rule below is an application of that.
+관통하는 원칙은 이것이다. **Swift는 점진적 공개(progressive disclosure) 언어다. 동작하는 것 중 가장 단순하고, 가장 정적이고, 가장 단일 스레드인 것에서 시작한다. 동적인 요소(동시성, 참조 의미론, 존재 타입(existential), 안전하지 않은 포인터)는 이유를 짚을 수 있는 곳에서만 대가를 치르고 들인다.** 아래 규칙은 모두 이 원칙을 적용한 것이다.
 
-Model this hierarchy of defaults. Move down a level only with a reason you can state:
+아래 기본값 계층을 따른다. 한 단계 내려갈 때는 말로 밝힐 수 있는 이유가 있어야 한다.
 
-| Need         | Reach for               | Move down only when                                        |
+| 필요 | 먼저 쓸 것 | 이럴 때만 한 단계 내려간다 |
 | ------------ | ----------------------- | ---------------------------------------------------------- |
-| Data         | `struct` / `enum`       | you need identity, sharing, or inheritance                 |
-| Abstraction  | concrete type           | you have repeated code across types                        |
-| Polymorphism | `some P` (generic)      | you need heterogeneous storage → `any P`                   |
-| Execution    | main actor, synchronous | profiling shows a hang → `async` → `@concurrent` → `actor` |
-| Memory       | `Array`, `String`       | profiling shows the cost → `InlineArray`, `Span`           |
-| Safety       | safe API                | C interop or a measured hot path → `Unsafe*`               |
+| 데이터 | `struct` / `enum` | 정체성, 공유, 상속이 필요할 때 |
+| 추상화 | 구체 타입 | 여러 타입에 반복되는 코드가 있을 때 |
+| 다형성 | `some P` (제네릭) | 서로 다른 타입을 함께 저장해야 할 때 → `any P` |
+| 실행 | 메인 액터, 동기 | 프로파일링에서 멈춤(hang)이 보일 때 → `async` → `@concurrent` → `actor` |
+| 메모리 | `Array`, `String` | 프로파일링에서 비용이 보일 때 → `InlineArray`, `Span` |
+| 안전성 | 안전한 API | C 상호 운용이 필요하거나 측정으로 확인한 핫 패스일 때 → `Unsafe*` |
 
 ---
 
-## 1. Model data with value types
+## 1. 값 타입으로 데이터 모델링
 
-Value types are the default in Swift, not a special case.
+Swift에서 값 타입은 특별한 경우가 아니라 기본이다.
 
-- **Default to `struct` and `enum`. Use `class` only for identity, shared mutable state, inheritance, or resource lifetime.** A window, a database connection, an entity stored in a rendering engine — those have identity. A `Point`, a `Drink`, a `Material` does not.
-- **`let` by default; `var` only when you mutate.** This is the same discipline as `some` before `any` and value before reference: start narrow, widen with cause.
-- **A struct with a mutable reference-type property is neither a value nor a reference.** Copies share the object; mutations leak across copies. Either keep the referenced type immutable, expose only computed properties that forward to it, or make it a `private` stored property behind copy-on-write.
-- **Copy-on-write is how you get out-of-line storage _and_ value semantics.** Wrap a final class in a struct and check `isKnownUniquelyReferenced(&storage)` before mutating; copy first if it isn't. This is exactly how `Array`, `String`, and `Dictionary` work.
-- **Enums are the tool for "a fixed set of things" and for mutually exclusive state.** Replacing a pile of optional stored properties (`isSharing`, `selectedRows`, `shareTarget`) with one `enum State` makes invalid combinations unrepresentable and makes state change atomic instead of a sequence of property writes you can forget to finish.
-- **Composing values yields a value.** A struct whose stored properties are all value types has value semantics for free — which is what makes undo, diffing, and state restoration a single code path instead of one per property.
+- **기본은 `struct`와 `enum`이다. `class`는 정체성, 공유된 가변 상태, 상속, 자원 수명이 필요할 때만 쓴다.** 창, 데이터베이스 연결, 렌더링 엔진에 저장된 엔티티는 정체성이 있다. `Point`, `Drink`, `Material`에는 없다.
+- **기본은 `let`이고, `var`는 값을 바꿀 때만 쓴다.** `any`보다 `some`을 먼저, 참조보다 값을 먼저 쓰는 것과 같은 규율이다. 좁게 시작하고, 이유가 있을 때 넓힌다.
+- **가변 참조 타입 프로퍼티를 가진 구조체는 값도 참조도 아니다.** 복사본들이 객체를 공유하고, 변경이 복사본 사이로 새어 나간다. 참조하는 타입을 불변으로 두거나, 그 객체에 위임하기만 하는 계산 프로퍼티만 노출하거나, copy-on-write 뒤에 둔 `private` 저장 프로퍼티로 만든다.
+- **copy-on-write는 외부 저장소(out-of-line storage)와 값 의미론을 *함께* 얻는 방법이다.** final 클래스를 구조체로 감싸고, 변경하기 전에 `isKnownUniquelyReferenced(&storage)`를 확인한다. 유일한 참조가 아니면 먼저 복사한다. `Array`, `String`, `Dictionary`가 바로 이렇게 동작한다.
+- **열거형은 "정해진 것들의 집합"과 상호 배타적인 상태를 위한 도구다.** 옵셔널 저장 프로퍼티 여러 개(`isSharing`, `selectedRows`, `shareTarget`)를 `enum State` 하나로 바꾸면 잘못된 조합을 표현할 수 없게 된다. 상태 변경도 끝내기를 잊을 수 있는 여러 번의 프로퍼티 쓰기가 아니라 한 번의 원자적 변경이 된다.
+- **값을 조합하면 값이 된다.** 저장 프로퍼티가 모두 값 타입인 구조체는 값 의미론을 공짜로 얻는다. 덕분에 실행 취소, diff 계산, 상태 복원이 프로퍼티마다 따로가 아니라 코드 경로 하나로 끝난다.
 
 ```swift
-struct Material {                       // value semantics preserved
+struct Material {                       // 값 의미론 유지
   var roughness: Double
-  private var _texture: Texture         // a class
+  private var _texture: Texture         // 클래스
 
   var color: Color {
     get { _texture.color }
@@ -58,339 +58,339 @@ struct Material {                       // value semantics preserved
 }
 ```
 
-**Noncopyable types** (`~Copyable`) express unique ownership: a file descriptor, a bank transfer, an open resource. Suppressing the copy turns "you must not run this twice" from an assertion into a compile error, and makes `deinit` on a struct meaningful. Mark the finishing method `consuming` so the compiler proves it's the last use. Parameter ownership becomes explicit: `borrowing` (read-only, the default), `consuming` (takes it away), `inout`/`mutating` (temporary write access).
+**복사 불가 타입**(noncopyable)은 `~Copyable`로 표시하며 고유한 소유권을 표현한다. 파일 디스크립터, 계좌 이체, 열린 자원 같은 것이다. 복사를 막으면 "이걸 두 번 실행하면 안 된다"가 단언(assertion)에서 컴파일 오류로 바뀌고, 구조체의 `deinit`이 의미를 갖는다. 마무리하는 메서드에 `consuming`을 붙여 그것이 마지막 사용임을 컴파일러가 증명하게 한다. 매개변수 소유권도 명시적으로 드러난다. 종류는 `borrowing`(읽기 전용, 기본값), `consuming`(가져가 버림), `inout`/`mutating`(일시적 쓰기 접근)이다.
 
 ---
 
-## 2. Errors and optionals — make the failure paths visible
+## 2. 오류와 옵셔널: 실패 경로를 드러내기
 
-Swift error handling rests on three points: sources of error are marked so they can't surprise you; errors carry enough context to act on; and **recoverable errors are different from programmer mistakes**.
+Swift 오류 처리는 세 가지 위에 서 있다. 오류가 날 수 있는 곳에는 표시가 있어서 예상치 못하게 튀어나오지 않는다. 오류는 대응할 만큼의 맥락을 담는다. 그리고 **복구 가능한 오류는 프로그래머 실수와 다르다**.
 
-- **Recoverable → `throw`. Programmer mistake → `precondition`/`fatalError`.** A failed network call keeps the program running. An out-of-bounds index means the code is wrong and must halt before the bug becomes a security issue.
-- **Enums with associated values make the best error types.** `case duplicateFriend(String)` beats `case duplicateFriend` — the context is the whole point.
-- **`guard` for error conditions**, because it forces the exit path. `if let` for the ordinary unwrap.
-- **Typed throws (`throws(MyError)`) are for internal functions, error-forwarding generic code, and constrained environments** where boxing `any Error` is too costly. For public API, untyped `throws` preserves your freedom to change the error type later. Note the unification: `throws` is `throws(any Error)`, and non-throwing is `throws(Never)` — which is what lets `map` abstract over both.
-- **Force-unwrap only where you can state the invariant**, and prefer a failing `#require`/`precondition` with a message over a bare `!`.
+- **복구 가능 → `throw`. 프로그래머 실수 → `precondition`/`fatalError`.** 네트워크 호출이 실패해도 프로그램은 계속 돈다. 범위를 벗어난 인덱스는 코드가 틀렸다는 뜻이고, 버그가 보안 문제로 번지기 전에 멈춰야 한다.
+- **연관 값이 있는 열거형이 가장 좋은 오류 타입이다.** `case duplicateFriend(String)`이 `case duplicateFriend`보다 낫다. 핵심은 맥락이다.
+- **오류 조건에는 `guard`를 쓴다.** 탈출 경로를 강제하기 때문이다. 평범한 언래핑에는 `if let`을 쓴다.
+- **타입 지정 throws(`throws(MyError)`)는 내부 함수, 오류를 전달하는 제네릭 코드, 그리고 `any Error`를 박싱하는 비용이 너무 큰 제약된 환경에 쓴다.** 공개 API에 타입 없는 `throws`를 써야 나중에 오류 타입을 바꿀 자유가 남는다. 둘이 하나로 통합된다는 점도 눈여겨본다. `throws`는 `throws(any Error)`이고, 던지지 않는 함수는 `throws(Never)`다. 그래서 `map` 하나가 두 경우를 모두 추상화할 수 있다.
+- **강제 언래핑은 불변 조건을 말로 밝힐 수 있는 곳에서만 쓴다.** 맨 `!`보다 메시지를 단 `#require`/`precondition` 실패를 택한다.
 
 ---
 
-## 3. Concurrency: stay single-threaded until profiling says otherwise
+## 3. 동시성: 프로파일링이 달리 말할 때까지 단일 스레드로
 
-This is the section agents get wrong most often, because the model changed in Swift 6.2.
+에이전트가 가장 자주 틀리는 절이다. Swift 6.2에서 모델이 바뀌었기 때문이다.
 
-Start every app entirely on the main thread. Single-threaded code goes a long way, and most apps never need to leave it.
+모든 앱은 전부 메인 스레드에서 시작한다. 단일 스레드 코드로도 할 수 있는 일이 많고, 대부분의 앱은 거기서 벗어날 일이 없다.
 
-**The progression, in order. Do not skip steps.**
+**단계는 이 순서대로다. 건너뛰지 않는다.**
 
-1. **Single-threaded on the main actor.** No concurrency at all. Fine for most apps.
-2. **`async`/`await`** to hide latency (network, disk). Still no concurrency of your own — SDK APIs like `URLSession.data(from:)` offload on your behalf.
-3. **`@concurrent`** to move _your_ expensive work off the main thread — only after Instruments shows a hang.
-4. **`actor`** to move _state_ off the main actor — only when too much main-actor state is forcing tasks to hop back constantly.
+1. **메인 액터에서 단일 스레드.** 동시성이 전혀 없다. 대부분의 앱은 이것으로 충분하다.
+2. **`async`/`await`로** 지연(네트워크, 디스크)을 숨긴다. 여전히 직접 만든 동시성은 없다. `URLSession.data(from:)` 같은 SDK API가 알아서 다른 스레드로 넘긴다.
+3. **`@concurrent`로** *직접 짠* 비싼 작업을 메인 스레드 밖으로 옮긴다. Instruments가 멈춤을 보여 준 뒤에만 쓴다.
+4. **`actor`로** *상태*를 메인 액터 밖으로 옮긴다. 메인 액터 상태가 너무 많아서 태스크가 계속 메인 액터로 되돌아가야 할 때만 쓴다.
 
-**Turn on the right build settings first.** Enable **Approachable Concurrency** in every project. For app modules and UI-facing modules, also set **Default Actor Isolation** to **MainActor** — it's the default for new app projects in Xcode 26, and it deletes most of your `@MainActor` annotations. In a package: `swiftSettings: [.defaultIsolation(MainActor.self)]`. **Do not set main-actor-by-default for a general-purpose library** — libraries should ship `nonisolated` APIs and let clients decide where work runs.
+**먼저 빌드 설정을 제대로 켠다.** 모든 프로젝트에서 **Approachable Concurrency**를 켠다. 앱 모듈과 UI를 다루는 모듈에서는 **Default Actor Isolation**도 **MainActor**로 설정한다. Xcode 26의 새 앱 프로젝트에서는 이것이 기본값이고, `@MainActor` 표시 대부분을 지울 수 있게 해 준다. 패키지에서는 `swiftSettings: [.defaultIsolation(MainActor.self)]`를 쓴다. **범용 라이브러리에는 기본 메인 액터 격리(main-actor-by-default)를 설정하지 않는다.** 라이브러리는 `nonisolated` API를 내보내고, 작업이 어디서 돌지는 클라이언트가 정하게 한다.
 
-### The rule that changed
+### 바뀐 규칙
 
-**In Swift 6.2, marking a function `async` does _not_ move it off the current actor.** It runs where it was called from. This is what makes "the most natural code to write" data-race free by default.
+**Swift 6.2에서는 함수에 `async`를 붙여도 현재 액터를 벗어나지 *않는다*.** 호출된 곳에서 그대로 돈다. "가장 자연스럽게 쓰는 코드"가 기본적으로 데이터 경쟁 없이 동작하는 이유가 이것이다.
 
-- **`@concurrent`** — always switches to the concurrent thread pool. Use it on _your_ CPU-heavy work.
-- **`nonisolated`** — runs wherever it's called from. **This is the right default for library APIs**, because the caller decides. `nonisolated` on a type makes all its members nonisolated (Swift 6.1+).
-- Neither one — stays on the caller's actor.
+- **`@concurrent`는** 항상 동시 스레드 풀로 전환한다. *직접 짠* CPU 집약 작업에 쓴다.
+- **`nonisolated`는** 호출된 곳 어디서든 돈다. **라이브러리 API에는 이것이 맞는 기본값이다.** 호출자가 정하기 때문이다. 타입에 `nonisolated`를 붙이면 모든 멤버가 nonisolated가 된다(Swift 6.1+).
+- 둘 다 없으면 호출자의 액터에 머문다.
 
 ```swift
-nonisolated struct PhotoProcessor {          // decoupled from the main actor
-  @concurrent                                // guaranteed to run in the background
+nonisolated struct PhotoProcessor {          // 메인 액터와 분리
+  @concurrent                                // 백그라운드 실행 보장
   func process(_ data: Data) async -> ProcessedPhoto {
-    async let sticker = extractSticker(data)  // two independent jobs, in parallel
+    async let sticker = extractSticker(data)  // 독립된 두 작업을 병렬로
     async let colors  = extractColors(data)
     return await ProcessedPhoto(sticker: sticker, colors: colors)
   }
 }
 ```
 
-- **Profile before you offload.** Use Instruments (Time Profiler, hangs). If the code can be made faster without concurrency, always do that first. Concurrency has real cost — task allocation, scheduling, and reasoning.
-- **Don't spawn a task for trivial work.** A child task to read a `UserDefaults` value costs more than it saves.
-- **One task per end-to-end operation.** Work that must happen in order goes in _one_ task; independent operations get separate tasks so the runtime can interleave them.
-- **`await` is a suspension point, and it breaks atomicity.** State can change while you're suspended, and you may resume on a different thread. Re-check assumptions after every `await`. Never hold a lock across one. Never rely on thread-local storage across one.
+- **다른 스레드로 넘기기 전에 프로파일링한다.** Instruments(Time Profiler, 멈춤)를 쓴다. 동시성 없이 코드를 더 빠르게 만들 수 있다면 언제나 그것부터 한다. 동시성에는 실제 비용이 있다. 태스크 할당, 스케줄링, 그리고 코드를 따라가는 부담이다.
+- **사소한 작업에 태스크를 띄우지 않는다.** `UserDefaults` 값 하나를 읽으려고 자식 태스크를 만들면 아끼는 것보다 드는 비용이 크다.
+- **처음부터 끝까지 이어지는 작업 하나에 태스크 하나.** 순서대로 일어나야 하는 일은 *하나의* 태스크에 넣는다. 독립된 작업은 태스크를 따로 두어 런타임이 번갈아 실행할 수 있게 한다.
+- **`await`는 중단 지점이고, 원자성을 깬다.** 중단된 사이에 상태가 바뀔 수 있고, 다른 스레드에서 재개될 수도 있다. `await`마다 그 뒤에 가정을 다시 확인한다. 절대 그 지점을 넘어 락을 쥐고 있지 않는다. 절대 그 지점을 넘어 스레드 로컬 저장소에 기대지 않는다.
 
-### Actor reentrancy
+### 액터 재진입
 
-Actors guarantee mutual exclusion, not transactions. Between two `await`s on the same actor, other work runs.
+액터는 트랜잭션이 아니라 상호 배제를 보장한다. 같은 액터에서 두 `await` 사이에 다른 작업이 돈다.
 
-- **Mutate actor state in synchronous methods.** Synchronous code on an actor runs to completion uninterrupted — that's your transaction boundary.
-- **Keep async actor methods thin**, composed of synchronous transactional operations, and leave the actor in a consistent state at every `await`.
-- The classic bug: check cache → `await` download → write cache. Two tasks both miss, both download, the second clobbers the first. Re-check after the `await`, or dedupe the in-flight work.
-- **Actors are not FIFO.** They run highest-priority work first, precisely to avoid priority inversion. If you need ordering, use a task (which runs start to finish) or an `AsyncStream`, not an actor.
-
----
-
-## 4. Sendable and sharing data
-
-`Sendable` marks a type safe to share across isolation domains. The compiler checks it at every task and actor boundary.
-
-- **Value types are `Sendable` when their storage is** — inferred automatically for non-public types. **Public types never get inferred sendability**: marking a public type `Sendable` is a promise to your clients, so Swift makes you write it.
-- **Actors and `@MainActor` classes are implicitly `Sendable`**, because their state is isolated.
-- **Most model classes should be neither `@MainActor` nor `Sendable`.** Keep them non-`Sendable` on purpose — it prevents half the model being mutated on the main thread while the other half is mutated in the background. If they need to leave the main actor, make them `nonisolated`, not `Sendable`.
-- **You can still _send_ a non-`Sendable` object between domains** as long as the sender stops using it. Make all your mutations _before_ handing it off; touching it afterward is the error.
-- Closures capture state too. Only mark a function type `@Sendable` if it genuinely crosses domains.
-- **`@unchecked Sendable` is a promise the compiler can't check.** Reserve it for types with real internal synchronization (a `Mutex`, a lock). Same for `nonisolated(unsafe)` on a global — last resort, not a warning silencer.
-
-**When you hit a data-race error, work down this list:**
-
-1. **Don't share it.** Move the shared object into a local so each concurrent job gets its own instance. (This is the fix for the overwhelming majority of real errors.)
-2. **Make it a `Sendable` value type**, so "sharing" is really copying.
-3. **Isolate it to an actor** — the main actor, or your own.
-4. Only then reach for `Mutex`/`Atomic` from the `Synchronization` module (store them in `let` properties), or `@unchecked Sendable`.
-
-**Global and static variables are the most common source of errors.** In order of preference: make it a `let`; put it on `@MainActor`; wrap it in a `Mutex`; `nonisolated(unsafe)`. Note globals in Swift are initialized lazily _and_ atomically — unlike C.
-
-**Bridging old callback APIs:** annotate delegate protocols with `@MainActor` if you own them. If you don't, mark the method `nonisolated` and use `MainActor.assumeIsolated { }` — it asserts rather than hopping, so it traps loudly instead of racing silently. `@preconcurrency` on the conformance is the shorthand for the same thing. Use `@preconcurrency import` to temporarily silence sendability warnings from a module that hasn't migrated; the warnings come back — correctly — once it does.
+- **액터 상태는 동기 메서드에서 바꾼다.** 액터 위의 동기 코드는 끊기지 않고 끝까지 돈다. 그것이 트랜잭션 경계다.
+- **액터의 async 메서드는 얇게 유지한다.** 동기 트랜잭션 연산을 조합해 만들고, `await`마다 액터를 일관된 상태로 둔다.
+- 전형적인 버그: 캐시 확인 → `await` 다운로드 → 캐시 쓰기. 두 태스크가 모두 캐시를 놓치고, 둘 다 다운로드하고, 두 번째가 첫 번째를 덮어쓴다. `await` 뒤에 다시 확인하거나, 진행 중인 작업을 하나로 합친다.
+- **액터는 FIFO가 아니다.** 우선순위 역전을 피하려고 일부러 우선순위가 가장 높은 작업부터 돌린다. 순서가 필요하면 액터가 아니라 태스크(처음부터 끝까지 이어서 돈다)나 `AsyncStream`을 쓴다.
 
 ---
 
-## 5. Structured concurrency
+## 4. Sendable과 데이터 공유
 
-Always prefer structured tasks.
+`Sendable`은 격리 도메인을 넘어 공유해도 안전한 타입을 표시한다. 컴파일러는 모든 태스크와 액터 경계에서 이를 검사한다.
 
-Structured tasks (`async let`, task groups) are scoped like local variables: they can't outlive the block, they're awaited automatically, and they inherit cancellation, priority, and task-local values through the task tree. Unstructured tasks (`Task { }`, `Task.detached`) give you none of that automatically.
+- **값 타입은 저장소가 Sendable이면 `Sendable`이다.** public이 아닌 타입은 자동으로 추론된다. **public 타입은 Sendable 여부가 절대 추론되지 않는다.** public 타입에 `Sendable`을 붙이는 것은 클라이언트에게 하는 약속이라서 Swift가 직접 쓰게 한다.
+- **액터와 `@MainActor` 클래스는 상태가 격리되어 있으므로 암묵적으로 `Sendable`이다.**
+- **모델 클래스는 대부분 `@MainActor`도 `Sendable`도 아니어야 한다.** 일부러 non-`Sendable`로 둔다. 그래야 모델의 절반은 메인 스레드에서, 나머지 절반은 백그라운드에서 바뀌는 일을 막는다. 메인 액터를 벗어나야 한다면 `Sendable`이 아니라 `nonisolated`로 만든다.
+- **보내는 쪽이 더 이상 쓰지 않는다면 non-`Sendable` 객체도 도메인 사이로 *보낼* 수 있다.** 변경은 모두 넘기기 *전에* 끝낸다. 넘긴 뒤에 건드리는 것이 오류다.
+- 클로저도 상태를 캡처한다. 함수 타입에 `@Sendable`을 붙이는 것은 실제로 도메인을 넘을 때뿐이다.
+- **`@unchecked Sendable`은 컴파일러가 검사할 수 없는 약속이다.** 내부 동기화(`Mutex`, 락)를 실제로 갖춘 타입에만 쓴다. 전역 변수의 `nonisolated(unsafe)`도 마찬가지다. 경고를 잠재우는 도구가 아니라 최후의 수단이다.
 
-- **`async let`** for a fixed, statically known number of concurrent children.
-- **`withTaskGroup`** when the number is dynamic. Task groups conform to `AsyncSequence` — iterate results as they land. Use **`withDiscardingTaskGroup`** when children return nothing: it frees each child's resources immediately and cancels siblings on the first error.
-- **`Task { }`** only when the work's lifetime doesn't fit a scope — reacting to a delegate callback, a button tap, a view appearing. It inherits actor isolation and priority; you must manage cancellation yourself.
-- **`Task.detached`** almost never. It inherits nothing — not isolation, not priority, not task-locals. If you need a detached root, put a task group _inside_ it rather than detaching repeatedly.
+**데이터 경쟁 오류를 만나면 이 목록을 위에서부터 차례로 시도한다.**
 
-**Cancellation is cooperative.** Cancelling sets a flag; it stops nothing. Check `Task.isCancelled` or `try Task.checkCancellation()` **before starting expensive work**, and in synchronous helpers too. For work that's suspended rather than running (an `AsyncSequence`'s `next()`), use `withTaskCancellationHandler` — and remember the handler runs immediately and concurrently with the body, so the state it touches needs real synchronization (an atomic or a lock, not an actor — you can't guarantee ordering on an actor).
+1. **공유하지 않는다.** 공유하던 객체를 지역 변수로 옮겨 동시 작업마다 자기 인스턴스를 갖게 한다. (실제 오류는 압도적 다수가 이것으로 고쳐진다.)
+2. **`Sendable` 값 타입으로 만든다.** 그러면 "공유"가 실은 복사가 된다.
+3. **액터에 격리한다.** 메인 액터든 직접 만든 액터든 된다.
+4. 그다음에야 `Synchronization` 모듈의 `Mutex`/`Atomic`(`let` 프로퍼티에 저장한다)이나 `@unchecked Sendable`을 꺼낸다.
 
-**Bound your concurrency.** Don't fan out one child per item over an unbounded list. Start N children, then add a new one each time one finishes.
+**전역 변수와 정적 변수는 오류의 가장 흔한 원인이다.** 선호하는 순서는 `let`으로 만들기, `@MainActor`에 두기, `Mutex`로 감싸기, `nonisolated(unsafe)`다. C와 달리 Swift의 전역 변수는 지연 초기화되고, 그 초기화가 원자적이기*도* 하다는 점에 유의한다.
 
-**Task-local values** (`@TaskLocal`) propagate context — a request ID, a trace span — down the task tree without threading a parameter through every signature. Make them optional so unbound reads have a sensible default.
-
-**Bridging callbacks:** `withCheckedContinuation` / `withCheckedThrowingContinuation`. The contract is **resume exactly once on every path** — never resuming hangs the caller forever; resuming twice is a fatal error. For delegate APIs that fire later, store the continuation and nil it out when you resume. (Swift 6.4 — unreleased — adds a `Continuation` type that checks single-resumption at compile time.)
-
-**`AsyncSequence`:** iterate with `for await` / `for try await`. Adapt an existing handler- or delegate-based API with `AsyncStream` / `AsyncThrowingStream` — construct the source inside the closure, `yield` from the handler, and clean up in `onTermination`.
+**옛 콜백 API 연결하기:** 직접 소유한 델리게이트 프로토콜이면 `@MainActor`를 붙인다. 그렇지 않으면 메서드를 `nonisolated`로 표시하고 `MainActor.assumeIsolated { }`를 쓴다. 이것은 액터로 건너가지 않고 단언만 하므로, 조용히 경쟁하는 대신 요란하게 트랩을 일으킨다. 준수 선언에 붙이는 `@preconcurrency`는 같은 일을 하는 축약형이다. 아직 마이그레이션하지 않은 모듈의 Sendable 여부 경고를 잠시 잠재우려면 `@preconcurrency import`를 쓴다. 그 모듈이 마이그레이션하면 경고가 다시 나타나고, 그것이 맞는 동작이다.
 
 ---
 
-## 6. Concurrency in SwiftUI
+## 5. 구조적 동시성
 
-- **`View` is `@MainActor`-isolated**, and so is everything it contains, including your `@State`. You almost never need to write `@MainActor` on a view or a view model — and with main-actor-by-default you can delete the ones you have.
-- **SwiftUI deliberately runs some of your code off the main thread** to keep frames cheap. The signal is `@Sendable` in the API's signature: `visualEffect`, `Shape.path(in:)`, `Layout` requirements, `onGeometryChange`. When you hit an isolation error inside one of those closures, **don't send `self` — copy the one value you need into the closure's capture list.**
+항상 구조적 태스크를 우선한다.
+
+구조적 태스크(`async let`, 태스크 그룹)는 지역 변수처럼 범위가 정해진다. 블록보다 오래 살 수 없고, 자동으로 await되고, 태스크 트리를 따라 취소, 우선순위, 태스크 로컬 값을 물려받는다. 비구조적 태스크(`Task { }`, `Task.detached`)는 이 중 어느 것도 자동으로 주지 않는다.
+
+- **`async let`은** 개수가 고정되어 정적으로 알 수 있는 동시 자식 작업에 쓴다.
+- **`withTaskGroup`은** 개수가 동적일 때 쓴다. 태스크 그룹은 `AsyncSequence`를 준수하므로 결과가 도착하는 대로 순회한다. 자식이 아무것도 반환하지 않으면 **`withDiscardingTaskGroup`을** 쓴다. 이 그룹은 각 자식의 자원을 즉시 해제하고, 첫 오류가 나면 형제 태스크를 취소한다.
+- **`Task { }`는** 작업의 수명이 범위에 맞지 않을 때만 쓴다. 델리게이트 콜백, 버튼 탭, 뷰가 나타나는 일에 반응할 때다. 액터 격리와 우선순위는 물려받지만 취소는 직접 관리해야 한다.
+- **`Task.detached`는** 거의 쓰지 않는다. 아무것도 물려받지 않는다. 격리도, 우선순위도, 태스크 로컬 값도 없다. 분리된 루트가 필요하면 여러 번 분리하지 말고 그 *안에* 태스크 그룹을 둔다.
+
+**취소는 협력적이다.** 취소는 플래그를 세울 뿐 아무것도 멈추지 않는다. **비싼 작업을 시작하기 전에** `Task.isCancelled`나 `try Task.checkCancellation()`을 확인하고, 동기 헬퍼 안에서도 확인한다. 실행 중이 아니라 중단된 작업(`AsyncSequence`의 `next()`)에는 `withTaskCancellationHandler`를 쓴다. 이때 핸들러는 즉시, 본문과 동시에 실행된다는 점을 기억한다. 그래서 핸들러가 건드리는 상태에는 진짜 동기화가 필요하다(액터가 아니라 원자 연산이나 락을 쓴다. 액터에서는 순서를 보장할 수 없다).
+
+**동시성에 상한을 둔다.** 끝이 정해지지 않은 목록의 항목마다 자식 태스크를 하나씩 띄우지 않는다. 자식 N개로 시작하고, 하나가 끝날 때마다 새로 하나를 더한다.
+
+**태스크 로컬 값**(`@TaskLocal`)은 모든 시그니처에 매개변수를 꿰지 않고도 맥락(요청 ID, 트레이스 스팬)을 태스크 트리 아래로 전달한다. 바인딩되지 않은 상태에서 읽어도 합당한 기본값이 나오도록 옵셔널로 만든다.
+
+**콜백 연결하기:** `withCheckedContinuation` / `withCheckedThrowingContinuation`. 계약은 **모든 경로에서 정확히 한 번 재개한다**는 것이다. 재개하지 않으면 호출자가 영원히 멈추고, 두 번 재개하면 치명적 오류다. 나중에 호출되는 델리게이트 API라면 continuation을 저장해 두고 재개할 때 nil로 비운다. (Swift 6.4는 아직 릴리스되지 않았지만, 한 번만 재개하는지를 컴파일 시점에 검사하는 `Continuation` 타입을 더한다.)
+
+**`AsyncSequence`:** `for await` / `for try await`로 순회한다. 기존의 핸들러 기반이나 델리게이트 기반 API는 `AsyncStream` / `AsyncThrowingStream`으로 감싼다. 클로저 안에서 소스를 만들고, 핸들러에서 `yield`하고, `onTermination`에서 정리한다.
+
+---
+
+## 6. SwiftUI의 동시성
+
+- **`View`는 `@MainActor`에 격리되어 있고**, `@State`를 비롯해 그 안에 든 모든 것도 마찬가지다. 뷰나 뷰 모델에 `@MainActor`를 쓸 일은 거의 없다. 기본 메인 액터 격리를 켜면 이미 쓴 것도 지울 수 있다.
+- **SwiftUI는 프레임 비용을 낮추려고 일부러 코드 일부를 메인 스레드 밖에서 돌린다.** 신호는 API 시그니처의 `@Sendable`이다. `visualEffect`, `Shape.path(in:)`, `Layout` 요구 사항, `onGeometryChange`가 그렇다. 이런 클로저 안에서 격리 오류가 나면 **`self`를 보내지 말고, 필요한 값 하나만 클로저 캡처 목록에 복사한다.**
 
 ```swift
-.visualEffect { [pulse] effect, proxy in    // copy the Bool, don't capture self
+.visualEffect { [pulse] effect, proxy in    // Bool만 복사, self는 캡처하지 않음
   effect.blur(radius: pulse ? 2 : 0)
 }
 ```
 
-- **SwiftUI's action callbacks are synchronous on purpose.** Time-sensitive UI updates — starting an animation in response to a gesture or a scroll event — must happen on the same frame as the event. Put the `withAnimation` state change in the synchronous callback; open a `Task` only for the long-running work that follows.
-- **Put a piece of state on the seam between UI and async work.** The view kicks off a task; the async layer does a synchronous mutation when it finishes; the UI reacts. That keeps view logic synchronous and makes the async logic testable without importing SwiftUI.
+- **SwiftUI의 액션 콜백은 일부러 동기다.** 시간에 민감한 UI 업데이트(제스처나 스크롤 이벤트에 반응해 애니메이션을 시작하는 일)는 이벤트와 같은 프레임에서 일어나야 한다. `withAnimation` 상태 변경은 동기 콜백 안에 둔다. `Task`는 그 뒤에 이어지는 오래 걸리는 작업에만 띄운다.
+- **UI와 비동기 작업 사이의 이음매에 상태 하나를 둔다.** 뷰가 태스크를 시작한다. 비동기 계층은 끝날 때 동기적으로 상태를 바꾼다. UI가 반응한다. 이렇게 하면 뷰 로직은 동기로 남고, 비동기 로직은 SwiftUI를 import하지 않고도 테스트할 수 있다.
 
 ---
 
-## 7. Protocols and generics
+## 7. 프로토콜과 제네릭
 
-Don't start with a class. **Don't start with a protocol either.**
+클래스로 시작하지 않는다. **프로토콜로 시작하지도 않는다.**
 
-The workflow: **write concrete types → notice repeated code across them → factor the shared capability into a protocol → write generic code against it.** Overloads with near-identical bodies are the signal that it's time to generalize.
+작업 순서: **구체 타입을 쓴다 → 타입 사이에 반복되는 코드를 알아챈다 → 공통 능력을 프로토콜로 뽑아낸다 → 그 프로토콜을 대상으로 제네릭 코드를 쓴다.** 본문이 거의 같은 오버로드가 보이면 일반화할 때가 됐다는 신호다.
 
-- **A protocol with no per-type customization is a wasted protocol.** If every conformance would use the same default implementation, write a constrained extension on an existing protocol instead. Elaborate protocol hierarchies ("type zoology") cost compile time and binary size and buy nothing.
-- **Prefer has-a to is-a.** If only some of a protocol's operations make sense for your type, don't refine it — wrap it in a generic struct and expose exactly the API you mean. (`GeometricVector<Storage: SIMD>` rather than `GeometricVector: SIMD`.)
-- **A protocol requirement is a customization point** — it's dynamically dispatched, and a conforming type's implementation wins everywhere. **A method only in an extension is statically dispatched**, so a conformer's version _shadows_ rather than overrides it, and code that only knows `any P` calls the extension's. If a type should be able to customize something, make it a requirement.
-- **Composition over inheritance.** Class inheritance is monolithic (one superclass), intrusive (you inherit stored properties and initializer complexity), and leaves unwritten contracts about what may be overridden and when to call super. Compose small values instead.
-- **A forced downcast is a code smell** — it usually means a type relationship was lost to a class hierarchy or an existential.
+- **타입마다 사용자화할 것이 없는 프로토콜은 낭비다.** 모든 준수가 같은 기본 구현을 쓸 것이라면 대신 기존 프로토콜에 제약을 건 extension을 쓴다. 정교한 프로토콜 계층("타입 동물원")은 컴파일 시간과 바이너리 크기만 늘리고 얻는 것이 없다.
+- **is-a보다 has-a를 택한다.** 프로토콜 연산 중 일부만 타입에 맞는다면 그 프로토콜을 상속하지 말고, 제네릭 구조체로 감싸 의도한 API만 정확히 노출한다. (`GeometricVector: SIMD`보다 `GeometricVector<Storage: SIMD>`.)
+- **프로토콜 요구 사항은 사용자화 지점이다.** 동적으로 디스패치되므로 준수 타입의 구현이 어디서나 우선한다. **extension에만 있는 메서드는 정적으로 디스패치된다.** 그래서 준수 타입의 버전은 그 메서드를 재정의하지 않고 *가린다*. `any P`만 아는 코드는 extension의 메서드를 호출한다. 타입이 무언가를 사용자화할 수 있어야 한다면 요구 사항으로 만든다.
+- **상속보다 조합.** 클래스 상속은 한 덩어리이고(상위 클래스 하나), 침투적이며(저장 프로퍼티와 이니셜라이저의 복잡함까지 물려받는다), 무엇을 재정의해도 되는지와 언제 super를 호출해야 하는지에 관한 명문화되지 않은 계약을 남긴다. 대신 작은 값을 조합한다.
+- **강제 다운캐스트는 코드 스멜이다.** 보통 타입 관계가 클래스 계층이나 존재 타입 속에서 사라졌다는 뜻이다.
 
 ### `some` vs `any`
 
-- **Write `some P` by default. Change to `any P` when you need to store arbitrary types.** Same discipline as `let` before `var`.
-- `some P` — one fixed underlying type per scope. You keep every type relationship, including associated types, and the compiler can specialize.
-- `any P` — type-erased box, dynamic type varies at runtime. Needed for heterogeneous collections, for optionality of the underlying type, and to hide the abstraction entirely. You pay for it: associated-type relationships are erased to their upper bounds, and calls are opaque to the optimizer.
-- **You cannot call a method that takes an associated type on an `any P`.** Erasure works in producing position (the result is erased to its upper bound) but not consuming position. The fix is to pass the existential into a function taking `some P` — the compiler unboxes it, and inside that scope the type is fixed again.
-- **Constrained existentials and opaque types** — `some Collection<Element>`, `any Collection<any Animal>` — let you hide `LazyFilterSequence<[Animal]>` while still exposing the element type. Declare primary associated types on your own protocols (`protocol Container<Item>`) for the type callers actually supply, not for implementation details like `Iterator`.
-- **Same-type requirements in `where` clauses** are how you pin down relationships across protocols (`where Self.CropType.FeedType == Self`). Without them, "grow then harvest" doesn't typecheck, and wrong conformances compile.
+- **기본은 `some P`로 쓴다. 임의의 타입을 저장해야 할 때 `any P`로 바꾼다.** `var`보다 `let`을 먼저 쓰는 것과 같은 규율이다.
+- `some P`: 범위마다 고정된 기반 타입 하나. 연관 타입을 포함한 모든 타입 관계가 유지되고, 컴파일러가 특수화할 수 있다.
+- `any P`: 타입이 지워진 상자. 동적 타입이 런타임에 달라진다. 이질적인 컬렉션, 기반 타입이 없을 수도 있는 경우, 추상화를 완전히 숨길 때 필요하다. 대가가 있다. 연관 타입 관계는 상한으로 지워지고, 호출은 최적화기가 들여다볼 수 없다.
+- **`any P`에서는 연관 타입을 받는 메서드를 호출할 수 없다.** 타입 지우기는 생산 위치(결과가 상한으로 지워진다)에서는 되지만 소비 위치에서는 안 된다. 해결책은 존재 타입 값을 `some P`를 받는 함수에 넘기는 것이다. 컴파일러가 상자를 열고, 그 범위 안에서는 타입이 다시 고정된다.
+- **제약된 존재 타입과 불투명 타입**(`some Collection<Element>`, `any Collection<any Animal>`)을 쓰면 요소 타입은 드러내면서 `LazyFilterSequence<[Animal]>`은 숨길 수 있다. 직접 만든 프로토콜에 주 연관 타입(`protocol Container<Item>`)을 선언하되, `Iterator` 같은 구현 세부가 아니라 호출자가 실제로 지정하는 타입에 쓴다.
+- **`where` 절의 같은 타입 요구 사항으로** 프로토콜 사이의 관계를 고정한다(`where Self.CropType.FeedType == Self`). 이것이 없으면 "기르고 나서 수확한다"가 타입 검사를 통과하지 못하고, 잘못된 준수가 컴파일된다.
 
 ---
 
-## 8. API design — clarity at the point of use
+## 8. API 설계: 사용하는 지점의 명확성
 
-Clarity at the point of use is the goal that outranks every other one here.
+사용하는 지점의 명확성은 여기서 다른 어떤 목표보다 앞선다.
 
-- **No type prefixes in Swift-only APIs.** Modules disambiguate. Keep prefixes only where the API mirrors an Objective-C one. But avoid very general names from specific frameworks — they read badly out of context and force manual disambiguation.
-- **Drop leading `get`** from async alternatives and from anything that returns its result directly. `persistentPosts`, not `getPersistentPosts`.
-- **Access control is documentation.** `private` (file), `internal` (module, and the default), `package`, `public`. Being explicit at the boundary is what forces the sendability and API-evolution decisions above.
-- **Design the model so illegal states can't be spelled.** Private setters plus a validating mutating method; enums for closed sets; a strongly typed `UUID` instead of a `String`.
-- **Property wrappers** factor out an _access policy_ (`@Argument`, `@Published`, defensive copying, lazy, thread-local) so the declaration site states the policy in one word. Combine with `@dynamicMemberLookup` on a key path to project through a wrapper (that's how `$binding.title` works).
-- **Result builders** for declarative DSLs. **Macros** when the boilerplate is code the compiler could have written (§12).
-
----
-
-## 9. Performance — measure, then choose
-
-Low-level Swift performance is dominated by four costs. Know which one you're paying.
-
-1. **Function calls** — argument copies, static vs dynamic dispatch, call-frame allocation, and blocked optimization.
-2. **Memory layout** — inline vs out-of-line storage; dynamically sized types.
-3. **Allocation** — global (free), stack (cheap: one subtraction), heap (expensive: search plus locking).
-4. **Copies** — retains/releases and recursive struct copies.
-
-**But do the algorithmic work first.** Every time you write a loop, try replacing it with a call to an algorithm. The largest wins are almost never micro-optimizations:
-
-- **Know the complexity of what you call.** `Array.remove(at:)` is O(n); calling it in a loop is O(n²). `removeAll(where:)` is O(n) total. Building a `Data` by re-slicing per byte is O(n²); `popFirst()` is O(1). Both of these were 100×+ regressions hiding behind clean-looking code.
-- **Chained `map`/`flatMap`/`filter` allocate an array per stage.** Elegant ≠ fast. If a pipeline runs per-pixel or per-element in a hot loop, size the output once and write into it.
-- **Then profile.** Instruments' Time Profiler and Allocations, run against a _test_ (secondary-click the test's run button → Profile) so you're measuring exactly the code you care about. `platform_memmove` dominating a flame graph means accidental copying; a million transient allocations means intermediate arrays; `swift_beginAccess` means runtime exclusivity checks; `swift_retain`/`swift_release` means reference-counting traffic.
-
-**Concrete levers, roughly in order of what they buy:**
-
-- **`final` on classes you don't intend to subclass** turns dynamic dispatch static and unlocks inlining. Whole-module optimization lets the compiler prove this for you in many cases — and enables generic specialization, which is where generics stop costing anything.
-- **Struct storage is inline; class storage is out-of-line.** Small structs are free; a large struct with three reference-typed fields costs three retains _per copy_, versus one for a class. If you copy it a lot, use copy-on-write.
-- **An `any P` existential has a 3-word inline buffer.** Values that fit live inline; larger ones get heap-allocated per copy. Same technique applies: give the large type indirect storage with copy-on-write and it fits in the buffer again.
-- **Homogeneous `[MyModel]` beats `[any Model]`** — densely packed, type info passed once, specializable. `[any Model]` is the flexible-but-opaque option; take it when you need it.
-- **Constraining a generic parameter to a class** (`T: AnyObject`) gives the compiler a known representation even without specialization.
-- **`InlineArray<N, T>`** (Swift 6.2) for fixed-size storage: elements stored inline, size in the type via value generics, no heap allocation, no reference counting, no uniqueness or exclusivity checks. Wrong choice if it gets copied or shared.
-- **`Span` / `RawSpan` / `OutputSpan`** (Swift 6.2) replace `withUnsafeBufferPointer` for direct access to contiguous storage. They're non-escapable, so the compiler ties their lifetime to the container — you get pointer performance with no lifetime bugs, and the retains/releases disappear.
-- **Moving stored properties out of a nested class into the parent struct** removes runtime exclusivity checks.
-- Shipped in Swift 6.3, when you've measured the need: `@inline(always)` (pair with `final` on methods) and `@specialized(where T == ...)` (SE-0460) to pre-specialize a generic for hot concrete types.
-- Landing in Swift 6.4 (**unreleased** — see the note below §15): `borrow`/`mutate` accessors instead of `get`/`set` for large stored values, `UniqueArray`/`UniqueBox`, and `Ref`/`MutableRef` to hoist a repeated lookup out of a loop.
-
-**Async functions** keep their state on a per-task slab allocator rather than the C stack, and split into partial functions at each suspension point. The cost profile is similar to sync functions with slightly higher call overhead — which is another reason not to make something `async` that has nothing to await.
-
-**Hops to and from the main actor cost a real context switch.** Batch: push the loop _into_ `loadArticles`/`updateUI` so they take arrays, rather than hopping twice per iteration.
+- **Swift 전용 API에는 타입 접두어를 붙이지 않는다.** 모듈이 구분해 준다. 접두어는 Objective-C API를 그대로 따르는 곳에만 남긴다. 다만 특정 프레임워크에서 아주 일반적인 이름은 피한다. 맥락 밖에서 읽기 어렵고, 쓰는 쪽에서 직접 구분해야 한다.
+- **비동기 대안과 결과를 바로 반환하는 모든 것에서 앞의 `get`을 뺀다.** `getPersistentPosts`가 아니라 `persistentPosts`다.
+- **접근 제어는 문서다.** `private`(파일), `internal`(모듈, 기본값), `package`, `public`. 경계에서 명시적으로 써야 앞서 말한 Sendable 여부와 API 진화에 관한 결정을 내리게 된다.
+- **잘못된 상태를 아예 쓸 수 없게 모델을 설계한다.** private setter와 검증하는 mutating 메서드를 함께 쓴다. 닫힌 집합에는 열거형을 쓴다. `String` 대신 강한 타입의 `UUID`를 쓴다.
+- **프로퍼티 래퍼**는 *접근 정책*(`@Argument`, `@Published`, 방어적 복사, 지연, 스레드 로컬)을 뽑아내, 선언하는 자리에서 정책을 한 단어로 밝히게 한다. 키 경로에 `@dynamicMemberLookup`을 함께 쓰면 래퍼를 거쳐 값을 투영할 수 있다(`$binding.title`이 이렇게 동작한다).
+- 선언적 DSL에는 **결과 빌더**를 쓴다. 반복 코드가 컴파일러가 대신 쓸 수 있었을 코드라면 **매크로**를 쓴다(§12).
 
 ---
 
-## 10. ARC and object lifetime
+## 9. 성능: 측정하고 나서 고르기
 
-- **An object's guaranteed lifetime ends at its last use, not at the closing brace.** Observed lifetimes are an emergent property of the optimizer and _will_ change. Code that depends on when a `deinit` runs is a latent bug.
-- **`weak`/`unowned` are for breaking reference cycles — nothing else.** Reading a `weak` reference after the strong owner's last use may legitimately give `nil`. Optional binding there is _worse_ than force-unwrap: it turns a loud crash into a silent wrong answer.
-- **Better than `weak`: don't build the cycle.** Factor the shared data into a third type both sides reference, turning the cycle into a tree.
-- **Next best: redesign the API** so the object is only reachable through a strong reference. `withExtendedLifetime` works but shifts correctness onto you and spreads through a codebase — treat it as a patch, not a design.
-- **Keep `deinit` side effects local.** Publishing metrics or firing a global effect from `deinit` sequences against optimizer decisions. Use `defer` at the call site instead, and leave `deinit` for verification.
-- Xcode's **Optimize Object Lifetimes** build setting shortens observed lifetimes toward the guaranteed minimum, and will surface exactly these bugs.
+저수준 Swift 성능은 네 가지 비용이 좌우한다. 어떤 비용을 치르고 있는지 안다.
 
----
+1. **함수 호출**: 인자 복사, 정적 대 동적 디스패치, 호출 프레임 할당, 막힌 최적화.
+2. **메모리 레이아웃**: 인라인 저장소 대 외부 저장소, 동적 크기 타입.
+3. **할당**: 전역(공짜), 스택(싸다: 뺄셈 한 번), 힙(비싸다: 탐색과 락).
+4. **복사**: retain/release와 재귀적인 구조체 복사.
 
-## 11. Testing — Swift Testing by default
+**하지만 알고리즘 작업이 먼저다.** 루프를 쓸 때마다 알고리즘 호출로 바꿔 본다. 가장 큰 이득은 마이크로 최적화에서 나오는 일이 거의 없다.
 
-Use **Swift Testing** for new tests. XCTest remains required for exactly three things: UI automation (`XCUIApplication`), performance metrics (`XCTMetric`), and tests that must be written in Objective-C or that catch Objective-C exceptions.
+- **호출하는 것의 복잡도를 안다.** `Array.remove(at:)`은 O(n)이고, 루프 안에서 부르면 O(n²)이다. `removeAll(where:)`는 전체가 O(n)이다. 바이트마다 다시 슬라이스해서 `Data`를 만들면 O(n²)이고, `popFirst()`는 O(1)이다. 둘 다 깔끔해 보이는 코드 뒤에 숨은 100×+ 회귀였다.
+- **`map`/`flatMap`/`filter`를 이어 붙이면 단계마다 배열을 할당한다.** 우아함 ≠ 빠름. 파이프라인이 핫 루프 안에서 픽셀마다, 요소마다 돈다면 출력 크기를 한 번에 잡고 그 안에 쓴다.
+- **그다음 프로파일링한다.** Instruments의 Time Profiler와 Allocations를 *테스트*에 대고 돌려(테스트 실행 버튼을 보조 클릭 → Profile) 관심 있는 코드만 정확히 잰다. 플레임 그래프를 `platform_memmove`가 차지하면 의도치 않은 복사다. 일시적인 할당이 백만 번이면 중간 배열이다. `swift_beginAccess`는 런타임 배타성 검사다. `swift_retain`/`swift_release`는 참조 카운팅 트래픽이다.
 
-- **`@Test` on any function** — global, static, or instance; `async`, `throws`, and global-actor-isolated all work.
-- **`#expect(...)` takes ordinary expressions.** No family of `XCTAssertEqual`-style functions to memorize — `#expect(a == b)`, `#expect(list.isEmpty)`, `#expect(!x.contains(y))` all capture and display subexpression values on failure.
-- **`try #require(...)`** to stop the test on failure, and to unwrap an optional safely. This replaces `continueAfterFailure = false` and lets you choose per-expectation.
-- **Suites are `struct`s.** A fresh instance is created per test function, so state can't leak between tests. Use `init` for setup; only use a `class`/`actor` when you need `deinit` for teardown. Nest suites to group.
-- **Parameterize instead of copy-pasting or looping.** `@Test(arguments: [...])` runs each case independently, in parallel, individually re-runnable, with the failing argument named in the results. Two argument collections produce the full cross product — use `zip()` when you want matched pairs instead.
-- **Traits carry intent:** `.enabled(if:)` / `.disabled("reason")` for conditions (never comment a test out — a disabled test still compiles), `.bug(url)` for tracking, `.tags(...)` to relate tests across files and targets, `.timeLimit`, `.serialized` when a test genuinely can't run in parallel. Use `@available` rather than a runtime `#available` check so the testing library knows.
-- **`withKnownIssue { }`** for a test failing on something outside your control — it keeps compiling and running and tells you when the issue is fixed, unlike `.disabled`.
-- **`confirmation`** for callbacks that fire N times; `withCheckedContinuation` for one-shot callbacks with no async overload.
-- **Tests run in parallel by default, in randomized order.** That's a feature: it surfaces hidden inter-test dependencies. Refactor rather than reaching for `.serialized`.
-- **Exit tests** — `#expect(processExitsWith: .failure) { ... }` — cover `precondition`/`fatalError` paths in an isolated child process. macOS, Linux, FreeBSD, Windows only.
-- Migrating: both frameworks coexist in one target, so migrate incrementally and write new tests in Swift Testing today. **Test framework interoperability** (swift-testing ST-0021; check your Xcode version for availability) lets helpers that wrap `XCTFail` be called from Swift Testing tests and vice versa; set the mode to **complete** or **strict** (not **limited**, and never **none**) so cross-framework issues stay errors and point you at the `Issue.record` replacement.
+**구체적인 수단(대략 얻는 효과가 큰 순서):**
 
----
+- **하위 클래스를 만들 생각이 없는 클래스에 `final`을 붙이면** 동적 디스패치가 정적으로 바뀌고 인라이닝이 가능해진다. 전체 모듈 최적화를 켜면 많은 경우 컴파일러가 이를 대신 증명해 준다. 제네릭 특수화도 가능해지는데, 제네릭 비용이 사라지는 지점이 바로 여기다.
+- **구조체 저장소는 인라인이고, 클래스 저장소는 외부에 있다.** 작은 구조체는 공짜다. 참조 타입 필드가 셋인 큰 구조체는 *복사할 때마다* retain을 세 번 하지만 클래스는 한 번이다. 많이 복사한다면 copy-on-write를 쓴다.
+- **`any P` 존재 타입에는 3워드짜리 인라인 버퍼가 있다.** 들어맞는 값은 인라인에 살고, 더 큰 값은 복사할 때마다 힙에 할당된다. 같은 기법이 통한다. 큰 타입에 copy-on-write로 간접 저장소를 주면 다시 버퍼에 들어간다.
+- **동질적인 `[MyModel]`이 `[any Model]`보다 낫다.** 촘촘하게 채워지고, 타입 정보를 한 번만 넘기고, 특수화할 수 있다. `[any Model]`은 유연하지만 불투명한 선택지다. 필요할 때 택한다.
+- **제네릭 매개변수를 클래스로 제약하면**(`T: AnyObject`) 특수화 없이도 컴파일러가 표현을 알 수 있다.
+- **`InlineArray<N, T>`**(Swift 6.2): 고정 크기 저장소에 쓴다. 요소가 인라인에 저장되고, 값 제네릭으로 크기가 타입에 들어가며, 힙 할당도, 참조 카운팅도, 유일성이나 배타성 검사도 없다. 복사되거나 공유된다면 잘못된 선택이다.
+- **`Span` / `RawSpan` / `OutputSpan`**(Swift 6.2)은 연속 저장소에 직접 접근할 때 `withUnsafeBufferPointer`를 대신한다. 탈출할 수 없는 타입이라 컴파일러가 수명을 컨테이너에 묶는다. 수명 버그 없이 포인터 성능을 얻고, retain/release도 사라진다.
+- **중첩 클래스의 저장 프로퍼티를 부모 구조체로 옮기면** 런타임 배타성 검사가 사라진다.
+- Swift 6.3에 들어온 것으로, 필요를 측정했을 때 쓴다. `@inline(always)`(메서드에 `final`과 함께 쓴다)와, 자주 쓰는 구체 타입에 맞춰 제네릭을 미리 특수화하는 `@specialized(where T == ...)`(SE-0460).
+- Swift 6.4에 들어올 것(**아직 릴리스되지 않음**, §15 아래 설명 참고): 큰 저장 값에 `get`/`set` 대신 쓰는 `borrow`/`mutate` 접근자, `UniqueArray`/`UniqueBox`, 반복 조회를 루프 밖으로 끌어올리는 `Ref`/`MutableRef`.
 
-## 12. Macros
+**비동기 함수**는 상태를 C 스택이 아니라 태스크별 슬랩 할당자에 두고, 중단 지점마다 부분 함수로 나뉜다. 비용 특성은 동기 함수와 비슷하고 호출 오버헤드가 조금 더 클 뿐이다. 기다릴 것이 없는 함수를 `async`로 만들지 말아야 할 또 하나의 이유다.
 
-Reach for a macro when you're writing code the compiler could derive — and only then.
-
-- **Macros are type-checked before expansion.** Arguments are checked against the macro's declared signature, so misuse is a clean error at the call site, not a mess inside generated code.
-- **Freestanding (`#foo`)** produce an expression or declaration. **Attached (`@Foo`)** augment a declaration in one of five roles: member, peer, accessor, member-attribute, conformance. Roles compose — `@Observable` is member + member-attribute + conformance.
-- **Test macros as pure syntax-tree transforms** with `assertMacroExpansion`. It's the fastest loop, and it's how you avoid bugs in code nobody reads. Set a breakpoint in `expansion` and `po` the syntax node to learn its shape.
-- **Emit real diagnostics when the macro doesn't apply.** Throw an error, or use `context.addDiagnostic` for warnings and fix-its at a specific location. Never let a macro silently generate code that won't compile.
-- Expanded code is ordinary Swift: inspectable ("Expand Macro"), debuggable, steppable.
+**메인 액터를 오갈 때마다 실제 컨텍스트 전환 비용이 든다.** 묶어서 처리한다. 반복마다 두 번씩 오가지 말고, 루프를 `loadArticles`/`updateUI` *안으로* 밀어 넣어 배열을 받게 한다.
 
 ---
 
-## 13. Logging and debugging
+## 10. ARC와 객체 수명
 
-- **`Logger` from `os`, not `print`.** Create one per subsystem and category. Messages are stored in an optimized form and only rendered when displayed, so logging is cheap enough to leave in.
-- **Non-numeric interpolations are redacted by default.** Opt in per value with `privacy: .public` only for data that is genuinely not personal. Use `.private(mask: .hash)` when you need to correlate values without exposing them.
-- **Levels control persistence and cost:** `debug` (never persisted, fastest — the message construction is optimized away entirely when not streaming), `info`, `notice` (default), `error`, `fault` (most persistent, slowest). Log at `error`/`fault` for the things you'll want in a bug report.
-- **Log a correlation ID** (a task or request UUID) and you can filter a whole failure's history out of a device log archive without reproducing it. `log collect --device --start ...`, then filter by subsystem in Console.
-- `format:` and `align:` are free — use them so logs are readable and column-selectable.
-- LLDB understands Swift tasks: it steps through `await` across threads, `swift task info` shows priority and children, and named tasks show up in both the debugger and Instruments' Swift Concurrency template.
-
----
-
-## 14. Unsafe code and interop
-
-- **"Unsafe" means the API cannot fully validate its input, so violating its preconditions is undefined behavior** — not that it crashes. Safe APIs _do_ trap deliberately; a clean fatal error is the safe outcome.
-- **Prefer `Span` over `Unsafe*Pointer`.** Since Swift 6.2 there is a safe, non-escaping, equally fast way to get at contiguous storage. Reserve raw pointers for C interop.
-- If you must use pointers: keep the unsafe region as small as possible, use **buffer** pointers (address + count) rather than bare pointers so bounds are tracked, never let a pointer escape the closure that vends it, and run the **Address Sanitizer**.
-- Enable **strict memory safety** in security-critical modules — it forces every unsafe use to be acknowledged in source, which is what makes an audit possible. Swift 6.4's `@diagnose` attribute (unreleased) lets you turn it on for individual functions.
-- **Interop is bidirectional and incremental.** C, Objective-C, and C++ types map into Swift directly (including C++ value semantics, containers as Swift collections, and move-only types as `~Copyable`). Swift 6.3's `@c` attribute exposes Swift functions back to C (with `@implementation` when the declaration already exists in a header). Adopt Swift one file at a time; don't rewrite.
+- **객체의 보장된 수명은 닫는 중괄호가 아니라 마지막 사용에서 끝난다.** 관찰되는 수명은 최적화기의 동작에서 생겨나는 성질일 뿐이라 *반드시* 바뀐다. `deinit`이 언제 도는지에 기대는 코드는 잠재적 버그다.
+- **`weak`/`unowned`는 순환 참조를 끊는 데만 쓴다. 다른 용도는 없다.** 강한 소유자의 마지막 사용 뒤에 `weak` 참조를 읽으면 정당하게 `nil`이 나올 수 있다. 거기서 옵셔널 바인딩을 하면 강제 언래핑보다 *더 나쁘다*. 요란한 크래시를 조용한 오답으로 바꾸기 때문이다.
+- **`weak`보다 나은 방법: 순환을 만들지 않는다.** 공유 데이터를 양쪽이 모두 참조하는 세 번째 타입으로 뽑아 순환을 트리로 바꾼다.
+- **차선책: 강한 참조로만 객체에 닿을 수 있게 API를 다시 설계한다.** `withExtendedLifetime`도 동작하지만 정확성의 책임을 직접 지게 되고 코드베이스 전체로 퍼진다. 설계가 아니라 임시방편으로 다룬다.
+- **`deinit`의 부수 효과는 지역에 머물게 한다.** `deinit`에서 지표를 내보내거나 전역 효과를 일으키면 그 순서가 최적화기의 결정에 좌우된다. 대신 호출하는 자리에서 `defer`를 쓰고, `deinit`은 검증용으로 남긴다.
+- Xcode의 **Optimize Object Lifetimes** 빌드 설정은 관찰되는 수명을 보장된 최소치 쪽으로 줄여서 바로 이런 버그를 드러낸다.
 
 ---
 
-## 15. Modern syntax you should be using
+## 11. 테스트: 기본은 Swift Testing
 
-Agents routinely write the older, longer form of all of these.
+새 테스트에는 **Swift Testing**을 쓴다. XCTest가 여전히 필요한 곳은 딱 세 가지다. UI 자동화(`XCUIApplication`), 성능 지표(`XCTMetric`), 그리고 Objective-C로 써야 하거나 Objective-C 예외를 잡는 테스트다.
 
-**Rows marked ⚠ are Swift 6.4, which has not shipped.** The current release is 6.3.x. Their proposals are accepted and implemented in main, so they are safe to plan around and unsafe to write today — check the project's toolchain before using one, and prefer the older form if it targets 6.3 or earlier.
+- **`@Test`는 어떤 함수에든 붙인다.** 전역, 정적, 인스턴스 함수 모두 되고, `async`, `throws`, 전역 액터 격리 함수도 모두 된다.
+- **`#expect(...)`는 평범한 표현식을 받는다.** `XCTAssertEqual` 같은 함수 계열을 외울 필요가 없다. `#expect(a == b)`, `#expect(list.isEmpty)`, `#expect(!x.contains(y))` 모두 실패하면 하위 표현식의 값을 캡처해 보여 준다.
+- **`try #require(...)`로** 실패하면 테스트를 멈추고, 옵셔널을 안전하게 언래핑한다. `continueAfterFailure = false`를 대체하고, 기대마다 따로 고를 수 있게 한다.
+- **스위트는 `struct`다.** 테스트 함수마다 새 인스턴스가 생기므로 테스트 사이에 상태가 새지 않는다. 준비에는 `init`을 쓴다. 정리에 `deinit`이 필요할 때만 `class`/`actor`를 쓴다. 묶으려면 스위트를 중첩한다.
+- **복사해 붙이거나 루프를 돌리지 말고 매개변수화한다.** `@Test(arguments: [...])`는 각 경우를 독립적으로, 병렬로 실행하고, 하나씩 다시 실행할 수 있으며, 결과에 실패한 인자를 이름으로 보여 준다. 인자 컬렉션이 둘이면 모든 조합(데카르트 곱)이 만들어진다. 짝을 맞춘 쌍을 원하면 대신 `zip()`을 쓴다.
+- **트레이트는 의도를 담는다:** 조건에는 `.enabled(if:)` / `.disabled("reason")`(절대 테스트를 주석 처리하지 않는다. 비활성화한 테스트도 컴파일은 된다), 추적에는 `.bug(url)`, 파일과 타깃을 넘어 테스트를 엮을 때는 `.tags(...)`, 그리고 `.timeLimit`, 테스트가 정말로 병렬로 돌 수 없을 때는 `.serialized`를 쓴다. 테스트 라이브러리가 알 수 있도록 런타임 `#available` 검사 대신 `@available`을 쓴다.
+- **`withKnownIssue { }`는** 통제할 수 없는 원인으로 실패하는 테스트에 쓴다. `.disabled`와 달리 계속 컴파일하고 실행하며, 문제가 고쳐지면 알려 준다.
+- **`confirmation`은** N번 호출되는 콜백에 쓴다. async 오버로드가 없는 일회성 콜백에는 `withCheckedContinuation`을 쓴다.
+- **테스트는 기본적으로 무작위 순서로 병렬 실행된다.** 이것은 기능이다. 숨은 테스트 간 의존성을 드러낸다. `.serialized`에 기대지 말고 리팩터링한다.
+- **종료 테스트**(exit test)는 `#expect(processExitsWith: .failure) { ... }` 형태로, 격리된 자식 프로세스에서 `precondition`/`fatalError` 경로를 검사한다. macOS, Linux, FreeBSD, Windows에서만 된다.
+- 마이그레이션: 두 프레임워크는 한 타깃 안에 함께 있을 수 있으니 점진적으로 옮기고, 새 테스트는 지금부터 Swift Testing으로 쓴다. **테스트 프레임워크 상호 운용**(swift-testing ST-0021, 쓸 수 있는지는 Xcode 버전을 확인한다)을 쓰면 `XCTFail`을 감싼 헬퍼를 Swift Testing 테스트에서 부를 수 있고 그 반대도 된다. 모드는 **complete**나 **strict**로 설정한다(**limited**는 아니고, **none**은 절대 안 된다). 그래야 프레임워크를 넘나드는 문제가 계속 오류로 남고, 대체할 `Issue.record`를 가리켜 준다.
 
-| Instead of                                                            | Write                                                                                                    | Since |
+---
+
+## 12. 매크로
+
+컴파일러가 유도할 수 있는 코드를 쓰고 있을 때 매크로를 꺼낸다. 그때만이다.
+
+- **매크로는 확장 전에 타입 검사를 받는다.** 인자가 매크로에 선언된 시그니처에 맞는지 검사하므로, 잘못 쓰면 생성된 코드 속 엉망이 아니라 호출 지점의 깔끔한 오류가 된다.
+- **독립형(freestanding) 매크로**(`#foo`)는 표현식이나 선언을 만든다. **부착형(attached) 매크로**(`@Foo`)는 다섯 역할 중 하나로 선언을 보강한다. 역할은 member, peer, accessor, member-attribute, conformance다. 역할은 조합된다. `@Observable`은 member + member-attribute + conformance다.
+- **`assertMacroExpansion`으로 매크로를 순수한 구문 트리 변환으로 테스트한다.** 가장 빠르게 반복할 수 있는 방법이고, 아무도 읽지 않는 코드에서 버그를 피하는 방법이다. `expansion`에 중단점을 걸고 구문 노드를 `po`로 출력해 모양을 익힌다.
+- **매크로가 적용되지 않으면 제대로 된 진단을 낸다.** 오류를 던지거나, 특정 위치에 경고와 fix-it을 달 때는 `context.addDiagnostic`을 쓴다. 매크로가 컴파일되지 않을 코드를 조용히 만들게 절대 두지 않는다.
+- 확장된 코드는 평범한 Swift다. 들여다볼 수 있고("Expand Macro"), 디버깅할 수 있고, 한 단계씩 실행할 수 있다.
+
+---
+
+## 13. 로깅과 디버깅
+
+- **`print`가 아니라 `os`의 `Logger`를 쓴다.** 서브시스템과 카테고리마다 하나씩 만든다. 메시지는 최적화된 형태로 저장되고 표시할 때만 렌더링되므로, 로깅을 남겨 둬도 될 만큼 싸다.
+- **숫자가 아닌 보간 값은 기본적으로 가려진다.** 정말 개인 정보가 아닌 데이터에만 값마다 `privacy: .public`으로 공개를 선택한다. 값을 드러내지 않고 서로 연관 지어야 할 때는 `.private(mask: .hash)`를 쓴다.
+- **레벨이 보존 여부와 비용을 정한다:** `debug`(절대 보존되지 않고 가장 빠르다. 스트리밍 중이 아니면 메시지 생성 자체가 최적화로 완전히 사라진다), `info`, `notice`(기본값), `error`, `fault`(가장 오래 보존되고 가장 느리다). 버그 리포트에 담고 싶은 것은 `error`/`fault`로 기록한다.
+- **상관관계 ID(태스크나 요청의 UUID)를 기록하면** 재현하지 않고도 기기 로그 아카이브에서 실패 하나의 전체 이력을 걸러 낼 수 있다. `log collect --device --start ...`를 실행한 뒤 Console에서 서브시스템으로 거른다.
+- `format:`과 `align:`은 공짜다. 로그를 읽기 쉽고 열 단위로 선택할 수 있게 쓴다.
+- LLDB는 Swift 태스크를 이해한다. 스레드를 넘나드는 `await`를 따라 한 단계씩 실행하고, `swift task info`는 우선순위와 자식을 보여 주며, 이름을 붙인 태스크는 디버거와 Instruments의 Swift Concurrency template 양쪽에 나타난다.
+
+---
+
+## 14. 안전하지 않은 코드와 상호 운용
+
+- **"Unsafe"는 API가 입력을 완전히 검증할 수 없어서 전제 조건을 어기면 정의되지 않은 동작이 된다는 뜻이다.** 크래시가 난다는 뜻이 아니다. 안전한 API는 일부러 트랩을 *일으킨다*. 깔끔한 치명적 오류가 안전한 결과다.
+- **`Unsafe*Pointer`보다 `Span`을 쓴다.** Swift 6.2부터는 연속 저장소에 닿는 안전하고, 탈출하지 않고, 똑같이 빠른 방법이 있다. 원시 포인터는 C 상호 운용에만 쓴다.
+- 포인터를 꼭 써야 한다면 안전하지 않은 구간을 최대한 작게 유지하고, 경계가 추적되도록 맨 포인터 대신 **버퍼** 포인터(주소 + 개수)를 쓰고, 포인터를 내준 클로저 밖으로 절대 내보내지 않고, **Address Sanitizer**를 돌린다.
+- 보안이 중요한 모듈에서는 **엄격한 메모리 안전성**을 켠다. 안전하지 않은 사용을 모두 소스에 명시하게 만들고, 그래서 점검이 가능해진다. Swift 6.4의 `@diagnose` 속성(아직 릴리스되지 않음)을 쓰면 함수 단위로 켤 수 있다.
+- **상호 운용은 양방향이고 점진적이다.** C, Objective-C, C++ 타입은 Swift로 바로 매핑된다(C++ 값 의미론, Swift 컬렉션으로 매핑되는 컨테이너, `~Copyable`로 매핑되는 이동 전용 타입까지 포함한다). Swift 6.3의 `@c` 속성은 Swift 함수를 다시 C로 노출한다(선언이 이미 헤더에 있으면 `@implementation`과 함께 쓴다). Swift는 파일 하나씩 도입한다. 통째로 다시 쓰지 않는다.
+
+---
+
+## 15. 써야 할 최신 문법
+
+에이전트는 아래 모두를 습관처럼 예전의 더 긴 형태로 쓴다.
+
+**⚠ 표시가 붙은 행은 아직 출시되지 않은 Swift 6.4다.** 현재 릴리스는 6.3.x다. 이 제안들은 채택되어 main에 구현되었으므로 계획에 넣기에는 안전하지만 오늘 코드로 쓰기에는 안전하지 않다. 쓰기 전에 프로젝트의 툴체인을 확인하고, 6.3 이하가 대상이면 예전 형태를 택한다.
+
+| 이것 대신 | 이렇게 쓴다 | 버전 |
 | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----- |
-| Nested ternaries; an immediately-called closure to initialize a `let` | `if`/`switch` **expressions**                                                                            | 5.9   |
-| Overloads for 1, 2, 3… arguments                                      | **parameter packs** (`each T`), and `for` over a pack                                                    | 5.9   |
-| `ObservableObject` + `@Published` on every property                   | **`@Observable`**                                                                                        | 5.9   |
-| Polling an object for changes                                         | **`Observations { ... }`** — an `AsyncSequence` of transactional updates                                 | 6.2   |
-| `NotificationCenter` with stringly-typed `userInfo`                   | concrete notification types (`MainActorMessage` / `AsyncMessage`)                                        | 6.2   |
-| `Process` + pipes for scripting                                       | the **Subprocess** package (`AsyncBufferSequence.strings()` for line-by-line output; 1.0 lands with 6.4) | 6.2+  |
-| Hand-rolled string index math                                         | **Swift Regex** — literals for brevity, `RegexBuilder` for structure                                     | 5.7   |
-| `[String]` of fixed size in a hot path                                | **`InlineArray<N, T>`**                                                                                  | 6.2   |
-| `withUnsafeBufferPointer`                                             | **`.span`** / **`.bytes`** (`RawSpan`) / `OutputSpan`                                                    | 6.2   |
-| Manual `Task.isCancelled` juggling to finish a write                  | `Task` **cancellation shield** (SE-0504)                                                                 | 6.4 ⚠ |
-| Rebuilding a dictionary by hand to use the key                        | **`mapKeyedValues`**                                                                                     | 6.4 ⚠ |
-| `@available(iOS ..., macOS ..., tvOS ..., watchOS ..., visionOS ...)` | **`@available(anyAppleOS ...)`**                                                                         | 6.4 ⚠ |
-| `Rocket.SaturnV` when a type shadows a module                         | **module selector** `Rocket::SaturnV`                                                                    | 6.3   |
-| Blanket "warnings as errors"                                          | **`@diagnose`** per declaration / warning group                                                          | 6.4 ⚠ |
-| `@unchecked Sendable` because of a `weak var`                         | `weak let`; or state non-sendability with **`~Sendable`**                                                | 6.4 ⚠ |
-| Manually parsing binary formats with pointers                         | **Swift Binary Parsing** (`ParserSpan`, overflow-checked parsing initializers)                           | 6.2   |
-| Awkward test function names                                           | **raw identifiers**: `` @Test func `fruits have a tropical climate`() ``                                 | 6.0   |
+| 중첩 삼항 연산자, `let`을 초기화하려고 즉시 호출하는 클로저 | `if`/`switch` **표현식** | 5.9   |
+| 인자 1개, 2개, 3개…용 오버로드 | **매개변수 팩**(parameter packs, `each T`), 팩을 순회하는 `for` | 5.9   |
+| `ObservableObject` + 모든 프로퍼티에 `@Published` | **`@Observable`** | 5.9   |
+| 변경을 알려고 객체를 폴링하기 | **`Observations { ... }`**: 트랜잭션 단위 업데이트의 `AsyncSequence` | 6.2   |
+| 문자열 기반 `userInfo`를 쓰는 `NotificationCenter` | 구체적인 알림 타입(`MainActorMessage` / `AsyncMessage`) | 6.2   |
+| 스크립팅용 `Process` + 파이프 | **Subprocess** 패키지(줄 단위 출력에는 `AsyncBufferSequence.strings()`, 1.0은 6.4와 함께 나온다) | 6.2+  |
+| 손으로 짠 문자열 인덱스 계산 | **Swift Regex**: 간결함에는 리터럴, 구조에는 `RegexBuilder` | 5.7   |
+| 핫 패스의 고정 크기 `[String]` | **`InlineArray<N, T>`** | 6.2   |
+| `withUnsafeBufferPointer` | **`.span`** / **`.bytes`** (`RawSpan`) / `OutputSpan` | 6.2   |
+| 쓰기를 끝내려고 `Task.isCancelled`를 손으로 이리저리 확인하기 | `Task` **취소 보호막**(cancellation shield, SE-0504) | 6.4 ⚠ |
+| 키를 쓰려고 딕셔너리를 손으로 다시 만들기 | **`mapKeyedValues`** | 6.4 ⚠ |
+| `@available(iOS ..., macOS ..., tvOS ..., watchOS ..., visionOS ...)` | **`@available(anyAppleOS ...)`** | 6.4 ⚠ |
+| 타입이 모듈을 가릴 때의 `Rocket.SaturnV` | **모듈 선택자**(module selector) `Rocket::SaturnV` | 6.3   |
+| 일괄 적용하는 "경고를 오류로 처리" | 선언 / 경고 그룹마다 **`@diagnose`** | 6.4 ⚠ |
+| `weak var` 때문에 쓰는 `@unchecked Sendable` | `weak let`, 또는 **`~Sendable`로** Sendable이 아님을 밝히기 | 6.4 ⚠ |
+| 포인터로 바이너리 형식을 직접 파싱하기 | **Swift Binary Parsing**(`ParserSpan`, 오버플로를 검사하는 파싱 이니셜라이저) | 6.2   |
+| 어색한 테스트 함수 이름 | **원시 식별자**(raw identifiers): `` @Test func `fruits have a tropical climate`() `` | 6.0   |
 
-Also worth knowing: **Swift Regex parsers compose with Foundation's real parsers** (`.date(...)`, `.currency(...)`) — never hand-roll date or number parsing inside a regex. Make the locale explicit rather than inheriting the system's. And use `NegativeLookahead` or `Local` (atomic groups) to stop a pattern backtracking across a whole input.
-
----
-
-## 16. Migrating an existing codebase to Swift 6
-
-The order matters, and mixing steps is how migrations stall.
-
-1. **Build with the new compiler first.** Source compatibility means this should just work, in Swift 5 mode.
-2. **Per target, enable complete concurrency checking** (Swift 5 mode + all Swift 6 warnings). Start with the **UI/app layer**, not the frameworks below it — much of it is already main-actor-annotated by the SDK, so the fix rate is high.
-3. **Fix the warnings, cheapest first.** Expect hundreds of warnings from a handful of root causes: `var` globals that should be `let`, free functions that belong on `@MainActor`, one public struct that needs `: Sendable`. A single line can clear dozens.
-4. **Flip the target to the Swift 6 language mode** to lock the work in.
-5. **Move to the next target and repeat.**
-6. **Refactor afterwards, separately.** Never combine a significant refactor with enabling data-race safety — you'll have to back out both.
-
-You can turn strict checking back off and ship; every fix you made is a genuine improvement that survives. Enable **Approachable Concurrency** and, for app modules, main-actor-by-default _before_ you start — both dramatically reduce the number of errors you'll see, and Xcode ships migration tooling that applies many of the changes for you (swift.org/migration).
+알아 둘 것이 더 있다. **Swift Regex 파서는 Foundation의 진짜 파서와 조합된다**(`.date(...)`, `.currency(...)`). 정규식 안에서 날짜나 숫자 파싱을 절대 손으로 짜지 않는다. 로케일은 시스템 것을 물려받지 말고 명시한다. 그리고 패턴이 입력 전체에 걸쳐 역추적하지 않도록 `NegativeLookahead`나 `Local`(원자 그룹)을 쓴다.
 
 ---
 
-## Quick Reference
+## 16. 기존 코드베이스의 Swift 6 마이그레이션
 
-| Need                               | Reach for                       | Not                                       |
+순서가 중요하다. 단계를 섞으면 마이그레이션이 멈춘다.
+
+1. **먼저 새 컴파일러로 빌드한다.** 소스 호환성이 있으니 Swift 5 모드에서는 그냥 동작해야 한다.
+2. **타깃마다 완전한 동시성 검사를 켠다**(Swift 5 모드 + Swift 6 경고 전부). 그 아래 프레임워크가 아니라 **UI/앱 계층**부터 시작한다. 그 계층의 상당 부분은 SDK가 이미 메인 액터로 표시해 두어서 고쳐지는 비율이 높다.
+3. **경고를 고친다. 가장 싼 것부터.** 근본 원인 몇 개에서 경고가 수백 개 나온다고 예상한다. `let`이어야 할 `var` 전역 변수, `@MainActor`에 속해야 할 자유 함수, `: Sendable`이 필요한 public 구조체 하나 같은 것이다. 한 줄로 수십 개가 사라질 수 있다.
+4. **타깃을 Swift 6 언어 모드로 바꿔** 작업 결과를 굳힌다.
+5. **다음 타깃으로 넘어가 반복한다.**
+6. **리팩터링은 그 뒤에 따로 한다.** 큰 리팩터링과 데이터 경쟁 안전성 켜기를 절대 함께 하지 않는다. 둘 다 되돌려야 하는 상황이 온다.
+
+엄격한 검사를 다시 끄고 내보내도 된다. 그동안 한 수정은 모두 진짜 개선이라 그대로 남는다. 시작하기 *전에* **Approachable Concurrency**를 켜고, 앱 모듈이라면 기본 메인 액터 격리도 켠다. 둘 다 보게 될 오류 수를 크게 줄인다. Xcode에는 변경 상당수를 대신 적용해 주는 마이그레이션 도구도 들어 있다(swift.org/migration).
+
+---
+
+## 빠른 참조
+
+| 필요 | 쓸 것 | 쓰지 말 것 |
 | ---------------------------------- | ------------------------------- | ----------------------------------------- |
-| A data type                        | `struct` / `enum`               | `class` without identity or sharing       |
-| Shared mutable state               | `actor`, or `@MainActor` class  | `class` + a lock you must remember        |
-| Move work off the main thread      | `@concurrent func … async`      | `Task.detached`, `DispatchQueue.global()` |
-| A library API's isolation          | `nonisolated`                   | `@MainActor`, `@concurrent`               |
-| Fixed number of parallel jobs      | `async let`                     | N unstructured `Task`s                    |
-| Dynamic number of parallel jobs    | `withTaskGroup` (bounded)       | one task per element, unbounded           |
-| Children that return nothing       | `withDiscardingTaskGroup`       | `withTaskGroup` you never drain           |
-| Work tied to a UI event            | `Task { }` inside the callback  | making the callback `async`               |
-| Fixing a data race                 | stop sharing the object         | `@unchecked Sendable`                     |
-| A shared model class               | non-`Sendable`, or `@MainActor` | `Sendable` + manual locking               |
-| Blocking primitive across `await`  | nothing — restructure           | `DispatchSemaphore`, `NSCondition`        |
-| Polymorphism                       | `some P`                        | `any P` unless you need storage           |
-| Heterogeneous collection           | `[any P]`                       | a class hierarchy                         |
-| Shared behavior, no customization  | constrained `extension`         | a new protocol                            |
-| A customization point              | protocol **requirement**        | a method only in an extension             |
-| Breaking a reference cycle         | restructure to a tree           | `weak` + `withExtendedLifetime`           |
-| Removing matching elements         | `removeAll(where:)` — O(n)      | `remove(at:)` in a loop — O(n²)           |
-| Direct access to contiguous memory | `.span`                         | `withUnsafeBufferPointer`                 |
-| Fixed-size buffer in a hot path    | `InlineArray<N, T>`             | `Array`                                   |
-| A new test                         | `@Test` + `#expect`             | `XCTestCase` + `XCTAssertEqual`           |
-| The same test over many inputs     | `@Test(arguments:)`             | a `for` loop, or copy-paste               |
-| Halting a test on failure          | `try #require`                  | `continueAfterFailure = false`            |
-| A temporarily broken test          | `withKnownIssue`                | `.disabled`, or commenting it out         |
-| Diagnostics in shipping code       | `Logger` + a correlation ID     | `print`                                   |
-| Deciding to optimize               | Instruments on a profiled test  | intuition                                 |
+| 데이터 타입 | `struct` / `enum` | 정체성도 공유도 없는 `class` |
+| 공유 가변 상태 | `actor`, 또는 `@MainActor` 클래스 | `class` + 잊지 말고 챙겨야 하는 락 |
+| 작업을 메인 스레드 밖으로 옮기기 | `@concurrent func … async` | `Task.detached`, `DispatchQueue.global()` |
+| 라이브러리 API의 격리 | `nonisolated` | `@MainActor`, `@concurrent` |
+| 개수가 고정된 병렬 작업 | `async let` | 비구조적 `Task` N개 |
+| 개수가 동적인 병렬 작업 | `withTaskGroup`(상한 있음) | 요소마다 태스크 하나, 상한 없음 |
+| 아무것도 반환하지 않는 자식 | `withDiscardingTaskGroup` | 결과를 끝까지 꺼내지 않는 `withTaskGroup` |
+| UI 이벤트에 묶인 작업 | 콜백 안의 `Task { }` | 콜백을 `async`로 만들기 |
+| 데이터 경쟁 고치기 | 객체 공유를 멈추기 | `@unchecked Sendable` |
+| 공유되는 모델 클래스 | non-`Sendable`, 또는 `@MainActor` | `Sendable` + 수동 락 |
+| `await`를 넘는 블로킹 프리미티브 | 없음. 구조를 바꾼다 | `DispatchSemaphore`, `NSCondition` |
+| 다형성 | `some P` | 저장할 필요가 없는데 쓰는 `any P` |
+| 이질적인 컬렉션 | `[any P]` | 클래스 계층 |
+| 사용자화 없는 공통 동작 | 제약을 건 `extension` | 새 프로토콜 |
+| 사용자화 지점 | 프로토콜 **요구 사항** | extension에만 있는 메서드 |
+| 순환 참조 끊기 | 트리로 구조 바꾸기 | `weak` + `withExtendedLifetime` |
+| 조건에 맞는 요소 제거 | `removeAll(where:)`, O(n) | 루프 안의 `remove(at:)`, O(n²) |
+| 연속 메모리에 직접 접근 | `.span` | `withUnsafeBufferPointer` |
+| 핫 패스의 고정 크기 버퍼 | `InlineArray<N, T>` | `Array` |
+| 새 테스트 | `@Test` + `#expect` | `XCTestCase` + `XCTAssertEqual` |
+| 여러 입력에 같은 테스트 | `@Test(arguments:)` | `for` 루프, 또는 복사해 붙이기 |
+| 실패 시 테스트 멈추기 | `try #require` | `continueAfterFailure = false` |
+| 잠시 깨진 테스트 | `withKnownIssue` | `.disabled`, 또는 주석 처리 |
+| 운영 코드의 진단 | `Logger` + 상관관계 ID | `print` |
+| 최적화 여부 결정 | 프로파일링한 테스트에 Instruments | 직감 |
 

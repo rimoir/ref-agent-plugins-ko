@@ -1,181 +1,181 @@
 ---
 name: animation-vocabulary
-description: Reverse-lookup glossary that turns a vague description of a web animation or motion effect into its exact term ("the bouncy thing when a popover opens" → Pop in; "the iOS rubber-band scroll" → Rubber-banding). Use when the user asks "what's it called when…", or describes a motion effect without knowing its name and wants the right word to prompt an AI or designer with. For naming an effect, not designing or building one.
+description: 웹 애니메이션이나 모션 효과를 막연하게 묘사한 말을 정확한 용어로 바꿔 주는 역방향 용어집이다("the bouncy thing when a popover opens"(팝오버 열릴 때 통통 튀는 그거) → Pop in, "the iOS rubber-band scroll"(iOS에서 고무줄처럼 늘어나는 스크롤) → Rubber-banding). 사용자가 "what's it called when…"(…하는 걸 뭐라고 해?)이라고 묻거나, 이름을 모르는 모션 효과를 묘사하며 AI나 디자이너에게 프롬프트로 건넬 정확한 말을 원할 때 쓴다. 효과를 설계하거나 만드는 것이 아니라 효과에 이름을 붙이는 데 쓴다.
 ---
 
-# Animation Vocabulary
+# 애니메이션 어휘
 
-## Initial Response
+## 첫 응답
 
-When this skill is first invoked without a specific question, respond only with:
+구체적인 질문 없이 이 스킬이 처음 호출되면 다음 내용으로만 답한다.
 
-> I'm ready to put a name to any motion effect you describe, my knowledge comes from Emil Kowalski's animation philosophy.
+> 설명해 주시는 모션 효과에 정확한 이름을 붙일 준비가 됐습니다. Emil Kowalski의 애니메이션 철학을 바탕으로 합니다.
 
-Do not provide any other information until the user asks a question.
+사용자가 질문하기 전에는 다른 정보를 주지 않는다.
 
-Turn a vague description of a motion or effect into the precise term, so the user knows what to ask for.
+모션이나 효과를 막연하게 묘사한 말을 정확한 용어로 바꿔, 사용자가 무엇을 요청하면 되는지 알게 한다.
 
-## Quick Start
+## 빠른 시작
 
-The user describes an effect loosely. You return the matching term(s) in this format:
+사용자는 효과를 대충 묘사한다. 맞는 용어를 다음 형식으로 돌려준다.
 
 ```
-**Stagger** — Animate several items one after another with a small delay between each, creating a cascade.
+**Stagger**: 여러 항목을 하나씩 차례로 애니메이션하되 항목 사이에 짧은 지연을 두어 물결처럼 이어지게 한다.
 ```
 
-If several terms could fit, list the best match first, then 1–2 alternates with a one-line note on how they differ.
+여러 용어가 맞을 수 있으면 가장 잘 맞는 것을 먼저 쓰고, 그다음에 대안 1–2개를 쓰면서 어떻게 다른지 한 줄로 덧붙인다.
 
-## Instructions
+## 지시 사항
 
-1. **Read for intent, not keywords.** Users describe what they *see* or *feel* ("springy", "slides off", "draws itself in"), not the technical name. Map the sensation to the glossary below.
-2. **Quote the glossary verbatim.** Its descriptions are authoritative — use them as-is, don't paraphrase.
-3. **Disambiguate close terms.** When two compete (*Clip-path* vs *Mask*, *Pop in* vs *Bounce*, *Shared element transition* vs *Layout animation*), contrast them so the user can pick.
-4. **When nothing matches exactly,** name the closest term and say plainly it's an approximation, or describe the effect in the glossary's vocabulary (e.g. "that's a *stagger* of *scale-in* entrances").
-5. **Stay within this glossary.** If a term genuinely isn't here, say so rather than inventing one — though you may explain the concept using these words.
-6. **Keep it tight.** A naming question wants a name, not an essay. Lead with the term; expand only if asked.
+1. **키워드가 아니라 의도를 읽는다.** 사용자는 기술 용어가 아니라 눈에 *보이는* 것이나 *느껴지는* 것을 묘사한다("탄력 있는", "미끄러지듯 빠지는", "저절로 그려지는"). 그 감각을 아래 용어집에 대응시킨다.
+2. **용어집을 글자 그대로 인용한다.** 용어집의 설명이 기준이다. 바꿔 말하지 말고 그대로 쓴다.
+3. **비슷한 용어를 구분한다.** 두 용어가 겨룰 때(*Clip-path*와 *Mask*, *Pop in*과 *Bounce*, *Shared element transition*과 *Layout animation*)는 둘을 대비해 사용자가 고를 수 있게 한다.
+4. **딱 맞는 용어가 없으면** 가장 가까운 용어를 대고 근사치라고 분명히 말하거나 용어집의 어휘로 효과를 묘사한다(예: "*scale-in* 등장에 *stagger*를 건 것이다").
+5. **이 용어집 안에서 답한다.** 정말로 여기 없는 용어라면 지어내지 말고 없다고 말한다. 다만 여기 있는 말로 개념을 설명하는 것은 괜찮다.
+6. **짧게 답한다.** 이름을 묻는 질문에는 에세이가 아니라 이름이 필요하다. 용어부터 말하고 요청받을 때만 덧붙인다.
 
-## Examples
+## 예시
 
-**Example 1 — feel-based**
-User: "What's it called when a popover seems to grow out of the button you clicked instead of from its middle?"
-Output:
+**예시 1: 느낌으로 묘사**
+사용자: "팝오버가 가운데가 아니라 클릭한 버튼에서 자라 나오는 것처럼 보이는 걸 뭐라고 해?"
+출력:
 ```
-**Origin-aware animation** — An element animates out of its trigger, like a popover growing from the button that opened it instead of from its own center which is the default in CSS.
-```
-
-**Example 2 — disambiguation**
-User: "The thing where one image turns into another image."
-Output:
-```
-**Morph** — One shape smoothly turns into another shape, e.g. Dynamic Island.
-
-Close alternates:
-- **Crossfade** — if they simply fade over each other in the same spot.
-- **Shared element transition** — if an element travels and transforms from one position into another.
+**Origin-aware animation**: 요소가 자신의 트리거에서 펼쳐져 나오는 애니메이션이다. 팝오버가 CSS 기본값인 자기 중심이 아니라 자신을 연 버튼에서 자라 나오는 식이다.
 ```
 
-**Example 3 — physics feel**
-User: "That iOS scroll where it resists and snaps back when you pull too far."
-Output:
+**예시 2: 비슷한 용어 구분**
+사용자: "이미지 하나가 다른 이미지로 바뀌는 그거."
+출력:
 ```
-**Rubber-banding** — Resistance and snap-back when you drag past a boundary (the iOS overscroll feel).
+**Morph**: 한 모양이 다른 모양으로 매끄럽게 바뀐다(예: Dynamic Island).
+
+가까운 대안:
+- **Crossfade**: 같은 자리에서 서로 겹쳐 페이드되기만 하는 경우.
+- **Shared element transition**: 요소가 한 위치에서 다른 위치로 이동하며 모양이 바뀌는 경우.
 ```
 
-## Glossary
+**예시 3: 물리적인 느낌**
+사용자: "iOS에서 너무 많이 당기면 버티다가 제자리로 튕겨 돌아오는 그 스크롤."
+출력:
+```
+**Rubber-banding**: 경계를 넘어 드래그하면 저항하다가 제자리로 튕겨 돌아온다(iOS의 오버스크롤 느낌).
+```
 
-_A curated snapshot mirroring the project's `/vocabulary` page; keep the two in sync when either changes._
+## 용어집
 
-### Entrances & Exits — how elements appear and disappear
-- **Fade in / Fade out** — Element appears or disappears by changing opacity.
-- **Slide in** — Element enters by sliding in from off-screen (left, right, top, or bottom).
-- **Scale in** — Element grows from smaller to full size as it appears, often paired with a fade.
-- **Pop in** — Element appears with a slight overshoot, like it bounces into place.
-- **Reveal** — Content is uncovered gradually, often by animating a clip-path or mask.
-- **Enter / Exit** — The animation an element plays when it's added to or removed from the screen.
+_프로젝트의 `/vocabulary` 페이지를 옮겨 온 엄선된 스냅숏이다. 둘 중 하나가 바뀌면 둘을 맞춘다._
 
-### Sequencing & Timing — coordinating multiple elements or moments
-- **Keyframes** — Defined points in an animation (0%, 50%, 100%) that the browser fills the gaps between.
-- **Interpolation / Tween** — Generating all the in-between frames between a start and end value, so motion is continuous.
-- **Stagger** — Animate several items one after another with a small delay between each, creating a cascade.
-- **Orchestration** — Deliberately timing multiple animations so they feel like one coordinated motion.
-- **Delay** — Time before an animation starts.
-- **Duration** — How long an animation takes.
-- **Fill mode** — Whether an element keeps its first or last frame's styles before the animation starts or after it ends (e.g. forwards).
-- **Stepped animation** — An animation that is divided into discrete steps, like a countdown timer.
+### 등장과 퇴장: 요소가 나타나고 사라지는 방식
+- **Fade in / Fade out**: opacity를 바꿔 요소가 나타나거나 사라진다.
+- **Slide in**: 요소가 화면 밖(왼쪽, 오른쪽, 위, 아래)에서 미끄러져 들어온다.
+- **Scale in**: 요소가 나타나면서 작은 크기에서 원래 크기로 커진다. 흔히 페이드와 함께 쓴다.
+- **Pop in**: 요소가 살짝 오버슈트하며 나타난다. 제자리로 통통 튀어 들어오는 것처럼 보인다.
+- **Reveal**: 콘텐츠가 서서히 드러난다. 흔히 clip-path나 mask를 애니메이션해 만든다.
+- **Enter / Exit**: 요소가 화면에 추가되거나 화면에서 제거될 때 재생하는 애니메이션이다.
 
-### Movement & Transforms — changing an element's position, size, or angle
-- **Translate** — Move an element along the X or Y axis.
-- **Scale** — Make an element bigger or smaller.
-- **Rotate** — Spin an element around a point.
-- **Skew** — Slant an element along the X or Y axis, shearing it out of its rectangular shape.
-- **3D tilt / Flip** — Rotate in 3D space (rotateX / rotateY) to add depth.
-- **Perspective** — How strong the 3D effect looks — a lower value exaggerates depth, like the viewer is closer.
-- **Transform origin** — The anchor point a scale or rotation grows or spins from.
-- **Origin-aware animation** — An element animates out of its trigger, like a popover growing from the button that opened it instead of from its own center which is the default in CSS.
+### 순서와 타이밍: 여러 요소나 순간의 조율
+- **Keyframes**: 애니메이션 안에 정해 둔 지점(0%, 50%, 100%)이다. 그 사이는 브라우저가 채운다.
+- **Interpolation / Tween**: 시작 값과 끝 값 사이의 중간 프레임을 모두 만들어 모션이 끊기지 않고 이어지게 하는 것이다.
+- **Stagger**: 여러 항목을 하나씩 차례로 애니메이션하되 항목 사이에 짧은 지연을 두어 물결처럼 이어지게 한다.
+- **Orchestration**: 여러 애니메이션의 타이밍을 의도적으로 맞춰 하나로 조율된 모션처럼 느껴지게 한다.
+- **Delay**: 애니메이션이 시작되기 전까지의 시간이다.
+- **Duration**: 애니메이션이 걸리는 시간이다.
+- **Fill mode**: 애니메이션이 시작되기 전이나 끝난 뒤에 요소가 첫 프레임이나 마지막 프레임의 스타일을 유지할지 정한다(예: forwards).
+- **Stepped animation**: 카운트다운 타이머처럼 불연속적인 단계로 나뉜 애니메이션이다.
 
-### Transitions Between States — connecting one state, view, or element to another
-- **Crossfade** — One element fades out as another fades in, in the same spot.
-- **Continuity transition** — A change that keeps the user oriented by visually connecting before and after. For example, making the same rectangle bigger and smaller.
-- **Morph** — One shape smoothly turns into another shape, e.g. Dynamic Island.
-- **Shared element transition** — An element travels and transforms from one position into another, like a thumbnail expanding into a card.
-- **Layout animation** — When an element's size or position changes, it animates to the new spot instead of snapping.
-- **Accordion / Collapse** — A section smoothly expands and collapses its height to show or hide content.
-- **Direction-aware transition** — Content slides one way going forward and the opposite way going back, so navigation has a sense of direction.
+### 움직임과 변형: 요소의 위치, 크기, 각도 변화
+- **Translate**: 요소를 X축이나 Y축을 따라 옮긴다.
+- **Scale**: 요소를 키우거나 줄인다.
+- **Rotate**: 요소를 한 점을 중심으로 돌린다.
+- **Skew**: 요소를 X축이나 Y축을 따라 기울여 직사각형 모양을 비스듬히 일그러뜨린다.
+- **3D tilt / Flip**: 3D 공간에서 회전해(rotateX / rotateY) 깊이감을 더한다.
+- **Perspective**: 3D 효과가 얼마나 강하게 보이는지 정한다. 값이 낮을수록 보는 사람이 더 가까이 있는 것처럼 깊이가 과장된다.
+- **Transform origin**: 크기 조절이나 회전의 기준이 되는 점이다. 요소는 이 점에서 커지거나 이 점을 중심으로 돈다.
+- **Origin-aware animation**: 요소가 자신의 트리거에서 펼쳐져 나오는 애니메이션이다. 팝오버가 CSS 기본값인 자기 중심이 아니라 자신을 연 버튼에서 자라 나오는 식이다.
 
-### Scroll — motion tied to scrolling or navigating between views
-- **Scroll reveal** — Elements fade or slide into place as they enter the viewport.
-- **Scroll-driven animation** — An animation whose progress is tied directly to scroll position.
-- **Parallax** — Background and foreground move at different speeds while scrolling, creating depth.
-- **Page transition** — An animation that plays when navigating from one page or route to another.
-- **View transition** — The browser morphs between two states or pages, connecting shared elements.
+### 상태 간 전환: 상태, 뷰, 요소를 서로 잇는 방식
+- **Crossfade**: 같은 자리에서 한 요소가 페이드 아웃되는 동안 다른 요소가 페이드 인된다.
+- **Continuity transition**: 전과 후를 시각적으로 이어 사용자가 방향을 잃지 않게 하는 변화다. 예를 들어 같은 사각형을 키우고 줄이는 것이다.
+- **Morph**: 한 모양이 다른 모양으로 매끄럽게 바뀐다(예: Dynamic Island).
+- **Shared element transition**: 요소가 한 위치에서 다른 위치로 이동하며 모양이 바뀐다. 썸네일이 카드로 펼쳐지는 식이다.
+- **Layout animation**: 요소의 크기나 위치가 바뀔 때 툭 바뀌지 않고 새 자리까지 애니메이션된다.
+- **Accordion / Collapse**: 섹션의 높이가 매끄럽게 늘었다 줄며 콘텐츠를 보여 주거나 숨긴다.
+- **Direction-aware transition**: 앞으로 갈 때는 콘텐츠가 한쪽으로, 뒤로 갈 때는 반대쪽으로 미끄러져 내비게이션에 방향감이 생긴다.
 
-### Feedback & Interaction — responding to the user's actions
-- **Hover effect** — Visual change when the cursor moves over an element.
-- **Press / Tap feedback** — A subtle scale-down when an element is clicked, so it feels physical.
-- **Hold to confirm** — A progress effect that fills up while the user holds a button.
-- **Drag** — Moving an element by grabbing it, often with momentum when released.
-- **Drag to reorder** — Dragging items in a list to rearrange them, while the others shift to make room.
-- **Swipe to dismiss** — Dragging an element off-screen to close it, like a drawer or toast.
-- **Rubber-banding** — Resistance and snap-back when you drag past a boundary (the iOS overscroll feel).
-- **Shake / Wiggle** — A quick side-to-side jitter signaling an error or rejected input.
-- **Ripple** — A circle expanding from the point of a tap, confirming the press.
+### 스크롤: 스크롤이나 뷰 사이 이동에 묶인 모션
+- **Scroll reveal**: 요소가 뷰포트에 들어오면서 페이드되거나 미끄러져 제자리를 잡는다.
+- **Scroll-driven animation**: 진행도가 스크롤 위치에 바로 묶인 애니메이션이다.
+- **Parallax**: 스크롤할 때 배경과 전경이 다른 속도로 움직여 깊이감을 만든다.
+- **Page transition**: 한 페이지나 라우트에서 다른 곳으로 이동할 때 재생하는 애니메이션이다.
+- **View transition**: 브라우저가 두 상태나 페이지 사이를 모핑하며 공유 요소를 이어 준다.
 
-### Easing — how speed changes over an animation
-- **Easing** — The rate at which an animation speeds up or slows down.
-- **Ease-out** — Starts fast, ends slow. The default for most UI and anything responding to the user.
-- **Ease-in** — Starts slow, ends fast. Usually avoided; can feel sluggish.
-- **Ease-in-out** — Slow, fast, slow. Good for elements already on screen moving from A to B.
-- **Linear** — Constant speed. Avoid for UI; reserve for spinners or marquees.
-- **Cubic-bezier** — A custom easing curve you define for precise control.
-- **Asymmetric easing** — A curve that accelerates and decelerates at different rates. Feels more alive than a symmetric one.
+### 피드백과 상호작용: 사용자 동작에 응답하는 모션
+- **Hover effect**: 커서가 요소 위로 올라갈 때 생기는 시각적 변화다.
+- **Press / Tap feedback**: 요소를 클릭하면 은은하게 작아지는 효과로, 실제로 누르는 느낌을 준다.
+- **Hold to confirm**: 사용자가 버튼을 누르고 있는 동안 차오르는 진행 효과다.
+- **Drag**: 요소를 잡아서 옮기는 것이다. 놓을 때 관성이 붙는 경우가 많다.
+- **Drag to reorder**: 목록의 항목을 끌어 순서를 바꾸고 나머지 항목은 자리를 비켜 준다.
+- **Swipe to dismiss**: 드로어나 토스트처럼 요소를 화면 밖으로 끌어 닫는다.
+- **Rubber-banding**: 경계를 넘어 드래그하면 저항하다가 제자리로 튕겨 돌아온다(iOS의 오버스크롤 느낌).
+- **Shake / Wiggle**: 좌우로 빠르게 떨려 오류나 거부된 입력을 알린다.
+- **Ripple**: 탭한 지점에서 원이 퍼져 나가며 누름을 확인해 준다.
 
-### Spring Animations — physics-based motion as an alternative to fixed-duration easing
-- **Spring** — Motion driven by physics (tension, mass, damping) rather than a set duration.
-- **Stiffness / Tension** — How strongly the spring pulls toward its target. Higher feels snappier.
-- **Damping** — How quickly a spring settles. Lower damping means more bounce and oscillation.
-- **Mass** — How heavy the animated element feels. More mass makes it slower and more sluggish.
-- **Bounce** — A spring that overshoots and settles, adding playfulness.
-- **Perceptual duration** — How long a spring feels finished, even though it keeps micro-settling underneath.
-- **Momentum** — Motion that carries velocity, especially after a drag or interruption.
-- **Velocity** — How fast and in which direction an element is moving. A spring carries it into the next animation when interrupted, so a flicked element keeps its speed.
-- **Interruptible animation** — An animation that can be smoothly redirected mid-flight instead of finishing first.
+### 이징: 애니메이션 동안 속도가 바뀌는 방식
+- **Easing**: 애니메이션이 빨라지거나 느려지는 비율이다.
+- **Ease-out**: 빠르게 시작해 느리게 끝난다. 대부분의 UI와 사용자에게 반응하는 모든 것의 기본값이다.
+- **Ease-in**: 느리게 시작해 빠르게 끝난다. 보통 피한다. 굼뜨게 느껴질 수 있다.
+- **Ease-in-out**: 느리게, 빠르게, 다시 느리게 움직인다. 이미 화면에 있는 요소가 A에서 B로 움직일 때 좋다.
+- **Linear**: 일정한 속도다. UI에는 피하고 스피너나 마키에만 쓴다.
+- **Cubic-bezier**: 정밀하게 조절하려고 직접 정의하는 커스텀 이징 곡선이다.
+- **Asymmetric easing**: 가속과 감속의 비율이 다른 곡선이다. 대칭 곡선보다 더 살아 있는 느낌을 준다.
 
-### Looping & Ambient Motion — animations that run on their own
-- **Marquee** — Text or content that scrolls continuously in a loop.
-- **Loop** — An animation that repeats, a set number of times or infinitely.
-- **Alternate (yoyo)** — A loop that plays forward then reverses each iteration, instead of jumping back to the start.
-- **Orbit** — An element circling around another in a continuous path.
-- **Pulse** — A gentle repeating scale or opacity change to draw attention.
-- **Float** — A gentle, continuous up-and-down drift that makes a static element feel alive and weightless.
-- **Idle animation** — Subtle motion that plays while an element is just sitting there, waiting to be interacted with.
+### 스프링 애니메이션: 지속 시간이 정해진 이징 대신 쓰는 물리 기반 모션
+- **Spring**: 정해진 지속 시간이 아니라 물리(장력, 질량, 감쇠)로 움직이는 모션이다.
+- **Stiffness / Tension**: 스프링이 목표 쪽으로 얼마나 세게 당기는지다. 높을수록 재빠르게 느껴진다.
+- **Damping**: 스프링이 얼마나 빨리 자리를 잡는지다. 감쇠가 낮을수록 바운스와 진동이 많아진다.
+- **Mass**: 애니메이션되는 요소가 얼마나 무겁게 느껴지는지다. 질량이 클수록 느리고 굼떠진다.
+- **Bounce**: 오버슈트했다가 자리를 잡는 스프링으로, 발랄함을 더한다.
+- **Perceptual duration**: 스프링이 끝난 것처럼 느껴지기까지의 시간이다. 실제로는 그 뒤에도 보이지 않게 계속 미세하게 자리를 잡는다.
+- **Momentum**: 속도를 이어 가는 모션이다. 특히 드래그나 중단 뒤에 나타난다.
+- **Velocity**: 요소가 얼마나 빠르게, 어느 방향으로 움직이는지다. 스프링은 중단될 때 이 속도를 다음 애니메이션으로 넘기므로 플릭한 요소가 속도를 잃지 않는다.
+- **Interruptible animation**: 먼저 끝나기를 기다리지 않고 도중에 매끄럽게 방향을 바꿀 수 있는 애니메이션이다.
 
-### Polish & Effects — the small touches that separate good from great
-- **Blur** — A blur filter used to soften an element or mask tiny imperfections.
-- **Clip-path** — Clipping an element to a shape, used for reveals, masks, and before/after sliders.
-- **Mask** — Hiding or revealing parts of an element using a shape or gradient — like clip-path, but with soft, fadeable edges.
-- **Before / after slider** — A draggable divider that wipes between two overlaid images to compare them.
-- **Line drawing** — An SVG path that draws itself in, like an invisible pen tracing it.
-- **Text morph** — Text that animates character by character when it changes, drawing attention to the new value.
-- **Skeleton / Shimmer** — A placeholder with a moving sheen shown while content loads.
-- **Number ticker** — Digits rolling or counting up to a value.
-- **Tabular numbers** — Fixed-width digits so numbers don't shift around as they change. Essential for tickers, timers, and counters.
-- **Typewriter** — Text appearing one character at a time, as if being typed.
+### 반복과 배경 모션: 스스로 계속 도는 애니메이션
+- **Marquee**: 텍스트나 콘텐츠가 끝없이 반복해 흘러가는 것이다.
+- **Loop**: 정해진 횟수만큼 또는 무한히 반복하는 애니메이션이다.
+- **Alternate (yoyo)**: 반복할 때마다 처음으로 건너뛰지 않고 앞으로 재생한 뒤 거꾸로 되돌아오는 루프다.
+- **Orbit**: 요소가 다른 요소 주위를 끊김 없는 경로로 도는 것이다.
+- **Pulse**: 주의를 끌려고 scale이나 opacity를 부드럽게 반복해 바꾸는 것이다.
+- **Float**: 위아래로 부드럽게 계속 떠다니게 해, 정적인 요소가 살아 있고 무게가 없는 듯 보이게 한다.
+- **Idle animation**: 요소가 상호작용을 기다리며 그냥 놓여 있는 동안 재생하는 은은한 모션이다.
 
-### Performance — what keeps motion smooth instead of stuttering
-- **Frame rate (FPS)** — Frames drawn per second. 60fps is the baseline for smooth motion; 120fps on newer displays.
-- **Jank** — Visible stutter when the browser drops frames because it can't keep up with the animation.
-- **Dropped frame** — A frame the browser missed its deadline to draw, causing a tiny hitch in motion.
-- **Compositing** — Letting the GPU move or fade an element on its own layer without redoing layout or paint.
-- **will-change** — A CSS hint that an element is about to animate, so the browser can promote it to its own layer ahead of time.
-- **Layout thrashing** — Animating properties like width, height, top, or left that force the browser to recalculate layout every frame, causing jank.
+### 다듬기와 효과: 좋은 것과 훌륭한 것을 가르는 작은 손길
+- **Blur**: 요소를 부드럽게 하거나 작은 흠을 가리는 데 쓰는 블러 필터다.
+- **Clip-path**: 요소를 어떤 모양으로 잘라 내는 것이다. 드러내기, 마스크, 전후 비교 슬라이더에 쓴다.
+- **Mask**: 모양이나 그라디언트로 요소의 일부를 숨기거나 드러낸다. clip-path와 비슷하지만 가장자리가 부드럽고 페이드될 수 있다.
+- **Before / after slider**: 겹쳐 놓은 두 이미지를 끌어서 쓸어 넘기며 비교하는 구분선이다.
+- **Line drawing**: 보이지 않는 펜이 따라 그리듯 SVG 경로가 저절로 그려진다.
+- **Text morph**: 텍스트가 바뀔 때 글자 단위로 애니메이션돼 새 값에 눈길을 끈다.
+- **Skeleton / Shimmer**: 콘텐츠를 불러오는 동안 보여 주는, 광택이 지나가는 자리 표시자다.
+- **Number ticker**: 숫자가 굴러가거나 세어 올라가며 값에 닿는 것이다.
+- **Tabular numbers**: 숫자가 바뀌어도 자리가 흔들리지 않게 폭을 고정한 숫자다. 티커, 타이머, 카운터에 꼭 필요하다.
+- **Typewriter**: 타이핑하듯 글자가 한 자씩 나타난다.
 
-### Principles to Know — concepts that guide when and how to animate
-- **Purposeful animation** — Motion should serve a function — orient, give feedback, show relationships — not just decorate.
-- **Anticipation** — A small wind-up in the opposite direction before a move, hinting at what's about to happen.
-- **Follow-through** — Parts of an element keep moving and settle slightly after the main motion stops, adding weight.
-- **Squash & stretch** — Deforming an element as it moves to convey weight, speed, and flexibility.
-- **Perceived performance** — The right animation makes an interface feel faster, even when it isn't.
-- **Frequency of use** — The more often a user sees an animation, the shorter and subtler it should be.
-- **Spatial consistency** — Animating so an element keeps its identity and position across states, so users never lose track of where things went.
-- **Hardware acceleration** — Animating transform and opacity lets the GPU keep motion smooth.
-- **Reduced motion** — Respecting the user's prefers-reduced-motion setting by toning down or removing motion.
+### 성능: 모션이 끊기지 않고 부드럽게 유지되게 하는 것
+- **Frame rate (FPS)**: 1초에 그리는 프레임 수다. 부드러운 모션의 기준은 60fps이고 최신 디스플레이에서는 120fps다.
+- **Jank**: 브라우저가 애니메이션을 따라가지 못해 프레임을 놓칠 때 눈에 보이는 끊김이다.
+- **Dropped frame**: 브라우저가 그릴 기한을 놓친 프레임이다. 모션이 순간 살짝 걸린다.
+- **Compositing**: 레이아웃이나 페인트를 다시 하지 않고 GPU가 자체 레이어에 있는 요소를 옮기거나 페이드하게 하는 것이다.
+- **will-change**: 요소가 곧 애니메이션된다고 알리는 CSS 힌트다. 브라우저는 이를 보고 요소를 미리 자체 레이어로 승격할 수 있다.
+- **Layout thrashing**: width, height, top, left처럼 브라우저가 매 프레임 레이아웃을 다시 계산하게 만드는 속성을 애니메이션해 버벅임이 생기는 것이다.
+
+### 알아 둘 원칙: 언제 어떻게 애니메이션을 넣을지 정하는 개념
+- **Purposeful animation**: 모션은 장식에 그치지 않고 기능을 해야 한다(방향을 잡아 주고, 피드백을 주고, 관계를 보여 준다).
+- **Anticipation**: 움직이기 전에 반대 방향으로 살짝 힘을 모아 곧 일어날 일을 암시한다.
+- **Follow-through**: 주된 움직임이 멈춘 뒤에도 요소의 일부가 조금 더 움직이다 자리를 잡아 무게감을 더한다.
+- **Squash & stretch**: 움직이는 요소를 찌그러뜨리고 늘여 무게, 속도, 유연함을 전한다.
+- **Perceived performance**: 알맞은 애니메이션은 실제로 빠르지 않아도 인터페이스를 더 빠르게 느끼게 한다.
+- **Frequency of use**: 사용자가 애니메이션을 자주 볼수록 더 짧고 은은해야 한다.
+- **Spatial consistency**: 상태가 바뀌어도 요소가 정체성과 위치를 유지하도록 애니메이션해, 사용자가 무엇이 어디로 갔는지 놓치지 않게 한다.
+- **Hardware acceleration**: transform과 opacity를 애니메이션하면 GPU가 모션을 부드럽게 유지한다.
+- **Reduced motion**: 사용자의 prefers-reduced-motion 설정을 존중해 모션을 줄이거나 없앤다.

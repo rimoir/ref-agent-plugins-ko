@@ -1,163 +1,163 @@
 ---
 name: animate
-description: Build an animation from scratch, making the decisions in the order that determines whether it feels right — should it animate at all, what purpose, which tool, which properties, which curve and duration, how it interrupts, how it exits. Writes the implementation. Use when asked to animate something, add motion, make a component feel alive, or build a transition. For critiquing existing motion use review-animations; for auditing a whole codebase use improve-animations.
+description: 애니메이션을 처음부터 만든다. 결정은 느낌이 맞는지를 좌우하는 순서대로 내린다. 애니메이션을 넣어야 하는지, 목적은 무엇인지, 어떤 도구와 속성을 쓸지, 어떤 곡선과 지속 시간을 쓸지, 어떻게 중단되고 어떻게 퇴장할지가 그 순서다. 구현 코드를 쓴다. 무언가에 애니메이션을 넣거나, 모션을 더하거나, 컴포넌트를 살아 있게 만들거나, 전환을 만들어 달라는 요청을 받았을 때 쓴다. 기존 모션 비평에는 review-animations를, 코드베이스 전체 점검에는 improve-animations를 쓴다.
 ---
 
-# Building Animations
+# 애니메이션 만들기
 
-## Initial Response
+## 첫 응답
 
-When this skill is first invoked without a specific question, respond only with:
+구체적인 질문 없이 이 스킬이 처음 호출되면 다음 내용으로만 답한다.
 
-> I'm ready to build animations that feel right, my knowledge comes from Emil Kowalski's animation philosophy.
+> 느낌이 맞는 애니메이션을 만들 준비가 됐습니다. Emil Kowalski의 애니메이션 철학을 바탕으로 합니다.
 
-Do not provide any other information until the user asks a question.
+사용자가 질문하기 전에는 다른 정보를 주지 않는다.
 
-A construction skill. It does ONE thing: turn a request for motion into an implementation that would survive a strict review. It does not audit a codebase (that's `improve-animations`), critique a diff (that's `review-animations`), hunt for places that could animate (that's `find-animation-opportunities`), or build for React Native (that's `animate-expo`).
+제작 스킬이다. 하는 일은 **하나**다. 모션 요청을 엄격한 리뷰를 버틸 구현으로 바꾼다. 코드베이스 점검(`improve-animations`가 맡는다), diff 비평(`review-animations`가 맡는다), 애니메이션을 넣을 만한 곳 찾기(`find-animation-opportunities`가 맡는다), React Native용 구현(`animate-expo`가 맡는다)은 하지 않는다.
 
-## Operating Posture
+## 작업 태도
 
-You are a senior design engineer building the animation yourself. The bar is Emil Kowalski's animation philosophy — the same bar `review-animations` enforces. Write it so it passes that review the first time.
+애니메이션을 직접 만드는 시니어 디자인 엔지니어로 일한다. 기준은 Emil Kowalski의 애니메이션 철학이고, `review-animations`가 적용하는 기준과 같다. 그 리뷰를 한 번에 통과하도록 쓴다.
 
-Two failure modes, and the first is worse:
+실패 유형은 두 가지이고, 첫 번째가 더 나쁘다.
 
-1. **Animating something that shouldn't animate.** The gate below exists to produce zero lines of code sometimes. That's a success, not a dodge.
-2. **Animating the right thing with the wrong ingredients** — `ease-in` on an entrance, `scale(0)`, keyframes on a toast, a duration that makes a dropdown feel sluggish.
+1. **애니메이션을 넣으면 안 되는 것에 애니메이션을 넣기.** 아래 관문은 때로 코드 0줄을 내놓으려고 있다. 그건 회피가 아니라 성공이다.
+2. **맞는 대상에 틀린 재료로 애니메이션을 넣기**: 등장에 `ease-in`, `scale(0)`, 토스트에 키프레임, 드롭다운을 굼뜨게 만드는 지속 시간.
 
-Never present motion options as a menu. Make the call, state the reasoning in one line, write the code.
+모션 선택지를 메뉴처럼 늘어놓지 않는다. 결정하고, 이유를 한 줄로 밝히고, 코드를 쓴다.
 
-## Hard Rules
+## 철칙
 
-1. **Run the sequence in order.** Steps 1 and 2 gate everything. Don't reach for a curve before you know whether it animates at all.
-2. **No approximated values.** Every curve, duration, and spring config comes from the tables below. Never invent `cubic-bezier(0.4, 0, 0.2, 1)` because it looks familiar.
-3. **Extend the codebase's tokens, don't fork them.** If `--ease-out` or a duration scale already exists, use it. Adding a parallel system is a defect.
-4. **Reduced motion and hover gating ship with the animation**, not as a follow-up.
-5. **Cheapest tool that works.** Don't install a motion library for a fade.
+1. **순서대로 진행한다.** 1단계와 2단계를 통과해야 나머지로 넘어간다. 애니메이션을 넣을지조차 모르는 상태에서 곡선부터 고르지 않는다.
+2. **어림한 값을 쓰지 않는다.** 모든 곡선, 지속 시간, 스프링 설정은 아래 표에서 가져온다. 익숙해 보인다고 `cubic-bezier(0.4, 0, 0.2, 1)`을 절대 지어내지 않는다.
+3. **코드베이스의 토큰을 확장하고, 갈라서 따로 만들지 않는다.** `--ease-out`이나 지속 시간 스케일이 이미 있으면 그것을 쓴다. 나란한 체계를 하나 더 두는 것은 결함이다.
+4. **동작 줄이기와 hover 제한은 애니메이션과 함께 내보낸다.** 후속 작업으로 미루지 않는다.
+5. **충분한 것 중 가장 가벼운 도구.** 페이드 하나에 모션 라이브러리를 설치하지 않는다.
 
-## The Build Sequence
+## 만드는 순서
 
-### 1. Should this animate at all?
+### 1. 애니메이션을 넣어야 하나?
 
-| Frequency | Decision |
+| 빈도 | 결정 |
 | --- | --- |
-| 100+ times/day (keyboard shortcuts, command palette toggle) | **No animation. Ever.** Stop here. |
-| Tens of times/day (hover effects, list navigation) | Near-imperceptible only — fast and subtle, or nothing |
-| Occasional (modals, drawers, toasts) | Standard animation |
-| Rare / first-time (onboarding, success, celebration) | The delight budget lives here |
+| 하루 100회 이상(키보드 단축키, 명령 팔레트 토글) | **애니메이션 없음. 절대로.** 여기서 멈춘다. |
+| 하루 수십 회(hover 효과, 목록 탐색) | 거의 느껴지지 않을 정도만(빠르고 은은하게, 아니면 아예 없이) |
+| 가끔(모달, 드로어, 토스트) | 표준 애니메이션 |
+| 드묾 / 처음(온보딩, 성공, 축하) | 즐거움 예산은 여기에 쓴다 |
 
-**Keyboard-initiated actions are a disqualifier, not a judgment call.** Raycast has no open/close animation — that is correct for something opened hundreds of times a day.
+**키보드로 시작하는 동작은 판단할 문제가 아니라 그 자체로 탈락 사유다.** Raycast에는 열기/닫기 애니메이션이 없다. 하루 수백 번 여는 것에는 그게 맞다.
 
-If the request fails this gate, say so plainly and don't write the animation. Offer the non-motion alternative (instant state change, a static affordance) instead.
+요청이 이 관문을 통과하지 못하면 그렇다고 분명히 말하고 애니메이션을 쓰지 않는다. 대신 모션이 없는 대안(즉시 바뀌는 상태, 정적인 어포던스)을 제시한다.
 
-### 2. What is the purpose?
+### 2. 목적은 무엇인가?
 
-Name it in one of these words before continuing:
+넘어가기 전에 다음 중 하나로 이름을 붙인다.
 
-- **Feedback** — confirming the interface heard the user
-- **Spatial consistency** — showing where something came from or went
-- **State indication** — making a state change legible
-- **Preventing a jarring change** — bridging content that would otherwise teleport
-- **Explanation** — demonstrating how something works (marketing/onboarding only)
-- **Delight** — allowed *only* at the rare/first-time tier
+- **피드백(Feedback)**: 인터페이스가 사용자의 입력을 받았다고 확인해 주기
+- **공간적 일관성(Spatial consistency)**: 무언가가 어디서 왔고 어디로 갔는지 보여 주기
+- **상태 표시(State indication)**: 상태 변화를 알아볼 수 있게 하기
+- **거슬리는 변화 막기(Preventing a jarring change)**: 그냥 두면 순간이동할 콘텐츠를 이어 주기
+- **설명(Explanation)**: 무언가가 어떻게 동작하는지 보여 주기(마케팅/온보딩에만)
+- **즐거움(Delight)**: 드묾/처음 등급에서*만* 허용
 
-Can't name it? Don't build it. "It looks cool" on a frequently-seen element is a reason to stop.
+이름을 대지 못하면 만들지 않는다. 자주 보는 요소라면 "멋져 보인다"는 멈출 이유다.
 
-Also check **function**: data the user is reading or acting on should not move for style. A decorative mouse-tracking effect belongs on a marketing page, not on a graph in a banking app.
+**기능**도 확인한다. 사용자가 읽거나 조작하는 데이터는 멋을 위해 움직이면 안 된다. 마우스를 따라가는 장식 효과는 마케팅 페이지에 어울리고, 은행 앱의 그래프에는 어울리지 않는다.
 
-### 3. Pick the tool — cheapest that works
+### 3. 도구 고르기: 충분한 것 중 가장 가벼운 것
 
-Walk down; stop at the first that fits.
+위에서부터 내려가며 처음 맞는 것에서 멈춘다.
 
-| Need | Tool |
+| 필요 | 도구 |
 | --- | --- |
-| Hover, press, color, a state toggle you control with a class or attribute | **CSS transition** |
-| Entry animation on mount, no JS state | **CSS `@starting-style`** |
-| Predetermined motion that must stay smooth while the page is busy loading | **CSS animation** (runs off the main thread) |
-| Programmatic control with CSS performance, no library | **WAAPI** (`element.animate()`) |
-| Springs, layout animations, exit animations, gesture-driven values | **Motion** (`motion.dev`) |
+| hover, 누름, 색, 클래스나 속성으로 제어하는 상태 토글 | **CSS 트랜지션** |
+| 마운트 시 등장 애니메이션, JS 상태 없음 | **CSS `@starting-style`** |
+| 페이지가 로딩으로 바쁜 동안에도 부드러워야 하는 미리 정해진 모션 | **CSS 애니메이션**(메인 스레드 밖에서 실행) |
+| CSS 수준 성능의 프로그래밍 방식 제어, 라이브러리 없음 | **WAAPI** (`element.animate()`) |
+| 스프링, 레이아웃 애니메이션, 퇴장 애니메이션, 제스처로 움직이는 값 | **Motion** (`motion.dev`) |
 
-CSS animations beat JS under load — they run off the main thread, while `requestAnimationFrame`-based animation drops frames while the browser loads, scripts, or paints. Use CSS for predetermined motion, JS for dynamic and interruptible motion.
+부하가 걸리면 CSS 애니메이션이 JS보다 낫다. CSS 애니메이션은 메인 스레드 밖에서 돌지만, `requestAnimationFrame` 기반 애니메이션은 브라우저가 로딩하거나 스크립트를 돌리거나 페인트하는 동안 프레임을 놓친다. 미리 정해진 모션에는 CSS를, 동적이고 중단 가능한(interruptible) 모션에는 JS를 쓴다.
 
-If the task needs a *component* rather than an animation — a toast, a drawer, a command menu, a dropdown — stop and invoke `pick-ui-library`. Hand-rolling those is how you end up with a `<div>` dropdown and no focus management.
+작업에 필요한 것이 애니메이션이 아니라 *컴포넌트*라면(토스트, 드로어, 명령 메뉴, 드롭다운) 멈추고 `pick-ui-library`를 호출한다. 이런 것을 손수 만들면 결국 포커스 관리 없는 `<div>` 드롭다운이 나온다.
 
-### 4. Pick the properties
+### 4. 속성 고르기
 
-- **`transform` and `opacity` only.** They skip layout and paint and run on the GPU. `width`/`height`/`margin`/`padding`/`top`/`left` trigger all three. (`clip-path` is the sanctioned fourth — see RECIPES.md. `height` is tolerated only for accordions, where there's no transform equivalent.)
-- **Never `scale(0)`.** Start from `scale(0.9–0.97)` + `opacity: 0`. Nothing in the real world appears from nothing.
-- **`transform-origin` at the trigger** for popovers, dropdowns, menus, tooltips — `var(--transform-origin)` in Base UI. **Modals are exempt**; they're not anchored to a trigger, so they stay centered.
-- **Percentages in `translate()`** are relative to the element's own size — `translateY(100%)` moves by its own height whatever the content. Prefer over hardcoded pixels.
-- **In Motion, use the full transform string.** `x`/`y`/`scale` shorthands are not hardware-accelerated and drop frames under load:
+- **`transform`과 `opacity`만.** 두 속성은 레이아웃과 페인트를 건너뛰고 GPU에서 돈다. `width`/`height`/`margin`/`padding`/`top`/`left`는 세 단계를 모두 일으킨다. (`clip-path`는 공인된 네 번째 속성이다. RECIPES.md를 참고한다. `height`는 transform으로 대신할 수 없는 아코디언에서만 용인한다.)
+- **절대 `scale(0)`을 쓰지 않는다.** `scale(0.9–0.97)` + `opacity: 0`에서 시작한다. 현실에서 아무것도 없는 데서 나타나는 것은 없다.
+- **`transform-origin`을 트리거에 둔다.** 팝오버, 드롭다운, 메뉴, 툴팁이 대상이다. Base UI에서는 `var(--transform-origin)`이다. **모달은 예외다.** 트리거에 붙어 있지 않으니 가운데에 둔다.
+- **`translate()`의 퍼센트 값**은 요소 자신의 크기를 기준으로 한다. `translateY(100%)`는 내용과 상관없이 자기 높이만큼 움직인다. 하드코딩한 픽셀보다 이쪽을 쓴다.
+- **Motion에서는 transform 문자열 전체를 쓴다.** `x`/`y`/`scale` 단축 속성은 하드웨어 가속되지 않아 부하가 걸리면 프레임을 놓친다.
 
 ```jsx
-<motion.div animate={{ x: 100 }} />                          // drops frames under load
-<motion.div animate={{ transform: "translateX(100px)" }} />  // hardware accelerated
+<motion.div animate={{ x: 100 }} />                          // 부하가 걸리면 프레임을 놓친다
+<motion.div animate={{ transform: "translateX(100px)" }} />  // 하드웨어 가속된다
 ```
 
-- **Never drive a child's transform from a CSS variable on the parent** — it recalculates styles for every child. Set `transform` on the element directly.
+- **절대 부모의 CSS 변수로 자식의 transform을 움직이지 않는다.** 자식마다 스타일을 다시 계산한다. 요소에 직접 `transform`을 설정한다.
 
-### 5. Easing and duration — or a spring
+### 5. 이징과 지속 시간, 또는 스프링
 
-**Easing**, in decision order:
+**이징**은 다음 순서로 결정한다.
 
-| Situation | Easing |
+| 상황 | 이징 |
 | --- | --- |
-| Entering or exiting | `ease-out` |
-| Moving / morphing on screen | `ease-in-out` |
-| Hover / color change | `ease` |
-| Constant motion (marquee, progress) | `linear` |
-| Default | `ease-out` |
+| 등장이나 퇴장 | `ease-out` |
+| 화면 안에서 이동 / 모핑 | `ease-in-out` |
+| hover / 색 변화 | `ease` |
+| 일정한 모션(마키, 진행 표시) | `linear` |
+| 기본 | `ease-out` |
 
-**Never `ease-in` on UI.** It starts slow, delaying the exact moment the user is watching. `ease-out` at 200ms *feels* faster than `ease-in` at 200ms.
+**UI에는 절대 `ease-in`을 쓰지 않는다.** 느리게 시작해서 사용자가 지켜보는 바로 그 순간을 늦춘다. 200ms `ease-out`은 200ms `ease-in`보다 빠르게 *느껴진다*.
 
-Built-in CSS easings are too weak. Use these:
+CSS 기본 이징은 너무 약하다. 다음을 쓴다.
 
 ```css
---ease-out: cubic-bezier(0.23, 1, 0.32, 1);        /* strong ease-out for UI */
---ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);    /* strong ease-in-out for on-screen movement */
---ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);     /* iOS-like drawer curve (Ionic) */
+--ease-out: cubic-bezier(0.23, 1, 0.32, 1);        /* UI용 강한 ease-out */
+--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);    /* 화면 안 이동용 강한 ease-in-out */
+--ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);     /* iOS 같은 드로어 곡선 (Ionic) */
 ```
 
-Need a curve that isn't here? Take it from [easing.dev](https://easing.dev/) or [easings.co](https://easings.co/). Don't hand-roll one.
+여기 없는 곡선이 필요하면 [easing.dev](https://easing.dev/) 또는 [easings.co](https://easings.co/)에서 가져온다. 직접 만들지 않는다.
 
-**Duration:**
+**지속 시간:**
 
-| Element | Duration |
+| 요소 | 지속 시간 |
 | --- | --- |
-| Button press feedback | 100–160ms |
-| Tooltips, small popovers | 125–200ms |
-| Dropdowns, selects | 150–250ms |
-| Modals, drawers | 200–500ms |
-| Marketing / explanatory | Can be longer |
+| 버튼 누름 피드백 | 100–160ms |
+| 툴팁, 작은 팝오버 | 125–200ms |
+| 드롭다운, 셀렉트 | 150–250ms |
+| 모달, 드로어 | 200–500ms |
+| 마케팅 / 설명용 | 더 길어도 됨 |
 
-**UI animations stay under 300ms.** A 180ms dropdown feels more responsive than a 400ms one.
+**UI 애니메이션은 300ms 미만으로 둔다.** 180ms 드롭다운이 400ms짜리보다 반응이 빠르게 느껴진다.
 
-**Reach for a spring instead** when the motion is drag with momentum, an element that should feel alive, a gesture the user can interrupt or reverse, or decorative mouse-tracking:
+관성이 있는 드래그, 살아 있게 느껴져야 하는 요소, 사용자가 중단하거나 되돌릴 수 있는 제스처, 마우스를 따라가는 장식이라면 **대신 스프링을 쓴다**.
 
 ```js
-{ type: "spring", duration: 0.5, bounce: 0.2 }        // Apple-style — easier to reason about
-{ type: "spring", mass: 1, stiffness: 100, damping: 10 }  // traditional physics — more control
+{ type: "spring", duration: 0.5, bounce: 0.2 }        // Apple 방식, 이해하기 더 쉽다
+{ type: "spring", mass: 1, stiffness: 100, damping: 10 }  // 전통적인 물리 방식, 더 세밀하게 조절한다
 ```
 
-Keep bounce at 0.1–0.3, and avoid bounce in most UI — reserve it for drag-to-dismiss and playful interactions.
+바운스는 0.1–0.3으로 두고, 대부분의 UI에서는 바운스를 피한다. 바운스는 끌어서 닫기와 발랄한 상호작용에만 남겨 둔다.
 
-### 6. Interruption and exit
+### 6. 중단과 퇴장
 
-- **Transitions, not keyframes, for anything triggered rapidly** — toasts, toggles, anything a user can fire twice in a second. Transitions retarget from the current value; keyframes restart from zero.
-- **Springs for gestures**, because they carry velocity through an interruption.
-- **Exit the way it entered.** A toast that slides in from the bottom leaves through the bottom. Symmetric paths are what make swipe-to-dismiss feel obvious.
-- **Asymmetric timing where the user is deciding.** Slow on the deliberate phase (a hold-to-confirm press: 2s linear), snappy on the system response (release: 200ms ease-out).
+- **빠르게 연달아 트리거되는 것에는 키프레임이 아니라 트랜지션을 쓴다.** 토스트, 토글, 사용자가 1초에 두 번 일으킬 수 있는 모든 것이 그렇다. 트랜지션은 현재 값에서 목표를 다시 잡고, 키프레임은 0부터 다시 시작한다.
+- **제스처에는 스프링을 쓴다.** 중단되어도 속도를 이어 가기 때문이다.
+- **들어온 길로 나간다.** 아래에서 미끄러져 들어온 토스트는 아래로 나간다. 경로가 대칭이어야 밀어서 닫기가 당연하게 느껴진다.
+- **사용자가 결정하는 곳에는 비대칭 타이밍을 쓴다.** 의도적으로 하는 구간은 느리게(길게 눌러 확인의 누름: 2s linear), 시스템의 반응은 재빠르게(손을 뗄 때: 200ms ease-out) 한다.
 
-### 7. Reduced motion and pointer gating
+### 7. 동작 줄이기와 포인터 제한
 
-Ships with the animation, every time.
+매번 애니메이션과 함께 내보낸다.
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-  .element { animation: fade 0.2s ease; } /* keep opacity/color, drop transform-based motion */
+  .element { animation: fade 0.2s ease; } /* opacity/색은 두고 transform 기반 모션은 뺀다 */
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .element:hover { transform: scale(1.05); } /* touch fires false hovers on tap */
+  .element:hover { transform: scale(1.05); } /* 터치는 탭할 때 가짜 hover를 일으킨다 */
 }
 ```
 
@@ -166,42 +166,42 @@ const reduce = useReducedMotion();
 const closedX = reduce ? 0 : '-100%';
 ```
 
-Reduced motion means **fewer and gentler** animations, not zero — keep transitions that aid comprehension, remove movement and position changes.
+동작 줄이기는 애니메이션을 0으로 만드는 것이 아니라 **더 적고 더 부드럽게** 만든다는 뜻이다. 이해를 돕는 트랜지션은 두고, 이동과 위치 변화는 없앤다.
 
-## Recipes
+## 레시피
 
-For ready-to-build implementations of the common cases — button press, dropdown, tooltip, modal, drawer, toast, accordion, stagger, hold-to-confirm, tab indicator, scroll reveal, drag-to-dismiss — see [RECIPES.md](RECIPES.md). Load it whenever the request matches one of those components; start from the recipe rather than from a blank file.
+흔한 경우(버튼 누름, 드롭다운, 툴팁, 모달, 드로어, 토스트, 아코디언, 스태거, 길게 눌러 확인, 탭 인디케이터, 스크롤 등장, 끌어서 닫기)를 바로 만들 수 있는 구현은 [RECIPES.md](RECIPES.md)에 있다. 요청이 이 컴포넌트 중 하나와 맞을 때마다 불러온다. 빈 파일이 아니라 레시피에서 시작한다.
 
-## Never Ship
+## 절대 내보내지 말 것
 
-Self-check before you finish. Each of these is an automatic block in `review-animations`:
+끝내기 전에 스스로 확인한다. 아래 항목은 모두 `review-animations`에서 자동으로 Block 사유다.
 
-| Never | Instead |
+| 금지 | 대신 |
 | --- | --- |
-| `transition: all` | Name the exact properties |
-| `transform: scale(0)` entrance | `scale(0.95)` + `opacity: 0` |
-| `ease-in` on a UI element | `ease-out` or a strong custom curve |
-| Built-in `ease-out` on a deliberate animation | `cubic-bezier(0.23, 1, 0.32, 1)` |
-| Animation on a keyboard shortcut or 100+/day action | No animation |
-| UI duration over 300ms with no reason | 150–250ms |
-| `transform-origin: center` on a trigger-anchored popover | `var(--transform-origin)` (modals exempt) |
-| Keyframes on toasts, toggles, rapidly-triggered elements | CSS transitions |
-| Animating `width`/`height`/`margin`/`padding`/`top`/`left` | `transform` / `opacity` |
-| Motion `x`/`y`/`scale` props under load | Full `transform` string |
-| Ungated `:hover` motion | `@media (hover: hover) and (pointer: fine)` |
-| Missing `prefers-reduced-motion` | Gentler variant, not zero |
-| Everything entering at once | 30–80ms stagger |
+| `transition: all` | 정확한 속성 지정 |
+| `transform: scale(0)` 등장 | `scale(0.95)` + `opacity: 0` |
+| UI 요소에 `ease-in` | `ease-out` 또는 강한 커스텀 곡선 |
+| 의도한 애니메이션에 기본 `ease-out` | `cubic-bezier(0.23, 1, 0.32, 1)` |
+| 키보드 단축키나 하루 100회 이상인 동작에 애니메이션 | 애니메이션 없음 |
+| 이유 없이 300ms를 넘는 UI 지속 시간 | 150–250ms |
+| 트리거에 붙은 팝오버에 `transform-origin: center` | `var(--transform-origin)` (모달은 예외) |
+| 토스트, 토글, 빠르게 연달아 트리거되는 요소에 키프레임 | CSS 트랜지션 |
+| `width`/`height`/`margin`/`padding`/`top`/`left` 애니메이션 | `transform` / `opacity` |
+| 부하 상황의 Motion `x`/`y`/`scale` prop | `transform` 문자열 전체 |
+| 제한하지 않은 `:hover` 모션 | `@media (hover: hover) and (pointer: fine)` |
+| `prefers-reduced-motion` 누락 | 0이 아니라 더 부드러운 버전 |
+| 모든 것이 한꺼번에 등장 | 30–80ms 스태거 |
 
-## Output
+## 출력
 
-Write the code. Then, in at most a few lines:
+코드를 쓴다. 그다음 많아야 몇 줄로 다음을 적는다.
 
-- **The gate result** — frequency tier and the named purpose. If something in the request was rejected, say which and why.
-- **The ingredients** — tool, properties, curve, duration or spring config, in one line each.
-- **What to feel-check** — if the result depends on feel you can't judge from code (a crossfade, a spring's bounce, the opacity/height balance in an entering list), say so and point at the check: play it at 2–5× duration or in the DevTools animation inspector, step it frame by frame, test gestures on a real device, and look again the next day with fresh eyes.
+- **관문 결과**: 빈도 등급과 이름 붙인 목적. 요청 중 거절한 것이 있으면 무엇을 왜 거절했는지 말한다.
+- **재료**: 도구, 속성, 곡선, 지속 시간이나 스프링 설정을 하나당 한 줄로 적는다.
+- **체감 확인할 것**: 결과가 코드로는 판단할 수 없는 느낌에 달려 있다면(크로스페이드, 스프링의 바운스, 등장하는 목록의 opacity/height 균형) 그렇다고 말하고 확인 방법을 가리킨다. 지속 시간을 2–5×로 늘려 재생하거나 DevTools 애니메이션 검사기에서 재생하고, 프레임 단위로 넘겨 보고, 실제 기기에서 제스처를 시험하고, 다음 날 새로운 눈으로 다시 본다.
 
-Don't pad this into a report. The code is the deliverable.
+이것을 보고서로 부풀리지 않는다. 산출물은 코드다.
 
-## Tone
+## 어조
 
-Opinionated and brief. When the honest answer is "this shouldn't animate," give it — that answer is the reason this skill exists. When feel genuinely can't be settled from code, say so instead of guessing at a value.
+의견은 분명하게, 말은 짧게 한다. 솔직한 답이 "이건 애니메이션을 넣으면 안 된다"라면 그렇게 답한다. 그 답이 이 스킬이 있는 이유다. 느낌을 정말 코드로 정할 수 없다면 값을 짐작하지 말고 그렇다고 말한다.

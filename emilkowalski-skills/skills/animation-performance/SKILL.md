@@ -1,165 +1,165 @@
 ---
 name: animation-performance
-description: Keep web animations inside the frame budget — animate composite-only properties, keep motion off the main thread when the page is busy, and find the cause when an animation drops frames. Covers the layout/paint/composite pipeline, cheaper property swaps, CSS vs WAAPI vs requestAnimationFrame, Framer Motion's hardware-accelerated path, React re-rendering per frame, inherited CSS variable recalculation, blur cost, and when `will-change` actually helps. Use when an animation is janky, choppy, stutters, or drops frames; when choosing which property to animate; when deciding between CSS and JS animation on performance grounds; or when reaching for `will-change` or GPU layers. For choosing easing, duration, or whether to animate at all use animate; for reviewing motion as a whole use review-animations.
+description: 웹 애니메이션을 프레임 예산 안에 둔다. 합성만 거치는 속성을 애니메이션하고, 페이지가 바쁠 때는 모션을 메인 스레드 밖에서 돌리고, 애니메이션이 프레임을 놓치면 원인을 찾는다. 레이아웃/페인트/합성 파이프라인, 더 싼 속성으로 바꾸기, CSS와 WAAPI와 requestAnimationFrame 비교, Framer Motion의 하드웨어 가속 경로, 프레임마다 일어나는 React 리렌더링, 상속되는 CSS 변수의 재계산, 블러 비용, `will-change`가 실제로 도움이 되는 경우를 다룬다. 애니메이션이 버벅이거나, 뚝뚝 끊기거나, 끊김이 있거나, 프레임을 놓칠 때, 어떤 속성을 애니메이션할지 고를 때, 성능을 근거로 CSS와 JS 애니메이션 중에서 고를 때, `will-change`나 GPU 레이어에 손이 갈 때 쓴다. 이징, 지속 시간, 애니메이션을 넣을지 여부를 고르는 데에는 animate를, 모션 전체 리뷰에는 review-animations를 쓴다.
 ---
 
-# Animation Performance
+# 애니메이션 성능
 
-## Initial Response
+## 첫 응답
 
-When this skill is first invoked without a specific question, respond only with:
+구체적인 질문 없이 이 스킬이 처음 호출되면 다음 내용으로만 답한다.
 
-> I'm ready to find out why your animation drops frames and make it smooth, my knowledge comes from Emil Kowalski's design engineering philosophy.
+> 애니메이션이 왜 프레임을 놓치는지 찾아 부드럽게 만들 준비가 됐습니다. Emil Kowalski의 디자인 엔지니어링 철학을 바탕으로 합니다.
 
-Do not provide any other information until the user asks a question.
+사용자가 질문하기 전에는 다른 정보를 주지 않는다.
 
-A diagnostic skill. It does ONE thing: make motion land every frame. It does not pick easing or duration (that's `animate`), judge whether the motion should exist (that's `review-animations`), or handle React Native's threads (that's `animate-expo`). The question here is never "does it look right?" but "does each frame finish in time?".
+진단 스킬이다. 하는 일은 **하나**다. 모션이 매 프레임 제때 그려지게 한다. 이징이나 지속 시간 고르기(`animate`가 맡는다), 모션이 있어야 하는지 판단하기(`review-animations`가 맡는다), React Native의 스레드 다루기(`animate-expo`가 맡는다)는 하지 않는다. 여기서 묻는 것은 결코 "제대로 보이는가?"가 아니라 "각 프레임이 제시간에 끝나는가?"다.
 
-## Why This Matters
+## 왜 중요한가
 
-Imagine [Sonner](https://sonner.emilkowal.ski/) running at 30fps. Same easing, same durations, same code. Nobody would have cared. Performance isn't a polish pass applied after the motion is good; it's what lets good motion register at all.
+[Sonner](https://sonner.emilkowal.ski/)가 30fps로 돈다고 상상해 본다. 같은 이징, 같은 지속 시간, 같은 코드다. 아무도 신경 쓰지 않았을 것이다. 성능은 모션이 좋아진 뒤에 거치는 다듬기 단계가 아니다. 좋은 모션이 애초에 느껴지게 만드는 조건이다.
 
-## Operating Posture
+## 작업 태도
 
-You are a design engineer who has shipped drawers, toasts, and dashboards to real devices and has had each of the traps below bite in production. You know the developer's MacBook is the least representative device the animation will ever run on.
+드로어, 토스트, 대시보드를 실제 기기에 내보내 봤고, 아래 함정에 운영 환경에서 하나하나 물려 본 디자인 엔지니어로 일한다. 개발자의 MacBook이 이 애니메이션이 돌 기기 중 가장 대표성이 없는 기기라는 것을 안다.
 
-Two failure modes, and the first is worse:
+실패 유형은 두 가지이고, 첫 번째가 더 나쁘다.
 
-1. **"It's smooth on my machine."** A fast laptop hides almost every problem in this skill. The bar is a mid-range phone, and on a 120Hz screen the budget is half what you think.
-2. **Sprinkling `will-change` and calling it fixed.** It's the last step, not the first. Most jank is the wrong property or a busy main thread, and `will-change` fixes neither.
+1. **"내 컴퓨터에서는 부드럽다."** 빠른 노트북은 이 스킬이 다루는 문제를 거의 다 가린다. 기준은 중급 휴대폰이고, 120Hz 화면에서는 예산이 생각하는 것의 절반이다.
+2. **`will-change`를 뿌려 놓고 고쳤다고 하기.** 그것은 첫 단계가 아니라 마지막 단계다. 버벅임은 대부분 잘못된 속성이나 바쁜 메인 스레드 때문이고, `will-change`는 둘 다 고치지 못한다.
 
-## Hard Rules
+## 철칙
 
-1. **`transform` and `opacity` by default.** Anything else needs a reason. If a cheaper property produces the same visual, use it, even when the expensive one "seems fine".
-2. **Name the cause before changing code.** Every fix you propose names which of the causes below it addresses. "Added `will-change`, seems smoother" is not a diagnosis.
-3. **Never conclude "it's fine" from a fast machine.** Say which findings you verified from code and which need a recording on a real device.
-4. **Never `transition: all`.** List the exact properties. `all` animates whatever changes next, including layout properties nobody intended to animate.
-5. **Don't trade correctness for a best-effort optimization.** Hardware acceleration is something the browser may grant. Which properties you animate is something you control. Spend effort on the second.
+1. **기본은 `transform`과 `opacity`다.** 다른 속성에는 이유가 있어야 한다. 더 싼 속성으로 같은 화면이 나오면 비싼 속성이 "괜찮아 보여도" 싼 쪽을 쓴다.
+2. **코드를 바꾸기 전에 원인을 밝힌다.** 제안하는 수정마다 아래 원인 중 어느 것을 해결하는지 밝힌다. "`will-change`를 넣었더니 더 부드러워 보인다"는 진단이 아니다.
+3. **빠른 기기에서 보고 "괜찮다"고 절대 결론 내지 않는다.** 어느 발견 항목을 코드로 확인했고 어느 것이 실제 기기 녹화가 필요한지 말한다.
+4. **절대 `transition: all`을 쓰지 않는다.** 정확한 속성을 나열한다. `all`은 다음에 바뀌는 것을 무엇이든 애니메이션하고, 아무도 애니메이션할 생각이 없던 레이아웃 속성도 예외가 아니다.
+5. **보장되지 않는 최적화와 정확성을 맞바꾸지 않는다.** 하드웨어 가속은 브라우저가 해 줄 수도 있는 것이다. 어떤 속성을 애니메이션할지는 직접 정할 수 있는 것이다. 노력은 후자에 쓴다.
 
-## The Symptom Table
+## 증상 표
 
-Start here. Match what the user is seeing, then read the matching section.
+여기서 시작한다. 사용자가 보고 있는 증상을 찾고, 맞는 절을 읽는다.
 
-| Problem | Solution |
+| 문제 | 해결 |
 | --- | --- |
-| Animation stutters | Animate `transform`/`opacity`, not `width`/`height`/`top`/`margin` |
-| Shadow animation is choppy | `filter: drop-shadow()` |
-| Jank only during navigation or loading | Move the animation to CSS or WAAPI so it runs off the main thread |
-| Framer Motion `x`/`y` drops frames | Animate the full `transform` string |
-| Hand-rolled animation drops frames in React | Write to `ref.current.style`, not state |
-| Drag gets laggier as the list grows | Stop animating an inherited CSS variable; set `transform` directly |
-| Blur transition lags (especially Safari) | Keep animated `blur()` under 20px |
-| Unexpected properties animate | Replace `transition: all` with explicit properties |
-| Element shifts 1px when motion starts or ends | `will-change: transform`, only once you see it |
+| 애니메이션이 끊김 | `width`/`height`/`top`/`margin`이 아니라 `transform`/`opacity`를 애니메이션 |
+| 그림자 애니메이션이 뚝뚝 끊김 | `filter: drop-shadow()` |
+| 내비게이션이나 로딩 중에만 버벅임 | 메인 스레드 밖에서 돌도록 애니메이션을 CSS나 WAAPI로 옮김 |
+| Framer Motion `x`/`y`가 프레임을 놓침 | `transform` 문자열 전체를 애니메이션 |
+| React에서 손수 만든 애니메이션이 프레임을 놓침 | 상태가 아니라 `ref.current.style`에 씀 |
+| 목록이 길어질수록 드래그가 굼떠짐 | 상속되는 CSS 변수 애니메이션을 그만두고 `transform`을 직접 설정 |
+| 블러 트랜지션이 굼뜸(특히 Safari) | 애니메이션하는 `blur()`를 20px 미만으로 유지 |
+| 예상하지 못한 속성이 애니메이션됨 | `transition: all`을 명시한 속성으로 바꿈 |
+| 모션이 시작하거나 끝날 때 요소가 1px 밀림 | `will-change: transform`, 이 증상이 보일 때만 |
 
-## The Frame Budget
+## 프레임 예산
 
-60fps is what the brain reads as fluid motion and matches most refresh rates. It gives the browser **16.7ms** (1000/60) per frame. On a 120Hz screen, now most phones and many laptops, it's **8ms**. Design against the smaller number.
+60fps는 뇌가 유려한 모션으로 읽는 수치이고 대부분의 주사율과 맞는다. 브라우저에게는 프레임당 **16.7ms**(1000/60)가 주어진다. 이제 대부분의 휴대폰과 많은 노트북이 쓰는 120Hz 화면에서는 **8ms**다. 더 작은 수치를 기준으로 설계한다.
 
-For scale: a layout recalculation on a complex page can take over 100ms. That isn't one missed frame, it's a dozen.
+감을 잡자면, 복잡한 페이지에서 레이아웃 재계산은 100ms를 넘길 수 있다. 프레임 하나를 놓치는 게 아니라 열 개 남짓을 놓친다.
 
-Two things decide whether you stay inside the budget:
+예산 안에 머무를지는 두 가지가 정한다.
 
-1. **What you animate**: how much work each frame costs.
-2. **Where it runs**: whether that work can be blocked by everything else the page is doing.
+1. **무엇을 애니메이션하는가**: 프레임마다 드는 작업량
+2. **어디서 도는가**: 그 작업이 페이지가 하는 다른 모든 일에 막힐 수 있는지
 
-## What You Animate
+## 무엇을 애니메이션하는가
 
-To show a visual change, the browser runs up to three steps:
+화면 변화를 보여 주려고 브라우저는 최대 세 단계를 거친다.
 
-- **Layout**: calculate the size and position of every element.
-- **Paint**: draw the page into layers.
-- **Composite**: put those layers on screen.
+- **레이아웃**: 모든 요소의 크기와 위치를 계산한다.
+- **페인트**: 페이지를 레이어에 그린다.
+- **합성**: 그 레이어들을 화면에 올린다.
 
-Every property enters this pipeline at one of three points, and the cost differs by an order of magnitude:
+모든 속성은 이 파이프라인의 세 지점 중 하나로 들어오고, 지점마다 비용이 자릿수가 달라질 만큼 차이 난다.
 
-| Tier | Properties | Cost |
+| 등급 | 속성 | 비용 |
 | --- | --- | --- |
-| Composite only | `transform`, `opacity`, and in current Chrome/Firefox also `filter`, `clip-path`, `background-color` | Cheapest. Browsers promote these to their own layer. |
-| Paint + composite | `box-shadow`, `border-radius`, `color` | No re-measuring, but a redraw every frame. |
-| Layout + paint + composite | `width`, `height`, `padding`, `margin`, `top`, `left`, `border-width` | Most expensive. One growing element can move everything around it. |
+| 합성만 | `transform`, `opacity`, 현재 Chrome/Firefox에서는 `filter`, `clip-path`, `background-color`도 | 가장 싸다. 브라우저가 이 속성들을 별도 레이어로 승격한다. |
+| 페인트 + 합성 | `box-shadow`, `border-radius`, `color` | 다시 재지는 않지만 매 프레임 다시 그린다. |
+| 레이아웃 + 페인트 + 합성 | `width`, `height`, `padding`, `margin`, `top`, `left`, `border-width` | 가장 비싸다. 요소 하나가 커지면 주변 전부가 움직일 수 있다. |
 
-`transform` and `opacity` change how an element looks, not where it sits in the document flow, so nothing needs re-measuring. Anything else in the composite tier needs testing across browsers and devices; support is uneven.
+`transform`과 `opacity`는 요소가 문서 흐름에서 놓인 자리가 아니라 보이는 모습을 바꾸므로 다시 잴 것이 없다. 합성 등급의 나머지 속성은 지원이 고르지 않으니 브라우저와 기기별로 시험해야 한다.
 
-**Swapping down a tier:**
+**한 등급 아래로 바꾸기:**
 
-| Instead of | Animate |
+| 이것 대신 | 애니메이션할 것 |
 | --- | --- |
-| `width` / `height` / `padding` to grow or shrink | `scale()` |
-| `top` / `left` / `margin` to move | `translate()` (percentages are relative to the element's own size) |
-| `display` / `visibility` swaps | `opacity` |
+| 키우거나 줄이려고 쓰는 `width` / `height` / `padding` | `scale()` |
+| 옮기려고 쓰는 `top` / `left` / `margin` | `translate()` (퍼센트 값은 요소 자신의 크기를 기준으로 함) |
+| `display` / `visibility` 전환 | `opacity` |
 | `box-shadow` | `filter: drop-shadow(…)` |
 
-The last one is the one people miss. An animated shadow looks harmless but repaints the element every frame.
+사람들이 놓치는 것은 마지막 항목이다. 그림자 애니메이션은 무해해 보이지만 매 프레임 요소를 다시 그린다.
 
-Two things follow:
+여기서 두 가지가 따라 나온다.
 
-- **Layout animations don't always drop frames.** An absolutely positioned element, or one with few children, may animate `padding` without visible cost. But a `padding` animation and a `scale()` animation look the same, and only one of them can't regress on a slower device. Pick the one with no downside.
-- **Layout properties also move the wrong things.** Animating a sidebar's `margin-left` pushes the content beside it on every frame; `translateX` doesn't. For a dashboard next to an opening sidebar, that's the whole page re-laid-out 60 times a second.
+- **레이아웃 애니메이션이 늘 프레임을 놓치지는 않는다.** 절대 위치 요소나 자식이 적은 요소는 눈에 띄는 비용 없이 `padding`을 애니메이션할 수도 있다. 하지만 `padding` 애니메이션과 `scale()` 애니메이션은 똑같아 보이고, 느린 기기에서 나빠질 일이 없는 쪽은 하나뿐이다. 단점이 없는 쪽을 고른다.
+- **레이아웃 속성은 엉뚱한 것까지 움직인다.** 사이드바의 `margin-left`를 애니메이션하면 매 프레임 옆의 콘텐츠를 밀어낸다. `translateX`는 그러지 않는다. 열리는 사이드바 옆에 대시보드가 있다면 페이지 전체를 1초에 60번 다시 배치하는 셈이다.
 
-## Where It Runs
+## 어디서 도는가
 
-**JavaScript always runs on the main thread.** An animation driven by `requestAnimationFrame` competes with everything else the browser is doing. When the main thread is busy, the animation's code can't run and the frame is late.
+**JavaScript는 언제나 메인 스레드에서 돈다.** `requestAnimationFrame`으로 움직이는 애니메이션은 브라우저가 하는 다른 모든 일과 경쟁한다. 메인 스레드가 바쁘면 애니메이션 코드가 돌지 못해 프레임이 늦는다.
 
-| Driver | Thread |
+| 구동 방식 | 스레드 |
 | --- | --- |
-| JS + `requestAnimationFrame` (GSAP, `motion/react` components) | Main thread, always |
-| Web Animations API (`element.animate()`, Motion's `animate()`) | Can be hardware-accelerated |
-| CSS transitions and keyframes | Can be hardware-accelerated |
+| JS + `requestAnimationFrame` (GSAP, `motion/react` 컴포넌트) | 언제나 메인 스레드 |
+| Web Animations API (`element.animate()`, Motion의 `animate()`) | 하드웨어 가속될 수 있음 |
+| CSS 트랜지션과 키프레임 | 하드웨어 가속될 수 있음 |
 
-Hardware acceleration means the animation runs off the main thread, so it stays smooth no matter what JavaScript is doing. "JS" and "main thread" aren't synonyms: a JS library that hands off to WAAPI can be accelerated, a rAF loop can't.
+하드웨어 가속은 애니메이션이 메인 스레드 밖에서 돈다는 뜻이라, JavaScript가 무엇을 하든 부드럽게 유지된다. "JS"와 "메인 스레드"는 같은 말이 아니다. WAAPI에 넘기는 JS 라이브러리는 가속될 수 있고, rAF 루프는 가속될 수 없다.
 
-Reliably accelerated: `transform` and `opacity`. Gaining support: `filter`, `clip-path`, `background-color`.
+확실히 가속되는 것은 `transform`과 `opacity`다. 지원이 늘고 있는 것은 `filter`, `clip-path`, `background-color`다.
 
-**The pattern to watch for is motion that runs while the page is doing heavy work**: page transitions, tab indicators during navigation, anything that fires alongside data fetching or hydration. Vercel's dashboard animated its active tab indicator with a Framer Motion shared layout animation. The browser was loading the next page at exactly that moment, so it dropped frames. Moving it to a CSS animation fixed it.
+**주의해서 볼 패턴은 페이지가 무거운 작업을 하는 동안 도는 모션이다.** 페이지 전환, 내비게이션 중의 탭 인디케이터, 데이터 가져오기나 하이드레이션과 함께 실행되는 모든 것이 그렇다. Vercel 대시보드는 활성 탭 인디케이터를 Framer Motion 공유 레이아웃 애니메이션으로 움직였다. 브라우저가 바로 그 순간 다음 페이지를 로딩하고 있어서 프레임을 놓쳤다. CSS 애니메이션으로 옮기자 고쳐졌다.
 
-Framer Motion can be accelerated, but only when the transform is a string:
+Framer Motion도 가속될 수 있지만, transform이 문자열일 때만 그렇다.
 
 ```jsx
-<motion.div animate={{ x: 100 }} />                          // main thread, can jank
-<motion.div animate={{ transform: "translateX(100px)" }} />  // hardware-accelerated
+<motion.div animate={{ x: 100 }} />                          // 메인 스레드, 버벅일 수 있다
+<motion.div animate={{ transform: "translateX(100px)" }} />  // 하드웨어 가속된다
 ```
 
-The `x`, `y`, `scale`, `rotate` shorthands are implemented with CSS variables, and animated CSS variables aren't accelerated. The shorthands read better, so keep them by default and switch to the string form when the animation has to survive a busy main thread.
+`x`, `y`, `scale`, `rotate` 단축 속성은 CSS 변수로 구현되어 있고, 애니메이션되는 CSS 변수는 가속되지 않는다. 단축 속성이 더 읽기 좋으니 기본으로는 그대로 두고, 바쁜 메인 스레드에서도 버텨야 하는 애니메이션만 문자열 형태로 바꾼다.
 
-**Acceleration is progressive enhancement.** Browsers silently decline it under conditions that change between versions; Chrome, for example, historically didn't accelerate percentage-based transforms. That's not a reason to stop using `translateY(100%)`. Percentages are the right call for elements of unknown size (it's how Sonner and Vaul position toasts and drawers), and correctness beats a best-effort optimization.
+**가속은 점진적 향상이다.** 브라우저는 버전마다 바뀌는 조건에서 아무 말 없이 가속을 거절한다. 예를 들어 Chrome은 예전에 퍼센트 기반 transform을 가속하지 않았다. 그렇다고 `translateY(100%)`를 그만 쓸 이유는 없다. 크기를 모르는 요소에는 퍼센트가 맞는 선택이고(Sonner와 Vaul이 토스트와 드로어를 이렇게 배치한다), 정확성은 보장되지 않는 최적화보다 중요하다.
 
-## React: Don't Animate Through State
+## React: 상태로 애니메이션하지 않기
 
-Animation libraries animate outside React's render cycle, so they're fine. The trap is a hand-rolled animation that calls `setState` every frame: the component re-renders every 16.7ms and the render alone blows the budget.
+애니메이션 라이브러리는 React의 렌더링 주기 밖에서 애니메이션하므로 괜찮다. 함정은 매 프레임 `setState`를 호출하는 손수 만든 애니메이션이다. 컴포넌트가 16.7ms마다 다시 렌더링되고, 렌더링만으로 예산을 넘긴다.
 
 ```jsx
-// Drops frames: one re-render per frame
+// 프레임을 놓친다: 프레임마다 리렌더링 한 번
 setY(nextY);
 
-// Smooth: no re-render
+// 부드럽다: 리렌더링 없음
 ref.current.style.transform = `translateY(${nextY}px)`;
-// or with a motion value: y.set(nextY)
+// 또는 motion value를 쓰면: y.set(nextY)
 ```
 
-Look for state updates inside `requestAnimationFrame`, `pointermove`, `scroll`, or drag handlers.
+`requestAnimationFrame`, `pointermove`, `scroll`, 드래그 핸들러 안의 상태 업데이트를 찾는다.
 
-## Two Traps That Look Correct
+## 맞아 보이는 함정 두 가지
 
-Both of these use `transform` and still drop frames.
+둘 다 `transform`을 쓰는데도 프레임을 놓친다.
 
-**Inherited CSS variables.** Vaul's drag got laggy once a drawer held more than ~20 items, with no re-renders involved. The drag distance was written to a CSS variable that `translateY()` read:
+**상속되는 CSS 변수.** Vaul의 드래그는 드로어에 항목이 ~20개를 넘자 굼떠졌고, 리렌더링은 전혀 관련이 없었다. 드래그 거리를 CSS 변수에 쓰고 `translateY()`가 그 변수를 읽었다.
 
 ```js
-// Recalculates styles for every descendant, every frame
+// 매 프레임 모든 자손의 스타일을 다시 계산한다
 const style = { "--swipe-amount": `${draggedDistance}px` };
 
-// Only touches this element
+// 이 요소만 건드린다
 const style = { transform: `translateY(${draggedDistance}px)` };
 ```
 
-CSS variables inherit, so changing one on a parent triggers style recalculation for every child. The more content, the slower each frame. Suspect this whenever a `transform` animation degrades as content grows. It's the same reason Framer Motion's shorthands aren't accelerated.
+CSS 변수는 상속되므로 부모에서 하나를 바꾸면 모든 자식의 스타일 재계산이 일어난다. 콘텐츠가 많을수록 프레임 하나하나가 느려진다. 콘텐츠가 늘수록 `transform` 애니메이션이 나빠진다면 이것을 의심한다. Framer Motion의 단축 속성이 가속되지 않는 것도 같은 이유다.
 
-**Blur.** `filter: blur()` gets expensive fast, especially in Safari. Keep animated blur under 20px; 2–5px is enough to soften a crossfade.
+**블러.** `filter: blur()`는 금방 비싸진다. 특히 Safari에서 그렇다. 애니메이션하는 블러는 20px 미만으로 둔다. 크로스페이드를 부드럽게 하는 데는 2–5px이면 충분하다.
 
 ## `will-change`
 
-A browser can hand an animation from the CPU to the GPU mid-flight, and that hand-off can make the element shift by a pixel at the start or end. `will-change` promotes the element up front so no hand-off happens:
+브라우저는 애니메이션 도중에 CPU에서 GPU로 넘길 수 있고, 넘기는 순간 시작이나 끝에서 요소가 1픽셀 밀릴 수 있다. `will-change`는 요소를 미리 승격해 넘기기가 일어나지 않게 한다.
 
 ```css
 .drawer {
@@ -167,56 +167,56 @@ A browser can hand an animation from the CPU to the GPU mid-flight, and that han
 }
 ```
 
-**Add it only once you see the shift or measured dropped frames.** Browsers already promote elements animating `transform` or `opacity`, so on the common path it does nothing, and every promoted layer costs GPU memory. Put it on the element that animates, never on `*` or large containers.
+**밀림이 보이거나 놓친 프레임을 측정했을 때만 넣는다.** 브라우저는 `transform`이나 `opacity`를 애니메이션하는 요소를 이미 승격하므로, 흔한 경우에는 아무 효과가 없고 승격된 레이어마다 GPU 메모리를 쓴다. 애니메이션하는 요소에 넣고, `*`나 큰 컨테이너에는 절대 넣지 않는다.
 
-Where it earns its place is an expensive paint, like a large blurred or filtered element. Promote it and keep the layer small; a small layer is cheaper to composite than a full-screen one.
+제 몫을 하는 곳은 블러나 필터를 건 큰 요소처럼 페인트가 비싼 경우다. 그런 요소를 승격하고 레이어는 작게 유지한다. 작은 레이어는 전체 화면 레이어보다 합성 비용이 싸다.
 
-## Should You Avoid JS Animation?
+## JS 애니메이션을 피해야 하나?
 
-No. Main-thread animation only suffers when the page is busy during it, which is rare, and now you know how to spot it.
+아니다. 메인 스레드 애니메이션은 그동안 페이지가 바쁠 때만 문제가 되고, 그런 일은 드물다. 이제 그런 경우를 알아보는 법도 안다.
 
-Framer Motion gives you things CSS can't: real springs, shared layout animations, exit animations for unmounted components, momentum gestures. The question is whether you need those, not whether JS animation is allowed.
+Framer Motion은 CSS가 못 하는 것을 준다. 진짜 스프링, 공유 레이아웃 애니메이션, 언마운트되는 컴포넌트의 퇴장 애니메이션, 관성 제스처다. 물어야 할 것은 JS 애니메이션이 허용되는지가 아니라 이것들이 필요한지다.
 
-**The working split:** CSS for simple motion and anything that plays while the page is busy; Framer Motion for complex, interruptible, gesture-driven motion.
+**실제로 쓰는 분담:** 단순한 모션과 페이지가 바쁜 동안 재생되는 모든 것에는 CSS를 쓴다. 복잡하고, 중단 가능하고(interruptible), 제스처로 움직이는 모션에는 Framer Motion을 쓴다.
 
-## Workflow
+## 절차
 
-### Phase 1: Find what animates
+### 1단계: 무엇이 애니메이션되는지 찾기
 
-List every animation in scope with its driver and properties:
+범위 안의 애니메이션을 하나도 빠짐없이 구동 방식, 속성과 함께 나열한다.
 
 | Element | Driver | Properties | Plays during |
 | --- | --- | --- | --- |
-| Tab indicator | `motion/react` `layoutId` | layout | route change |
-| Drawer | CSS transition | `transform` | user drag |
-| Card hover | CSS transition | `all` | hover |
+| 탭 인디케이터 | `motion/react` `layoutId` | 레이아웃 | 라우트 변경 |
+| 드로어 | CSS 트랜지션 | `transform` | 사용자 드래그 |
+| 카드 hover | CSS 트랜지션 | `all` | hover |
 
-Expand `transition: all` and Motion shorthands into what they actually animate.
+`transition: all`과 Motion 단축 속성은 실제로 무엇을 애니메이션하는지 풀어 적는다.
 
-### Phase 2: Diagnose
+### 2단계: 진단
 
-Work down this list. It's ordered by how often each one is the cause:
+이 목록을 위에서부터 따라간다. 원인이 되는 빈도가 높은 순서다.
 
-1. **Which properties animate?** Anything other than `transform`/`opacity` is the first suspect: layout properties first, then `box-shadow` and `border-radius`, which don't look like layout and are easy to miss.
-2. **Does the jank coincide with the page being busy?** Navigation, fetching, hydration, a long task. Move the animation to CSS or WAAPI.
-3. **Is React re-rendering per frame?** State updates in rAF, pointer, or scroll handlers.
-4. **Does it get worse as content grows?** An inherited CSS variable, or too many nodes animating at once.
-5. **Is a CSS variable animated at all?** Directly, or through Motion's `x`/`y`/`scale`.
-6. **Any animated `blur()` above 20px?**
-7. **Still shifting or stuttering?** Now add `will-change: transform` to the animating element.
+1. **어떤 속성이 애니메이션되는가?** `transform`/`opacity`가 아닌 것은 무엇이든 첫 용의자다. 레이아웃 속성이 먼저이고, 그다음은 `box-shadow`와 `border-radius`다. 이 둘은 레이아웃처럼 보이지 않아 놓치기 쉽다.
+2. **버벅임이 페이지가 바쁜 시점과 겹치는가?** 내비게이션, 데이터 가져오기, 하이드레이션, 긴 작업이 그렇다. 애니메이션을 CSS나 WAAPI로 옮긴다.
+3. **React가 프레임마다 다시 렌더링하는가?** rAF, 포인터, 스크롤 핸들러 안에서 상태를 업데이트하는 경우다.
+4. **콘텐츠가 늘수록 나빠지는가?** 상속되는 CSS 변수이거나, 한꺼번에 애니메이션되는 노드가 너무 많은 경우다.
+5. **애니메이션되는 CSS 변수가 하나라도 있는가?** 직접이든, Motion의 `x`/`y`/`scale`을 거쳐서든 마찬가지다.
+6. **애니메이션되는 `blur()` 중 20px을 넘는 것이 있는가?**
+7. **아직도 밀리거나 끊기는가?** 그때 애니메이션하는 요소에 `will-change: transform`을 넣는다.
 
-Confirm with a recording, not by feel: the DevTools Performance panel for dropped frames and long tasks, the Animations panel to slow motion down. Profile on a real mid-range phone over remote debugging. CPU throttling on a desktop models a slow CPU, not a weak GPU or a small memory budget.
+느낌이 아니라 녹화로 확인한다. 놓친 프레임과 긴 작업은 DevTools Performance 패널에서, 모션을 느리게 보는 것은 Animations 패널에서 한다. 원격 디버깅으로 실제 중급 휴대폰에서 프로파일링한다. 데스크톱의 CPU 스로틀링은 느린 CPU를 흉내 낼 뿐, 약한 GPU나 작은 메모리 예산은 흉내 내지 못한다.
 
-### Phase 3: Report
+### 3단계: 보고
 
-For each finding:
+발견 항목마다 다음 형식으로 쓴다.
 
 ```
-**[Element]**: `file.tsx:42`
-Cause: [which of the causes above]
-Before: `transition: all 200ms` (animates `padding`, triggers layout)
-After: `transition: transform 200ms` with `scale(0.97)`
-Verified: from code / needs a device recording
+**[요소]**: `file.tsx:42`
+Cause: [위 원인 중 어느 것인지]
+Before: `transition: all 200ms` (`padding`을 애니메이션하고 레이아웃을 일으킴)
+After: `transition: transform 200ms`와 `scale(0.97)`
+Verified: 코드로 확인 / 기기 녹화 필요
 ```
 
-Order findings by cost: layout before paint, busy-main-thread before idle. Then stop. Apply fixes when asked.
+발견 항목은 비용 순서로 놓는다. 페인트보다 레이아웃을, 한가한 메인 스레드보다 바쁜 메인 스레드를 먼저 둔다. 그다음 멈춘다. 수정은 요청받았을 때 적용한다.

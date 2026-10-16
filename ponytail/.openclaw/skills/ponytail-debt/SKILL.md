@@ -42,4 +42,3 @@ ponytail이 의도적으로 단순화한 부분에는 모두 `shortcut:` 주석�
 
 읽고 보고만 하며 아무것도 바꾸지 않는다. 결과를 남기고 싶으면 요청하면 된다.
 그러면 부채 목록을 파일(예: `PONYTAIL-DEBT.md`)에 쓴다. 일회성이다.
-"stop ponytail-debt" 또는 "normal mode"라고 하면 원래대로 돌아간다.

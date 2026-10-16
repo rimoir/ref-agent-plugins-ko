@@ -6,7 +6,7 @@ description: >
   리팩터링, 리뷰, 의존성 선택)에 쓰고, 사용자가 "ponytail", "be lazy",
   "simplest solution", "yagni"라고 말하거나 과잉 설계나 불필요하게 커진 코드에
   불만을 말할 때도 쓴다. 레벨은 lite, full(기본값), ultra다.
-argument-hint: "[lite|full|ultra]"
+argument-hint: "[lite|full|ultra|off]"
 license: MIT
 ---
 

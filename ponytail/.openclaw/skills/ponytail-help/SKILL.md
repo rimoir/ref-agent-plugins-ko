@@ -40,6 +40,11 @@ Claude Code와 OpenCode는 위의 슬래시 명령 형식을 쓴다(OpenCode는 
 언제든 `/ponytail`로 다시 켤 수 있다.
 `/ponytail off`로도 끌 수 있다.
 
+## 밴드 (Claude Code)
+
+`/ponytail band`는 프롬프트 위의 밴드를 숨기고, 같은 명령으로 다시 보여 준다.
+`/ponytail band on`과 `/ponytail band off`는 상태를 바로 정한다. 레벨은 그대로다.
+
 ## 기본 모드 설정
 
 기본 모드는 `full`이고, 모든 세션에서 자동으로 켜진다.

@@ -1,5 +1,5 @@
 ---
-name: Make Bot UI
+name: make-bot-ui
 description: >-
   webhook으로 Grok Bot을 깨우는 사용자 정의 UI(페이지, 대시보드, 버튼)를 만들 때,
   사용자가 webhook sender key를 제공해야 할 때, 그 UI를 Tailscale에 노출할 때 쓴다.

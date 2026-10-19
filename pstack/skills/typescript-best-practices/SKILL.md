@@ -12,7 +12,7 @@ disable-model-invocation: true
 | 규칙 | 요약 |
 |------|---------|
 | 판별 유니온(Discriminated unions) | 변형은 `kind` 리터럴 판별자로 모델링해 불가능한 상태를 표현할 수 없게 한다. 선택 필드 묶음은 쓰지 않는다. |
-| 브랜드 타입(Branded types) | 원시 타입에 `& { readonly __brand: "X" }`로 브랜드를 붙여 서로 섞이지 않게 한다. 검증은 경계에서 한 번만. |
+| 브랜드 타입(Branded types) | 원시 타입에 `& { readonly __brand: "X" }`로 브랜드를 붙여 서로 섞이지 않게 한다. 검증은 경계에서 한 번만. 브랜드는 `as`가 아니라 검증하는 타입 가드(`input is AgentId`)에서 얻는다. |
 | 구성적 모델링(Constructive modeling) | 잘못된 값을 아예 만들 수 없도록 형태를 짠다. 비어 있지 않음은 `[T, ...T[]]`, 짝수 길이는 `[T, T][]`, 범위는 `start`와 `duration`. 런타임 가드도 아니고, 정제 타입(refinement type)을 바라는 것도 아니다. |
 | 가장 단순한 전함수 타입 | 그 위의 모든 연산이 전함수(total)로 남는 한 `T[]`를 유지한다. 느슨한 타입 때문에 `!`, 캐스트, "일어날 리 없음" throw가 필요해지는 곳에서만 `NonEmpty<T>`로 강화한다. |
 | `any`보다 `unknown` | 외부 데이터는 `unknown`이다. |

@@ -69,7 +69,7 @@ pstack은 Cursor용으로 만들었다. 스킬이 Agent Skills 형식이라 다�
 | 코드가 왜 이런 모양인지, 숫자가 어디서 왔는지 알기 | [`/why`](../why/SKILL.md) |
 | 변경이나 하위 시스템을 쉬운 말로 이해하기 | [`/teach`](../teach/SKILL.md) |
 | 어떤 주제의 최근 내 작업 따라잡기 | [`/recall`](../recall/SKILL.md) |
-| 내 마지막 메시지 이후 이 채팅에서 바뀐 것을 쉬운 문장 몇 개와 작은 시각 자료로 따라잡고, 실행 항목마다 결정할 만큼의 맥락 받기 | [`/ketchup`](../ketchup/SKILL.md) |
+| 내 마지막 메시지 이후 이 채팅에서 바뀐 것을 쉬운 말과 작은 시각 자료로 따라잡고, 나를 기다리는 항목을 빠짐없이 답변만 보고 결정할 수 있게 받기 | [`/ketchup`](../ketchup/SKILL.md) |
 | 작은 diff가 그 바깥에서 무엇을 깨뜨릴 수 있는지 알기 | [`/blast-radius`](../blast-radius/SKILL.md) |
 | 함수 경계를 넘는 코드 전에 타입과 모듈 모양 정하기 | [`/architect`](../architect/SKILL.md) |
 | 지시 하나에 여러 시도를 받아 가장 좋은 것으로 합치기 | [`/arena`](../arena/SKILL.md) |
@@ -83,6 +83,7 @@ pstack은 Cursor용으로 만들었다. 스킬이 Agent Skills 형식이라 다�
 | 마지막 답을 쉬운 말로 다시 듣기 | [`/bro`](../bro/SKILL.md) |
 | 에이전트가 앱을 스크립트로 조작해 동작을 증명하게 하기 | [`/create-verification-skill`](../create-verification-skill/SKILL.md) |
 | 검증 스킬과 기능 지도를 앱에 다시 맞추기 | [`/maintain-verification-skill`](../maintain-verification-skill/SKILL.md) |
+| 테스트가 좀처럼 닿지 못하는 레이스, 불변식 같은 속성을 형식 검증하기 | [`/create-formal-verification-skill`](../create-formal-verification-skill/SKILL.md) |
 | 성능 수치를 보고하거나 그에 따라 움직이기 전에 점검하기 | [`/benchmark-checklist`](../benchmark-checklist/SKILL.md) |
 | 크거나 여러 곳에 걸친 변경, 자리를 비운 뒤 검토할 변경을 돌리기 | [`/figure-it-out`](../figure-it-out/SKILL.md) |
 | 실행 중 결정 로그를 남기고 나중에 검토하기 | [`/show-me-your-work`](../show-me-your-work/SKILL.md) |

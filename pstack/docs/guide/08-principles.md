@@ -24,7 +24,7 @@ prove it works 원칙을 적용해. 실제 import 흐름을 돌리고 기록된 
 separate before serializing shared state 원칙대로 해. 시도마다 worktree를 따로 주고, 잠금은 쓰지 마.
 ```
 
-각 구절이 먹히는 것은 그 뒤의 규칙이 구체적이기 때문이다. 그래도 에이전트는 응답에서 그 규칙이 어떤 결정을 바꿨는지 말해야 한다. 바뀐 결정 없이 원칙만 인용했다면 적용하지 않고 이름만 들먹였다는 신호다.
+각 구절이 먹히는 것은 그 뒤의 규칙이 구체적이기 때문이다. 그래도 에이전트는 응답에서 그 규칙이 어떤 결정을 바꿨는지 말해야 한다. 바뀐 결정 없이 원칙만 인용했다면 에이전트가 규칙을 적용하지 않고 이름만 댄 것이다.
 
 ## 24개 원칙 간단히
 
@@ -33,7 +33,7 @@ separate before serializing shared state 원칙대로 해. 시도마다 worktree
 - [Laziness Protocol](../../skills/principle-laziness-protocol/SKILL.md)(게으름 프로토콜)은 삭제와, 문제를 푸는 가장 작은 변경을 택한다.
 - [Foundational Thinking](../../skills/principle-foundational-thinking/SKILL.md)(기초부터 생각하기)은 로직을 쓰기 전에 핵심 데이터 구조를 고른다.
 - [Redesign from First Principles](../../skills/principle-redesign-from-first-principles/SKILL.md)(제1원칙부터 재설계)는 새 요구 사항을 처음부터 있었던 것처럼 녹여 넣는다.
-- [Attack the Premise](../../skills/principle-attack-the-premise/SKILL.md)(전제 공격)는 어느 주체가 불균형을 쥐고 있는지 전수 조사한 뒤, 실패한 수정 둘 이상이 공유한 전제를 의심한다.
+- [Attack the Premise](../../skills/principle-attack-the-premise/SKILL.md)(전제 공격)는 실패한 수정 둘 이상이 공유한 전제를 적어 두고, 다음 수정 전에 그 전제를 직접 검증한다.
 - [Subtract Before You Add](../../skills/principle-subtract-before-you-add/SKILL.md)(더하기 전에 빼기)는 그 위에 쌓기 전에 죽은 짐을 걷어 낸다.
 - [Minimize Reader Load](../../skills/principle-minimize-reader-load/SKILL.md)(읽는 사람의 부담 최소화)는 읽는 사람이 머릿속에 들고 있어야 하는 층과 숨은 상태를 줄인다.
 - [Outcome-Oriented Execution](../../skills/principle-outcome-oriented-execution/SKILL.md)(결과 지향 실행)은 버릴 호환 상태를 보존하지 않고 재작성을 목표 설계로 수렴시킨다.
@@ -55,7 +55,7 @@ separate before serializing shared state 원칙대로 해. 시도마다 worktree
 - [Prove It Works](../../skills/principle-prove-it-works/SKILL.md)(동작을 증명하라)는 대리 지표가 아니라 실제 산출물을 검증한다.
 - [Fix Root Causes](../../skills/principle-fix-root-causes/SKILL.md)(근본 원인 수정)는 코드를 바꾸기 전에 재현하고 원인까지 추적한다.
 - [Sequence Work into Verifiable Units](../../skills/principle-sequence-verifiable-units/SKILL.md)(검증 가능한 단위로 작업 나누기)는 작은 단위마다 확인으로 끝낸 뒤 다음을 시작한다.
-- [Test Behavior, Not Implementation](../../skills/principle-test-behavior-not-implementation/SKILL.md)(구현이 아니라 동작을 테스트)은 사용자가 부르는 방식으로 코드를 호출하고 문자 그대로의 기댓값을 단언하며, import한 함수가 전부 `undefined`를 돌려줘도 통과할 테스트는 지운다.
+- [Test Behavior, Not Implementation](../../skills/principle-test-behavior-not-implementation/SKILL.md)(구현이 아니라 동작을 테스트)은 코드의 사용자가 관찰할 수 있는 것을 단언한다. 그래서 테스트는 그 동작이 깨지면 실패하고, 내부가 바뀌어도 살아남는다.
 - [Explain the Number](../../skills/principle-explain-the-number/SKILL.md)(숫자를 설명하라)는 누군가 측정한 숫자를 믿거나 보고하기 전에, 그 숫자를 제한하는 요인을 대고 엉뚱한 것을 잰 것이 아님을 배제한다. [`/benchmark-checklist`](../../skills/benchmark-checklist/SKILL.md)는 이것을 실제 실행으로 답하는 질문 일곱 개로 바꾼다.
 
 위임 원칙은 병렬 작업을 제정신으로 유지한다.

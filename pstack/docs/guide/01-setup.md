@@ -59,6 +59,6 @@ pstack은 subagent와 리뷰 패널에 토큰을 더 쓴다. 엄밀함의 값이
 
 할 일 목록을 지켜본다. 첫 항목들은 일치한 플레이북의 단계를 복사해 넣은 것으로, 이 프롬프트에서는 Feature 플레이북이다. `/poteto-mode`가 어떤 단계를 건너뛰면 그 단계는 `skip: <reason>`과 함께 목록에 남으므로 무엇을 하지 않기로 했는지 볼 수 있다.
 
-여기서부터는 평소처럼 후속 요청을 입력하면 된다. 채팅 내내 `/poteto-mode`를 켜 두려면 `/` 메뉴에서 고를 때 Enter 대신 Option+Enter(Mac)나 Alt+Enter(Windows)를 누른다. 그러면 [Custom Mode](https://cursor.com/docs/skills)가 되어 나갈 때까지 매 턴 컨텍스트에 남는다. Custom Mode는 Agents Window와 CLI에서 쓸 수 있다. 그냥 Enter를 누르면 스킬이 메시지 하나에만 붙고, 채팅이 길어질수록 흐려진다.
+여기서부터는 평소처럼 후속 요청을 입력하면 된다. 채팅 내내 `/poteto-mode`를 켜 두려면 `/` 메뉴에서 고를 때 Enter 대신 Option+Enter(Mac)나 Alt+Enter(Windows)를 누른다. 그러면 [Custom Mode](https://cursor.com/docs/skills#using-a-skill-as-a-custom-mode)가 되어 나갈 때까지 매 턴 컨텍스트에 남는다. Custom Mode는 Agents Window와 CLI에서 쓸 수 있다. 그냥 Enter를 누르면 스킬이 메시지 하나에만 붙고, 채팅이 길어질수록 흐려진다.
 
 다음: [`/poteto-mode`로 작업 보내기](./02-poteto-mode.md).

@@ -44,6 +44,7 @@ Claude Code와 OpenCode는 위의 슬래시 명령 형식을 쓴다(OpenCode는 
 
 `/ponytail band`는 프롬프트 위의 밴드를 숨기고, 같은 명령으로 다시 보여 준다.
 `/ponytail band on`과 `/ponytail band off`는 상태를 바로 정한다. 레벨은 그대로다.
+`/ponytail band import`는 지난 Claude Code 세션(비용, 에이전트 시간, 토큰)을 보드에 추가한다.
 
 ## 기본 모드 설정
 

@@ -72,3 +72,7 @@ interrogate reviewers: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast
 ### 7. 검증 스킬 제안 (선택)
 
 프로젝트에 증명을 위해 실제 앱을 조작할 방법(`verify-*` 스킬이나 기존 하네스)이 있는지 확인한다. 없으면 한 번만 제안한다. "에이전트가 사용자처럼 앱을 조작해 변경이 동작함을 증명할 수 있도록 프로젝트 로컬 검증 스킬을 만들까요? /create-verification-skill로 생성할 수 있습니다." 그렇다고 하면 `/create-verification-skill`을 호출한다(pstack이 설치된 곳이 workspace든 user든 plugin이든 해석된다). 아니라고 하면 밀어붙이지 않고 넘어간다.
+
+### 8. 형식 검증 스킬 제안 (선택)
+
+프로젝트에 이미 형식 검증 스킬(코드를 대상으로 모델 검사기, 증명, 다른 검증기를 돌리는 프로젝트 스킬)이 있는지 확인한다. 없으면 한 번만 제안한다. "에이전트가 테스트가 닿는 경우만이 아니라 범위 안의 모든 경우에서 코드의 핵심 속성이 성립함을 증명할 수 있도록 형식 검증 스킬을 만들까요? /create-formal-verification-skill로 생성할 수 있습니다." 그렇다고 하면 `/create-formal-verification-skill`을 호출한다(pstack이 설치된 곳이 workspace든 user든 plugin이든 해석된다). 아니라고 하면 밀어붙이지 않고 넘어간다.

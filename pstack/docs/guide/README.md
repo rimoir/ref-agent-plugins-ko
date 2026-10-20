@@ -9,7 +9,7 @@ pstack은 에이전트를 세세하게 관리하지 않을 때 가장 잘 동작
 3. [코드 이해하기](./03-understand.md). 읽기 전용 조사, 그리고 무엇이든 고치기 전에 `/how`, `/why`, `/teach`, `/recall`.
 4. [변경 설계하기](./04-design.md). 코드가 모양을 굳히기 전에 `/architect`, `/arena`, `/swarm`, `/interrogate`, 프로토타입, 계획.
 5. [변경을 만들고 정리하기](./05-build-and-clean.md). 빌드 플레이북, `/tdd`, `/unslop`, `/no-comments`.
-6. [검증하고 내보내기](./06-verify-and-ship.md). 실제 앱에서 동작을 증명하고, `/benchmark-checklist`로 숫자를 점검한 뒤, 초점 잡힌 PR을 열어 머지까지 끌고 간다.
+6. [검증하고 내보내기](./06-verify-and-ship.md). 실제 앱에서 동작을 증명하고, 테스트가 좀처럼 닿지 못하는 것을 형식 검증하고, `/benchmark-checklist`로 숫자를 점검한 뒤, 초점 잡힌 PR을 열어 머지까지 끌고 간다.
 7. [잠든 사이에 작업 돌리기](./07-overnight.md). 루프보다 먼저 쌓는 신뢰, 밤샘 계약, 감사할 수 있는 결정 로그, 에이전트 하나를 넘어 규모를 키우는 Projects와 automation.
 8. [원칙 이름으로 방향 잡기](./08-principles.md). 작업 도중 에이전트의 방향을 바꾸는 24개의 이름.
 9. [내 것으로 만들기](./09-make-it-yours.md). 나만의 모드, 반복되는 실수를 잡는 `/correct`, 그리고 스킬 변경을 테스트하는 법.

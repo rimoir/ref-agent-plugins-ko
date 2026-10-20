@@ -61,7 +61,7 @@ poteto-mode는 한 사람의 스타일이다. 그 밑에 있는 플레이북, �
 
 스킬 쓰기는 [Authoring or modifying a skill 플레이북](../../skills/poteto-mode/playbooks/authoring-a-skill.md)에 해당한다. 이 플레이북은 Cursor 내장 `create-skill`을 거치고, frontmatter와 링크를 검증하고, Opening a PR 플레이북으로 결과를 내보낸다. 에이전트가 읽는 글은 사람이 읽는 글보다 기준이 높다. 쓸모없는 문장 하나가 미래의 어떤 에이전트가 따르는 지시가 되기 때문이다. `SKILL.md`를 맨손으로 쓰지 말고 플레이북이 그 기준을 지키게 둔다.
 
-특별한 경우 하나에는 전용 생성기가 있다. 앱을 조작해 동작을 증명해야 하는 스킬은 검증 스킬이므로 대신 [`/create-verification-skill`](../../skills/create-verification-skill/SKILL.md)과 [`/maintain-verification-skill`](../../skills/maintain-verification-skill/SKILL.md)을 쓴다. 둘 다 [검증과 출시](./06-verify-and-ship.md#create-a-project-verification-skill)에서 다룬다.
+특별한 경우 둘에는 전용 생성기가 있다. 앱을 조작해 동작을 증명해야 하는 스킬은 검증 스킬이므로 대신 [`/create-verification-skill`](../../skills/create-verification-skill/SKILL.md)과 [`/maintain-verification-skill`](../../skills/maintain-verification-skill/SKILL.md)을 쓴다. 모델 검사기, 증명, 다른 검증기로 코드의 속성을 확인하는 스킬은 형식 검증 스킬이므로 [`/create-formal-verification-skill`](../../skills/create-formal-verification-skill/SKILL.md)과 [`/maintain-formal-verification-skill`](../../skills/maintain-formal-verification-skill/SKILL.md)을 쓴다. 두 종류 모두 [검증과 출시](./06-verify-and-ship.md#prove-a-property-with-a-formal-verification-skill)에서 다룬다.
 
 ## `/technical-writing`으로 기준에 맞춰 문서 쓰기
 

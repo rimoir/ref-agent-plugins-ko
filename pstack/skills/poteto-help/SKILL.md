@@ -26,6 +26,7 @@ pstack에 관한 사용자의 질문에 답하고, 보낼 수 있는 프롬프�
 
 - `~/.cursor/rules/pstack-models.mdc`가 없으면 이 사용자는 `/setup-pstack`을 돌리지 않았고, 모든 역할이 기본 모델을 쓴다.
 - 프로젝트에 `verify-*` 스킬이나 다른 앱 하네스가 없으면 에이전트가 앱을 스크립트로 조작할 방법이 없다. 변경이 동작함을 증명하는 질문이면 `/create-verification-skill`을 언급한다.
+- 프로젝트에 형식 검증 스킬이 없으면 테스트가 닿는 범위 너머로 확인하는 속성이 없다. 레이스, 불변식, 테스트가 좀처럼 닿지 못하는 다른 경우를 묻는 질문이면 `/create-formal-verification-skill`을 언급한다. 형식 검증 스킬이 있는데 그것이 다루는 코드가 마지막으로 맞췄다고 기록한 커밋 뒤에 바뀌었고 질문이 그 코드에 닿으면 `/maintain-formal-verification-skill`을 언급한다.
 
 모델 규칙이 없고 그게 중요하면, 지금 역할마다 모델과 추론 예산을 고를지 묻는다. 사용자가 처음이거나, 설정이나 비용을 묻거나, 어떤 모델이 도는지에 답이 달려 있으면 중요하다. 채팅마다 많아야 한 번 묻는다. 필요한 것도 불분명하면 두 질문을 함께 한다. 선택지는 둘이다.
 
@@ -35,14 +36,16 @@ pstack에 관한 사용자의 질문에 답하고, 보낼 수 있는 프롬프�
 ## 설정하기
 
 1. 채팅에서 `/add-plugin pstack`으로 설치하거나, 사이드바의 Customize에서 설치한다.
-2. [`/setup-pstack`](../setup-pstack/SKILL.md)을 돌린다. 추론 예산을 묻고, 역할마다 모델을 정하고, 규칙을 쓴다. 규칙은 새 채팅부터 적용된다.
+2. [`/setup-pstack`](../setup-pstack/SKILL.md)을 돌린다. 추론 예산을 묻고, 역할마다 모델을 정하고, 규칙을 쓴다. 규칙은 새 채팅부터 적용된다. 이어서 프로젝트에 이미 있지 않으면 검증 스킬과 형식 검증 스킬을 만들자고 각각 한 번씩 제안한다.
 3. `/poteto-mode`와 목표, 그리고 통과하거나 실패할 수 있는 검사로 실제 작업을 시작한다.
 
 설치만으로는 사용자가 스킬을 부르기 전까지 아무것도 바뀌지 않는다. 사용자의 말로 로드되는 것은 `/setup-pstack`뿐이다. 세부는 [README](../../README.md)와 [가이드 1쪽](../../docs/guide/01-setup.md)에 있다. [`references/prompting.md`](references/prompting.md)에 따라 첫 프롬프트를 함께 다듬자고 제안한다.
 
 비용이 걱정이라면 토큰이 어디에 쓰이는지와 덜 쓰는 법을 알려 준다. pstack은 subagent와 리뷰 패널에 토큰을 더 쓴다. `/setup-pstack`을 다시 돌려 더 작은 예산이나 더 싼 모델을 고른다. `auto`나 `inherit-parent`로 둔 역할은 채팅 모델로 돌아서, 채팅이 Auto나 더 싼 모델일 때 토큰을 아낀다. 패널 목록이 짧으면 항목마다 하나씩 도는 subagent도 줄어든다. `/poteto-mode`는 엄밀함이 필요한 작업에만 쓴다.
 
-pstack은 Cursor용으로 만들었다. 스킬이 Agent Skills 형식이라 다른 도구도 읽을 수 있다. 하지만 `/poteto-mode`, `/how`, `/why`, `/teach`를 포함한 워크플로 스킬 대부분이 역할별 모델로 Cursor subagent를 띄우고, Custom Mode와 `/loop`도 Cursor 기능이라 그런 부분은 다른 도구에서 동작하지 않을 수 있다.
+pstack은 Cursor용으로 만들었고, Claude Code에도 `/plugin marketplace add cursor/plugins`, 이어서 `/plugin install pstack@cursor-plugins`로 설치된다. 거기서는 명령마다 `/pstack:poteto-mode`처럼 `pstack:` 접두어가 붙는다. [Claude Code 어댑터](../../docs/harness/claude-code.md)가 Cursor 이름을 대응시키고, Bugbot이나 Automations처럼 Cursor 전용 기능이 필요한 단계는 한 줄 메모를 남기고 건너뛴다.
+
+스킬이 Agent Skills 형식이라 다른 도구도 읽을 수 있다. 하지만 `/poteto-mode`, `/how`, `/why`, `/teach`를 포함한 워크플로 스킬 대부분이 역할별 모델로 Cursor subagent를 띄우고, Custom Mode와 `/loop`도 Cursor 기능이라 그런 부분은 다른 도구에서 동작하지 않을 수 있다.
 
 ## `/poteto-mode`로 작업 시작하기
 
@@ -64,7 +67,7 @@ pstack은 Cursor용으로 만들었다. 스킬이 Agent Skills 형식이라 다�
 |---|---|
 | 사소하지 않은 작업을 엄밀하게 하기 | [`/poteto-mode`](../poteto-mode/SKILL.md) |
 | 에이전트가 시작하기 전에 내 목표와 문제를 이해했는지 확인하기 | [`/in-your-own-words`](../in-your-own-words/SKILL.md) |
-| 시작하기 전에 작업을 더 높이 겨냥하기. 더 전문가답게, 더 결과 중심으로, 과하게 명세하지 않고 | [`/sharpen`](../sharpen/SKILL.md) |
+| 보내기 전에 프롬프트를 더 크게가 아니라 더 깊게 다시 쓰기. 최고 전문가가 더할 것, 그들의 원자료와 방법, 바깥에서 확인하는 수단을 담는다. 프롬프트를 돌려줄 뿐 작업은 하지 않는다 | [`/sharpen`](../sharpen/SKILL.md) |
 | 코드가 지금 어떻게 동작하는지, 새 코드를 어디에 둘지 알기 | [`/how`](../how/SKILL.md) |
 | 코드가 왜 이런 모양인지, 숫자가 어디서 왔는지 알기 | [`/why`](../why/SKILL.md) |
 | 변경이나 하위 시스템을 쉬운 말로 이해하기 | [`/teach`](../teach/SKILL.md) |
@@ -84,6 +87,7 @@ pstack은 Cursor용으로 만들었다. 스킬이 Agent Skills 형식이라 다�
 | 에이전트가 앱을 스크립트로 조작해 동작을 증명하게 하기 | [`/create-verification-skill`](../create-verification-skill/SKILL.md) |
 | 검증 스킬과 기능 지도를 앱에 다시 맞추기 | [`/maintain-verification-skill`](../maintain-verification-skill/SKILL.md) |
 | 테스트가 좀처럼 닿지 못하는 레이스, 불변식 같은 속성을 형식 검증하기 | [`/create-formal-verification-skill`](../create-formal-verification-skill/SKILL.md) |
+| 다루는 코드가 바뀐 뒤 형식 검증을 다시 맞추고, 실패가 어긋남인지 버그인지 알기 | [`/maintain-formal-verification-skill`](../maintain-formal-verification-skill/SKILL.md) |
 | 성능 수치를 보고하거나 그에 따라 움직이기 전에 점검하기 | [`/benchmark-checklist`](../benchmark-checklist/SKILL.md) |
 | 크거나 여러 곳에 걸친 변경, 자리를 비운 뒤 검토할 변경을 돌리기 | [`/figure-it-out`](../figure-it-out/SKILL.md) |
 | 실행 중 결정 로그를 남기고 나중에 검토하기 | [`/show-me-your-work`](../show-me-your-work/SKILL.md) |

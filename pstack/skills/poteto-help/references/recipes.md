@@ -6,7 +6,7 @@
 
 - `/poteto-mode read <thread>. restate the underlying issue in your own words, in plain english.`
 - `/in-your-own-words <long or messy ask>`
-- `/sharpen <your task>`
+- `/sharpen <the prompt you're about to send>`
 - `/poteto-mode investigate why <symptom>. give me what we know, what data you used, and your best hypotheses. don't change any code yet.`
 - `use /how to understand <subsystem>. then use /why to find out why it broke recently.`
 - `/recall my work on <topic> from last week, then read <issue>.`
@@ -34,6 +34,7 @@
 ## 리뷰와 출시
 
 - `/interrogate the whole branch, but skeptically. don't change anything yet. no nitpicks unless it's a real bug or regression.` 기각한 항목도 읽는다.
+- `/create-formal-verification-skill prove <property> holds in <module>, even when <steps> interleave or retry.` 그 코드에 머지나 리팩터링이 있은 뒤에는 `/maintain-formal-verification-skill`.
 - `/swarm check every package under <dir> against its check script. one worker per package. one report.`
 - `/poteto-mode open the pr. small ordered commits, evidence in the description.`
 - `/poteto-mode babysit this pr. get it green.` 상태만 볼 때: `/poteto-mode check on pr <number>. anything outstanding?`
@@ -43,6 +44,7 @@
 
 - `/poteto-mode im going to bed. <goal> in a fresh worktree off <base>. done means <checks>. keep a decision log. don't ask me before committing. /loop until done. if you're truly stuck after a few hours, stop and write up why.`
 - `/show-me-your-work catch me up on what you did last night.` Attention 절부터 읽는다.
+- `/ketchup`은 마지막 메시지 이후 이 채팅에서 바뀐 것을 따라잡게 하고, 내 결정을 기다리는 일을 모두 나열한다.
 - `/poteto-mode full autopilot on this queue. each item is independent.`
 - `/poteto-mode autopilot these changes but stack them, don't ship. i'll land the stack.`
 - `/reflect capture what we learned so the next run doesn't repeat it.` 앞으로의 결정을 바꾸는 수정만 승인한다.

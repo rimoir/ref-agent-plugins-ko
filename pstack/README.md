@@ -125,7 +125,7 @@ claude code는 이 readme와 가이드까지 포함한 pstack의 생성 사본�
 | [`/poteto-mode`](./skills/poteto-mode/SKILL.md) | 사소하지 않은 모든 작업의 기본 진입점. |
 | [`/poteto-help`](./skills/poteto-help/SKILL.md) | pstack이 처음이거나 어떤 스킬, 플레이북, 원칙이 맞는지 모를 때. 무엇을 하려는지 알아낸 뒤 그 부분에 답하고, 입력할 프롬프트를 건넨다. `/poteto-help`를 입력할 때만 실행된다. |
 | [`/in-your-own-words`](./skills/in-your-own-words/SKILL.md) | 에이전트가 시작하기 전에 내 목표와 문제를 다시 말해 주기를 바랄 때. `/in-your-own-words`를 입력할 때만 실행된다. |
-| [`/sharpen`](./skills/sharpen/SKILL.md) | 과하게 명세하거나 내 선택을 대신 정하지 않으면서, 최고 전문가가 접근할 방식으로 내가 정말 원하는 것을 겨냥해 작업하게 하고 싶을 때. |
+| [`/sharpen`](./skills/sharpen/SKILL.md) | 보내기 전에 프롬프트를 더 크게가 아니라 더 깊게 만들고 싶을 때. 최고 전문가라면 내가 요청하지 않았어도 할 일, 그들이 출발점으로 삼을 원자료, 그들의 방법과 도구, 결과가 맞는지 바깥에서 확인하는 수단을 담는다. 다시 쓴 프롬프트를 돌려주고 내 선택은 열어 둔다. 작업 자체는 하지 않는다. `/sharpen`을 입력할 때만 실행된다. |
 | [`/how`](./skills/how/SKILL.md) | 하위 시스템이 어떻게 동작하는지 차근차근 설명을 듣고 싶을 때. |
 | [`/why`](./skills/why/SKILL.md) | 무언가가 왜 이렇게 만들어졌는지 알고 싶을 때. 실행 시점에 사용 가능한 MCP를 찾아 증거 범주(소스 관리, 이슈 트래커, 장문 문서, 실시간 채팅, 인프라 관측, 에러 추적, 분석 웨어하우스)마다 병렬로 조회한다. |
 | [`/recall`](./skills/recall/SKILL.md) | 작업을 시작하거나 재개하면서, 한 주제에 대한 최근 맥락을 자기 채팅 기록과 공유 기록에서 다시 세워 짧은 현재 상태 브리핑으로 받고 싶을 때. |
@@ -150,6 +150,7 @@ claude code는 이 readme와 가이드까지 포함한 pstack의 생성 사본�
 | [`/create-verification-skill`](./skills/create-verification-skill/SKILL.md) | 프로젝트에 앱 동작을 증명하는 스크립트화된 방법이 없을 때. 언어나 플랫폼에 상관없이 기능 지도(feature map)를 갖춘 프로젝트 로컬 verify 스킬을 만든다. |
 | [`/maintain-verification-skill`](./skills/maintain-verification-skill/SKILL.md) | verify 스킬의 기능 지도가 앱과 어긋났을 때. 소스 웨이브와 라이브 확인 한 번을 거쳐, 증명된 수정만 담은 PR을 많아야 하나 만든다. |
 | [`/create-formal-verification-skill`](./skills/create-formal-verification-skill/SKILL.md) | 레이스, 재시도, 상태 기계, 파서, unsafe 코드를 깨뜨리는 경우에 테스트가 닿지 못할 때. 속성 하나를 맞는 도구로 검증하고, 변경마다 다시 확인하는 프로젝트 로컬 스킬을 만든다. |
+| [`/maintain-formal-verification-skill`](./skills/maintain-formal-verification-skill/SKILL.md) | 형식 검증이 다루는 코드가 마지막 확인 뒤에 바뀌었을 때. 모델, 하네스, 속성을 코드에 맞게 고치고 다시 돌린 뒤, 실패마다 검증이 어긋난 것인지 코드의 버그인지 말한다. |
 | [`/unslop`](./skills/unslop/SKILL.md) | 글을 다듬을 때. AI 티를 없앤다. |
 | [`/bro`](./skills/bro/SKILL.md) | 직전 메시지를 전문 용어 없이 평범한 사람 말로 다시 듣고 싶을 때. |
 | [`/technical-writing`](./skills/technical-writing/SKILL.md) | 문서, RFC, readme, PR 설명, 커밋 메시지를 위한 계층형 문서 표준(Diátaxis + Google developer style + STE + Global English). |

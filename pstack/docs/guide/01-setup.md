@@ -12,6 +12,8 @@ Cursor 채팅에서 다음을 실행한다.
 
 Cursor가 플러그인 설치를 확인해 준다.
 
+Claude Code에서는 `/plugin marketplace add cursor/plugins`를 돌린 뒤 `/plugin install pstack@cursor-plugins`를 돌린다. Claude Code는 플러그인 명령에 접두어를 붙이므로, 이 가이드의 명령마다 거기서는 `pstack:` 접두어가 붙는다. 예를 들어 `/pstack:setup-pstack`이고, 이 명령은 모델 규칙을 `~/.claude/rules/pstack-models.md`에 쓴다. 나머지 차이는 [Claude Code 어댑터](../harness/claude-code.md)에서 다룬다.
+
 ## 모델 고르기
 
 다음을 실행한다.
@@ -28,13 +30,15 @@ Cursor가 플러그인 설치를 확인해 준다.
 
 Auto를 쓰면 어떻게 되는지 궁금할 수 있다. 역할을 `inherit-parent`나 `auto`로 두면 pstack은 subagent의 `model` 필드를 생략하고, subagent는 부모 채팅 모델을 물려받는다. 두 값은 뜻이 같고 둘 다 모델 slug가 아니다. 패널 역할의 값은 목록이며 항목마다 subagent 하나가 돌기 때문에 목록 길이가 패널 크기를 정한다. 설정은 `swarm workers`도 구성한다. 이것은 race가 갈래마다 모델을 지정하지 않는 한 모든 `/swarm` 워커의 기본 모델이다.
 
-## 검증 제안을 받아들이거나 거절하기
+## 검증 제안들을 받아들이거나 거절하기
 
 설정이 끝날 무렵 `/setup-pstack`은 프로젝트에서 앱 동작을 입증할 방법, 즉 `verify-*` 스킬이나 기존 하네스를 찾는다. 둘 다 없으면 [`/create-verification-skill`](../../skills/create-verification-skill/SKILL.md)로 하나 만들자고 한 번 제안한다.
 
 수락하면 에이전트가 사용자처럼 앱을 조작하도록 가르치는 프로젝트 로컬 스킬 `.cursor/skills/verify-<app>/`을 쓴다. 넘겨주기 전에 스킬이 동작함을 한 번 입증한다. 거절하면 설정은 다음으로 넘어간다. `/create-verification-skill`은 언제든 직접 돌릴 수 있다. 자세한 내용은 [검증과 배포](./06-verify-and-ship.md#create-a-project-verification-skill)에서 다룬다.
 
 pstack이 처음이라면 수락하라. 자기 작업을 확인할 수 있는 에이전트는 확인이 통과할 때까지 계속 일한다. 그렇지 못한 에이전트는 모든 결과를 손으로 확인하라고 넘긴다. 이 가이드에 나오는 것 가운데 검증 스킬이 가장 큰 값을 한다.
+
+이어서 설정은 [`/create-formal-verification-skill`](../../skills/create-formal-verification-skill/SKILL.md)로 형식 검증 스킬을 만들자고 한 번 제안한다. 프로젝트에 이미 있으면 제안하지 않는다. 테스트는 누군가 써야겠다고 생각한 경우만 확인한다. 형식 검증 스킬은 "작업 하나가 동시에 두 번 돌지 않는다" 같은 코드의 핵심 속성 하나를 밝혀 둔 범위 안의 모든 경우에서 확인한다. 코드에 동시성, 재시도, 상태 기계, 파서가 있어 버그의 대가가 크고 그것을 깨뜨리는 경우에 테스트가 좀처럼 닿지 못한다면 수락한다. 아니면 거절하고, 사정이 바뀌면 나중에 돌린다. [검증과 배포](./06-verify-and-ship.md#prove-a-property-with-a-formal-verification-skill)에서 다룬다.
 
 설정이 끝나면 새 채팅을 시작한다. 모델 규칙은 새 세션에 적용된다.
 

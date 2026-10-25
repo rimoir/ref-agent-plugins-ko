@@ -130,6 +130,7 @@ claude code는 이 readme와 가이드까지 포함한 pstack의 생성 사본�
 | [`/why`](./skills/why/SKILL.md) | 무언가가 왜 이렇게 만들어졌는지 알고 싶을 때. 실행 시점에 사용 가능한 MCP를 찾아 증거 범주(소스 관리, 이슈 트래커, 장문 문서, 실시간 채팅, 인프라 관측, 에러 추적, 분석 웨어하우스)마다 병렬로 조회한다. |
 | [`/recall`](./skills/recall/SKILL.md) | 작업을 시작하거나 재개하면서, 한 주제에 대한 최근 맥락을 자기 채팅 기록과 공유 기록에서 다시 세워 짧은 현재 상태 브리핑으로 받고 싶을 때. |
 | [`/ketchup`](./skills/ketchup/SKILL.md) | 내 마지막 메시지 이후 이 채팅에서 바뀐 것을 쉬운 말과 작은 시각 자료로 받고, 나를 기다리는 항목을 빠짐없이 답변만 보고 결정할 수 있게 받고 싶을 때. 그 때문에 답변이 길어져도 괜찮다. |
+| [`/ketchup-video`](./skills/ketchup-video/SKILL.md) | `/ketchup`의 따라잡기를 짧은 무음 슬라이드 영상으로 받고, 나를 기다리는 결정은 그 아래 글로 받고 싶을 때. |
 | [`/blast-radius`](./skills/blast-radius/SKILL.md) | 작아 보이는 변경이 무엇을 더 망가뜨릴 수 있는지 알고 싶을 때. 안전하다는 근거가 되는 사실 하나를 주장이 아니라 실행한 코드로 증명한다. |
 | [`/architect`](./skills/architect/SKILL.md) | 함수 경계를 넘는 코드를 쓰기 직전에 호출자의 사용법, 타입, 모듈 형태를 먼저 정하고 싶을 때. |
 | [`/arena`](./skills/arena/SKILL.md) | 같은 일을 N번 병렬로 시도하고 각각에서 가장 좋은 부분을 가져오고 싶을 때. |
@@ -151,6 +152,7 @@ claude code는 이 readme와 가이드까지 포함한 pstack의 생성 사본�
 | [`/maintain-verification-skill`](./skills/maintain-verification-skill/SKILL.md) | verify 스킬의 기능 지도가 앱과 어긋났을 때. 소스 웨이브와 라이브 확인 한 번을 거쳐, 증명된 수정만 담은 PR을 많아야 하나 만든다. |
 | [`/create-formal-verification-skill`](./skills/create-formal-verification-skill/SKILL.md) | 레이스, 재시도, 상태 기계, 파서, unsafe 코드를 깨뜨리는 경우에 테스트가 닿지 못할 때. 속성 하나를 맞는 도구로 검증하고, 변경마다 다시 확인하는 프로젝트 로컬 스킬을 만든다. |
 | [`/maintain-formal-verification-skill`](./skills/maintain-formal-verification-skill/SKILL.md) | 형식 검증이 다루는 코드가 마지막 확인 뒤에 바뀌었을 때. 모델, 하네스, 속성을 코드에 맞게 고치고 다시 돌린 뒤, 실패마다 검증이 어긋난 것인지 코드의 버그인지 말한다. |
+| [`/statechart`](./skills/statechart/SKILL.md) | 동작을 책임지는 사람이 명세를 읽는 대신 눈으로 봐야 할 때. 사용자가 보는 것을 TLA+ 모델에서 생성한 Mermaid 상태 차트로 그리고, 상태마다 동작함, 아직 틀림, 열린 PR이 고침을 표시하고, TLC가 찾은 버그를 번호 붙은 경로로 그린다. 합의한 차트를 TLA+ 뼈대로 바꾸거나 기존 명세에 비추어 코드를 감사하기도 한다. |
 | [`/unslop`](./skills/unslop/SKILL.md) | 글을 다듬을 때. AI 티를 없앤다. |
 | [`/bro`](./skills/bro/SKILL.md) | 직전 메시지를 전문 용어 없이 평범한 사람 말로 다시 듣고 싶을 때. |
 | [`/technical-writing`](./skills/technical-writing/SKILL.md) | 문서, RFC, readme, PR 설명, 커밋 메시지를 위한 계층형 문서 표준(Diátaxis + Google developer style + STE + Global English). |

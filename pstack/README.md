@@ -25,6 +25,8 @@ claude code에서는 다음과 같다.
 /plugin install pstack@cursor-plugins
 ```
 
+claude code는 서드파티 마켓플레이스의 자동 업데이트를 꺼 두므로 pstack은 설치한 버전에 머문다. 켜려면 `/plugin`을 실행하고 **marketplaces** 탭을 열어 `cursor-plugins`를 고른 뒤 **enable auto-update**를 선택한다. 한 번만 직접 업데이트하려면 `claude plugin update pstack@cursor-plugins`를 실행한다.
+
 claude code는 플러그인 명령과 에이전트 이름 앞에 접두어를 붙인다. 그래서 `/poteto-mode`는 `/pstack:poteto-mode`가 된다. 나머지 cursor 이름은 [claude code 어댑터](./docs/harness/claude-code.md)가 모두 대응시킨다. claude code에서 `/pstack:setup-pstack`은 모델 선택을 `~/.claude/rules/pstack-models.md`에 쓴다. bugbot이나 automations처럼 cursor 전용 기능이 필요한 단계는 한 줄 메모를 남기고 건너뛴다.
 
 claude code는 이 readme와 가이드까지 포함한 pstack의 생성 사본을 저장소 루트의 [`harness/pstack/`](https://github.com/cursor/plugins/tree/main/harness/pstack)에서 설치한다. pstack을 바꾼 뒤에는 저장소 루트에서 `node scripts/generate-pstack-harness-trees.mjs`를 실행하고 결과를 커밋한다. 생성 사본이 낡아 있는 동안에는 ci가 실패한다.
@@ -152,7 +154,7 @@ claude code는 이 readme와 가이드까지 포함한 pstack의 생성 사본�
 | [`/maintain-verification-skill`](./skills/maintain-verification-skill/SKILL.md) | verify 스킬의 기능 지도가 앱과 어긋났을 때. 소스 웨이브와 라이브 확인 한 번을 거쳐, 증명된 수정만 담은 PR을 많아야 하나 만든다. |
 | [`/create-formal-verification-skill`](./skills/create-formal-verification-skill/SKILL.md) | 레이스, 재시도, 상태 기계, 파서, unsafe 코드를 깨뜨리는 경우에 테스트가 닿지 못할 때. 속성 하나를 맞는 도구로 검증하고, 변경마다 다시 확인하는 프로젝트 로컬 스킬을 만든다. |
 | [`/maintain-formal-verification-skill`](./skills/maintain-formal-verification-skill/SKILL.md) | 형식 검증이 다루는 코드가 마지막 확인 뒤에 바뀌었을 때. 모델, 하네스, 속성을 코드에 맞게 고치고 다시 돌린 뒤, 실패마다 검증이 어긋난 것인지 코드의 버그인지 말한다. |
-| [`/statechart`](./skills/statechart/SKILL.md) | 동작을 책임지는 사람이 명세를 읽는 대신 눈으로 봐야 할 때. 사용자가 보는 것을 TLA+ 모델에서 생성한 Mermaid 상태 차트로 그리고, 상태마다 동작함, 아직 틀림, 열린 PR이 고침을 표시하고, TLC가 찾은 버그를 번호 붙은 경로로 그린다. 합의한 차트를 TLA+ 뼈대로 바꾸거나 기존 명세에 비추어 코드를 감사하기도 한다. |
+| [`/statechart`](./skills/statechart/SKILL.md) | 동작을 책임지는 사람이 명세를 읽는 대신 눈으로 봐야 할 때. TLA+ 모델을 검사하고, 사용자가 보는 것을 Mermaid 상태 차트로 그리고, 규칙을 깨는 상태마다 표시하고, 각 상태로 가는 가장 짧은 경로를 알려 준다. |
 | [`/unslop`](./skills/unslop/SKILL.md) | 글을 다듬을 때. AI 티를 없앤다. |
 | [`/bro`](./skills/bro/SKILL.md) | 직전 메시지를 전문 용어 없이 평범한 사람 말로 다시 듣고 싶을 때. |
 | [`/technical-writing`](./skills/technical-writing/SKILL.md) | 문서, RFC, readme, PR 설명, 커밋 메시지를 위한 계층형 문서 표준(Diátaxis + Google developer style + STE + Global English). |

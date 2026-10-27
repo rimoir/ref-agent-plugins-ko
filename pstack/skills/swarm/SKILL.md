@@ -19,12 +19,12 @@ disable-model-invocation: true
 
 1. 완료 조건(done predicate)과 swarm이 돌려줘야 할 산출물이나 보고서를 밝힌다.
 2. 형태를 고른다. 조각으로 나누거나, 같은 지시로 작업자 N개를 경주시키거나, 둘을 섞는다. 경주나 혼합 형태라면 띄우기 전에 `first pass`, `rank all`, `best-of` 중 하나를 선언한다.
-4. 작업자 모델은 `~/.cursor/rules/pstack-models.mdc`의 `swarm workers` 줄에서 고른다. 규칙이나 그 줄이 없으면 `grok-4.7-xhigh-fast`를 쓴다. `auto`나 `inherit-parent`이면 `model`을 생략해 작업자들이 부모 모델로 돌게 한다. Task 도구가 slug를 거부하면 기본값을 쓰고 그렇다고 알린다. 기본값을 거부하면 오류 메시지에서 같은 계열의 가장 가까운 유효 slug를 쓴다. 모델 경주라면 각 갈래의 모델을 미리 명시한다. 각 subagent의 추론 수준과 속도(fast 또는 표준)는 **poteto-mode** 스킬의 Subagents 절에 따라 작업에 맞게 고른다.
-5. 작업자가 무언가를 쓴다면 각자 쓸 수 있는 출력 위치를 따로 준다. 작업자가 커밋을 검증하거나 측정한다면 지시마다 정확한 SHA를 명시한다. 측정 지시에는 방법(샘플 수, 샘플 하나가 무엇인지, 순서)도 명시한다. 작업자는 결과에 둘 다 기록한다.
+3. 작업자 모델은 `~/.cursor/rules/pstack-models.mdc`의 `swarm workers` 줄에서 고른다. 규칙이나 그 줄이 없으면 `grok-4.7-xhigh-fast`를 쓴다. `auto`나 `inherit-parent`이면 `model`을 생략해 작업자들이 부모 모델로 돌게 한다. Task 도구가 slug를 거부하면 기본값을 쓰고 그렇다고 알린다. 기본값을 거부하면 오류 메시지에서 같은 계열의 가장 가까운 유효 slug를 쓴다. 모델 경주라면 각 갈래의 모델을 미리 명시한다. 각 subagent의 추론 수준과 속도(fast 또는 표준)는 **poteto-mode** 스킬의 Subagents 절에 따라 작업에 맞게 고른다.
+4. 작업자가 무언가를 쓴다면 각자 쓸 수 있는 출력 위치를 따로 준다. 작업자가 커밋을 검증하거나 측정한다면 지시마다 정확한 SHA를 명시한다. 측정 지시에는 방법(샘플 수, 샘플 하나가 무엇인지, 순서)도 명시한다. 작업자는 결과에 둘 다 기록한다.
 
 ## Phase B: 펼치기
 
-작업자 N개 모두를 메시지 하나에서 `subagent_type: generalPurpose`, `environment: "cloud"`, `run_in_background: true`, 그리고 4단계의 모델로 띄운다. 모델은 `auto`나 `inherit-parent`이면 비워 둔다. `environment: "local"`은 작업자가 사용자 컴퓨터에 있는 무언가에 접근해야 할 때만 쓴다.
+작업자 N개 모두를 메시지 하나에서 `subagent_type: generalPurpose`, `environment: "cloud"`, `run_in_background: true`, 그리고 3단계의 모델로 띄운다. 모델은 `auto`나 `inherit-parent`이면 비워 둔다. `environment: "local"`은 작업자가 사용자 컴퓨터에 있는 무언가에 접근해야 할 때만 쓴다.
 
 작업자가 기본값이 아닌 푸시된 브랜치에서 시작해야 하면 `cloud_base_branch`를 넘긴다.
 
@@ -38,4 +38,4 @@ disable-model-invocation: true
 
 ## Phase D: 보고
 
-표, 한 줄짜리 문제, 공백이나 이탈, 그리고 경주 규칙을 썼다면 그 규칙을 담은 통합 보고서 하나를 채팅으로 돌려준다.
+결과 표, 한 줄짜리 문제, 공백이나 이탈, 그리고 경주 규칙을 썼다면 그 규칙을 담은 통합 보고서 하나를 채팅으로 돌려준다.

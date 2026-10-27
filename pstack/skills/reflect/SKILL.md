@@ -48,6 +48,8 @@ Accepted 편집을 적용하기 전에 종합자의 Accepted / Rejected / Backlo
 
 Backlog 항목은 기다리지 않고 팀의 devex·backlog 트래커에 등록한다. 승인을 기다리는 것은 Accepted 목록뿐이다.
 
+`plugins/cache/` 아래의 스킬은 절대 고치지 않는다. 승인 전에 복사할 위치(`.cursor/skills/<skill>/` 또는 `~/.cursor/skills/<skill>/`)를 보여 준다. 승인 후 스킬 폴더를 그곳에 복사하고 복사본을 고친다. PR을 열거나 push하지 않는다.
+
 승인된 행마다 Routing을 정확히 따른다.
 
 - 사소한 기존 스킬 편집(글머리표 한 줄, 다듬은 문장 하나, 낡은 사실 하나 수정): 부모 에이전트가 직접 한다.

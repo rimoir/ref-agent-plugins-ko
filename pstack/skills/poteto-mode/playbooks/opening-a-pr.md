@@ -31,4 +31,4 @@
 
 **Babysit.** PR을 연다고 babysit이 시작되지는 않는다. URL을 올리고 계속 만든다. 먼저 단계나 스택을 끝낸다. 스택 전체가 생긴 뒤 사용자가 요청할 때만 별도의 babysit 단계를 돌린다. 새 PR마다 babysit하면 빌드가 멈추고, 이후 wave가 다시 시작시킬 커밋에 체크를 낭비한다. 피드백이 의도에서 벗어나면 반박한다.
 
-PR을 여는 subagent는 `interrogate`, `/deslop`, `/no-comments`를 돌리고 URL을 올린다. babysit 없이 부모에게 돌아간다. 단, Autopilot-full이나 Autopilot-stack의 소유자는 예외다. 그 소유자의 브리프가 babysit 루프를 맡기며, 그것이 `playbooks/babysit.md`가 기다리는 요청이다. 소유자는 code-ready 보고 뒤에 루프를 시작하고, 자기 플레이북대로 merge-ready나 STACK-READY를 보고하며, 스택 전체가 만들어질 때까지 babysit을 미루라는 여기와 `playbooks/babysit.md`의 규칙에서 빠진다.
+PR을 여는 subagent는 `/deslop`과 `/no-comments`를 돌리고 URL을 올린다. babysit 없이 부모에게 돌아간다. 단, Autopilot-full이나 Autopilot-stack의 소유자는 예외다. 그 소유자의 브리프가 babysit 루프를 맡기며, 그것이 `playbooks/babysit.md`가 기다리는 요청이다. 소유자는 code-ready 보고 뒤에 루프를 시작하고, merge-ready를 보고하며, 스택 전체가 만들어질 때까지 babysit을 미루라는 여기와 `playbooks/babysit.md`의 규칙에서 빠진다.

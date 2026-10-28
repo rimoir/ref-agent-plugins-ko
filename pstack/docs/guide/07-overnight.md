@@ -79,13 +79,13 @@ flowchart TD
 /poteto-mode 이 큐를 완전 자동으로 처리해 줘. 항목끼리는 독립적이야. 아침까지 머지돼 있으면 좋겠어.
 ```
 
-[Autopilot-stack](../../skills/poteto-mode/playbooks/autopilot-stack.md)은 같은 owner 루프를 돌리지만 아무것도 내보내지 않는다. 일어나면 모든 고리에 검증자 판정이 붙은 선형 base-branch 스택 하나가 있고, 리뷰와 반영은 직접 한다. 변경끼리 얽혀 있거나, 무엇이든 병합되기 전에 직접 보고 싶으면 Autopilot-full 대신 이것을 고른다.
+[Autopilot-stack](../../skills/poteto-mode/playbooks/autopilot-stack.md)은 병합을 뺀 Autopilot-full이다. 일어나면 각자 판정이 붙은 검증된 PR들이 있고, 리뷰와 반영은 직접 한다. PR은 그것이 기반으로 삼는 PR 위에만 쌓인다. 무엇이든 병합되기 전에 직접 보고 싶으면 Autopilot-full 대신 이것을 고른다.
 
 ```text
-/poteto-mode 이 변경 다섯 개를 자동으로 진행하되 스택으로만 쌓고 내보내지는 마. 스택은 아침에 내가 랜딩할게.
+/poteto-mode 이 변경 다섯 개를 자동으로 진행하되 병합은 하지 마. 아침에 내가 랜딩할게.
 ```
 
-[Orchestrate](../../skills/poteto-mode/playbooks/orchestrate.md)는 에이전트 하나의 수명보다 오래가는 프로그램을 위한 것이다. 여러 날에 걸치고, 쌓인 PR이 많고, 상주하는 코디네이터 채팅 하나 아래 subagent 무리가 일한다. 코디네이터는 브리프를 쓰고, subagent가 끝낸 것을 모으고, 병합되지 않은 가장 아래 PR을 초록색으로 유지하며, 코드는 직접 쓰지 않는다. 일부러 무거운 장치다. 에이전트 하나가 세션 하나에서 끝낼 수 있는 작업이면 플레이북이 스스로 위의 밤샘 계약으로 되돌려 보낸다.
+[Orchestrate](../../skills/poteto-mode/playbooks/orchestrate.md)는 에이전트 하나의 수명보다 오래가는 프로그램을 위한 것이다. 여러 날에 걸치고, 쌓인 PR이 많고, 상주하는 코디네이터 채팅 하나 아래 subagent 무리가 일한다. 코디네이터는 각 작업을 어느 에이전트가 맡을지 정하고, 각자 만든 것을 확인하며, 코드는 직접 쓰지 않는다. 에이전트 하나가 세션 하나에서 끝낼 수 있는 작업이면 플레이북이 스스로 위의 밤샘 계약으로 되돌려 보낸다.
 
 ```text
 /poteto-mode store 마이그레이션을 지휘해 줘. 모든 패키지가 전환되고 머지될 때까지 네가 책임져. 나는 하루에 두 번 들여다볼게.

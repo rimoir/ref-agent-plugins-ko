@@ -84,7 +84,7 @@ claude code는 이 readme와 가이드까지 포함한 pstack의 생성 사본�
 | [autonomous run](./skills/poteto-mode/playbooks/autonomous-run.md) | 긴 작업을 멈추지 않고 끝까지 몰고 간다. |
 | [orchestrate](./skills/poteto-mode/playbooks/orchestrate.md) | 코디네이터 채팅 하나에 맡기는 상시 프로젝트. 며칠에 걸치고, 쌓인 PR이 많고, subagent 무리를 부린다. |
 | [autopilot-full](./skills/poteto-mode/playbooks/autopilot-full.md) | 독립 PR들을 머지까지 몰고 간다. PR마다 담당자 하나를 둔다. 코드가 준비된 head는 스웜(swarm)이 검증하고, 그 뒤 패치가 바뀔 때마다 새로 확인한다. |
-| [autopilot-stack](./skills/poteto-mode/playbooks/autopilot-stack.md) | 운영자가 리뷰하고 반영할 선형 base-branch 스택 하나를 만들고 검증한다. |
+| [autopilot-stack](./skills/poteto-mode/playbooks/autopilot-stack.md) | 머지를 뺀 autopilot-full. 운영자가 리뷰하고 반영할 PR들을 만들고 검증하며, PR은 그것이 기반으로 삼는 PR 위에만 쌓는다. |
 | [session pickup](./skills/poteto-mode/playbooks/session-pickup.md) | 이전 에이전트가 진행 중이던 작업을 재개하거나 넘겨받는다. |
 | [pause safely](./skills/poteto-mode/playbooks/pause-safely.md) | 진행 중인 작업을 나중에 재개할 수 있게 깔끔하게 멈춘다. |
 | [multi-phase plan](./skills/poteto-mode/playbooks/multi-phase-plan.md) | 여러 단계나 쌓인 PR에 걸친 작업. |
@@ -132,12 +132,12 @@ claude code는 이 readme와 가이드까지 포함한 pstack의 생성 사본�
 | [`/why`](./skills/why/SKILL.md) | 무언가가 왜 이렇게 만들어졌는지 알고 싶을 때. 실행 시점에 사용 가능한 MCP를 찾아 증거 범주(소스 관리, 이슈 트래커, 장문 문서, 실시간 채팅, 인프라 관측, 에러 추적, 분석 웨어하우스)마다 병렬로 조회한다. |
 | [`/recall`](./skills/recall/SKILL.md) | 작업을 시작하거나 재개하면서, 한 주제에 대한 최근 맥락을 자기 채팅 기록과 공유 기록에서 다시 세워 짧은 현재 상태 브리핑으로 받고 싶을 때. |
 | [`/ketchup`](./skills/ketchup/SKILL.md) | 내 마지막 메시지 이후 이 채팅에서 바뀐 것을 쉬운 말과 작은 시각 자료로 받고, 나를 기다리는 항목을 빠짐없이 답변만 보고 결정할 수 있게 받고 싶을 때. 그 때문에 답변이 길어져도 괜찮다. |
-| [`/ketchup-video`](./skills/ketchup-video/SKILL.md) | `/ketchup`의 따라잡기를 짧은 무음 슬라이드 영상으로 받고, 나를 기다리는 결정은 그 아래 글로 받고 싶을 때. |
+| [`/ketchup-video`](./skills/ketchup-video/SKILL.md) | `/ketchup`의 따라잡기를 짧은 자막 슬라이드 영상으로 받고, 나를 기다리는 결정은 그 아래 글로 받고 싶을 때. |
 | [`/blast-radius`](./skills/blast-radius/SKILL.md) | 작아 보이는 변경이 무엇을 더 망가뜨릴 수 있는지 알고 싶을 때. 안전하다는 근거가 되는 사실 하나를 주장이 아니라 실행한 코드로 증명한다. |
 | [`/architect`](./skills/architect/SKILL.md) | 함수 경계를 넘는 코드를 쓰기 직전에 호출자의 사용법, 타입, 모듈 형태를 먼저 정하고 싶을 때. |
 | [`/arena`](./skills/arena/SKILL.md) | 같은 일을 N번 병렬로 시도하고 각각에서 가장 좋은 부분을 가져오고 싶을 때. |
 | [`/swarm`](./skills/swarm/SKILL.md) | 서로 다른 조각이나 경합 대상에 N개의 작업자를 병렬로 붙이고 보고서 하나로 모으고 싶을 때. |
-| [`/interrogate`](./skills/interrogate/SKILL.md) | diff가 있고 다른 모델들이 엄격한 코드 품질 관점까지 동원해 그것을 깨 보게 하고 싶을 때. |
+| [`/interrogate`](./skills/interrogate/SKILL.md) | diff가 있고 다른 모델들이 그것을 깨 보게 하되, 실행으로 증명된 지적만 남기고 싶을 때. |
 | [`/automate-me`](./skills/automate-me/SKILL.md) | 자기가 실제로 일해 온 방식으로 초안을 잡은 자기만의 `-mode` 스킬을 원할 때. |
 | [`/make-bot-ui`](./skills/make-bot-ui/SKILL.md) | 버튼이 webhook으로 Grok Bot을 깨우는 페이지나 대시보드를 원할 때. sender-key 전달과 Tailscale까지 포함한다. |
 | [`/setup-pstack`](./skills/setup-pstack/SKILL.md) | pstack이 역할별로 쓸 모델을 고르고 싶을 때. 쓸 수 있는 모델을 감지하고 설정 rule을 쓴다. |

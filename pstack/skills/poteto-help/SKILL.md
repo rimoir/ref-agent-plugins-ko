@@ -73,7 +73,7 @@ pstack은 Cursor용으로 만들었고, Claude Code에도 `/plugin marketplace a
 | 변경이나 하위 시스템을 쉬운 말로 이해하기 | [`/teach`](../teach/SKILL.md) |
 | 어떤 주제의 최근 내 작업 따라잡기 | [`/recall`](../recall/SKILL.md) |
 | 내 마지막 메시지 이후 이 채팅에서 바뀐 것을 쉬운 말과 작은 시각 자료로 따라잡고, 나를 기다리는 항목을 빠짐없이 답변만 보고 결정할 수 있게 받기 | [`/ketchup`](../ketchup/SKILL.md) |
-| `/ketchup`처럼 따라잡되 짧은 무음 슬라이드 영상으로 받고, 기다리는 결정은 그 아래 글로 받기 | [`/ketchup-video`](../ketchup-video/SKILL.md) |
+| `/ketchup`처럼 따라잡되 짧은 자막 슬라이드 영상으로 받고, 기다리는 결정은 그 아래 글로 받기 | [`/ketchup-video`](../ketchup-video/SKILL.md) |
 | 작은 diff가 그 바깥에서 무엇을 깨뜨릴 수 있는지 알기 | [`/blast-radius`](../blast-radius/SKILL.md) |
 | 함수 경계를 넘는 코드 전에 타입과 모듈 모양 정하기 | [`/architect`](../architect/SKILL.md) |
 | 지시 하나에 여러 시도를 받아 가장 좋은 것으로 합치기 | [`/arena`](../arena/SKILL.md) |
@@ -125,7 +125,7 @@ pstack에 없는 것:
 - "land the stack"은 Shipping을 돌린다.
 - "take over this branch"는 Session pickup을 돌린다.
 - "pause safely"는 Pause safely를 돌린다.
-- "full autopilot on this queue"는 Autopilot-full을, "stack them, don't ship"은 Autopilot-stack을 돌린다.
+- "full autopilot on this queue"는 Autopilot-full을, "autopilot, don't merge"는 Autopilot-stack을 돌린다.
 - "run the eval playbook"은 Eval을 돌린다.
 
 `/poteto-mode` 없이 "babysit this pr" 같은 표현을 쓰면 같은 일을 하는 Cursor 자체 스킬이 대신 시작될 수 있다. [`poteto-mode`](../poteto-mode/SKILL.md)의 Playbooks 절에 모든 플레이북과 적용 시점이 있다. PR을 열고, babysit하고, 반영하는 과정은 [가이드 6쪽](../../docs/guide/06-verify-and-ship.md)이 다룬다.

@@ -33,7 +33,7 @@
 
 ## 리뷰와 출시
 
-- `/interrogate the whole branch, but skeptically. don't change anything yet. no nitpicks unless it's a real bug or regression.` 기각한 항목도 읽는다.
+- `/interrogate the whole branch, but skeptically. don't change anything yet. no nitpicks unless it's a real bug or regression.` Dropped 목록도 읽는다.
 - `/create-formal-verification-skill prove <property> holds in <module>, even when <steps> interleave or retry.` 그 코드에 머지나 리팩터링이 있은 뒤에는 `/maintain-formal-verification-skill`.
 - `/swarm check every package under <dir> against its check script. one worker per package. one report.`
 - `/poteto-mode open the pr. small ordered commits, evidence in the description.`
@@ -46,6 +46,6 @@
 - `/show-me-your-work catch me up on what you did last night.` Attention 절부터 읽는다.
 - `/ketchup`은 마지막 메시지 이후 이 채팅에서 바뀐 것을 따라잡게 하고, 내 결정을 기다리는 일을 모두 나열한다.
 - `/poteto-mode full autopilot on this queue. each item is independent.`
-- `/poteto-mode autopilot these changes but stack them, don't ship. i'll land the stack.`
+- `/poteto-mode autopilot these changes, but don't merge. i'll land them.`
 - `/reflect capture what we learned so the next run doesn't repeat it.` 앞으로의 결정을 바꾸는 수정만 승인한다.
 - `/bro`는 마지막 답을 쉬운 말로 다시 말해 준다.

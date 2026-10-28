@@ -5,7 +5,7 @@
 1. 변경이 파일 한두 개이고 접근법이 뻔하면 계획을 건너뛴다. 그렇다고 말하고 멈춘다.
 2. 쓰기 전에 열린 질문을 프로토타입으로 정리한다. 질문마다 `playbooks/prototype.md`를 돌린다. 부록 A에 쓸 브랜치, SHA, 스크린샷을 남겨 둔다. 어떤 실행으로도 정할 수 없는 제품 판단이나 취향 문제만 운영자에게 묻는다. 선택지를 함께 준다(**never-block-on-the-human** 원칙 스킬).
 3. `subagent_type: "poteto-agent"`와 Subagents 섹션에 따른 명시적 모델로 subagent를 띄워 탐색한다(**guard-the-context-window** 원칙 스킬). 각 subagent의 추론 수준과 속도(fast 또는 표준)는 Subagents 섹션에 따라 작업에 맞게 고른다. 각 subagent는 파일 포인터, 관례, 테스트 명령, 진입점을 돌려준다. 내용을 통째로 붙여 넣지 않는다.
-4. 아래 골격을 계획 파일에 복사하고 모든 자리표시자를 채운다. 운영자가 경로를 지정하지 않으면 에이전트 저장소의 `docs/` 아래에 파일을 쓴다. 모든 헤딩과 하위 블록을 보이는 순서대로 유지한다. PR 하나에 섹션 하나다. PR 하나는 자체 증거를 갖춘 변경 하나다(**sequence-verifiable-units** 원칙 스킬). 실행 플레이북은 **How to read this**에 적는다. `playbooks/autopilot-full.md`와 `playbooks/autopilot-stack.md` 중 무엇을 쓸지는 `playbooks/autopilot-stack.md` 끝의 규칙으로 고른다. 상시 프로그램은 `playbooks/orchestrate.md`를 쓴다.
+4. 아래 골격을 계획 파일에 복사하고 모든 자리표시자를 채운다. 운영자가 경로를 지정하지 않으면 에이전트 저장소의 `docs/` 아래에 파일을 쓴다. 모든 헤딩과 하위 블록을 보이는 순서대로 유지한다. PR 하나에 섹션 하나다. PR 하나는 자체 증거를 갖춘 변경 하나다(**sequence-verifiable-units** 원칙 스킬). 실행 플레이북은 **How to read this**에 적는다. 실행이 머지해도 되면 `playbooks/autopilot-full.md`를 고른다. 운영자가 PR을 머지하면 `playbooks/autopilot-stack.md`를 고른다. 상시 프로그램은 `playbooks/orchestrate.md`를 쓴다.
 5. `/technical-writing`으로 전체를 쓰고 이어서 `/unslop`을 돌린다. 본문은 Diátaxis 모드 하나, how-to다. 설명과 참조는 부록에 둔다. 헤딩마다 과업이나 발견을 적는다. 긴 대시를 쓰지 않는다. 문장 중간에 콜론을 쓰지 않는다.
 6. `node pstack/skills/poteto-mode/scripts/check-plan.mjs <plan.md>`를 돌리고 출력된 줄을 모두 고친다(**encode-lessons-in-structure** 원칙 스킬).
 7. 넘겨준다. 계획 경로와 스크립트 출력을 올리고 멈춘다. 실행은 운영자가 명시적으로 진행하라고 할 때, 계획이 지정한 실행 플레이북으로 시작한다.
@@ -58,13 +58,13 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 - [ ] PR로 나가는 push 전에 레포의 lint와 typecheck를 한 번 돌린다. hook을 켠 채로 push한다.
 - [ ] 커밋마다 그 전에 `/deslop`을, 리뷰 전에 `/no-comments`를 돌린다.
 - [ ] Bugbot과 보안 리뷰어 코멘트는 모두 `../references/bugbot-triage.md`에 따라 분류한다.
-- [ ] code-ready 보고와 babysit 전에 현재 trunk로 rebase한다. 수정 라운드 동안은 그 merge base를 유지한다. 다시 rebase하는 때는 머지 준비 단계, trunk와 `git merge-tree` 충돌이 날 때, trunk 쪽 변경 때문에 CI가 실패할 때뿐이다.
+- [ ] code-ready 보고와 babysit 전에 현재 trunk로 rebase한다. 수정 라운드 동안은 그 merge base를 유지한다. 다시 rebase하는 때는 머지 준비 단계, trunk와 `git merge-tree` 충돌이 날 때, trunk 쪽 변경 때문에 CI가 실패할 때, 같은 파일을 건드리는 알려진 동시 변경이 들어올 때뿐이다.
 
 ### Verdict and merge, for every PR (모든 PR 공통 판정과 머지)
 
-- [ ] 전체 swarm은 code-ready head에서 한 번 돈다. 새 동작, 재설계, 큰 새 diff가 있을 때만 전체 swarm을 다시 돌린다. rebase, 머지 충돌 해결, 작은 수정은 새 head에서 검증자 하나만 받는다. 전체 swarm은 매번 `pstack/skills/swarm/SKILL.md`에 따라 돌린다. gates 레인 하나. PR의 **Verify, live** 블록에 있는 live 레인 열 개. **Verify, perf** 블록에 있는 perf 레인. 각자 초점이 다른 감사 레인 둘 이상은 diff와 영수증(receipt)을 읽고 PR 본문을 믿지 않는다. 루트는 판정 전에 merge-ready 보고의 영수증을 감사한다.
-- [ ] 모든 레인이 `PASS`일 때만 깨끗한 것이다. 발견 사항은 owner에게 돌려보낸다. 레인이 메모로 남긴 결함도 포함한다. 새 head는 새 판정을 받는다. 단 `playbooks/shipping.md`의 patch-id 규칙에 따라 유효한 결과는 그대로 둔다.
-- [ ] <실행 플레이북의 머지 또는 append 규칙과 `playbooks/shipping.md`의 patch-id 규칙.>
+- [ ] 전체 swarm은 code-ready head에서 한 번 돈다. 새 동작, 재설계, 큰 새 diff가 있을 때만 전체 swarm을 다시 돌린다. rebase, 머지 충돌 해결, 작은 수정은 새 head에서 검증자 하나만 받고, 문구만 바꾼 변경은 검증자를 받지 않는다. 전체 swarm은 매번 `pstack/skills/swarm/SKILL.md`에 따라 돌린다. gates 레인 하나. PR의 **Verify, live** 블록에 있는 live 레인 열 개. **Verify, perf** 블록에 있는 perf 레인. 각자 초점이 다른 감사 레인 둘 이상은 diff와 영수증(receipt)을 읽고 PR 본문을 믿지 않는다. 루트는 판정 전에 merge-ready 보고의 영수증을 감사한다.
+- [ ] 모든 발견을 실행 플레이북의 막기 규칙으로 판단한다. 막는 발견이 없으면 판정은 깨끗하다. `Regression lane against trunk.`로 표시한 레인에서 trunk 동작이 실패하면 trunk 쪽 문제로 기록하고 PR을 막지 않는다. 새 head는 새 판정을 받는다. 단 `playbooks/shipping.md`의 patch-id 규칙에 따라 유효한 결과는 그대로 둔다.
+- [ ] <실행 플레이북의 머지 또는 인계 규칙과 `playbooks/shipping.md`의 patch-id 규칙.>
 
 ### Boot recipe, for every live lane (모든 live 레인 공통 부팅 절차)
 

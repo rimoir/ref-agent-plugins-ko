@@ -10,7 +10,7 @@
 | `scripts/cursor-hooks.js` | `install` / `uninstall`. `~/.cursor/hooks.json`에 병합한다(`--project`를 주면 `.cursor/hooks.json`). |
 | `hooks/ponytail-activate.js` | `sessionStart`: 기본 레벨의 규칙 세트를 주입한다. |
 | `hooks/ponytail-mode-tracker.js` | `beforeSubmitPrompt`: `/ponytail` 명령을 추적하고 새 레벨의 규칙 세트를 주입한다. |
-| `hooks/ponytail-runtime.js` | Cursor를 감지하고(`CURSOR_VERSION`), 상태를 `~/.cursor/.ponytail-active`에 저장하고 Cursor 형식의 JSON을 출력한다. |
+| `hooks/ponytail-runtime.js` | Cursor를 감지하고(`CURSOR_VERSION`), 프로젝트별 모드 상태와 공유 호환 플래그를 관리하고 Cursor 형식의 JSON을 출력한다. |
 
 ## 설치와 제거
 
@@ -80,7 +80,7 @@ Cursor 3.20.17 클라이언트다. 클라이언트에서는 훅 실행기와 응
 ## 동작
 
 - 새 대화: `sessionStart`가 기본 레벨(`PONYTAIL_DEFAULT_MODE`, 없으면 `config.json`,
-  그것도 없으면 `full`)을 `~/.cursor/.ponytail-active`에 쓰고,
+  그것도 없으면 `full`)을 현재 모드로 정하고,
   `PONYTAIL MODE ACTIVE — level: <level>`와 그 레벨에 맞게 거른 규칙 세트를 주입한다.
   기본값이 `off`이면 플래그를 쓰지 않고 아무것도 출력하지 않는다.
 - `/ponytail lite|full|ultra`를 일반 메시지로 보낸 경우: 플래그가 바뀌고 그 턴에
@@ -129,8 +129,11 @@ Cursor 3.20.17 클라이언트다. 클라이언트에서는 훅 실행기와 응
   시간이다(3.20.17에서 측정한 값은 1.05~1.3초다). `beforeSubmitPrompt`는 끝날 때까지 기다리므로
   프롬프트를 제출할 때마다 그만큼 기다린다. macOS와 Linux는 명령을 바로 실행하므로
   node 시작 시간만 든다.
-- 모드 상태는 사용자마다 플래그 하나이고 열려 있는 모든 Cursor 대화가 함께 쓴다.
-  Claude Code 어댑터와 같다.
+- `CLAUDE_PROJECT_DIR`가 있으면 모드 상태는 프로젝트별로
+  `~/.cursor/ponytail-modes/<sha256(normalized project dir)>`에 저장한다. 같은
+  프로젝트의 대화는 그 플래그를 함께 쓰고, 다른 프로젝트는 모드를 따로 둔다.
+  프로젝트 디렉터리가 없으면 런타임은 `~/.cursor/.ponytail-active`를 쓴다. 이 공유
+  플래그는 호환성과 상태 표시줄을 위한 사본으로도 유지되며 마지막 모드 변경을 따른다.
 - `beforeSubmitPrompt`의 주입 필드는 문서 페이지에 없다. 나중의 Cursor 빌드에서 이
   필드가 빠지면 레벨을 바꿔도 플래그만 바뀌고 모델에는 아무것도 전달되지 않는다.
   시작 시 주입만 남는다.

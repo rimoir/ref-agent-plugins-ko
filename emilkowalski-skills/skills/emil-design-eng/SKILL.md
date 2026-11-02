@@ -492,23 +492,25 @@ element.style.setProperty('--swipe-amount', `${distance}px`);
 element.style.transform = `translateY(${distance}px)`;
 ```
 
-### Framer Motion 하드웨어 가속 주의점
+### Motion 하드웨어 가속 주의점
 
-Framer Motion의 단축 속성(`x`, `y`, `scale`)은 하드웨어 가속되지 **않는다**. 메인 스레드에서 `requestAnimationFrame`을 쓴다. 하드웨어 가속을 받으려면 전체 `transform` 문자열을 쓴다.
+`motion` 14.2부터 Motion의 단축 속성(`x`, `y`, `scale`, `rotate`)은 HTML 요소에서 하드웨어 가속된다. 14.2 이전에는 메인 스레드에서 `requestAnimationFrame`을 쓴다. 그런 버전에서 하드웨어 가속을 받으려면 전체 `transform` 문자열을 쓴다.
 
 ```jsx
-// 하드웨어 가속 안 됨(편하지만 부하가 걸리면 프레임을 놓친다)
+// motion 14.2+: 하드웨어 가속됨. 14.2 이전: 메인 스레드, 부하가 걸리면 프레임을 놓친다
 <motion.div animate={{ x: 100 }} />
 
-// 하드웨어 가속됨(메인 스레드가 바빠도 부드럽게 유지된다)
+// 모든 버전에서 하드웨어 가속됨(메인 스레드가 바빠도 부드럽게 유지된다)
 <motion.div animate={{ transform: "translateX(100px)" }} />
 ```
+
+어떤 Motion 애니메이션은 어느 버전에서든 메인 스레드에서 돈다. 레이아웃 애니메이션(`layout`, `layoutId`), `onUpdate`나 `transformTemplate`을 쓰는 애니메이션, 관성(드래그 모멘텀), 모션 값이 프레임마다 움직이는 값(드래그, `useTransform`)이 그렇다.
 
 브라우저가 콘텐츠를 불러오거나, 스크립트를 실행하거나, 페인트하는 일을 동시에 할 때 이 차이가 중요해진다. Vercel에서는 대시보드 탭 애니메이션이 Shared Layout Animations를 썼고 페이지를 불러오는 동안 프레임을 놓쳤다. CSS 애니메이션(메인 스레드 밖에서 실행)으로 바꾸자 해결됐다.
 
 ### 부하가 걸리면 CSS 애니메이션이 JS보다 낫다
 
-CSS 애니메이션은 메인 스레드 밖에서 실행된다. 브라우저가 새 페이지를 불러오느라 바쁠 때 Framer Motion 애니메이션(`requestAnimationFrame` 사용)은 프레임을 놓친다. CSS 애니메이션은 부드럽게 유지된다. 미리 정해진 애니메이션에는 CSS를 쓴다. 동적이고 중단 가능한 애니메이션에는 JS를 쓴다.
+CSS 애니메이션은 메인 스레드 밖에서 실행된다. 브라우저가 새 페이지를 불러오느라 바쁠 때 `requestAnimationFrame`으로 도는 애니메이션(Motion 레이아웃 애니메이션 포함)은 프레임을 놓친다. CSS 애니메이션은 부드럽게 유지된다. 미리 정해진 애니메이션에는 CSS를 쓴다. 동적이고 중단 가능한 애니메이션에는 JS를 쓴다.
 
 ### 코드로 제어하는 CSS 애니메이션에는 WAAPI를 쓴다
 
@@ -669,6 +671,6 @@ UI 코드를 리뷰할 때 확인할 것:
 | UI 요소의 지속 시간 > 300ms                | 150-250ms로 줄인다                                               |
 | 미디어 쿼리 없는 hover 애니메이션          | `@media (hover: hover) and (pointer: fine)`을 더한다             |
 | 빠르게 연달아 실행되는 요소에 키프레임     | 중단 가능하도록 CSS 트랜지션을 쓴다                              |
-| 부하 상태의 Framer Motion `x`/`y` prop     | 하드웨어 가속을 위해 `transform: "translateX()"`를 쓴다          |
+| 부하 상태의 Motion `x`/`y` prop(14.2 이전) | 14.2+로 올리거나 `transform: "translateX()"`를 쓴다              |
 | 등장과 퇴장의 전환 속도가 같음             | 퇴장을 등장보다 빠르게 한다(예: 등장 2s, 퇴장 200ms)             |
 | 요소가 한꺼번에 나타남                     | 스태거 지연을 더한다(항목 사이 30-80ms)                          |

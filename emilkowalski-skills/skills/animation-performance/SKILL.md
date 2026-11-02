@@ -1,6 +1,6 @@
 ---
 name: animation-performance
-description: 웹 애니메이션을 프레임 예산 안에 둔다. 합성만 거치는 속성을 애니메이션하고, 페이지가 바쁠 때는 모션을 메인 스레드 밖에서 돌리고, 애니메이션이 프레임을 놓치면 원인을 찾는다. 레이아웃/페인트/합성 파이프라인, 더 싼 속성으로 바꾸기, CSS와 WAAPI와 requestAnimationFrame 비교, Framer Motion의 하드웨어 가속 경로, 프레임마다 일어나는 React 리렌더링, 상속되는 CSS 변수의 재계산, 블러 비용, `will-change`가 실제로 도움이 되는 경우를 다룬다. 애니메이션이 버벅이거나, 뚝뚝 끊기거나, 끊김이 있거나, 프레임을 놓칠 때, 어떤 속성을 애니메이션할지 고를 때, 성능을 근거로 CSS와 JS 애니메이션 중에서 고를 때, `will-change`나 GPU 레이어에 손이 갈 때 쓴다. 이징, 지속 시간, 애니메이션을 넣을지 여부를 고르는 데에는 animate를, 모션 전체 리뷰에는 review-animations를 쓴다.
+description: 웹 애니메이션을 프레임 예산 안에 둔다. 합성만 거치는 속성을 애니메이션하고, 페이지가 바쁠 때는 모션을 메인 스레드 밖에서 돌리고, 애니메이션이 프레임을 놓치면 원인을 찾는다. 레이아웃/페인트/합성 파이프라인, 더 싼 속성으로 바꾸기, CSS와 WAAPI와 requestAnimationFrame 비교, Motion의 하드웨어 가속 경로, 프레임마다 일어나는 React 리렌더링, 상속되는 CSS 변수의 재계산, 블러 비용, `will-change`가 실제로 도움이 되는 경우를 다룬다. 애니메이션이 버벅이거나, 뚝뚝 끊기거나, 끊김이 있거나, 프레임을 놓칠 때, 어떤 속성을 애니메이션할지 고를 때, 성능을 근거로 CSS와 JS 애니메이션 중에서 고를 때, `will-change`나 GPU 레이어에 손이 갈 때 쓴다. 이징, 지속 시간, 애니메이션을 넣을지 여부를 고르는 데에는 animate를, 모션 전체 리뷰에는 review-animations를 쓴다.
 ---
 
 # 애니메이션 성능
@@ -45,7 +45,7 @@ description: 웹 애니메이션을 프레임 예산 안에 둔다. 합성만 �
 | 애니메이션이 끊김 | `width`/`height`/`top`/`margin`이 아니라 `transform`/`opacity`를 애니메이션 |
 | 그림자 애니메이션이 뚝뚝 끊김 | `filter: drop-shadow()` |
 | 내비게이션이나 로딩 중에만 버벅임 | 메인 스레드 밖에서 돌도록 애니메이션을 CSS나 WAAPI로 옮김 |
-| Framer Motion `x`/`y`가 프레임을 놓침 | `transform` 문자열 전체를 애니메이션 |
+| Motion `x`/`y`가 프레임을 놓침 | `motion` 14.2+로 올리거나 `transform` 문자열 전체를 애니메이션 |
 | React에서 손수 만든 애니메이션이 프레임을 놓침 | 상태가 아니라 `ref.current.style`에 씀 |
 | 목록이 길어질수록 드래그가 굼떠짐 | 상속되는 CSS 변수 애니메이션을 그만두고 `transform`을 직접 설정 |
 | 블러 트랜지션이 굼뜸(특히 Safari) | 애니메이션하는 `blur()`를 20px 미만으로 유지 |
@@ -103,8 +103,8 @@ description: 웹 애니메이션을 프레임 예산 안에 둔다. 합성만 �
 
 | 구동 방식 | 스레드 |
 | --- | --- |
-| JS + `requestAnimationFrame` (GSAP, `motion/react` 컴포넌트) | 언제나 메인 스레드 |
-| Web Animations API (`element.animate()`, Motion의 `animate()`) | 하드웨어 가속될 수 있음 |
+| JS + `requestAnimationFrame` (GSAP, Motion 레이아웃 애니메이션) | 언제나 메인 스레드 |
+| Web Animations API (`element.animate()`, Motion의 `animate()`와 `motion/react` 컴포넌트) | 하드웨어 가속될 수 있음 |
 | CSS 트랜지션과 키프레임 | 하드웨어 가속될 수 있음 |
 
 하드웨어 가속은 애니메이션이 메인 스레드 밖에서 돈다는 뜻이라, JavaScript가 무엇을 하든 부드럽게 유지된다. "JS"와 "메인 스레드"는 같은 말이 아니다. WAAPI에 넘기는 JS 라이브러리는 가속될 수 있고, rAF 루프는 가속될 수 없다.
@@ -113,14 +113,14 @@ description: 웹 애니메이션을 프레임 예산 안에 둔다. 합성만 �
 
 **주의해서 볼 패턴은 페이지가 무거운 작업을 하는 동안 도는 모션이다.** 페이지 전환, 내비게이션 중의 탭 인디케이터, 데이터 가져오기나 하이드레이션과 함께 실행되는 모든 것이 그렇다. Vercel 대시보드는 활성 탭 인디케이터를 Framer Motion 공유 레이아웃 애니메이션으로 움직였다. 브라우저가 바로 그 순간 다음 페이지를 로딩하고 있어서 프레임을 놓쳤다. CSS 애니메이션으로 옮기자 고쳐졌다.
 
-Framer Motion도 가속될 수 있지만, transform이 문자열일 때만 그렇다.
+Motion은 `opacity`, `transform`, `clip-path`, `filter`를 WAAPI에 넘기므로 이 속성들은 가속될 수 있다. `x`, `y`, `scale`, `rotate` 단축 속성은 버전에 따라 다르다.
 
 ```jsx
-<motion.div animate={{ x: 100 }} />                          // 메인 스레드, 버벅일 수 있다
-<motion.div animate={{ transform: "translateX(100px)" }} />  // 하드웨어 가속된다
+<motion.div animate={{ x: 100 }} />                          // motion 14.2+: 하드웨어 가속된다. 이전 버전: 메인 스레드, 버벅일 수 있다
+<motion.div animate={{ transform: "translateX(100px)" }} />  // 모든 버전에서 하드웨어 가속된다
 ```
 
-`x`, `y`, `scale`, `rotate` 단축 속성은 CSS 변수로 구현되어 있고, 애니메이션되는 CSS 변수는 가속되지 않는다. 단축 속성이 더 읽기 좋으니 기본으로는 그대로 두고, 바쁜 메인 스레드에서도 버텨야 하는 애니메이션만 문자열 형태로 바꾼다.
+`motion` 14.2부터는 HTML 요소의 단축 속성을 가속되는 `transform` 애니메이션 하나로 합치므로 그대로 둔다. 이전 버전에서는 바쁜 메인 스레드에서도 버텨야 하는 애니메이션을 문자열 형태로 바꾼다. 레이아웃 애니메이션(`layout`, `layoutId`), `onUpdate`, `transformTemplate`, 관성, 모션 값이 프레임마다 움직이는 값(드래그, `useTransform`)은 어느 버전에서든 메인 스레드에 남는다.
 
 **가속은 점진적 향상이다.** 브라우저는 버전마다 바뀌는 조건에서 아무 말 없이 가속을 거절한다. 예를 들어 Chrome은 예전에 퍼센트 기반 transform을 가속하지 않았다. 그렇다고 `translateY(100%)`를 그만 쓸 이유는 없다. 크기를 모르는 요소에는 퍼센트가 맞는 선택이고(Sonner와 Vaul이 토스트와 드로어를 이렇게 배치한다), 정확성은 보장되지 않는 최적화보다 중요하다.
 
@@ -153,7 +153,7 @@ const style = { "--swipe-amount": `${draggedDistance}px` };
 const style = { transform: `translateY(${draggedDistance}px)` };
 ```
 
-CSS 변수는 상속되므로 부모에서 하나를 바꾸면 모든 자식의 스타일 재계산이 일어난다. 콘텐츠가 많을수록 프레임 하나하나가 느려진다. 콘텐츠가 늘수록 `transform` 애니메이션이 나빠진다면 이것을 의심한다. Framer Motion의 단축 속성이 가속되지 않는 것도 같은 이유다.
+CSS 변수는 상속되므로 부모에서 하나를 바꾸면 모든 자식의 스타일 재계산이 일어난다. 콘텐츠가 많을수록 프레임 하나하나가 느려진다. 콘텐츠가 늘수록 `transform` 애니메이션이 나빠진다면 이것을 의심한다.
 
 **블러.** `filter: blur()`는 금방 비싸진다. 특히 Safari에서 그렇다. 애니메이션하는 블러는 20px 미만으로 둔다. 크로스페이드를 부드럽게 하는 데는 2–5px이면 충분하다.
 
@@ -201,7 +201,7 @@ Framer Motion은 CSS가 못 하는 것을 준다. 진짜 스프링, 공유 레�
 2. **버벅임이 페이지가 바쁜 시점과 겹치는가?** 내비게이션, 데이터 가져오기, 하이드레이션, 긴 작업이 그렇다. 애니메이션을 CSS나 WAAPI로 옮긴다.
 3. **React가 프레임마다 다시 렌더링하는가?** rAF, 포인터, 스크롤 핸들러 안에서 상태를 업데이트하는 경우다.
 4. **콘텐츠가 늘수록 나빠지는가?** 상속되는 CSS 변수이거나, 한꺼번에 애니메이션되는 노드가 너무 많은 경우다.
-5. **애니메이션되는 CSS 변수가 하나라도 있는가?** 직접이든, Motion의 `x`/`y`/`scale`을 거쳐서든 마찬가지다.
+5. **애니메이션되는 CSS 변수가 하나라도 있는가?** 14.2 이전 버전에서 Motion의 `x`/`y`/`scale`을 쓰고 있지는 않은가?
 6. **애니메이션되는 `blur()` 중 20px을 넘는 것이 있는가?**
 7. **아직도 밀리거나 끊기는가?** 그때 애니메이션하는 요소에 `will-change: transform`을 넣는다.
 

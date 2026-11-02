@@ -72,12 +72,12 @@ CSS **트랜지션**은 애니메이션 도중에 현재 상태에서 목표를 
 
 - **`transform`과 `opacity`만 애니메이션한다.** `width`/`height`/`margin`/`padding`/`top`/`left`는 레이아웃 + 페인트 + 합성을 일으킨다.
 - **`transition: all`**은 의도하지 않은 속성까지 GPU 밖에서 애니메이션한다. 언제나 발견 항목이다.
-- **Framer Motion의 `x`/`y`/`scale` 단축 속성은 하드웨어 가속되지 않는다.** 메인 스레드에서 돌기 때문에 부하가 걸리면 프레임을 놓친다. 목표: transform 문자열 전체, `animate={{ transform: "translateX(100px)" }}`.
+- **`motion` 14.2 이전의 Motion `x`/`y`/`scale` 단축 속성은 하드웨어 가속되지 않는다.** 메인 스레드에서 돌기 때문에 부하가 걸리면 프레임을 놓친다. 목표: HTML 요소에서 가속되는 `motion` 14.2+로 올린다. 이전 버전에서는 transform 문자열 전체, `animate={{ transform: "translateX(100px)" }}`. 레이아웃 애니메이션(`layout`, `layoutId`)은 어느 버전에서든 메인 스레드에서 돈다.
 - **부모의 CSS 변수로 자식의 transform을 움직이지 않는다.** 모든 자식의 스타일을 다시 계산하게 된다. `transform`은 해당 요소에 직접 설정한다.
 - 부하가 걸리면 CSS(와 WAAPI)가 rAF 기반 JS보다 낫다. 미리 정해진 모션에는 CSS를, 동적이거나 제스처로 움직이는 모션에는 JS/스프링을 쓴다.
 - 전환 중 `filter: blur()`는 20px 미만으로 둔다. 강한 블러는 비용이 크고, Safari에서는 특히 그렇다.
 
-찾을 것: `transition: all`, 애니메이션하는 레이아웃 속성, 복잡한 페이지의 Framer Motion 단축 속성 prop, 자식 transform을 움직이는 `setProperty('--x', …)`, CSS로 할 수 있는 일을 하는 rAF 루프.
+찾을 것: `transition: all`, 애니메이션하는 레이아웃 속성, 복잡한 페이지의 Motion 단축 속성 prop(14.2 이전 버전), 복잡한 페이지의 레이아웃 애니메이션, 자식 transform을 움직이는 `setProperty('--x', …)`, CSS로 할 수 있는 일을 하는 rAF 루프.
 
 ## 6. 접근성
 

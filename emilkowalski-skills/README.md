@@ -47,6 +47,7 @@ npx skills@latest add emilkowalski/skills
 - **[review-animations](./skills/review-animations/SKILL.md)**: 내 규칙에 따라 애니메이션을 엄격하게 리뷰한다.
 - **[improve-animations](./skills/improve-animations/SKILL.md)**: 코드베이스의 애니메이션을 모두 점검하고 우선순위를 매긴 그 자체로 완결된 계획을 만든다. 어떤 에이전트든 이 계획을 실행할 수 있다.
 - **[find-animation-opportunities](./skills/find-animation-opportunities/SKILL.md)**: UI에서 모션이 정말로 도움이 될 곳을 찾고 애니메이션을 넣지 말아야 할 곳도 알려 준다.
+- **[remove-animations](./skills/remove-animations/SKILL.md)**: 기회 찾기의 반대다. 앱에 필요 없는 애니메이션을 지운다. 키보드 단축키에 붙은 모션, 모든 섹션의 페이드인, 그룹 안 툴팁마다 붙은 지연 같은 것이다.
 - **[animation-performance](./skills/animation-performance/SKILL.md)**: 프레임을 놓치는 애니메이션을 고친다. 대부분의 에이전트가 못 보고 지나치는 미묘한 문제를 많이 다룬다.
 - **[animation-vocabulary](./skills/animation-vocabulary/SKILL.md)**: 알맞은 용어로 원하는 것을 정확히 말해 AI에게서 더 나은 애니메이션을 얻는다.
 - **[apple-design](./skills/apple-design/SKILL.md)**: Apple의 WWDC 디자인 세션에서 추려 웹에 맞게 옮긴, 인터페이스 디자인과 유려한 모션의 원칙이다.

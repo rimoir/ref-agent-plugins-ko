@@ -40,7 +40,7 @@ diff의 모든 애니메이션을 이 기준에 견준다. 위반은 발견 항�
 
 6. **중단 가능성(interruptibility).** 빠르게 연달아 실행되거나 제스처로 움직이는 모션(토스트, 토글, 드래그)은 중단 가능해야 한다. 0부터 다시 시작하는 키프레임이 아니라 현재 상태에서 목표를 다시 잡는 CSS 트랜지션이나 스프링을 쓴다.
 
-7. **GPU 전용 속성.** `transform`과 `opacity`만 애니메이션한다. `width`/`height`/`margin`/`padding`/`top`/`left`를 애니메이션하는 것(또는 부하가 걸린 상태에서 Framer Motion의 `x`/`y`/`scale` 단축 속성을 쓰는 것)은 성능 발견 항목이다.
+7. **GPU 전용 속성.** `transform`과 `opacity`만 애니메이션한다. `width`/`height`/`margin`/`padding`/`top`/`left`를 애니메이션하는 것(또는 14.2 이전 버전에서 부하가 걸린 상태로 Motion의 `x`/`y`/`scale` 단축 속성을 쓰는 것)은 성능 발견 항목이다.
 
 8. **접근성.** `prefers-reduced-motion`을 지킨다(모션을 0으로 만들지 말고 부드럽게 줄인다. opacity와 색은 두고 움직임은 뺀다). hover 애니메이션은 `@media (hover: hover) and (pointer: fine)` 안에서만 동작하도록 제한한다.
 
@@ -60,7 +60,7 @@ diff의 모든 애니메이션을 이 기준에 견준다. 위반은 발견 항�
 - 트리거에 붙은 팝오버, 드롭다운, 툴팁의 `transform-origin: center`
 - 토스트, 토글, 빠르게 추가되거나 실행되는 모든 것에 쓴 키프레임
 - 레이아웃 속성(`width`/`height`/`margin`/`padding`/`top`/`left`) 애니메이션
-- 페이지가 바쁠 때 도는 모션에 쓴 Framer Motion `x`/`y`/`scale` prop
+- 페이지가 바쁠 때 도는 모션에 쓴 Motion `x`/`y`/`scale` prop(`motion` 14.2 이전)이나 레이아웃 애니메이션
 - 자식의 transform을 움직이려고 부모의 CSS 변수를 갱신하는 것(스타일 재계산 폭주)
 - 움직임에 `prefers-reduced-motion` 처리가 없음
 - 제한하지 않은 `:hover` 모션
@@ -76,7 +76,7 @@ diff의 모든 애니메이션을 이 기준에 견준다. 위반은 발견 항�
 3. **이징을 고친다**: `ease-in`→`ease-out`/커스텀 곡선으로 바꾸고 강한 cubic-bezier를 쓴다.
 4. **원점과 물리감을 고친다**: `transform-origin`을 바로잡고 `scale(0)`을 `scale(0.95)`+opacity로 바꾼다.
 5. **중단 가능하게 만든다**: 키프레임 → 트랜지션, 또는 제스처로 움직이는 모션에는 스프링.
-6. **GPU로 옮긴다**: 레이아웃 속성 → `transform`/`opacity`, 단축 속성 → `transform` 문자열 전체, 프로그래밍 방식의 CSS에는 WAAPI.
+6. **GPU로 옮긴다**: 레이아웃 속성 → `transform`/`opacity`, Motion 14.2 이전의 단축 속성 → 버전 올리기나 `transform` 문자열 전체, 프로그래밍 방식의 CSS에는 WAAPI.
 7. **비대칭 타이밍**: 의도적인 단계는 느리게, 응답은 재빠르게.
 8. **다듬기**: 크로스페이드를 가리는 블러, 묶음에는 스태거, 등장에는 `@starting-style`, "살아 있는" 요소에는 스프링.
 9. **접근성과 통일성**: 동작 줄이기 대응과 hover 제한을 더하고 컴포넌트의 성격에 맞게 조율한다.

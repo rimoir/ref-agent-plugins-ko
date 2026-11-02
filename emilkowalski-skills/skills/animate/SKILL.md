@@ -86,11 +86,11 @@ description: 애니메이션을 처음부터 만든다. 결정은 느낌이 맞�
 - **절대 `scale(0)`을 쓰지 않는다.** `scale(0.9–0.97)` + `opacity: 0`에서 시작한다. 현실에서 아무것도 없는 데서 나타나는 것은 없다.
 - **`transform-origin`을 트리거에 둔다.** 팝오버, 드롭다운, 메뉴, 툴팁이 대상이다. Base UI에서는 `var(--transform-origin)`이다. **모달은 예외다.** 트리거에 붙어 있지 않으니 가운데에 둔다.
 - **`translate()`의 퍼센트 값**은 요소 자신의 크기를 기준으로 한다. `translateY(100%)`는 내용과 상관없이 자기 높이만큼 움직인다. 하드코딩한 픽셀보다 이쪽을 쓴다.
-- **Motion에서는 transform 문자열 전체를 쓴다.** `x`/`y`/`scale` 단축 속성은 하드웨어 가속되지 않아 부하가 걸리면 프레임을 놓친다.
+- **Motion 최신 버전은 `x`/`y`/`scale`/`rotate` 같은 개별 transform을 하드웨어 가속한다.**
 
 ```jsx
-<motion.div animate={{ x: 100 }} />                          // 부하가 걸리면 프레임을 놓친다
-<motion.div animate={{ transform: "translateX(100px)" }} />  // 하드웨어 가속된다
+<motion.div animate={{ x: 100 }} />                          // motion 14.2+: 하드웨어 가속된다
+<motion.div animate={{ transform: "translateX(100px)" }} />  // 모든 버전에서 하드웨어 가속된다
 ```
 
 - **절대 부모의 CSS 변수로 자식의 transform을 움직이지 않는다.** 자식마다 스타일을 다시 계산한다. 요소에 직접 `transform`을 설정한다.
@@ -187,7 +187,7 @@ const closedX = reduce ? 0 : '-100%';
 | 트리거에 붙은 팝오버에 `transform-origin: center` | `var(--transform-origin)` (모달은 예외) |
 | 토스트, 토글, 빠르게 연달아 트리거되는 요소에 키프레임 | CSS 트랜지션 |
 | `width`/`height`/`margin`/`padding`/`top`/`left` 애니메이션 | `transform` / `opacity` |
-| 부하 상황의 Motion `x`/`y`/`scale` prop | `transform` 문자열 전체 |
+| 14.2 이전 버전에서 부하 상황의 Motion `x`/`y`/`scale` prop | 14.2+로 올리거나 `transform` 문자열 전체 |
 | 제한하지 않은 `:hover` 모션 | `@media (hover: hover) and (pointer: fine)` |
 | `prefers-reduced-motion` 누락 | 0이 아니라 더 부드러운 버전 |
 | 모든 것이 한꺼번에 등장 | 30–80ms 스태거 |

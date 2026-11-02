@@ -5,7 +5,7 @@
 | 애니메이션이 끊김                   | `width`/`top`이 아니라 `transform`/`opacity`를 애니메이션 |
 | 긴 목록의 스크롤이 느림             | 가상화(보이는 것만 렌더링)                                |
 | 블러가 성능 문제를 일으킴           | 애니메이션하는 `blur()`는 20px 미만으로 유지              |
-| Motion의 `x`/`y`가 프레임을 놓침    | 대신 `transform` 문자열 전체를 애니메이션                 |
+| Motion의 `x`/`y`가 프레임을 놓침    | `motion` 14.2+로 올리거나 `transform` 문자열을 씀         |
 | 엉뚱한 속성까지 애니메이션됨        | `transition: all`은 쓰지 않고 속성을 정확히 나열          |
 | React가 프레임마다 다시 렌더링함    | 상태가 아니라 `ref.current.style`에 씀                    |
 | 모션이 시작될 때 요소가 1px 밀림    | `will-change: transform` (밀림이 실제로 보일 때만)        |

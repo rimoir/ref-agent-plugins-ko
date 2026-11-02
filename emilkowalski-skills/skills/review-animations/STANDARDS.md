@@ -115,10 +115,10 @@ JS 없이 등장을 만들 때는 `@starting-style`을 쓴다.
   element.style.setProperty('--swipe-amount', `${d}px`); // 나쁨: 모든 자식을 재계산
   element.style.transform = `translateY(${d}px)`;        // 좋음: 이 요소만
   ```
-- **Framer Motion 단축 속성은 하드웨어 가속되지 않는다.** `x`/`y`/`scale`은 rAF로 메인 스레드에서 돌고 부하가 걸리면 프레임을 놓친다. transform 문자열 전체를 쓴다.
+- **Motion 단축 속성은 `motion` 14.2부터 하드웨어 가속된다.** 14.2 이전에는 `x`/`y`/`scale`이 rAF로 메인 스레드에서 돌고 부하가 걸리면 프레임을 놓친다. 그런 버전에서는 버전을 올리거나 transform 문자열 전체를 쓴다. 레이아웃 애니메이션(`layout`, `layoutId`)은 어느 버전에서든 메인 스레드에서 돈다.
   ```jsx
-  <motion.div animate={{ x: 100 }} />                          // 부하가 걸리면 프레임을 놓친다
-  <motion.div animate={{ transform: "translateX(100px)" }} />  // 하드웨어 가속된다
+  <motion.div animate={{ x: 100 }} />                          // motion 14.2+: 하드웨어 가속된다
+  <motion.div animate={{ transform: "translateX(100px)" }} />  // 모든 버전에서 하드웨어 가속된다
   ```
 - **부하가 걸리면 CSS 애니메이션이 JS보다 낫다**: 메인 스레드 밖에서 돌기 때문이다. rAF 기반 애니메이션은 브라우저가 로딩, 스크립트 실행, 페인트를 하는 동안 끊긴다. 미리 정해진 모션에는 CSS를, 동적이거나 중단 가능한 모션에는 JS를 쓴다.
 - **WAAPI**는 CSS 수준의 성능을 내면서 JS로 제어하게 해 준다(하드웨어 가속, 중단 가능, 라이브러리 없음).

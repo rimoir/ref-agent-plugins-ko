@@ -58,7 +58,7 @@
 
 **`/wayfinder`가 조사 티켓을 만들었어요. 그 티켓은 제가 직접 해소해야 하나요?**
 
-아니다. 이제는 wayfinder가 직접 실행한다. v1.1 이후 아직 릴리스되지 않은 변경에서는, 계획 이슈를 만드는 세션이 조사 티켓마다 `/research` 서브에이전트를 띄워 병렬로 처리한다. 조사 결과는 보관용 `research/<name>` 브랜치에 남기고, 티켓에서 [컨텍스트 포인터](https://www.aihero.dev/ai-coding-dictionary/context-pointer)로 그 결과를 가리킨다. 조사 티켓은 wayfinder의 '한 세션에 티켓 하나' 규칙의 유일한 예외다. [AFK](https://www.aihero.dev/ai-coding-dictionary/afk)(사람 없이 에이전트 혼자 진행) 작업이라 사용자를 기다리는 일이 없기 때문이다. 이 브랜치에는 알려진 문제가 있다. 서브에이전트가 병합할 일이 없는 브랜치에서 draft PR을 연 사례가 있고([issue #576](https://github.com/mattpocock/skills/issues/576)), 나중에 브랜치를 지우면 티켓이 가진 컨텍스트 포인터가 깨진다.
+아니다. 이제는 wayfinder가 직접 실행한다. v1.1 이후 아직 릴리스되지 않은 변경에서는, 계획 이슈를 만드는 세션이 조사 티켓마다 `/research` 서브에이전트를 띄워 병렬로 처리한다. 조사 결과는 보관용 `research/<name>` 브랜치에 남기고, 티켓에서 [컨텍스트 포인터](https://www.aihero.dev/ai-coding-dictionary/context-pointer)로 그 결과를 가리킨다. 조사 티켓은 wayfinder의 '한 세션에 티켓 하나' 규칙의 유일한 예외다. [AFK](https://www.aihero.dev/ai-coding-dictionary/afk)(사람 없이 에이전트 혼자 진행) 작업이라 사용자를 기다리는 일이 없기 때문이다. 이 브랜치에는 알려진 문제가 하나 있다. 나중에 브랜치를 지우면 티켓이 가진 컨텍스트 포인터가 깨진다.
 
 ## 잘 동작하고 있다는 신호
 

@@ -49,7 +49,7 @@
 
 **TypeScript에서 깊은 모듈을 실제로 어떻게 만드나요?**
 
-이 스킬에 관해 가장 많이 나오는 질문이지만 스킬은 여기에 답하지 않는다. 스킬은 깊은 모듈이 *무엇인지*는 정의하지만, 엉뚱한 import가 인터페이스를 건너뛰고 안쪽에 닿지 못하게 막는 방법은 말하지 않는다. [이슈 #458](https://github.com/mattpocock/skills/issues/458)은 이 점을 분명하게 짚었다. "인터페이스가 마음에 들고, 세부 사항도 잘 숨기는 등 다 괜찮다고 해 보자. 그런데 이걸 어떻게 강제하나? 린트나 명확한 자동 검사 장치가 없으면 사람이든 LLM이든 시간이 지나면서 코드를 어지럽히기 시작할 거라고 생각한다." Matt은 그 스레드에서 다음 방법을 답으로 내놓았다. 클래스나 IIFE로 감싸고 클래스가 아주 커지는 것을 받아들이는 방법, 모노레포 안의 패키지로 만들고 모노레포 도구를 받아들이는 방법, [dependency-cruiser](https://github.com/sverweij/dependency-cruiser) 같은 린터로 인터페이스를 우회하는 import를 금지하는 방법이다. 그는 따로 Effect가 가장 좋은 방법이고 dependency-cruiser가 그다음이라고 말한 적이 있다. 저장소의 `in-progress/` 버킷에 `src/packages/<name>/index.ts` 규칙을 잡아 주는 `setup-ts-deep-modules` 스킬이 있지만, 문서 페이지가 없는 베타 단계 스킬이고 함께 제공하는 린트 규칙도 없다.
+이 스킬에 관해 가장 많이 나오는 질문이지만 스킬은 여기에 답하지 않는다. 스킬은 깊은 모듈이 *무엇인지*는 정의하지만, 엉뚱한 import가 인터페이스를 건너뛰고 안쪽에 닿지 못하게 막는 방법은 말하지 않는다. [이슈 #458](https://github.com/mattpocock/skills/issues/458)은 이 점을 분명하게 짚었다. "인터페이스가 마음에 들고, 세부 사항도 잘 숨기는 등 다 괜찮다고 해 보자. 그런데 이걸 어떻게 강제하나? 린트나 명확한 자동 검사 장치가 없으면 사람이든 LLM이든 시간이 지나면서 코드를 어지럽히기 시작할 거라고 생각한다." 그 스레드의 답변은 다음 세 방법을 내놓았다. 클래스나 IIFE로 감싸고 클래스가 아주 커지는 것을 받아들이는 방법, 모노레포 안의 패키지로 만들고 모노레포 도구를 받아들이는 방법, [dependency-cruiser](https://github.com/sverweij/dependency-cruiser) 같은 린터로 인터페이스를 우회하는 import를 금지하는 방법이다. 이런 방법 가운데 Effect가 가장 좋고 dependency-cruiser가 그다음이다. 저장소의 `in-progress/` 버킷에 `src/packages/<name>/index.ts` 규칙을 잡아 주는 `setup-ts-deep-modules` 스킬이 있지만, 문서 페이지가 없는 베타 단계 스킬이고 함께 제공하는 린트 규칙도 없다.
 
 **세션에서 이 스킬을 실행했더니 요청하지도 않은 부분을 다시 설계하느라 [토큰](https://www.aihero.dev/ai-coding-dictionary/token)을 10만 개나 썼어요.**
 

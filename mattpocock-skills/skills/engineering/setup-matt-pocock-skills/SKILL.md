@@ -22,7 +22,7 @@ disable-model-invocation: true
 
 - `git remote -v`와 `.git/config`: GitHub 저장소인가? 어느 저장소인가?
 - 저장소 루트의 `AGENTS.md`와 `CLAUDE.md`: 둘 중 하나라도 있는가? 어느 한쪽에 `## Agent skills` 섹션이 이미 있는가?
-- 저장소 루트의 `GLOSSARY.md`와 `GLOSSARY-MAP.md`
+- 저장소 루트의 `GLOSSARY.md`와 `GLOSSARY-MAP.md`, 그리고 예전 이름인 `CONTEXT.md` / `CONTEXT-MAP.md`. 예전 파일이 있으면 `GLOSSARY` 이름으로 `git mv`하고 `docs/agents/domain.md`에 적힌 이름도 고치자고 제안한다.
 - `docs/adr/`와 `src/*/docs/adr/` 디렉터리
 - `docs/agents/`: 이 스킬이 전에 만든 결과물이 이미 있는가?
 - `.scratch/`: 로컬 마크다운 이슈 트래커 규칙을 이미 쓰고 있다는 표시
@@ -47,6 +47,8 @@ disable-model-invocation: true
 - **기타**(Jira, Linear 등): 사용자에게 작업 방식을 한 문단으로 설명해 달라고 한다. 스킬은 그 설명을 자유 형식 글로 기록한다.
 
 선택한 내용을 `docs/agents/issue-tracker.md`에 기록한다. GitHub과 GitLab 템플릿에는 "PR을 요청 접수 경로로 쓰기" 플래그가 있고 기본값은 **꺼짐**이다. 꺼진 채로 두고 이 플래그 이야기를 꺼내지 않는다. 외부 PR을 분류 대기열에 넣고 싶은 사용자는 나중에 파일에서 플래그를 직접 바꿀 수 있다.
+
+GitHub이나 GitLab 트래커는 접근할 수 있는 저장소가 필요하다. 사용자가 둘 중 하나를 골랐는데 그 호스트를 가리키는 `git remote`가 없으면, 사용자에게 저장소 URL을 받아 연결한 뒤(필요하면 `git init`, 그다음 `git remote add origin <url>`) 다음으로 넘어간다. 이 디렉터리 안에서 `gh repo view` / `glab repo view`가 프로젝트를 출력하면 끝이다. 출력하지 못하면 멈추고 무엇이 빠졌는지 사용자에게 알린다.
 
 **섹션 B: 분류 라벨 이름.** `triage` 스킬이 설치되어 있지 않으면(탐색에서 확인했다) 이 섹션을 통째로 건너뛴다. 설치되지 않은 스킬에는 라벨이 필요 없다.
 
@@ -100,6 +102,8 @@ disable-model-invocation: true
 ```
 
 `### 분류 라벨` 하위 블록을 넣고 `docs/agents/triage-labels.md`를 쓰는 것은 `triage`가 설치되어 있어 섹션 B를 진행했을 때만이다. 그렇지 않으면 둘 다 뺀다.
+
+GitHub이나 GitLab에서 섹션 B를 진행했다면, 설정한 라벨 가운데 트래커에 없는 것을 하나씩 만든다(`gh label create` / `glab label create`).
 
 그다음 이 스킬 폴더의 기본 템플릿을 출발점으로 삼아 문서 파일을 쓴다.
 

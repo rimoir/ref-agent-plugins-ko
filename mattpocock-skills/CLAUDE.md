@@ -8,7 +8,7 @@
 
 **정식 버킷**(promoted, 플러그인에 포함되고 문서 페이지가 있는 `engineering/`과 `productivity/`)에 있는 스킬은 모두 최상위 `README.md`에 항목이 있어야 하고 `.claude-plugin/plugin.json`의 `skills` 배열에도 들어 있어야 한다(Claude Code 플러그인은 정식 버킷의 스킬을 빠짐없이, 그 스킬만 담는다). `misc/`, `in-progress/`, `deprecated/`의 스킬은 둘 중 어디에도 나오면 안 된다.
 
-설치 명령은 [.agents/install-block.md](./.agents/install-block.md)에서 글자 그대로 복사한다. `.claude-plugin/marketplace.json`은 이 저장소를 플러그인 하나만 담은 자체 마켓플레이스로 만든다(설치 블록이 설명하는 대체 경로일 뿐 문서에 안내하는 경로는 아니다). 두 매니페스트 중 하나라도 고쳤으면 `claude plugin validate . --strict`를 실행한다. Claude 플러그인은 내고 Codex 플러그인은 (아직) 내지 않는 이유는 [.agents/adr/0002-ship-as-a-claude-code-plugin.md](./.agents/adr/0002-ship-as-a-claude-code-plugin.md)에 있다.
+설치 명령은 [.agents/install-block.md](./.agents/install-block.md)에서 글자 그대로 복사한다. `.claude-plugin/marketplace.json`은 이 저장소의 자체 마켓플레이스다. Claude Code를 뺀 모든 에이전트는 자동 업데이트를 받으려고 여기서 설치하고, Claude Code는 `claude-plugins-official`을 쓴다. 두 매니페스트 중 하나라도 고쳤으면 `claude plugin validate . --strict`를 실행한다. 그 이유는 [ADR 0002](./.agents/adr/0002-ship-as-a-claude-code-plugin.md)에 적혀 있다.
 
 최상위 `README.md`의 각 스킬 항목은 스킬 이름을 그 스킬의 `SKILL.md`로 링크해야 한다.
 
@@ -23,3 +23,11 @@
 `deprecated/`와 `misc/` 밖의 모든 스킬을 로컬 하네스 스킬 디렉터리(`~/.claude/skills`, `~/.agents/skills`)에 (다시) 연결하려면 `scripts/link-skills.sh`를 실행한다. 각 항목은 이 저장소를 가리키는 심볼릭 링크이므로 `git pull`만 하면 설치된 스킬이 최신 상태로 유지된다. 스킬을 추가하거나, 없애거나, 이름을 바꾼 뒤에는 스크립트를 다시 실행한다.
 
 이 저장소의 산문(`SKILL.md` 파일, docs, `README.md`, `CHANGELOG.md`, ADR, changeset, 코드 주석) 어디에도 em dash를 쓰지 않는다. 문장에 em dash가 필요해 보이면 쉼표, 콜론, 마침표, 괄호, 접속사 가운데 그 문장에 실제로 맞는 것으로 문장을 다시 쓴다. 문자만 기계적으로 바꿔 넣지 마라.
+
+서브에이전트를 띄우는 스킬은 모두 서브에이전트를 새 컨텍스트 창으로 시작하라고 적는다. 일부 하네스(Codex 등)는 기본으로 부모 대화를 fork하는데, fork는 부모의 컨텍스트를 물려받는다. 서브에이전트가 벗어나려던 것이 바로 그 컨텍스트다.
+
+## Agent skills
+
+### 분류 라벨
+
+표준 이름을 바꾸지 않고 쓴다. `docs/agents/triage-labels.md`를 참고한다. 이슈는 [`SCOPE.md`](./SCOPE.md)를 기준으로 판단한다.

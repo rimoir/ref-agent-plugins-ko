@@ -39,3 +39,15 @@ Codex에 정식 버킷 스킬만 담긴 경로 하나를 주는 확실한 방법
 - 이어서 `claude plugin details mattpocock-skills`는 버전 1.2.0을 표시하고 정식 버킷의 스킬을 불러온다.
 - 목록의 `source`는 `{"source": "url", "url": "https://github.com/mattpocock/skills.git", "sha": …}`이다. **sha가 고정되어 있으므로** 릴리스는 태그를 다는 순간이 아니라 이 고정 sha가 옮겨질 때 설치한 사용자에게 전달된다. 이 글을 쓰는 시점에 고정 sha는 `main`보다 커밋 두 개 뒤에 있어서, `plugin.json`의 24개가 아니라 22개 스킬이 목록에 나온다.
 - 세션 안에서 쓰는 `/plugin install mattpocock-skills`는 **시험하지 않았다**. 헤드리스(`claude -p`) 세션에서는 `/plugin`을 쓸 수 없기 때문이다. 이 명령은 CLI와 같은 설치 로직을 쓰고, 문서의 예시 형식은 `/plugin install <name>@claude-plugins-official`이다.
+
+## 갱신, 2026-10-07
+
+위의 Codex 제약은 더는 맞지 않는다. Codex `main`은 `skills` 문자열 배열을 받고, `.codex-plugin/`이 없으면 `.claude-plugin/`으로 대신한다([manifest.rs](https://github.com/openai/codex/blob/main/codex-rs/core-plugins/src/manifest.rs)). Codex는 여전히 심볼릭 링크를 버린다.
+
+Codex 0.161.0에서 `@mattpocock` 마켓플레이스로 설치하면 정식 버킷의 모델 호출 스킬을 불러오고, `misc/`나 `in-progress/`의 스킬은 하나도 불러오지 않는다. Copilot CLI는 같은 매니페스트를 읽고 "Installed 27 skills"라고 보고한다.
+
+## 갱신, 2026-10-08: 관리형 설치를 먼저
+
+이제 Codex, Copilot, VS Code에서는 `@mattpocock`이 첫 번째로 안내하는 경로다. 대신 Copilot에서는 한 번 설정을 켜야 한다. Claude Code는 2026-08-05 갱신대로 `claude-plugins-official`에 남는다. 기본으로 자동 업데이트되고 `marketplace add`가 필요 없기 때문이다.
+
+위의 버전 불변식은 이제 모든 관리형 경로에 적용된다. `npm run version`이 `scripts/sync-plugin-version.mjs`를 실행해 이미 이 불변식을 지킨다. `marketplace.json`에는 `version` 필드가 없으니 어긋날 일이 없다.

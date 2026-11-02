@@ -54,8 +54,8 @@ ADR 조건 중 하나라도 충족하지 못하면 ADR은 쓰지 않는다. 쉽�
 **`GLOSSARY.md`가 500줄이에요. 1,000줄, 3,000줄이 되기도 해요. 어떻게 해야 하나요?**
 크기는 원인이 아니라 증상이다. 원래 용어집에 들어가면 안 되는 구현 세부 사항과 결정이 파일에 쌓인 것이다. 해결책은 직접 지시하는 것이다. `/grill-with-docs make my GLOSSARY.md more concise and remove any implementation details from it`(GLOSSARY.md를 더 간결하게 만들고 구현 세부 사항을 모두 지워 달라는 뜻)을 비대해진 파일에 실행하면 내용 대부분이 빠진다. `GLOSSARY-MAP.md`로 나누는 일은 파일이 정말로 간결해졌는데도, 독자가 한꺼번에 머리에 담고 싶지 않을 두 도메인을 여전히 함께 다룰 때만 한다. 비대한 파일을 나누면 비대한 파일이 여러 개 생길 뿐이다. 애초에 파일이 커지지 않게 막기에는 스킬의 지침이 아직 충분하지 않고, 이 문제를 다루는 이슈도 아직 열려 있다.
 
-**왜 `GLOSSARY.md`가 아니라 `GLOSSARY.md`인가요?**
-스킬 모음 전체에서 가장 논쟁이 많은 이름 문제이고, 정해진 답은 없다. 지금 이름에 반대하는 근거는 타당하다. "용어집이고 그 외의 용도는 없다"면 `GLOSSARY.md`라는 이름이 그 뜻을 그대로 드러낸다. 한 독자의 말처럼 "AI 에이전트에게는 모든 것이 [컨텍스트](https://www.aihero.dev/ai-coding-dictionary/context)"이기도 하다. 지금 이름을 지지하는 근거는 맵 파일이다. 여러 `GLOSSARY.md` 파일을 가리키는 `GLOSSARY-MAP.md`는 `GLOSSARY-MAP.md`와 달리 자연스럽게 읽히고, `context`는 모델 안에서 경계가 정해진 영역을 가리키는 DDD의 기존 용어다. 오로지 파일 이름을 바꾸려고 로컬 포크를 따로 유지하는 사람도 적어도 한 명 있다. 같은 방법을 써도 되지만, 이 스킬 모음의 다른 스킬은 모두 `GLOSSARY.md`를 찾으므로 이름을 바꾸면 그 스킬들을 모두 고쳐야 한다.
+**왜 `CONTEXT.md`가 아니라 `GLOSSARY.md`인가요?**
+1.3.0까지는 `CONTEXT.md`(와 `CONTEXT-MAP.md`)였다. 이 파일은 용어집이고 그 외의 용도는 없으므로 `GLOSSARY.md`라는 이름이 그 뜻을 그대로 드러낸다. 한 독자의 말처럼 "AI 에이전트에게는 모든 것이 [컨텍스트](https://www.aihero.dev/ai-coding-dictionary/context)"이기도 하다. 저장소에 아직 `CONTEXT.md`가 있으면 `/setup-matt-pocock-skills`를 다시 실행한다. 이 스킬이 파일을 `git mv`하고 `docs/agents/domain.md`를 고치겠다고 제안한다. 이 스킬 모음의 모든 스킬은 `GLOSSARY.md`를 찾으므로, 예전 이름을 유지하면 그 스킬들을 모두 고쳐야 한다.
 
 **`/ubiquitous-language`는 어디로 갔나요?**
 삭제했고, 사용 중단(deprecated) 단계를 거치지 않았다. 그 역할은 `domain-modeling`으로 옮겼다. `domain-modeling`은 대화 하나에서 용어집을 뽑아내지 않고 모델 전체를 계속 관리한다. 용어를 지키게 하는 일은 덜 중요해진 것이 아니라 더 꼭 필요해졌다. 이제는 사용자가 기억해서 따로 실행하는 단계가 아니라, 집요한 질문, 분류(triage), 계획 이슈(map, 결정 목록과 하위 티켓을 묶는 상위 이슈) 만들기 밑에서 실행된다.

@@ -1,6 +1,6 @@
 ---
 name: unslop
-description: Turns vibecoded, AI-looking UI into a designed interface with its own character. Finds a direction from the product itself, then fixes spacing, color, icons, copy, type, layout, details, visuals and motion in that order, and can generate a real hero visual with an image tool when one is available. Use when the user asks to unslop, polish, clean up or redesign a screen so it stops looking AI-generated, or when a UI shows the usual tells like purple gradients, glows, gradient text, emoji labels, "New ✨" badges, glossy blobs, uppercase tracked labels, pulsing elements or uneven spacing. Works on React, Tailwind, HTML and CSS, for dashboards, apps and landing pages.
+description: 바이브 코딩으로 만든 AI 티 나는 UI를 자기 성격이 있는 디자인된 인터페이스로 바꾼다. 제품 자체에서 방향을 찾은 뒤 간격, 색, 아이콘, 카피, 타입, 레이아웃, 디테일, 비주얼, 모션을 이 순서로 고치고, 이미지 도구가 있으면 진짜 히어로 비주얼을 생성할 수 있다. 사용자가 화면을 unslop하거나, 다듬거나, 정리하거나, 다시 디자인해서 AI가 만든 티가 나지 않게 해 달라고 할 때, 또는 UI에 보라색 그라디언트, 글로우, 그라디언트 텍스트, 이모지 라벨, "New ✨" 배지, 번들거리는 블롭, 자간 넓은 대문자 라벨, 펄스하는 요소, 들쭉날쭉한 간격 같은 흔한 징후가 보일 때 쓴다. React, Tailwind, HTML, CSS로 만든 대시보드, 앱, 랜딩 페이지에 쓴다.
 license: CC-BY-4.0
 metadata:
   author: Damir Sokolovsky
@@ -10,224 +10,225 @@ metadata:
 
 # Unslop
 
-unslop was created by Damir Sokolovsky ([@heydamir](https://x.com/heydamir)), who started the Unslopping series on X. It is licensed under CC BY 4.0, so keep this credit in any copy or adaptation.
+unslop은 Damir Sokolovsky([@heydamir](https://x.com/heydamir))가 만들었다. X에서 Unslopping 시리즈를 시작한 사람이다. CC BY 4.0 라이선스를 따르니 사본과 파생물에 이 크레딧을 남긴다. 이 파일은 한국어 번역본이다.
 
-Vibecoded UI fails in the same predictable ways. Every surface glows, every label has an emoji, spacing is whatever the model typed that day, and the copy shouts. Unslopping fixes the craft and keeps the product. The features, content and order of sections stay. What changes is that every size, color, word and image becomes deliberate.
+바이브 코딩으로 만든 UI는 늘 같은 방식으로 뻔하게 실패한다. 모든 표면이 빛나고, 라벨마다 이모지가 붙고, 간격은 그날 모델이 친 값이고, 카피는 소리친다. 슬롭을 걷어 내는 일은 만듦새를 고치고 제품은 그대로 둔다. 기능, 콘텐츠, 섹션 순서는 남는다. 바뀌는 것은 모든 크기, 색, 단어, 이미지가 의도를 갖게 된다는 점이다.
 
-Removing slop is only half the job. A screen that is clean but could belong to any product is the next template. Every run ends with a screen that only this product could have.
+슬롭 제거는 일의 절반일 뿐이다. 깔끔하지만 어느 제품의 것이라도 될 수 있는 화면은 다음 템플릿이다. 실행마다 이 제품만 가질 수 있는 화면으로 끝낸다.
 
-The difference between slop and craft is where the richness goes. Slop spreads color and effects over the chrome, the backgrounds, buttons, borders and labels. Craft keeps the chrome quiet and puts the richness into one or two moments of content that people remember, like a rendered object, a beautiful chart or an image from the product's world.
+슬롭과 만듦새의 차이는 풍부함을 어디에 두느냐다. 슬롭은 색과 효과를 크롬(chrome), 곧 배경, 버튼, 테두리, 라벨에 펴 바른다. 만듦새는 크롬을 조용히 두고, 렌더링한 오브젝트, 아름다운 차트, 제품 세계의 이미지처럼 사람들이 기억할 콘텐츠의 순간 한두 곳에 풍부함을 담는다.
 
-Work like a designer doing a redline pass, one layer at a time, across the whole screen.
+레드라인 패스를 하는 디자이너처럼 화면 전체에 걸쳐 한 번에 한 층씩 작업한다.
 
-## What good looks like
+## 좋은 결과의 모습
 
-- **One bright element.** Each screen has one polished thing that carries the color and the craft, a rendered object, a painted scene or a rich chart. Everything around it is quiet, so it reads instantly.
-- **Quiet chrome.** Navigation, buttons and text use the tinted neutrals and one accent. Nothing glows, nothing competes with the bright element.
-- **A clear idea.** You can say in one sentence what the visual shows and why it belongs to this product.
-- **Text on calm space.** The headline sits on a part of the image or layout that was left empty for it, short and specific, with one primary and one secondary action and nothing stacked under them.
-- **Real product, real material.** Previews look like the real app with plausible data, and objects look like real things with weight, light and shadow.
+- **밝은 요소 하나.** 화면마다 색과 만듦새를 짊어지는 공들인 요소 하나를 둔다. 렌더링한 오브젝트, 그린 장면, 풍부한 차트가 그렇다. 주변은 모두 조용해서 그 요소가 바로 읽힌다.
+- **조용한 크롬.** 내비게이션, 버튼, 텍스트는 색조를 넣은 중립색과 강조색 하나를 쓴다. 아무것도 빛나지 않고 밝은 요소와 다투지 않는다.
+- **분명한 아이디어.** 비주얼이 무엇을 보여 주고 왜 이 제품의 것인지 한 문장으로 말할 수 있다.
+- **조용한 공간 위의 텍스트.** 헤드라인은 이미지나 레이아웃에서 그것을 위해 비워 둔 곳에 놓이고, 짧고 구체적이다. 주 동작 하나와 보조 동작 하나가 있고 그 아래에 아무것도 쌓이지 않는다.
+- **진짜 제품, 진짜 재질.** 미리보기는 그럴듯한 데이터로 실제 앱처럼 보이고, 오브젝트는 무게, 빛, 그림자가 있는 실제 사물처럼 보인다.
 
-Which visual styles tend to work, and which fail, is in [references/visuals.md](references/visuals.md). Finished examples to learn from are in [references/refs.md](references/refs.md), and code treatments like drawing an image in glyphs are in [references/effects.md](references/effects.md).
+어떤 비주얼 스타일이 잘 되고 어떤 것이 실패하는지는 [references/visuals.md](references/visuals.md)에 있다. 배울 만한 완성 예시는 [references/refs.md](references/refs.md)에, 이미지를 글리프로 그리는 것 같은 코드 처리는 [references/effects.md](references/effects.md)에 있다.
 
-## Run it
+## 실행
 
-1. **Look at the screen.** Find the files that render it. If you can run the app or open the file in a browser and take a screenshot, do it, so you judge what people see and not only the code.
-   - Only a link to a live site, no code? Save the page with `node <skill folder>/scripts/snapshot.mjs <url> unslop/original.html` and work on a copy of that file. Add `--dark` or `--light` to match the theme the user sees. It also saves `original.live.png`, a screenshot of the live page, so render the saved copy and compare the two before you start. Animated backgrounds drawn by scripts do not survive, so describe them in the audit from the live page.
-   - Only a screenshot? Rebuild the screen as one static HTML file first, matching it closely, and treat that as the original.
-   - In both cases the result is a redesigned page in code that the user can hand to whoever owns the real site, so say that in the report.
-2. **Audit.** Go through [references/signs.md](references/signs.md) and list every sign you find, one line each with where it lives.
-3. **Decide how much to change.** Read the audit honestly before planning anything.
-   - **Heavy slop**, many signs across color, type, icons and copy. Run the full process below.
-   - **Light slop**, a screen that is mostly designed with a few signs left. Polish mode. Fix only what the audit found, take the direction from the existing brand instead of inventing a new one, and keep the palette, type, layout and visual. Bigger ideas, like a moment that is missing or a scene for the hero, go into the report as suggestions, not changes.
-   - **No slop.** Say so plainly and suggest two or three small refinements at most, with exact values. Apply them only if the user agrees, and stop there. Never change a good screen just to make it different.
-4. **Set the direction and stop.** Write the five lines described below. Show the audit and the direction to the user and wait for their answer before editing, since changing the direction later means redoing everything. If you have a tool for asking the user questions, ask through it, otherwise ask in plain text and stop. Skip the wait only when the user already said to just do it.
-5. **Fix in nine passes, in order.** Finish a pass across the whole screen before starting the next. When nearly every line changes, plan the passes in order and then write the new screen in one go, as long as every pass is applied. Spacing comes first because everything else reads differently once the rhythm is right. Copy comes before type and layout because the length of the headline decides its size and where it sits. Visuals and motion come last because they should fit a screen that already works without them.
-6. **Check.** Run the checklist at the end of this file, render again and compare with the audit list. Anything still on the list gets fixed.
-7. **Report** the direction, a few lines per pass about what changed, and any image prompt you wrote.
-8. **Record, when asked or when the user wants something to share.** Build the story file and render the video described in [Story video](#story-video). If the user asks for it at the start, write each pass into the story file as you go.
+1. **화면을 본다.** 화면을 렌더링하는 파일을 찾는다. 앱을 돌리거나 브라우저에서 파일을 열어 스크린샷을 찍을 수 있으면 그렇게 해서, 코드만이 아니라 사람들이 보는 것으로 판단한다.
+   - 코드 없이 라이브 사이트 링크만 있는가? `node <skill folder>/scripts/snapshot.mjs <url> unslop/original.html`로 페이지를 저장하고 그 파일의 사본으로 작업한다. 사용자가 보는 테마에 맞게 `--dark`나 `--light`를 붙인다. 라이브 페이지의 스크린샷인 `original.live.png`도 저장되니, 시작하기 전에 저장된 사본을 렌더링해 둘을 비교한다. 스크립트가 그리는 애니메이션 배경은 살아남지 않으니 라이브 페이지를 보고 점검 목록에 적어 둔다.
+   - 스크린샷만 있는가? 먼저 화면을 정적 HTML 파일 하나로 최대한 비슷하게 다시 만들고 그것을 원본으로 삼는다.
+   - 두 경우 모두 결과는 사용자가 실제 사이트 담당자에게 넘길 수 있는 코드로 된 재디자인 페이지이니 보고서에 그렇게 말한다.
+2. **점검한다.** [references/signs.md](references/signs.md)를 훑어 찾은 징후를 위치와 함께 한 줄씩 모두 나열한다.
+3. **얼마나 바꿀지 정한다.** 계획을 세우기 전에 점검 결과를 정직하게 읽는다.
+   - **슬롭이 심함.** 색, 타입, 아이콘, 카피에 걸쳐 징후가 많다. 아래 전체 절차를 돌린다.
+   - **슬롭이 가벼움.** 화면이 대체로 디자인되어 있고 징후가 몇 개 남았다. 다듬기 모드다. 점검에서 찾은 것만 고치고, 새 방향을 지어내지 말고 기존 브랜드에서 방향을 가져오고, 팔레트, 타입, 레이아웃, 비주얼은 유지한다. 빠진 순간이나 히어로 장면 같은 큰 아이디어는 변경이 아니라 제안으로 보고서에 넣는다.
+   - **슬롭 없음.** 그렇다고 분명히 말하고, 정확한 값과 함께 작은 다듬기를 많아야 두세 개 제안한다. 사용자가 동의할 때만 적용하고 거기서 멈춘다. 좋은 화면을 달라 보이게 하려고 바꾸지 않는다.
+4. **방향을 정하고 멈춘다.** 아래 설명한 다섯 줄을 쓴다. 나중에 방향을 바꾸면 모두 다시 해야 하니 점검 결과와 방향을 사용자에게 보여 주고 답을 기다린 뒤에 고친다. 사용자에게 질문하는 도구가 있으면 그것으로 묻고, 없으면 일반 텍스트로 묻고 멈춘다. 사용자가 그냥 하라고 이미 말했을 때만 기다리지 않는다.
+5. **패스 아홉 개를 순서대로 돌려 고친다.** 화면 전체에서 패스 하나를 끝낸 뒤 다음으로 넘어간다. 거의 모든 줄이 바뀌면 패스를 순서대로 계획한 뒤 새 화면을 한 번에 써도 된다. 모든 패스를 적용하기만 하면 된다. 간격이 먼저인 이유는 리듬이 맞으면 나머지가 모두 다르게 읽히기 때문이다. 카피가 타입과 레이아웃보다 먼저인 이유는 헤드라인 길이가 크기와 위치를 정하기 때문이다. 비주얼과 모션이 마지막인 이유는 그것 없이도 제대로 동작하는 화면에 맞아야 하기 때문이다.
+6. **확인한다.** 이 파일 끝의 체크리스트를 돌리고, 다시 렌더링하고, 점검 목록과 비교한다. 목록에 남은 것은 고친다.
+7. 방향, 패스별로 바뀐 것 몇 줄, 쓴 이미지 프롬프트를 **보고한다**.
+8. **요청받았거나 사용자가 공유할 것을 원하면 기록한다.** [스토리 영상](#story-video)에 나오는 스토리 파일을 만들고 영상을 렌더링한다. 시작할 때 요청받았으면 진행하면서 패스마다 스토리 파일에 적는다.
 
-Keep a run quick. Render the screen to check it at most three times. When you generate an image, start it right after the direction is confirmed and keep doing the first passes while it runs, instead of waiting for it.
+실행은 빠르게 끝낸다. 확인을 위한 렌더링은 많아야 세 번이다. 이미지를 생성할 때는 방향이 확정되자마자 시작하고, 기다리지 말고 도는 동안 첫 패스들을 진행한다.
 
-Exact values for every pass live in [references/tokens.md](references/tokens.md).
+패스별 정확한 값은 [references/tokens.md](references/tokens.md)에 있다.
 
-## Direction
+## 방향
 
-Before touching anything, write five short lines. Derive them from what the page says the product does and who it is for. Never from what is trending.
+무엇이든 건드리기 전에 짧은 다섯 줄을 쓴다. 페이지가 말하는 제품의 일과 대상에서 끌어낸다. 유행에서 끌어내지 않는다.
 
-- **Product.** What it does and for whom, in one plain sentence.
-- **Character.** Two or three concrete words, like `calm, exact, a little warm` or `fast, technical, playful`. Words like clean, modern, sleek, minimal and premium are not allowed, because they describe every template.
-- **World.** The place or material the product naturally belongs to. A note app lives near paper and ink, a monitoring tool near instruments and night shifts, a travel app near maps and window light. This world sets the tint of the neutrals, the accent and the visual.
-- **Moments.** One or two places where the screen gets rich color, material and detail, chosen from what the product shows. A rendered card or device inside the preview, a chart whose colors each mean a series, an object from the world placed next to the content. Write what they are.
-- **Signature.** One small detail only this product would have, used consistently. A live status dot for a monitoring tool, keycaps for a developer tool, hand drawn underlines for a teaching app, a route line for a delivery app. One detail, not five.
+- **제품(Product).** 무엇을 누구를 위해 하는지 평이한 한 문장으로 쓴다.
+- **성격(Character).** 구체적인 단어 두세 개다. `차분하고, 정확하고, 조금 따뜻한`이나 `빠르고, 기술적이고, 장난기 있는` 같은 것이다. 깔끔한(clean), 모던한(modern), 매끈한(sleek), 미니멀한(minimal), 프리미엄(premium) 같은 말은 모든 템플릿을 설명하니 쓰지 않는다.
+- **세계(World).** 제품이 자연스럽게 속하는 장소나 재료다. 노트 앱은 종이와 잉크 곁에, 모니터링 도구는 계기와 야간 근무 곁에, 여행 앱은 지도와 창가의 빛 곁에 산다. 이 세계가 중립색의 색조, 강조색, 비주얼을 정한다.
+- **순간(Moments).** 화면에서 풍부한 색, 재질, 디테일을 쓰는 한두 곳이다. 제품이 보여 주는 것에서 고른다. 미리보기 안의 렌더링한 카드나 기기, 색마다 시리즈를 뜻하는 차트, 콘텐츠 옆에 둔 세계의 오브젝트가 그렇다. 그것이 무엇인지 적는다.
+- **시그니처(Signature).** 이 제품만 가질 작은 디테일 하나를 일관되게 쓴다. 모니터링 도구의 실시간 상태 점, 개발자 도구의 키캡, 교육 앱의 손글씨 밑줄, 배송 앱의 경로선이 그렇다. 다섯이 아니라 하나다.
 
-The examples here only show the shape of an answer. Derive yours from the product in front of you, even when an example happens to fit.
+여기 나온 예시는 답의 모양만 보여 준다. 예시가 우연히 맞더라도 눈앞의 제품에서 답을 끌어낸다.
 
-If the product already has a real brand, like a logo file, a color or a typeface that is not slop, keep it and build the direction around it. A violet to blue gradient, sparkles and glow are slop even when they sit in the logo, so they do not count as brand unless the user says they do.
+제품에 슬롭이 아닌 로고 파일, 색, 서체 같은 진짜 브랜드가 이미 있으면 유지하고 그것을 중심으로 방향을 짠다. 보라에서 파랑으로 가는 그라디언트, 반짝이, 글로우는 로고에 들어 있어도 슬롭이니, 사용자가 브랜드라고 말하지 않는 한 브랜드로 치지 않는다.
 
-## 1. Spacing
+## 1. 간격
 
-- Everything sits on a 4px grid. Margins, paddings, gaps and fixed heights are multiples of 4, so 28 or 104 are fine even though they are not in the token list. A 2px step is fine for nudges inside small controls, and an odd value that exactly centers something stays.
-- Same thing, same size. All rows in a list share one height and one gap, all cards in a row share one padding.
-- Space shows grouping. Space inside a group is smaller than space between groups, so a list reads as one block and sections read as separate ones.
-- Things line up. Icons sit in one column, labels start on one line, numbers align right in one column. Nothing is nudged off the line with a stray translate or odd margin.
-- Padding follows density. Compact panels and sidebars around 16, cards 20 to 24, page edges 24 to 32.
-- Navigation is the densest part of an app. Rows are 32 to 36 tall with 2 to 4 between them, icons in one column, labels on one line. A section label sits closer to its own items than to the section above it, like 24 above and 8 below. Measure the sidebar after the pass, it is where spacing breaks most often.
-- Remove one-off values that break the rhythm, like `mt-[13px]` or `py-[11px]`, and replace them with steps from the scale.
+- 모든 것은 4px 격자에 놓인다. 마진, 패딩, 갭, 고정 높이는 4의 배수이니 28이나 104는 토큰 목록에 없어도 괜찮다. 작은 컨트롤 안의 미세 조정에는 2px 단계를 써도 되고, 무언가를 정확히 가운데 맞추는 홀수 값은 남긴다.
+- 같은 것은 같은 크기로. 목록의 모든 행은 높이 하나와 갭 하나를 공유하고, 한 줄의 모든 카드는 패딩 하나를 공유한다.
+- 간격이 그룹을 보여 준다. 그룹 안의 간격은 그룹 사이의 간격보다 작아서, 목록은 한 덩어리로 읽히고 섹션은 따로따로 읽힌다.
+- 줄을 맞춘다. 아이콘은 한 열에, 라벨은 한 줄에서 시작하고, 숫자는 한 열에서 오른쪽 정렬한다. 어긋난 translate나 이상한 마진으로 줄에서 밀려난 것이 없어야 한다.
+- 패딩은 밀도를 따른다. 조밀한 패널과 사이드바는 16 안팎, 카드는 20에서 24, 페이지 가장자리는 24에서 32다.
+- 내비게이션은 앱에서 가장 조밀한 곳이다. 행 높이는 32에서 36, 행 사이는 2에서 4, 아이콘은 한 열, 라벨은 한 줄이다. 섹션 라벨은 위 섹션보다 자기 항목에 더 가깝게 둔다. 위로 24, 아래로 8 같은 식이다. 패스를 마친 뒤 사이드바를 잰다. 간격이 가장 자주 깨지는 곳이다.
+- `mt-[13px]`이나 `py-[11px]`처럼 리듬을 깨는 일회성 값을 지우고 스케일의 단계로 바꾼다.
 
-## 2. Color
+## 2. 색
 
-- Build from one neutral ramp, tinted toward the world from the direction. Pick graphite, warm or ink from the tokens, or tint your own the same way. Background, raised surfaces, borders and text all come from that ramp.
-- In apps and dashboards the backgrounds, surfaces, borders and text stay neutral, the graphite ramp or something just as grey. People look at them for hours and the content has to carry the color. A screen whose background reads as orange, brown, blue or green has gone too far. The world shows in the accent, the charts and the moments, not in the surfaces. Landing pages can tint their surfaces further toward the world.
-- Three text roles, primary, secondary and muted. Not ten slightly different lavenders.
-- In the chrome, one accent, used rarely. It marks the primary action, the selection or the one number that matters.
-- The moments from the direction are the exception. Inside them color can be rich, several hues in a chart, a rendered object with real materials, an image with its own light, as long as it stays inside the world and each color means something.
-- If the brand has a real color, it becomes the accent and leaves the surfaces. If there is no real brand color, take the accent from the world.
-- Accent with text on it reaches 4.5 to 1 contrast. If it does not, darken it or put dark text on it. Accent used as text or ink on a light surface needs the same contrast, so use a darker shade of it there.
-- On dark themes the primary button can be an off white from the ramp with dark text, and the accent can live in a smaller place like the selection or a key figure. This often looks more deliberate than a colored button.
-- Semantic colors only carry meaning, like green for a good change and red for an error, and they are toned down to sit inside the palette.
-- Remove hue gradients on surfaces, gradient text, colored glows and colored shadows, radial color washes and blobs behind content, and neon borders.
-- Borders are quiet hairlines, the text color of the ramp at 6 to 10% opacity.
-- On dark themes depth comes from surface steps and hairlines, not from shadows. A window or object floating over an image may keep a soft neutral shadow. On light themes shadows are neutral, soft and small.
-- A gradient is allowed only as a small tone shift inside one neutral, like an active row going from #2b2b2b to #1f1f1f. Never from one hue to another.
+- 방향의 세계 쪽으로 색조를 넣은 중립색 램프 하나로 짓는다. 토큰에서 graphite, warm, ink 중 하나를 고르거나 같은 방식으로 직접 색조를 넣는다. 배경, 올라온 표면, 테두리, 텍스트는 모두 그 램프에서 나온다.
+- 앱과 대시보드에서 배경, 표면, 테두리, 텍스트는 중립을 지킨다. graphite 램프나 그만큼 회색인 것을 쓴다. 사람들이 몇 시간씩 보는 곳이고 색은 콘텐츠가 맡아야 한다. 배경이 주황, 갈색, 파랑, 초록으로 읽히는 화면은 너무 나간 것이다. 세계는 표면이 아니라 강조색, 차트, 순간에서 드러난다. 랜딩 페이지는 표면을 세계 쪽으로 더 물들여도 된다.
+- 텍스트 역할은 주, 보조, 흐림 셋이다. 미묘하게 다른 라벤더 열 개가 아니다.
+- 크롬에서 강조색은 하나이고 드물게 쓴다. 주 동작, 선택 상태, 중요한 숫자 하나를 표시한다.
+- 방향의 순간은 예외다. 세계 안에 머물고 색마다 뜻이 있다면 그 안에서는 색이 풍부해도 된다. 차트의 여러 색조, 실제 재질을 가진 렌더링 오브젝트, 자기 빛을 가진 이미지가 그렇다.
+- 브랜드에 진짜 색이 있으면 그 색은 강조색이 되고 표면에서 물러난다. 진짜 브랜드 색이 없으면 세계에서 강조색을 가져온다.
+- 텍스트가 올라가는 강조색은 대비 4.5 대 1에 이르러야 한다. 그렇지 않으면 강조색을 어둡게 하거나 그 위에 어두운 텍스트를 쓴다. 밝은 표면에서 텍스트나 잉크로 쓰는 강조색도 같은 대비가 필요하니 더 어두운 색조를 쓴다.
+- 다크 테마에서는 주 버튼을 램프의 오프화이트에 어두운 텍스트로 두고, 강조색은 선택 상태나 핵심 수치 같은 작은 곳에 둘 수 있다. 색 버튼보다 더 의도적으로 보일 때가 많다.
+- 의미 색은 뜻만 나른다. 좋은 변화에 초록, 오류에 빨강 같은 것이고, 팔레트 안에 들어앉도록 톤을 낮춘다.
+- 표면의 색상 그라디언트, 그라디언트 텍스트, 색 글로우와 색 그림자, 콘텐츠 뒤의 방사형 색 번짐과 블롭, 네온 테두리를 지운다.
+- 테두리는 조용한 헤어라인이다. 램프의 텍스트 색을 불투명도 6에서 10%로 쓴다.
+- 다크 테마에서 깊이는 그림자가 아니라 표면 단계와 헤어라인에서 나온다. 이미지 위에 뜬 창이나 오브젝트는 부드러운 중립 그림자를 둬도 된다. 라이트 테마의 그림자는 중립적이고, 부드럽고, 작다.
+- 그라디언트는 중립색 하나 안의 작은 톤 변화로만 허용한다. 활성 행이 #2b2b2b에서 #1f1f1f로 가는 정도다. 한 색상에서 다른 색상으로 가는 것은 절대 안 된다.
 
-## 3. Icons
+## 3. 아이콘
 
-- Every emoji used as an icon or as decoration in a label becomes a line icon from one set. Use the set the project already has, otherwise lucide.
-- One size and one stroke everywhere, 16 or 18px with a 1.5 stroke.
-- Icons take the color of their text role, usually secondary or muted. They never get their own colors.
-- The icon box has the same width in every row and the gap to the label is fixed, 8 or 10, so labels align.
-- Drop icons that add nothing, like an emoji in every card title or before every section label. Categories that need color get a small status dot.
+- 아이콘이나 라벨 장식으로 쓴 이모지는 모두 한 세트의 라인 아이콘으로 바꾼다. 프로젝트에 세트가 있으면 그것을, 없으면 lucide를 쓴다.
+- 크기 하나와 획 하나를 어디서나 쓴다. 16이나 18px에 획 1.5다.
+- 아이콘은 자기 텍스트 역할의 색을 따른다. 보통 보조나 흐림이다. 아이콘만의 색을 주지 않는다.
+- 아이콘 상자는 모든 행에서 너비가 같고 라벨까지의 갭은 8이나 10으로 고정해서 라벨이 줄을 맞추게 한다.
+- 카드 제목마다, 섹션 라벨 앞마다 붙은 이모지처럼 아무것도 더하지 않는 아이콘은 뺀다. 색이 필요한 분류에는 작은 상태 점을 쓴다.
 
-## 4. Copy
+## 4. 카피
 
-- Headlines say what the product does for whom, in plain words, so they could not fit another product. Use the facts already on the page and do not invent new ones.
-- No exclamation marks in interface text, and never `!!`.
-- No greeting headlines like `Welcome back, Damir! 👋`. The title names the context, like the page name or the period, for example `October 2026`.
-- Short labels. `Search`, not `Search anything...`.
-- A change says what it compares to, like `+12% vs last month` or `3 fewer vs last month`.
-- Headlines, subheads, labels, buttons and captions end without a period. Only paragraphs of several sentences keep their periods.
-- No hype words like supercharge, seamless, unlock, magic, revolutionize or game-changing, and no `AI-powered` on everything.
-- Claims that cannot be checked, like `Loved by 10,000+ teams` or `10x faster`, become quiet and specific if the user confirms they are real, and are removed otherwise. Ask, and list them in the report.
-- Mock data looks real, with plausible numbers and names, never `[X]` or `123,456`.
-- Badges like `PRO`, `New ✨` or `Beta 🚀` go away unless the product really needs them, and then they are quiet text.
+- 헤드라인은 제품이 누구를 위해 무엇을 하는지 평이한 말로 해서 다른 제품에는 맞지 않게 한다. 페이지에 이미 있는 사실을 쓰고 새 사실을 지어내지 않는다.
+- 인터페이스 텍스트에 느낌표를 쓰지 않고 `!!`는 절대 쓰지 않는다.
+- `Welcome back, Damir! 👋` 같은 인사 헤드라인을 쓰지 않는다. 제목은 페이지 이름이나 기간처럼 맥락을 밝힌다. 예를 들면 `October 2026`이다.
+- 라벨은 짧게. `Search anything...`이 아니라 `Search`다.
+- 변화는 비교 대상을 말한다. `+12% vs last month`나 `3 fewer vs last month`처럼 쓴다.
+- 헤드라인, 부제, 라벨, 버튼, 캡션은 마침표 없이 끝낸다. 여러 문장으로 된 문단만 마침표를 둔다.
+- supercharge, seamless, unlock, magic, revolutionize, game-changing 같은 과장어를 쓰지 않고, 모든 곳에 `AI-powered`를 붙이지 않는다.
+- `Loved by 10,000+ teams`나 `10x faster`처럼 확인할 수 없는 주장은 사용자가 사실이라고 확인하면 조용하고 구체적으로 바꾸고, 아니면 지운다. 묻고 보고서에 나열한다.
+- 목업 데이터는 진짜처럼 보여야 한다. 그럴듯한 숫자와 이름을 쓰고 `[X]`나 `123,456`은 절대 쓰지 않는다.
+- `PRO`, `New ✨`, `Beta 🚀` 같은 배지는 제품에 정말 필요하지 않으면 없애고, 필요하면 조용한 텍스트로 둔다.
 
-## 5. Type
+## 5. 타입
 
-- Choose type for the character in the direction, from the families in the tokens. Keep the project's font when it is part of a real brand. A default like Inter that nobody chose may be swapped when another family fits the character better. One family for the interface, plus at most one partner from any row of the tokens, a mono for figures and meta or a display face for large headlines.
-- A few sizes from a scale and two weights, 400 and 500, with 600 at most for rare emphasis. No 700 to 900 headings, no gradient text.
-- Hierarchy comes from size and color, not from weight.
-- Sentence case everywhere. Labels like `NAVIGATION` or `PAID THIS MONTH` with wide tracking become `Navigation` and `Paid this month`.
-- Small text never gets negative letter spacing. Readability on small text means bigger, a bit bolder or slightly looser. Tight tracking is only for large display text.
-- Numbers use `tabular-nums` and one format across the screen. If one figure is `$48,210`, the next is not `$124,860.40`.
-- No italic for emphasis.
+- 방향의 성격에 맞게 토큰의 서체 계열에서 타입을 고른다. 프로젝트의 폰트가 진짜 브랜드의 일부면 유지한다. 아무도 고르지 않은 Inter 같은 기본값은 다른 계열이 성격에 더 맞으면 바꿔도 된다. 인터페이스에 계열 하나를 쓰고, 여기에 토큰의 어느 행에서든 파트너를 많아야 하나 더한다. 수치와 메타에 쓰는 모노나 큰 헤드라인에 쓰는 디스플레이 서체가 그렇다.
+- 스케일의 크기 몇 개와 두 가지 굵기 400, 500을 쓰고, 드문 강조에는 많아야 600까지 쓴다. 700에서 900의 헤딩과 그라디언트 텍스트는 쓰지 않는다.
+- 위계는 굵기가 아니라 크기와 색에서 나온다.
+- 어디서나 문장형 대소문자(sentence case)를 쓴다. 자간 넓은 `NAVIGATION`이나 `PAID THIS MONTH` 같은 라벨은 `Navigation`과 `Paid this month`가 된다.
+- 작은 텍스트에는 음수 자간을 주지 않는다. 작은 텍스트의 가독성은 더 크게, 조금 더 굵게, 약간 더 느슨하게를 뜻한다. 좁은 자간은 큰 디스플레이 텍스트에만 쓴다.
+- 숫자는 `tabular-nums`와 화면 전체에 걸친 한 형식을 쓴다. 한 수치가 `$48,210`이면 다음이 `$124,860.40`이면 안 된다.
+- 강조에 이탤릭을 쓰지 않는다.
 
-## 6. Layout
+## 6. 레이아웃
 
-- Keep the sections and their order. Inside a section, alignment and proportions may change when that makes the screen clearer.
-- Apps and dashboards keep real app proportions. The shell fills the viewport, a sidebar of 240 to 280 and fluid content, usually capped around 1440 to 1600 wide, and the page is as long as its content, with more sections below the first screen. Never shrink an app into a narrow centered column. If the original was drawn as a small window on a backdrop, keep it visibly a window, with its frame and backdrop, and still give it desktop proportions inside.
-- The strongest landing hero is a scene. One generated image fills the hero from edge to edge, its subject sits on one side, and the headline sits on the calm empty part of the same image, with the product view rising from the bottom edge. Look at the hero in the references to see it.
-- Without a scene, use an asymmetric split, text on one side and the visual given at least half the width, or text over a large product view below it. Everything stacked and centered is the template default, keep it only for a short hero with no visual.
-- In a scene hero, the text block sits in the upper part, in the space between the navigation and the top of the product view, at its optical center, a little above the true middle.
-- In a split, center the text block vertically against the visual, so neither side leaves a big empty corner. If the visual is much taller, shorten it instead of pushing the text down. Floating cards and devices next to the text are hard to balance, prefer one solid visual. The spacing token from the navigation to the headline applies to stacked heroes, a split hero is centered instead.
-- Long headlines align left. Centered text works for one or two short lines.
-- One primary action and at most one secondary action next to it. Anything else moves out of the hero.
-- Navigation stays quiet. Logo, the existing links, one button. Log in is a quiet text link next to it, not a second button. A floating pill header is not required. On small screens the links collapse into one menu button.
-- Compose the first screen as a whole. The hero fills the viewport height without a dead empty band. If the content is shorter, center it or let the product view start low and run past the bottom edge, so the page invites a scroll.
-- On small screens everything stacks in reading order, the headline drops to the mobile size from the tokens and the visual comes after the actions. A dense preview gets simpler on mobile, with fewer rows and columns, instead of being zoomed down. No text in it goes below 11px.
+- 섹션과 그 순서는 유지한다. 섹션 안에서는 화면이 더 분명해진다면 정렬과 비율을 바꿔도 된다.
+- 앱과 대시보드는 실제 앱의 비율을 유지한다. 셸이 뷰포트를 채우고, 사이드바는 240에서 280, 콘텐츠는 유동적이며 보통 폭 1440에서 1600 안팎에서 제한한다. 페이지는 콘텐츠만큼 길어지고 첫 화면 아래에 섹션이 더 있다. 앱을 좁은 가운데 열로 줄이지 않는다. 원본이 배경 위의 작은 창으로 그려졌다면 프레임과 배경을 유지해 눈에 보이는 창으로 두고, 안쪽은 데스크톱 비율을 준다.
+- 가장 강한 랜딩 히어로는 장면이다. 생성한 이미지 하나가 히어로를 가장자리까지 채우고, 피사체는 한쪽에 놓이고, 헤드라인은 같은 이미지의 조용하고 빈 부분에 앉고, 제품 뷰는 아래 가장자리에서 올라온다. 레퍼런스의 히어로를 보면 알 수 있다.
+- 장면이 없으면 비대칭 분할을 쓴다. 한쪽에 텍스트를 두고 비주얼에 폭의 절반 이상을 주거나, 아래의 큰 제품 뷰 위에 텍스트를 둔다. 모두 쌓아 가운데 맞추는 것은 템플릿 기본값이니 비주얼 없는 짧은 히어로에만 쓴다.
+- 장면 히어로에서 텍스트 블록은 위쪽, 내비게이션과 제품 뷰 꼭대기 사이의 공간에서 시각적 중심, 곧 실제 가운데보다 조금 위에 놓는다.
+- 분할에서는 텍스트 블록을 비주얼에 맞춰 세로 가운데에 두어 어느 쪽도 큰 빈 구석을 남기지 않게 한다. 비주얼이 훨씬 높으면 텍스트를 밀어 내리지 말고 비주얼을 줄인다. 텍스트 옆에 뜬 카드와 기기는 균형 잡기가 어려우니 단단한 비주얼 하나를 쓴다. 내비게이션에서 헤드라인까지의 간격 토큰은 쌓인 히어로에 적용하고, 분할 히어로는 대신 가운데 맞춘다.
+- 긴 헤드라인은 왼쪽 정렬한다. 가운데 정렬은 짧은 한두 줄에만 맞는다.
+- 주 동작 하나와 그 옆에 많아야 보조 동작 하나를 둔다. 나머지는 히어로 밖으로 옮긴다.
+- 내비게이션은 조용히 둔다. 로고, 기존 링크, 버튼 하나다. 로그인은 두 번째 버튼이 아니라 그 옆의 조용한 텍스트 링크다. 떠 있는 필 헤더는 필수가 아니다. 작은 화면에서는 링크가 메뉴 버튼 하나로 접힌다.
+- 첫 화면은 전체로 구성한다. 히어로는 죽은 빈 띠 없이 뷰포트 높이를 채운다. 콘텐츠가 더 짧으면 가운데에 두거나 제품 뷰를 낮게 시작해 아래 가장자리를 넘어가게 해서 스크롤을 유도한다.
+- 작은 화면에서는 모든 것이 읽는 순서로 쌓이고, 헤드라인은 토큰의 모바일 크기로 내려가고, 비주얼은 동작 뒤에 온다. 밀도 높은 미리보기는 축소하지 말고 행과 열을 줄여 모바일에서 더 단순하게 만든다. 그 안의 텍스트는 11px 아래로 내려가지 않는다.
 
-## 7. Details
+## 7. 디테일
 
-- Nested radius. An inner radius equals the outer radius minus the padding between them, never less than 4. Controls 8 to 10, cards 12 to 16, panels 14 to 20. Not everything is a pill.
-- Counts and meta become quiet text, often mono and muted, instead of glowing pills.
-- Keyboard shortcuts become small keycaps.
-- Charts sit on a muted grid with muted mono labels. No rainbow bars inside one series, no glowing bars, no uppercase day labels. If the chart is placeholder noise, replace it with data that tells something real.
-- Charts have a hierarchy, like text. One main chart is clearly the biggest thing on the screen, drawn with care, like smooth lines or a mirrored comparison. Anything else that shows data is smaller and different in kind, like a ranked list with thin bars or a short table, never a second chart of the same size.
-- One accent per chart. The thing that matters, like the current month, the line you are tracking or the plan that grew, gets the accent, and everything else sits in neutral steps of the ramp. Several hues only when the chart really has to tell series apart, and even then one leads and the rest are quiet.
-- Stat cards are numbers. A label, a big figure and a change with what it compares to. No sparklines, tallies, mini bars or icons added to fill them, they read as decoration. A card can hold a real looking object when it is the very thing its number counts, like a paid receipt next to paid revenue or bank cards next to spend. Use as many as make sense for that dashboard, as long as each one reads on its own and none of them is a mini chart.
-- Vary the sizes. Cards of equal width side by side, each with the same kind of content, read as a template. Give the grid a rhythm, like three or four compact stats in a row above one wide chart, or a wide chart next to a narrow list.
-- Pick the chart type for the data. A trend is a line, a comparison is bars, a share is one stacked bar or a list with bars, a single goal is a progress bar.
-- The active state is a small surface step with a hairline highlight, not a gradient with a glow.
-- Hover and focus states exist and stay inside the palette. A visible focus ring for keyboard users.
-- The logo is the product name in the main family, plus a simple mark if there is one. No gradient wordmark and no sparkle tile.
-- The signature detail from the direction appears where it belongs and nowhere else.
+- 중첩 반경. 안쪽 반경은 바깥 반경에서 둘 사이의 패딩을 뺀 값이고 4보다 작아지지 않는다. 컨트롤 8에서 10, 카드 12에서 16, 패널 14에서 20이다. 모든 것이 필은 아니다.
+- 개수와 메타는 빛나는 필 대신 조용한 텍스트가 된다. 보통 모노에 흐린 색이다.
+- 키보드 단축키는 작은 키캡이 된다.
+- 차트는 흐린 격자 위에 흐린 모노 라벨로 놓인다. 한 시리즈 안의 무지개 막대, 빛나는 막대, 대문자 요일 라벨은 쓰지 않는다. 차트가 자리만 채우는 잡음이면 실제로 무언가를 말하는 데이터로 바꾼다.
+- 차트에도 텍스트처럼 위계가 있다. 메인 차트 하나가 화면에서 분명히 가장 크고, 매끈한 선이나 거울 비교처럼 공들여 그린다. 데이터를 보여 주는 다른 것은 더 작고 종류가 달라야 한다. 얇은 막대가 붙은 순위 목록이나 짧은 표 같은 것이고, 같은 크기의 둘째 차트는 절대 아니다.
+- 차트당 강조색 하나. 이번 달, 추적하는 선, 성장한 플랜처럼 중요한 것에 강조색을 주고 나머지는 램프의 중립 단계에 둔다. 차트가 정말로 시리즈를 구분해야 할 때만 여러 색조를 쓰고, 그때도 하나가 앞서고 나머지는 조용하다.
+- 통계 카드는 숫자다. 라벨, 큰 수치, 비교 대상이 있는 변화를 담는다. 스파크라인, 탤리, 미니 막대, 자리를 채우는 아이콘을 넣지 않는다. 장식으로 읽힌다. 오브젝트가 그 숫자가 세는 바로 그것일 때는 카드에 실제처럼 보이는 오브젝트를 담아도 된다. 결제 수익 옆의 결제된 영수증, 지출 옆의 은행 카드가 그렇다. 각각이 따로 읽히고 어느 것도 미니 차트가 아니라면 그 대시보드에 맞는 만큼 쓴다.
+- 크기를 달리한다. 너비가 같은 카드가 나란히 같은 종류의 내용을 담으면 템플릿으로 읽힌다. 넓은 차트 위에 조밀한 통계 서너 개를 한 줄로 두거나, 넓은 차트 옆에 좁은 목록을 두어 그리드에 리듬을 준다.
+- 데이터에 맞는 차트 유형을 고른다. 추세는 선, 비교는 막대, 비중은 누적 막대 하나나 막대 달린 목록, 단일 목표는 진행 막대다.
+- 활성 상태는 글로우 달린 그라디언트가 아니라 헤어라인 하이라이트가 있는 작은 표면 단계다.
+- hover와 focus 상태가 있어야 하고 팔레트 안에 머문다. 키보드 사용자를 위한 포커스 링이 보여야 한다.
+- 로고는 주 서체 계열로 쓴 제품 이름이고, 마크가 있으면 단순한 마크를 더한다. 그라디언트 워드마크와 반짝이 타일은 쓰지 않는다.
+- 방향의 시그니처 디테일은 어울리는 곳에만 나타난다.
 
-## 8. Visuals
+## 8. 비주얼
 
-- Decorative filler goes. Glossy blobs, orbs, nebulas, floating cubes, glowing grids, holographic brains and robots say nothing about the product.
-- A landing hero gets a visual that shows something true.
-- Dashboards and app screens almost never need generated images. Their moments come from the product itself: a chart drawn with care, figures set beautifully, real content like product photos or avatars, a status that feels alive. A physical thing the product deals with, like a payment card in a finance app, is usually better built in code with real materials, a soft gradient, a chip, a number.
-- Generate images for an app only for empty states, onboarding and marketing moments, or when the user asks for it.
-- With an image generation tool, the first choice for a landing hero is a scene from the world in the direction, generated wide enough to sit behind the whole hero, with calm empty space where the text goes. It carries the color and the mood, and the chrome stays quiet over it.
-- Under the scene, or as the visual when there is no tool, show the product. Build a preview in code of what the page already promises, with the project's components or careful HTML and plausible data, like the main screen, one key card or the result the product produces. Showing what the copy already claims is not inventing a feature. In a scene hero it rises from the bottom edge and runs past it.
-- The product view carries a moment, not just a plain card. A rendered object inside it, like a payment card on a figure, a rich chart or a small object from the world. These are kinds of objects, so using one that fits is fine.
-- Before this pass, look at the references in [references/refs.md](references/refs.md). Take qualities from them, like composition, light, restraint and how the moment is placed, never their subject or layout.
-- Rendered objects and scenes come from an image generation tool when you have one. If you do not, build what you can in code, write the prompts for the rest and leave empty slots of the right size.
-- How to pick the subject, the prompt recipe and how to place the image are in [references/visuals.md](references/visuals.md). Read it before this pass.
+- 장식용 채움을 없앤다. 번들거리는 블롭, 구, 성운, 떠다니는 큐브, 빛나는 격자, 홀로그램 뇌와 로봇은 제품을 전혀 말해 주지 않는다.
+- 랜딩 히어로에는 사실을 보여 주는 비주얼을 쓴다.
+- 대시보드와 앱 화면에는 생성 이미지가 거의 필요 없다. 그 순간은 제품 자체에서 나온다. 공들여 그린 차트, 아름답게 놓인 수치, 제품 사진이나 아바타 같은 실제 콘텐츠, 살아 있는 느낌의 상태가 그렇다. 금융 앱의 결제 카드처럼 제품이 다루는 물리적인 것은 대개 실제 재질, 부드러운 그라디언트, 칩, 번호를 써서 코드로 만드는 편이 낫다.
+- 앱용 이미지는 빈 상태, 온보딩, 마케팅 순간에만, 또는 사용자가 요청할 때만 생성한다.
+- 이미지 생성 도구가 있으면 랜딩 히어로의 첫 선택은 방향의 세계에서 나온 장면이다. 히어로 전체 뒤에 깔릴 만큼 넓게 생성하고 텍스트가 들어갈 곳에 조용한 빈 공간을 둔다. 장면이 색과 분위기를 맡고 크롬은 그 위에서 조용히 있다.
+- 장면 아래에, 또는 도구가 없을 때의 비주얼로 제품을 보여 준다. 페이지가 이미 약속한 것을 프로젝트의 컴포넌트나 정성 들인 HTML과 그럴듯한 데이터로 코드 미리보기로 만든다. 메인 화면, 핵심 카드 하나, 제품이 내는 결과 같은 것이다. 카피가 이미 주장하는 것을 보여 주는 일은 기능을 지어내는 것이 아니다. 장면 히어로에서는 아래 가장자리에서 올라와 그 너머로 이어진다.
+- 제품 뷰에는 평범한 카드만이 아니라 순간이 담긴다. 수치 위의 결제 카드처럼 그 안의 렌더링 오브젝트, 풍부한 차트, 세계에서 온 작은 오브젝트가 그렇다. 이것은 오브젝트의 종류이니 맞는 것을 쓰면 된다.
+- 이 패스 전에 [references/refs.md](references/refs.md)의 레퍼런스를 본다. 구도, 빛, 절제, 순간을 놓는 방식 같은 특성을 가져오고, 주제나 레이아웃은 절대 가져오지 않는다.
+- 렌더링 오브젝트와 장면은 이미지 생성 도구가 있으면 거기서 나온다. 없으면 코드로 만들 수 있는 것을 만들고, 나머지는 프롬프트를 쓰고 맞는 크기의 빈 슬롯을 남긴다.
+- 피사체 고르기, 프롬프트 레시피, 이미지 배치법은 [references/visuals.md](references/visuals.md)에 있다. 이 패스 전에 읽는다.
 
-## 9. Motion
+## 9. 모션
 
-- Remove motion that loops for no reason, like `animate-pulse` or `animate-ping` on things that are not live, shimmer on headings, breathing glows, floating elements and parallax.
-- Remove `transition-all`, bouncy springs, `hover:scale` on cards and anything that moves more than a few pixels on hover.
-- Keep motion that explains something. A hover is a quick color or surface change, a press is a tiny scale down, a menu fades and rises a few pixels from where it opens, a changed number tweens.
-- Transition color, background, border, opacity and transform, and name them, like `transition-colors` or `transition-[transform,opacity]` in Tailwind, instead of a catch all. Never animate width, height, top, left, margins or large blurs, they stutter on weak devices.
-- One easing curve and a few durations across the screen, from the tokens. Short for feedback, a little longer for things that enter.
-- At most one entrance on load, a short fade and rise for the main content with a small stagger. Not every card flying in from a different side.
+- 살아 있지 않은 것에 쓴 `animate-pulse`나 `animate-ping`, 헤딩의 시머, 숨 쉬는 글로우, 떠다니는 요소, 패럴랙스처럼 이유 없이 반복되는 모션을 지운다.
+- `transition-all`, 튕기는 스프링, 카드의 `hover:scale`, hover에 몇 픽셀 넘게 움직이는 것을 지운다.
+- 무언가를 설명하는 모션은 남긴다. hover는 빠른 색이나 표면 변화, 누름은 아주 작은 축소다. 메뉴는 열린 자리에서 페이드와 함께 몇 픽셀 올라오고, 바뀐 숫자는 트윈한다.
+- 색, 배경, 테두리, 불투명도, transform을 트랜지션하고, 뭉뚱그리지 말고 Tailwind의 `transition-colors`나 `transition-[transform,opacity]`처럼 이름을 댄다. width, height, top, left, margin, 큰 블러는 절대 애니메이션하지 않는다. 약한 기기에서 끊긴다.
+- 화면 전체에 이징 곡선 하나와 지속 시간 몇 개를 토큰에서 가져와 쓴다. 피드백은 짧게, 등장하는 것은 조금 더 길게 쓴다.
+- 로드 시 등장은 많아야 하나다. 메인 콘텐츠에 작은 스태거를 곁들인 짧은 페이드와 상승이다. 카드마다 다른 쪽에서 날아들지 않는다.
 
-## Story video
+<a id="story-video"></a>
+## 스토리 영상
 
-A short video where the screen unslops itself step by step, with red redlines on the slop. Look at [refs/story-dashboard-frames.webp](references/refs/story-dashboard-frames.webp) before you build it, eight frames from it in order. That video went viral, and this is how it works:
+화면에서 슬롭이 단계별로 걷히는 짧은 영상이다. 슬롭 위에 빨간 레드라인이 뜬다. 만들기 전에 [refs/story-dashboard-frames.webp](references/refs/story-dashboard-frames.webp)를 본다. 영상에서 뽑은 프레임 여덟 개가 순서대로 담겨 있다. 그 영상은 입소문을 탔고, 방식은 다음과 같다.
 
-- **Nothing is swapped, everything morphs.** One page, and each step only changes CSS, so padding, gaps, sizes, colors, radii and shadows tween from the old value to the new one in place. You see the spacing open up, the purple drain out, the corners soften.
-- **A wave.** Elements start a few dozen milliseconds apart from the top left down, so a change runs across the screen instead of everything flipping at once.
-- **Text rolls.** Copy that changes blurs out, and the new words rise in letter by letter.
-- **Redlines first.** The slop gets red selection boxes with tags, a spacing step shows red measurements that turn white once fixed, a details step outlines corners with their radius.
-- **Close and short.** Square, cropped close on the part that changes most, so it reads on a phone, and about 10 seconds.
+- **아무것도 바꿔치기하지 않고 모두 모핑한다.** 페이지는 하나이고 단계마다 CSS만 바꾸니 패딩, 갭, 크기, 색, 반경, 그림자가 제자리에서 옛 값에서 새 값으로 트윈한다. 간격이 벌어지고, 보라색이 빠지고, 모서리가 부드러워지는 것이 보인다.
+- **물결.** 요소는 왼쪽 위부터 아래로 수십 밀리초 간격을 두고 시작해서, 모두가 한 번에 뒤집히지 않고 변화가 화면을 가로질러 간다.
+- **텍스트가 구른다.** 바뀌는 카피는 블러로 사라지고 새 단어가 글자 단위로 올라온다.
+- **레드라인 먼저.** 슬롭에 태그가 달린 빨간 선택 상자가 붙고, 간격 단계는 고쳐지면 흰색이 되는 빨간 측정선을 보여 주고, 디테일 단계는 모서리를 반경과 함께 외곽선으로 그린다.
+- **가깝고 짧게.** 정사각형으로, 가장 많이 바뀌는 부분에 바짝 잘라 휴대폰에서도 읽히게 하고, 길이는 약 10초다.
 
-It adds a few minutes, so make it only when the user wants it.
+몇 분 더 걸리니 사용자가 원할 때만 만든다.
 
-1. **One story file.** Build `unslop-story/story.html`, a standalone copy of the original screen with its styles in the file. Keep the original rules as they are, they are step 0.
-2. **Steps.** Three to five, merging passes so each one changes something you can see, like `Spacing`, `Color and icons`, `Type and copy`, `Details`. A new chart or visual goes into the last step. List them in the head as `<meta name="unslop-steps" content="Spacing, Color and icons, Type and copy, Details">`. A name containing Spacing shows spacing measurements, one containing Details shows corner outlines.
-3. **Each step is CSS on top.** Write the changes of step 1 under `.s1`, step 2 under `.s2` and so on, like `.s1 .card { padding: 24px }` or `.s2 body { background-color: #141415 }`. The classes add up, so step 3 still has the rules of steps 1 and 2. Change values, never structure, so the browser can tween them.
-4. **What cannot tween, and how to handle it.**
-   - Gradients, glows and washes: put them on their own layer and fade its `opacity` to 0, with the solid color underneath changing. Gradient text goes on the `.from` span only, never on the swap or its parent, because a text clip also catches the hidden new text.
-   - Pills: write their radius as half the height, like `23px`, not `9999px`, or the corner only changes in the last frame.
-   - Use swaps sparingly, only where the words change, at most eight in a story. Twenty swaps blurring at once read as a cut between two pictures, which is exactly what the video must not look like. Weight, size, tracking and color changes tween on their own, so they never need a swap. A new font family switches directly in its step, without swaps.
-   - Text that changes, a new font family, an emoji that becomes an icon: `<span class="swap" data-at="3"><span class="from">Welcome back, Damir! 👋</span><span class="to">October 2026</span></span>`. At step 3 the old part blurs out and the new one rolls in.
-   - Emoji that become icons: put the new icon next to the emoji inside the same box, both absolutely stacked, and crossfade their `opacity` in the step. That is not a swap and does not count toward the limit.
-   - Things that disappear, like a `New ✨` badge: `data-out="2"` collapses them at step 2.
-   - Things that appear, like a legend: `data-in="4"` fades them in at step 4. Reserve their space so nothing jumps.
-5. **Redlines.** The measurements follow the elements live, so their numbers count from the old value to the new one while things move. That is the moment people watch, so choose them well.
-   - `data-gap` goes on the blocks of a vertical stack, like the brand row, the search, the navigation group and the plans group in a sidebar, or the headline, the stat row and the chart in the main column. Not on every row, or the screen fills with tiny 2px tags. Aim for four to six measured gaps per stack, and give each stack its own name if there is more than one, like `data-gap="sidebar"` and `data-gap="main"`.
-   - `data-radius` goes on two to four buttons and cards whose corners change.
-   - `data-slop="Gradient text"` and so on marks the slop for a short first beat, at most five, on the clearest examples that sit apart from each other, with short tags. It is optional, the reference video has none.
-6. **Only the screen and its background.** The video shows the story page as it is, with no extra window, border or shadow around it, so the page's own background fills the frame and the screen is the only box. If the screen sits in a window that grows to desktop proportions, anchor it to the left in the story so it widens to the right instead of gliding sideways. The story page renders 1440 wide and at least 900 tall, so do not size things from `100vh`, and keep `position: fixed` for background layers only.
-7. **Camera.** `<meta name="unslop-frame" content="0 0 960">` sets which part of the page fills the frame, as x, y and width in page pixels. Point x and y at the screen's own top left corner, so the frame starts with the page background around it, and crop close on where the most visible change happens, usually the sidebar or headline and the first cards.
-8. **Render.** `node <skill folder>/scripts/story.mjs unslop-story/story.html unslop-story.mp4`, square by default, `--wide` for 16:9. It needs Playwright and ffmpeg, so if either is missing, tell the user the one command that installs it. To watch it live first, run it with `--play` instead of the output path, and it loops in a browser window until closed. Pull a few frames with ffmpeg and look at them before you hand it over. Checking the story file and the video does not count toward the render limit of a run.
-9. **The story file is a presentation piece.** The clean result still ships as normal code in the project's own stack, without `.s` classes or story attributes. Every video carries a small `unslop by @heydamir` credit, as the license asks.
+1. **스토리 파일 하나.** `unslop-story/story.html`을 만든다. 스타일을 파일 안에 담은 원본 화면의 독립 사본이다. 원본 규칙은 그대로 둔다. 그것이 0단계다.
+2. **단계.** 세 개에서 다섯 개다. 각 단계가 눈에 보이는 무언가를 바꾸도록 패스를 합친다. `Spacing`, `Color and icons`, `Type and copy`, `Details` 같은 식이다. 새 차트나 비주얼은 마지막 단계에 넣는다. head에 `<meta name="unslop-steps" content="Spacing, Color and icons, Type and copy, Details">`로 나열한다. 이름에 Spacing이 들어가면 간격 측정선을, Details가 들어가면 모서리 외곽선을 보여 준다.
+3. **단계마다 CSS를 위에 얹는다.** 1단계의 변경은 `.s1` 아래에, 2단계는 `.s2` 아래에 쓴다. `.s1 .card { padding: 24px }`나 `.s2 body { background-color: #141415 }`처럼 쓴다. 클래스는 누적되니 3단계에도 1, 2단계 규칙이 남는다. 구조가 아니라 값을 바꿔야 브라우저가 트윈할 수 있다.
+4. **트윈되지 않는 것과 처리법.**
+   - 그라디언트, 글로우, 번짐: 자기 층에 올리고 `opacity`를 0으로 페이드하면서 아래의 단색을 바꾼다. 그라디언트 텍스트는 스왑이나 그 부모가 아니라 `.from` span에만 둔다. 텍스트 클립이 숨겨진 새 텍스트까지 잡기 때문이다.
+   - 필: 반경을 `9999px`가 아니라 `23px`처럼 높이의 절반으로 쓴다. 그러지 않으면 모서리가 마지막 프레임에서야 바뀐다.
+   - 스왑은 아껴서 단어가 바뀌는 곳에만 쓰고, 스토리 하나에 많아야 여덟 개다. 스왑 스무 개가 한꺼번에 블러되면 두 그림 사이의 컷으로 읽히고, 영상이 절대 그렇게 보이면 안 된다. 굵기, 크기, 자간, 색 변화는 스스로 트윈하니 스왑이 필요 없다. 새 폰트 계열은 스왑 없이 그 단계에서 바로 바꾼다.
+   - 바뀌는 텍스트, 새 폰트 계열, 아이콘이 되는 이모지: `<span class="swap" data-at="3"><span class="from">Welcome back, Damir! 👋</span><span class="to">October 2026</span></span>`. 3단계에서 옛 부분이 블러로 사라지고 새 부분이 굴러 들어온다.
+   - 아이콘이 되는 이모지: 같은 상자 안에 새 아이콘을 이모지 옆에 넣고 둘을 absolute로 겹친 뒤 그 단계에서 `opacity`를 크로스페이드한다. 스왑이 아니고 한도에도 세지 않는다.
+   - 사라지는 것, 예를 들어 `New ✨` 배지: `data-out="2"`가 2단계에서 접는다.
+   - 나타나는 것, 예를 들어 범례: `data-in="4"`가 4단계에서 페이드인한다. 아무것도 튀지 않게 자리를 확보해 둔다.
+5. **레드라인.** 측정값은 요소를 실시간으로 따라가서, 움직이는 동안 숫자가 옛 값에서 새 값으로 세어 간다. 사람들이 지켜보는 순간이니 잘 고른다.
+   - `data-gap`은 세로 스택의 블록에 넣는다. 사이드바의 브랜드 행, 검색, 내비게이션 그룹, 플랜 그룹이나 메인 열의 헤드라인, 통계 행, 차트 같은 것이다. 행마다 넣으면 화면이 작은 2px 태그로 가득 차니 그러지 않는다. 스택당 측정 갭 네 개에서 여섯 개를 목표로 하고, 스택이 여럿이면 `data-gap="sidebar"`와 `data-gap="main"`처럼 각각 이름을 준다.
+   - `data-radius`는 모서리가 바뀌는 버튼과 카드 두 개에서 네 개에 넣는다.
+   - `data-slop="Gradient text"` 같은 것은 짧은 첫 박자 동안 슬롭을 표시한다. 많아야 다섯 개로, 서로 떨어져 있는 가장 분명한 예에 짧은 태그로 단다. 선택 사항이고 레퍼런스 영상에는 없다.
+6. **화면과 그 배경만.** 영상은 스토리 페이지를 그대로 보여 주고 주변에 창, 테두리, 그림자를 더하지 않는다. 그래서 페이지 자체의 배경이 프레임을 채우고 화면이 유일한 상자다. 화면이 데스크톱 비율로 커지는 창 안에 있으면 스토리에서 왼쪽에 고정해 옆으로 미끄러지지 않고 오른쪽으로 넓어지게 한다. 스토리 페이지는 너비 1440, 높이 최소 900으로 렌더링되니 `100vh`로 크기를 정하지 말고, `position: fixed`는 배경 층에만 쓴다.
+7. **카메라.** `<meta name="unslop-frame" content="0 0 960">`은 페이지의 어느 부분이 프레임을 채울지 페이지 픽셀 단위의 x, y, 너비로 정한다. x와 y는 화면의 왼쪽 위 모서리를 가리켜 프레임이 페이지 배경으로 둘러싸여 시작하게 하고, 가장 눈에 띄는 변화가 일어나는 곳, 보통 사이드바나 헤드라인과 첫 카드들에 바짝 자른다.
+8. **렌더링.** `node <skill folder>/scripts/story.mjs unslop-story/story.html unslop-story.mp4`. 기본은 정사각형이고 `--wide`는 16:9다. Playwright와 ffmpeg가 필요하니 없으면 설치 명령 하나를 사용자에게 알려 준다. 먼저 실시간으로 보려면 출력 경로 대신 `--play`로 돌린다. 브라우저 창에서 닫을 때까지 반복한다. 넘기기 전에 ffmpeg로 프레임 몇 장을 뽑아 본다. 스토리 파일과 영상 확인은 실행의 렌더링 한도에 세지 않는다.
+9. **스토리 파일은 발표용이다.** 깔끔한 결과물은 `.s` 클래스나 스토리 속성 없이 프로젝트 자체 스택의 일반 코드로 낸다. 모든 영상에는 라이선스 요구대로 작은 `unslop by @heydamir` 크레딧이 붙는다.
 
-## Do not
+## 하지 말 것
 
-- Do not rename the product, even when the name has AI in it. Keep a real logo as it is. When the logo itself is slop, like an emoji or a sparkle in a gradient tile, redraw it flat: the wordmark alone in the new type, or a simple glyph from the product's idea in one solid color. Never a glossy or gradient ball, a glow or a gradient tile, those read as AI at first sight.
-- Do not change what the product is. Keep its features, content and the order of sections unless the user asks for more. Placeholder content that means nothing may be replaced with content that does.
-- Do not replace removed decoration with new decoration, and do not swap one trend for another like glass, grain, noise, neon or bento grids.
-- Do not invent features, claims or data.
-- Do not fall back to the same look for every product. The direction decides the palette tint, type and visual, not habit.
+- 이름에 AI가 들어가도 제품 이름을 바꾸지 않는다. 진짜 로고는 그대로 둔다. 그라디언트 타일의 이모지나 반짝이처럼 로고 자체가 슬롭이면 평면으로 다시 그린다. 새 타입의 워드마크만 두거나, 제품 아이디어에서 나온 단순한 글리프를 단색으로 쓴다. 번들거리는 공이나 그라디언트 공, 글로우, 그라디언트 타일은 절대 쓰지 않는다. 한눈에 AI로 읽힌다.
+- 제품의 정체를 바꾸지 않는다. 사용자가 더 요청하지 않는 한 기능, 콘텐츠, 섹션 순서를 유지한다. 아무 뜻 없는 플레이스홀더 콘텐츠는 뜻 있는 콘텐츠로 바꿔도 된다.
+- 지운 장식을 새 장식으로 대체하지 않고, 글래스, 그레인, 노이즈, 네온, 벤토 그리드처럼 유행을 다른 유행으로 바꾸지 않는다.
+- 기능, 주장, 데이터를 지어내지 않는다.
+- 모든 제품에 같은 모양으로 되돌아가지 않는다. 팔레트의 색조, 타입, 비주얼은 습관이 아니라 방향이 정한다.
 
-## Checklist
+## 체크리스트
 
-- [ ] The direction is written and every pass follows it
-- [ ] Every spacing value is on the 4px scale and equal things have equal sizes
-- [ ] Icons, labels and numbers each sit in one aligned column
-- [ ] One tinted neutral ramp, three text roles, one accent with enough contrast
-- [ ] No hue gradients, gradient text, glows, colored shadows or color blobs
-- [ ] No emoji left in the interface
-- [ ] One icon set at one size and stroke
-- [ ] Type chosen for the character, weights 400 to 600, no uppercase tracked labels, no italic, no negative tracking on small text
-- [ ] No exclamation marks, no trailing periods on short strings, no greeting headline, no unverified claims
-- [ ] Numbers in one format with tabular figures
-- [ ] Nested radii add up
-- [ ] A hero has a real visual or a product preview with at least one moment, never filler and never a labeled placeholder
-- [ ] The first screen is composed as a whole with no dead empty band
-- [ ] No looping or bouncy motion, one easing curve, no animated layout properties
-- [ ] Template check. If you swapped the product name for another product's, would the screen still fit? If yes, push the direction harder in the copy, the visual and the signature detail
+- [ ] 방향을 썼고 모든 패스가 그것을 따른다
+- [ ] 모든 간격 값이 4px 스케일에 있고 같은 것은 같은 크기다
+- [ ] 아이콘, 라벨, 숫자가 각각 한 열에 정렬된다
+- [ ] 색조를 넣은 중립색 램프 하나, 텍스트 역할 셋, 대비가 충분한 강조색 하나
+- [ ] 색상 그라디언트, 그라디언트 텍스트, 글로우, 색 그림자, 색 블롭 없음
+- [ ] 인터페이스에 남은 이모지 없음
+- [ ] 크기와 획이 하나인 아이콘 세트 하나
+- [ ] 성격에 맞게 고른 타입, 굵기 400에서 600, 자간 넓은 대문자 라벨 없음, 이탤릭 없음, 작은 텍스트의 음수 자간 없음
+- [ ] 느낌표 없음, 짧은 문자열의 끝 마침표 없음, 인사 헤드라인 없음, 확인되지 않은 주장 없음
+- [ ] 숫자는 한 형식에 tabular 숫자
+- [ ] 중첩 반경이 맞는다
+- [ ] 히어로에 진짜 비주얼이나 순간이 하나 이상 있는 제품 미리보기가 있고, 채움이나 라벨 붙은 플레이스홀더는 절대 없다
+- [ ] 첫 화면이 죽은 빈 띠 없이 전체로 구성된다
+- [ ] 반복되거나 튕기는 모션 없음, 이징 곡선 하나, 애니메이션되는 레이아웃 속성 없음
+- [ ] 템플릿 점검. 제품 이름을 다른 제품으로 바꿔도 화면이 맞을까? 그렇다면 카피, 비주얼, 시그니처 디테일에서 방향을 더 밀어붙인다

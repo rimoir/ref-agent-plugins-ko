@@ -1,84 +1,84 @@
-# Visuals
+# 비주얼
 
-How to replace decorative filler with a visual that belongs to this product, and how to generate one when an image tool is available.
+장식용 채움을 이 제품에 속하는 비주얼로 바꾸는 법과, 이미지 도구가 있을 때 비주얼을 생성하는 법을 다룬다.
 
-## Decide what the visual is
+## 비주얼이 무엇일지 정하기
 
-1. **Does the screen need one?** Dashboards, settings and most app screens do not. Landing heroes and empty states usually do.
-2. **Is there an image tool?** For a landing hero, generate a scene from the world as the background of the whole hero, with the subject on one side and calm space for the headline on the other. Then show the product rising from the bottom edge. This is the strongest hero.
-3. **Show the product.** Below the scene, or as the visual when there is no tool, build a preview in code of what the page already promises. Pick the one moment that proves the headline, not the whole app. A scheduling tool shows one week with a booked slot, a code review tool shows one diff with a comment, a habit app shows a streak on one card. Use the project's own components when they exist, otherwise careful HTML in the new palette, with plausible data and real looking names. Frame it like a window or a device only if that helps it read.
-4. **Write the scene as one sentence.** Use the world and character from the direction and write the subject as one plain sentence before generating anything. If you cannot say it in one sentence, it is not clear yet.
+1. **화면에 필요한가?** 대시보드, 설정, 대부분의 앱 화면에는 필요 없다. 랜딩 히어로와 빈 상태에는 대개 필요하다.
+2. **이미지 도구가 있는가?** 랜딩 히어로라면 세계에서 나온 장면을 히어로 전체의 배경으로 생성한다. 피사체는 한쪽에, 헤드라인을 위한 조용한 공간은 다른 쪽에 둔다. 그다음 제품이 아래 가장자리에서 올라오게 한다. 가장 강한 히어로다.
+3. **제품을 보여 준다.** 장면 아래에, 또는 도구가 없을 때의 비주얼로 페이지가 이미 약속한 것을 코드 미리보기로 만든다. 앱 전체가 아니라 헤드라인을 증명하는 한 순간을 고른다. 일정 도구는 예약이 잡힌 한 주를, 코드 리뷰 도구는 댓글이 달린 diff 하나를, 습관 앱은 카드 한 장의 연속 기록을 보여 준다. 프로젝트의 컴포넌트가 있으면 쓰고, 없으면 새 팔레트로 정성 들인 HTML을 그럴듯한 데이터와 실제 같은 이름으로 쓴다. 읽히는 데 도움이 될 때만 창이나 기기로 틀을 씌운다.
+4. **장면을 한 문장으로 쓴다.** 방향의 세계와 성격을 써서 생성 전에 피사체를 평이한 한 문장으로 쓴다. 한 문장으로 말할 수 없으면 아직 분명하지 않은 것이다.
 
-These examples only show the shape of a good sentence. Do not reuse them, derive yours from the product in front of you.
+이 예시는 좋은 문장의 모양만 보여 준다. 재사용하지 말고 눈앞의 제품에서 끌어낸다.
 
-- A tool that protects backups → a small lighthouse on a dark rocky coast with its beam reaching into fog
-- A meditation app → a single cup of tea steaming on a windowsill at first light
-- A logistics API → one container ship seen from straight above on a calm grey sea
-- A language learning app → a stack of handwritten flashcards on a café table in afternoon sun
+- 백업을 지키는 도구 → 어두운 바위 해안의 작은 등대, 빛줄기가 안개 속으로 뻗는다
+- 명상 앱 → 동틀 무렵 창턱에서 김이 오르는 차 한 잔
+- 물류 API → 잔잔한 회색 바다 위 컨테이너선 한 척을 바로 위에서 본 모습
+- 언어 학습 앱 → 오후 햇살이 드는 카페 탁자 위 손으로 쓴 플래시카드 더미
 
-Avoid the AI defaults, unless the product is literally about them. No glossy blobs, orbs, nebulas, chrome liquid, floating cubes, neon circuits, holograms, glowing brains, robots, rockets or crystal shapes.
+제품이 말 그대로 그것을 다루지 않는 한 AI 기본값을 피한다. 번들거리는 블롭, 구, 성운, 크롬 액체, 떠다니는 큐브, 네온 회로, 홀로그램, 빛나는 뇌, 로봇, 로켓, 크리스털 형상은 쓰지 않는다.
 
-## Styles that work
+## 잘 되는 스타일
 
-Pick one that fits the character, and keep it for the whole page.
+성격에 맞는 것 하나를 골라 페이지 전체에 유지한다.
 
-- **Painted background art.** A calm sky or landscape with one subject, painted like the backgrounds of modern Japanese animated films, crisp clouds and soft light, with open sky left for the text. Good for warm, hopeful, human products.
-- **Cinematic photo of one object.** A single real thing in simple dramatic light on a plain field, like a lighthouse in fog or a paper object in mid air. Good for calm, serious, trustworthy products.
-- **Soft stylized 3D.** One small scene or object with matte materials and gentle light, like a doorway standing in a meadow. Good for playful or friendly products.
-- **Product object render.** A real looking object from the product, like a payment card, a phone or a package, studio lit with true materials, used as a moment inside the interface. Good for anything that touches the physical world.
-- **Light and optics.** One physical phenomenon on a dark field, like light splitting through a prism. Good for technical or data products.
-- **Engraving or print.** A monochrome engraving or woodcut in one ink on a soft tinted page, with type and palette that belong to the same world. Good for products with heritage, craft or an editorial voice.
-- **A code treatment over an image.** Rendering a generated image as glyphs, dots or a duotone in the page palette, so it feels made for the page. See [effects.md](effects.md).
+- **그림 배경 아트.** 피사체가 하나인 차분한 하늘이나 풍경을 현대 일본 애니메이션 영화의 배경처럼 그린다. 선명한 구름과 부드러운 빛이 있고 텍스트를 위해 하늘을 비워 둔다. 따뜻하고, 희망차고, 사람 냄새 나는 제품에 좋다.
+- **사물 하나의 시네마틱 사진.** 안개 속 등대나 공중의 종이 오브젝트처럼 평범한 배경 위에서 단순하고 극적인 빛을 받는 실제 사물 하나다. 차분하고, 진지하고, 믿음직한 제품에 좋다.
+- **부드러운 스타일라이즈드 3D.** 초원에 선 문처럼 무광 재질과 은은한 빛의 작은 장면이나 오브젝트 하나다. 장난기 있거나 친근한 제품에 좋다.
+- **제품 오브젝트 렌더.** 결제 카드, 휴대폰, 택배처럼 제품에서 나온 실제 같은 오브젝트를 스튜디오 조명과 진짜 재질로 그려 인터페이스 안의 순간으로 쓴다. 물리 세계에 닿는 모든 것에 좋다.
+- **빛과 광학.** 프리즘을 지나 갈라지는 빛처럼 어두운 배경 위의 물리 현상 하나다. 기술이나 데이터 제품에 좋다.
+- **판화나 인쇄.** 부드러운 색조의 페이지 위에 잉크 하나로 찍은 단색 판화나 목판화로, 같은 세계에 속하는 타입과 팔레트를 쓴다. 유산, 공예, 에디토리얼한 목소리를 가진 제품에 좋다.
+- **이미지 위의 코드 처리.** 생성한 이미지를 글리프, 점, 페이지 팔레트의 듀오톤으로 렌더링해 페이지를 위해 만든 것처럼 느껴지게 한다. [effects.md](effects.md)를 참고한다.
 
-What tends to fail:
+자주 실패하는 것:
 
-- Prompts that ask for film grain, paper grain or a mottled texture. Models bake a fine checker pattern into the image. Add texture in code if you need it.
-- A print style, like engraving, woodcut or risograph, on one image while the rest of the page is a plain modern interface. It reads as a filter. The same styles work well when the whole brand lives in them, with matching type and a paper palette, like a monochrome engraving on a soft tinted page.
-- Several subjects or a busy collage. The idea stops reading in a second.
-- Purple and blue glossy abstractions of any kind.
+- 필름 그레인, 종이 그레인, 얼룩진 질감을 요구하는 프롬프트. 모델이 이미지에 미세한 체커 패턴을 박아 넣는다. 질감이 필요하면 코드로 더한다.
+- 나머지 페이지가 평범한 현대 인터페이스인데 이미지 하나만 판화, 목판화, 리소그래프 같은 인쇄 스타일인 경우. 필터로 읽힌다. 같은 스타일이라도 브랜드 전체가 그 안에 살면, 곧 맞는 타입과 종이 팔레트를 쓰면 잘 된다. 부드러운 색조의 페이지 위 단색 판화가 그렇다.
+- 피사체가 여럿이거나 복잡한 콜라주. 아이디어가 1초 안에 읽히지 않는다.
+- 어떤 종류든 보라와 파랑의 번들거리는 추상.
 
-## Objects for moments
+## 순간을 위한 오브젝트
 
-Besides whole scenes, generate single objects to place into the interface, like a payment card, a phone, a parcel, a coffee cup or a notebook from the product's world. They make a coded preview feel real.
+장면 전체 말고도 결제 카드, 휴대폰, 소포, 커피잔, 제품 세계의 노트처럼 인터페이스에 놓을 오브젝트 하나를 생성한다. 코드 미리보기가 실제처럼 느껴진다.
 
-- Ask for one object, studio lit, on a plain background in the exact page color, with soft contact shadow and nothing else in frame.
-- Ask for the angle you need in the layout, like "tilted 20 degrees, seen slightly from above".
-- If the tool can remove backgrounds, cut the object out. Otherwise blend it with a mask into the page color.
-- Place it overlapping the edge of a card or window, a little rotated, with a soft shadow in the ramp's darkest color, so it sits in the same space as the UI.
-- Background removal deletes dark areas that are close to the background color, like a switched off black screen. Ask for the screen in a contrasting flat color, or rebuild the alpha from the outer edge of the cutout.
-- To show real UI on a generated device, generate it straight on with no perspective, measure the screen rectangle, lay HTML over it and rotate both together. The text stays sharp and real.
-- Everything inside one visual tells the same story. If the list shows invoice INV-0142 for a client, the phone shows the same client, number and amount.
+- 오브젝트 하나를 스튜디오 조명으로, 정확한 페이지 색의 평범한 배경에 부드러운 접촉 그림자만 두고 프레임에 다른 것은 없이 요청한다.
+- 레이아웃에 필요한 각도를 요청한다. "tilted 20 degrees, seen slightly from above"(20도 기울여 살짝 위에서 본 모습) 같은 식이다.
+- 도구가 배경을 지울 수 있으면 오브젝트를 오려 낸다. 그렇지 않으면 마스크로 페이지 색에 녹인다.
+- 카드나 창의 가장자리에 겹치게, 약간 돌려서, 램프의 가장 어두운 색으로 부드러운 그림자를 주어 놓는다. 그러면 UI와 같은 공간에 놓인 것처럼 보인다.
+- 배경 제거는 꺼진 검은 화면처럼 배경색에 가까운 어두운 영역을 지운다. 대비되는 평면 색으로 화면을 요청하거나, 오려 낸 바깥 경계에서 알파를 다시 만든다.
+- 생성한 기기에 실제 UI를 보여 주려면 원근 없이 정면으로 생성하고, 화면 사각형을 재고, 그 위에 HTML을 올린 뒤 둘을 함께 돌린다. 텍스트가 선명하고 진짜로 남는다.
+- 비주얼 하나 안의 모든 것은 같은 이야기를 한다. 목록이 고객의 송장 INV-0142를 보여 주면 휴대폰도 같은 고객, 번호, 금액을 보여 준다.
 
-## Generate it
+## 생성하기
 
-Look for an image generation tool among the tools you have, for example an MCP server for fal, Replicate, OpenAI images, Higgsfield or a design tool. If there is one:
+가진 도구 중에서 이미지 생성 도구를 찾는다. 예를 들어 fal, Replicate, OpenAI images, Higgsfield용 MCP 서버나 디자인 도구다. 있으면 다음을 따른다.
 
-- Show the user the prompt, the model and the size, and ask before running, since generation can cost money.
-- Run once. Judge the result against the one sentence and the palette before trying again, and change the prompt rather than rerolling the same one.
-- Save the result into the project's assets, not a temporary URL.
+- 생성에 돈이 들 수 있으니 사용자에게 프롬프트, 모델, 크기를 보여 주고 돌리기 전에 묻는다.
+- 한 번 돌린다. 다시 시도하기 전에 결과를 한 문장과 팔레트에 맞춰 판단하고, 같은 프롬프트를 다시 돌리지 말고 프롬프트를 바꾼다.
+- 결과는 임시 URL이 아니라 프로젝트 애셋에 저장한다.
 
-If there is no tool and the screen needs a scene or an object, say so before the Visuals pass and offer to connect one, like an MCP server for fal, Replicate, OpenAI images or Higgsfield, then go on once it is connected. If the user skips it, leave the slot empty and put the prompt in your report, not on the page. The empty slot is a plain surface step of the exact size with the radius of the layout and no text inside, so nothing unfinished can ship by accident. Tell the user which kind of service can generate it and the file name to save it under.
+도구가 없는데 화면에 장면이나 오브젝트가 필요하면 비주얼 패스 전에 그렇다고 말하고, fal, Replicate, OpenAI images, Higgsfield용 MCP 서버처럼 연결할 것을 제안한 뒤 연결되면 진행한다. 사용자가 건너뛰면 슬롯을 비워 두고 프롬프트는 페이지가 아니라 보고서에 넣는다. 빈 슬롯은 정확한 크기의 평범한 표면 단계로, 레이아웃의 반경을 주고 안에 텍스트를 넣지 않는다. 그래야 미완성인 것이 실수로 나가지 않는다. 어떤 종류의 서비스로 생성할 수 있는지와 저장할 파일 이름을 사용자에게 알려 준다.
 
-## Prompt recipe
+## 프롬프트 레시피
 
-Build the prompt from these parts, in this order:
+다음 부분을 이 순서로 조합해 프롬프트를 만든다.
 
-- **Subject.** The one sentence, concrete and physical.
-- **Setting.** Where it is, kept simple.
-- **Light and palette.** Matched to the page. Name the page background color so the edges can blend into it, and the direction of the light.
-- **Style.** One clear direction that fits the character, like cinematic photo, soft 3D render, editorial illustration, risograph print or painted background. Pick what fits the product, not what is trending.
-- **Composition.** Where the subject sits so the text has room, like "subject on the right half, calm empty space on the left". For a scene behind the whole hero, ask for 16:9 or wider, keep the lower fifth calm too, since the product view rises over it, and fade the edges into the page color in code.
-- **Exclusions.** No text, no letters, no logos, no UI, no watermark.
-- **Format.** The aspect ratio of the slot at twice the display size.
+- **피사체(Subject).** 구체적이고 물리적인 그 한 문장이다.
+- **배경(Setting).** 어디에 있는지 단순하게 쓴다.
+- **빛과 팔레트(Light and palette).** 페이지에 맞춘다. 가장자리가 녹아들도록 페이지 배경색을 지정하고 빛의 방향을 적는다.
+- **스타일(Style).** 시네마틱 사진, 부드러운 3D 렌더, 에디토리얼 일러스트, 리소그래프 인쇄, 그림 배경처럼 성격에 맞는 분명한 방향 하나다. 유행하는 것이 아니라 제품에 맞는 것을 고른다.
+- **구도(Composition).** 텍스트에 자리가 나도록 피사체를 어디에 둘지 쓴다. "subject on the right half, calm empty space on the left"(피사체는 오른쪽 절반, 왼쪽은 조용한 빈 공간) 같은 식이다. 히어로 전체 뒤에 깔릴 장면은 16:9 이상을 요청하고, 제품 뷰가 그 위로 올라오니 아래 5분의 1도 조용하게 두고, 가장자리는 코드로 페이지 색에 페이드한다.
+- **제외(Exclusions).** 텍스트, 글자, 로고, UI, 워터마크를 넣지 않는다.
+- **형식(Format).** 슬롯의 종횡비로, 표시 크기의 두 배로 요청한다.
 
-## Put it on the page
+## 페이지에 넣기
 
-- Export as WebP or AVIF at twice the display size, with a real `alt` that says what is shown.
-- Match the image edges to the page background. If they do not match, fade them with a mask, like `mask-image: radial-gradient(closest-side, #000 70%, transparent)`, or a gradient overlay in the page color. A hard rectangle on a page of a different color is a sign of slop.
-- Keep it static or give it one slow, subtle motion that fits the subject. No parallax.
-- A treatment in code, like a duotone into the page palette, can make a generated image feel native. Use one only when it fits the character, and never as new decoration.
-- Load the hero image with high priority and give it fixed dimensions so the layout does not jump.
+- 표시 크기의 두 배로 WebP나 AVIF로 내보내고, 보이는 것을 말하는 진짜 `alt`를 단다.
+- 이미지 가장자리를 페이지 배경에 맞춘다. 맞지 않으면 `mask-image: radial-gradient(closest-side, #000 70%, transparent)` 같은 마스크나 페이지 색의 그라디언트 오버레이로 페이드한다. 다른 색 페이지 위의 딱딱한 사각형은 슬롭의 징후다.
+- 정적으로 두거나 피사체에 맞는 느리고 은은한 모션 하나만 준다. 패럴랙스는 쓰지 않는다.
+- 페이지 팔레트로 넣는 듀오톤 같은 코드 처리는 생성 이미지를 페이지의 일부처럼 느끼게 할 수 있다. 성격에 맞을 때만 쓰고, 새 장식으로는 절대 쓰지 않는다.
+- 히어로 이미지는 높은 우선순위로 불러오고 고정 치수를 줘서 레이아웃이 튀지 않게 한다.
 
 ---
 
-Part of unslop by Damir Sokolovsky ([@heydamir](https://x.com/heydamir)), CC BY 4.0. Keep this credit in copies and adaptations.
+Damir Sokolovsky([@heydamir](https://x.com/heydamir))의 unslop 일부를 한국어로 옮겼다. CC BY 4.0. 사본과 파생물에 이 크레딧을 남긴다.

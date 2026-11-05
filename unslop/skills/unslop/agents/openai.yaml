@@ -1,4 +1,4 @@
 interface:
   display_name: "Unslop"
-  short_description: "Turn vibecoded, AI-looking UI into a designed interface"
-  default_prompt: "Use $unslop on this screen so it stops looking AI-generated."
+  short_description: "바이브 코딩으로 만든 AI 티 나는 UI를 디자인된 인터페이스로 바꾼다"
+  default_prompt: "$unslop을 써서 이 화면에서 AI가 만든 티를 없애라."

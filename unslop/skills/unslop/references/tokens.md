@@ -1,135 +1,135 @@
-# Tokens
+# 토큰
 
-Starting values for each pass. When the project already has a good system, keep its values and only fix how they are used. These are starting points, not a house style, so let the direction move them.
+패스별 시작 값이다. 프로젝트에 이미 좋은 체계가 있으면 그 값을 유지하고 쓰는 방식만 고친다. 하우스 스타일이 아니라 출발점이니 방향이 값을 움직이게 둔다.
 
-## Spacing scale
+## 간격 스케일
 
 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96, 128
 
-- Inside a control: 4 to 12
-- Between related items, like rows in a list: 2 to 8
-- Between groups, like a label and its list or two cards: 12 to 24
-- Between sections: 32 to 64, landing sections 80 to 128
-- Row heights: 32 compact, 36 default, 40 to 44 touch
-- Hero: 96 to 128 from the navigation to the headline on desktop, 48 to 64 on mobile
+- 컨트롤 안: 4에서 12
+- 목록의 행처럼 관련된 항목 사이: 2에서 8
+- 라벨과 그 목록, 카드 두 장처럼 그룹 사이: 12에서 24
+- 섹션 사이: 32에서 64, 랜딩 섹션은 80에서 128
+- 행 높이: 조밀 32, 기본 36, 터치 40에서 44
+- 히어로: 내비게이션에서 헤드라인까지 데스크톱 96에서 128, 모바일 48에서 64
 
-## App layout
+## 앱 레이아웃
 
-- Sidebar 240 to 280 wide, content fluid with page padding 24 to 32, capped around 1440 to 1600.
-- Top bar or page header 56 to 64 tall.
-- Navigation rows 32 to 36, gap 2 to 4, section labels 24 above and 8 below.
-- Stat cards in a row share one height, usually 3 or 4 compact cards per row on desktop, numbers only.
-- The main chart spans at least two thirds of the content width and is 280 to 360 tall. A second data block next to it is a list or table, narrower, not another chart.
+- 사이드바는 폭 240에서 280, 콘텐츠는 유동적이고 페이지 패딩은 24에서 32, 폭 제한은 1440에서 1600 안팎이다.
+- 상단 바나 페이지 헤더는 높이 56에서 64다.
+- 내비게이션 행은 32에서 36, 갭은 2에서 4, 섹션 라벨은 위로 24, 아래로 8이다.
+- 한 줄의 통계 카드는 높이 하나를 공유한다. 보통 데스크톱에서 조밀한 카드를 줄당 3개나 4개 두고 숫자만 담는다.
+- 메인 차트는 콘텐츠 폭의 3분의 2 이상을 차지하고 높이는 280에서 360이다. 그 옆의 둘째 데이터 블록은 다른 차트가 아니라 더 좁은 목록이나 표다.
 
-## Neutral ramps
+## 중립색 램프
 
-For apps and dashboards use graphite, or a ramp just as grey, for every surface. For landing pages pick the ramp whose tint matches the world in the direction. Warm suits paper, wood, food, craft and anything human. Ink suits night, sky, water and anything technical. You can tint your own ramp the same way, keeping saturation very low, so a surface never reads as a color on its own.
+앱과 대시보드는 모든 표면에 graphite나 그만큼 회색인 램프를 쓴다. 랜딩 페이지는 방향의 세계와 색조가 맞는 램프를 고른다. Warm은 종이, 나무, 음식, 공예, 사람 냄새 나는 모든 것에 어울린다. Ink는 밤, 하늘, 물, 기술적인 모든 것에 어울린다. 같은 방식으로 직접 색조를 넣어도 된다. 채도를 아주 낮게 유지해서 표면이 그 자체로 색으로 읽히지 않게 한다.
 
-### Dark
+### 다크
 
-| Role | Graphite | Warm | Ink |
+| 역할 | Graphite | Warm | Ink |
 | --- | --- | --- | --- |
-| Deepest surface, like a sidebar | #0f0f10 | #12110f | #07080d |
-| Page background | #141415 | #161513 | #0b0d14 |
-| Card | #19191b | #1c1a18 | #11141c |
-| Raised, like an active row or input | #232325 | #262421 | #1a1e28 |
-| Hairline | primary text at 8% | primary text at 8% | primary text at 8% |
-| Primary text | #ededed | #efe9de | #eef0f5 |
-| Secondary text | #a1a1a6 | #aaa398 | #a3a9b8 |
-| Muted text and icons | #85858b | #8a847a | #7a8296 |
+| 사이드바처럼 가장 깊은 표면 | #0f0f10 | #12110f | #07080d |
+| 페이지 배경 | #141415 | #161513 | #0b0d14 |
+| 카드 | #19191b | #1c1a18 | #11141c |
+| 활성 행이나 입력처럼 올라온 표면 | #232325 | #262421 | #1a1e28 |
+| 헤어라인 | 주 텍스트 8% | 주 텍스트 8% | 주 텍스트 8% |
+| 주 텍스트 | #ededed | #efe9de | #eef0f5 |
+| 보조 텍스트 | #a1a1a6 | #aaa398 | #a3a9b8 |
+| 흐린 텍스트와 아이콘 | #85858b | #8a847a | #7a8296 |
 
-### Light
+### 라이트
 
-| Role | Graphite | Warm | Ink |
+| 역할 | Graphite | Warm | Ink |
 | --- | --- | --- | --- |
-| Page background | #fafafa | #f7f4ee | #f5f7fa |
-| Card | #ffffff | #fdfbf7 | #ffffff |
-| Raised, like an active row or input | #f4f4f5 | #efe9df | #eceff4 |
-| Hairline | primary text at 8% | primary text at 8% | primary text at 8% |
-| Primary text | #171717 | #1f1b16 | #111827 |
-| Secondary text | #525252 | #5e554a | #4b5565 |
-| Muted text and icons | #737373 | #7b7266 | #6b7487 |
+| 페이지 배경 | #fafafa | #f7f4ee | #f5f7fa |
+| 카드 | #ffffff | #fdfbf7 | #ffffff |
+| 활성 행이나 입력처럼 올라온 표면 | #f4f4f5 | #efe9df | #eceff4 |
+| 헤어라인 | 주 텍스트 8% | 주 텍스트 8% | 주 텍스트 8% |
+| 주 텍스트 | #171717 | #1f1b16 | #111827 |
+| 보조 텍스트 | #525252 | #5e554a | #4b5565 |
+| 흐린 텍스트와 아이콘 | #737373 | #7b7266 | #6b7487 |
 
-Muted text is for meta and captions only and stays near 4.5 to 1 on its surface. Body text uses primary or secondary.
+흐린 텍스트는 메타와 캡션에만 쓰고 자기 표면에서 4.5 대 1 가까이를 유지한다. 본문은 주나 보조를 쓴다.
 
-Semantic colors, toned to sit inside any ramp: positive #4cc38a on dark and #16a34a on light, negative #e5484d on dark and #dc2626 on light.
+어느 램프에든 들어앉도록 톤을 맞춘 의미 색이다. 긍정은 다크 #4cc38a, 라이트 #16a34a이고, 부정은 다크 #e5484d, 라이트 #dc2626이다.
 
-## Accent
+## 강조색
 
-- Keep a real brand color. A violet to blue or any other hue to hue glow gradient is slop, not a brand color, unless the user says otherwise.
-- Without a brand color, take it from the world. Warm worlds suit amber, coral or ember orange. Cool worlds suit cobalt, teal or a clear sky blue. Natural worlds suit moss or sage. Avoid the purple to blue family unless the brand really is purple.
-- Text on the accent reaches 4.5 to 1 contrast. Darken the accent or use dark text when it does not.
-- The accent covers a few percent of the screen, like the primary action, the selection and one key figure.
+- 진짜 브랜드 색은 유지한다. 바이올렛에서 파랑으로 가는, 또는 한 색상에서 다른 색상으로 가는 글로우 그라디언트는 사용자가 달리 말하지 않는 한 브랜드 색이 아니라 슬롭이다.
+- 브랜드 색이 없으면 세계에서 가져온다. 따뜻한 세계는 앰버, 코랄, 불씨 주황이 어울린다. 차가운 세계는 코발트, 틸, 맑은 하늘색이 어울린다. 자연의 세계는 이끼색이나 세이지가 어울린다. 브랜드가 정말 보라색이 아니면 보라에서 파랑 계열은 피한다.
+- 강조색 위의 텍스트는 대비 4.5 대 1에 이른다. 그렇지 않으면 강조색을 어둡게 하거나 어두운 텍스트를 쓴다.
+- 강조색은 주 동작, 선택 상태, 핵심 수치 하나처럼 화면의 몇 퍼센트만 덮는다.
 
-## Buttons
+## 버튼
 
-- Hero buttons 44 to 48 tall, navigation buttons 32 to 36, padding 16 to 20 on the sides.
-- Primary on dark: an off white from the ramp with dark text, or the accent. Primary on light: the primary text color as a fill with white text, or the accent.
-- Secondary: the raised surface with a hairline, primary text.
-- A soft top highlight like `inset 0 1px 0 rgba(255,255,255,0.12)` on dark buttons gives depth without a glow.
+- 히어로 버튼은 높이 44에서 48, 내비게이션 버튼은 32에서 36, 좌우 패딩은 16에서 20이다.
+- 다크의 주 버튼은 램프의 오프화이트에 어두운 텍스트이거나 강조색이다. 라이트의 주 버튼은 주 텍스트 색을 채우고 흰 텍스트를 올리거나 강조색이다.
+- 보조 버튼은 헤어라인이 있는 올라온 표면에 주 텍스트다.
+- 다크 버튼에 `inset 0 1px 0 rgba(255,255,255,0.12)` 같은 부드러운 위쪽 하이라이트를 주면 글로우 없이 깊이가 생긴다.
 
-## Type families
+## 서체 계열
 
-Pick by the character in the direction. All of these are free, and a partner can come from any row.
+방향의 성격으로 고른다. 모두 무료이고 파트너는 어느 행에서 가져와도 된다.
 
-| Character | Interface family | Optional partner |
+| 성격 | 인터페이스 계열 | 선택 파트너 |
 | --- | --- | --- |
-| Precise, technical, calm | Geist, Inter, IBM Plex Sans | Geist Mono, IBM Plex Mono, JetBrains Mono for figures and meta |
-| Warm, friendly, human | Instrument Sans, DM Sans, Figtree | Instrument Serif or Newsreader for the hero headline only |
-| Editorial, literary, crafted | Inter or Instrument Sans for the interface | Newsreader, Instrument Serif or Fraunces for headlines |
-| Playful, bold | Space Grotesk, Bricolage Grotesque | a mono for small labels |
+| 정밀하고, 기술적이고, 차분함 | Geist, Inter, IBM Plex Sans | 수치와 메타에 Geist Mono, IBM Plex Mono, JetBrains Mono |
+| 따뜻하고, 친근하고, 사람 냄새 남 | Instrument Sans, DM Sans, Figtree | 히어로 헤드라인에만 Instrument Serif나 Newsreader |
+| 에디토리얼하고, 문학적이고, 공들임 | 인터페이스에 Inter나 Instrument Sans | 헤드라인에 Newsreader, Instrument Serif, Fraunces |
+| 장난기 있고, 대담함 | Space Grotesk, Bricolage Grotesque | 작은 라벨에 모노 |
 
-A display serif belongs to large headlines only, never to labels or buttons.
+디스플레이 세리프는 큰 헤드라인에만 쓰고 라벨이나 버튼에는 절대 쓰지 않는다.
 
-## Type scale
+## 타입 스케일
 
-| Use | Size | Line height | Weight |
+| 용도 | 크기 | 줄 높이 | 굵기 |
 | --- | --- | --- | --- |
-| Small labels, meta, counts | 12 | 16 | 400, mono welcome |
-| Secondary text, captions | 13 to 14 | 20 | 400 |
-| Body, nav items | 14 to 15 | 20 to 22 | 400 to 500 |
-| Logo wordmark | 16 to 18 | 1 | 500 to 600 |
-| Hero subhead | 18 to 20 | 28 to 30 | 400, secondary color, at most 36rem wide |
-| Card figures | 28 to 32 | 1 | 500, tabular |
-| Page title | 28 to 36 | 1.15 | 400 to 500 |
-| Hero headline | 56 to 72 desktop, 36 to 44 mobile | 1.02 to 1.08 | 400 to 500 |
+| 작은 라벨, 메타, 개수 | 12 | 16 | 400, 모노 환영 |
+| 보조 텍스트, 캡션 | 13에서 14 | 20 | 400 |
+| 본문, 내비게이션 항목 | 14에서 15 | 20에서 22 | 400에서 500 |
+| 로고 워드마크 | 16에서 18 | 1 | 500에서 600 |
+| 히어로 부제 | 18에서 20 | 28에서 30 | 400, 보조 색, 폭 최대 36rem |
+| 카드 수치 | 28에서 32 | 1 | 500, tabular |
+| 페이지 제목 | 28에서 36 | 1.15 | 400에서 500 |
+| 히어로 헤드라인 | 데스크톱 56에서 72, 모바일 36에서 44 | 1.02에서 1.08 | 400에서 500 |
 
-Letter spacing is 0 for anything under 16px, slightly positive like 0.01em is fine for small muted text. Display text from 40px can go to -0.02em, and from 56px to -0.03em.
+자간은 16px 미만이면 0이고, 작은 흐린 텍스트에는 0.01em처럼 살짝 양수를 줘도 된다. 디스플레이 텍스트는 40px부터 -0.02em, 56px부터 -0.03em까지 가도 된다.
 
-## Radius
+## 반경
 
-| Element | Radius |
+| 요소 | 반경 |
 | --- | --- |
-| Keycap, tag, small button | 4 to 6 |
-| Row, input, button | 8 to 10 |
-| Card | 12 to 16 |
-| Panel or window | 14 to 20 |
+| 키캡, 태그, 작은 버튼 | 4에서 6 |
+| 행, 입력, 버튼 | 8에서 10 |
+| 카드 | 12에서 16 |
+| 패널이나 창 | 14에서 20 |
 
-Nested radius: inner = outer − padding, never below 4. A 16px card with 8px padding holds items with an 8px radius.
+중첩 반경: inner = outer − padding, 4 아래로 내려가지 않는다. 패딩 8px인 16px 카드 안의 항목은 반경 8px이다.
 
-## Icons
+## 아이콘
 
-lucide, 16 or 18px, stroke 1.5, color of the muted or secondary text role, 8 to 10px gap to the label.
+lucide, 16이나 18px, 획 1.5, 흐린 텍스트나 보조 텍스트 역할의 색, 라벨까지 갭 8에서 10px이다.
 
-## Depth
+## 깊이
 
-- Dark: surface steps plus a hairline. An active row can carry `inset 0 1px 0 rgba(255,255,255,0.12)` as a top highlight.
-- Light: `0 1px 2px rgba(0,0,0,0.05)` for small things, `0 8px 24px rgba(0,0,0,0.06)` for floating ones.
+- 다크: 표면 단계와 헤어라인. 활성 행에는 위쪽 하이라이트로 `inset 0 1px 0 rgba(255,255,255,0.12)`를 줄 수 있다.
+- 라이트: 작은 것에는 `0 1px 2px rgba(0,0,0,0.05)`, 떠 있는 것에는 `0 8px 24px rgba(0,0,0,0.06)`를 쓴다.
 
-## Motion
+## 모션
 
-One easing curve for everything, `cubic-bezier(0.22, 1, 0.36, 1)`.
+모든 것에 이징 곡선 하나, `cubic-bezier(0.22, 1, 0.36, 1)`을 쓴다.
 
-| Use | Duration |
+| 용도 | 지속 시간 |
 | --- | --- |
-| Hover, press, toggles | 120 to 180ms |
-| Menus, popovers, tooltips | 160 to 220ms |
-| Entrances, sheets, layout changes | 300 to 500ms |
-| Stagger between items | 40 to 60ms, at most six items |
+| hover, 누름, 토글 | 120에서 180ms |
+| 메뉴, 팝오버, 툴팁 | 160에서 220ms |
+| 등장, 시트, 레이아웃 변화 | 300에서 500ms |
+| 항목 사이 스태거 | 40에서 60ms, 최대 여섯 항목 |
 
-- Rise distance on enter: 6 to 12px. Press scale: 0.97 to 0.98.
-- Transition color, background, border, opacity and transform only.
+- 등장할 때 상승 거리는 6에서 12px, 누름 스케일은 0.97에서 0.98이다.
+- 색, 배경, 테두리, 불투명도, transform만 트랜지션한다.
 
 ---
 
-Part of unslop by Damir Sokolovsky ([@heydamir](https://x.com/heydamir)), CC BY 4.0. Keep this credit in copies and adaptations.
+Damir Sokolovsky([@heydamir](https://x.com/heydamir))의 unslop 일부를 한국어로 옮겼다. CC BY 4.0. 사본과 파생물에 이 크레딧을 남긴다.

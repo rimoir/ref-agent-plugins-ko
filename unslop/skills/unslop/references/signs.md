@@ -1,103 +1,103 @@
-# Signs of slop
+# 슬롭의 징후
 
-Go through every group and note each sign you find with where it lives. Each line pairs the sign with its fix.
+모든 그룹을 훑어 찾은 징후를 위치와 함께 적는다. 각 줄은 징후와 수정을 짝지어 놓았다.
 
-## Surfaces and color
+## 표면과 색
 
-- Purple to blue or violet to pink gradients on backgrounds, cards, buttons or the active nav item → one neutral surface, accent only where it means something
-- Gradient text in headings, numbers or the logo → solid primary text color
-- Colored glows, like `shadow-[0_0_20px_rgba(139,92,246,0.5)]`, `drop-shadow` on emoji or glowing pills → remove, depth from surface steps and hairlines
-- Radial color washes or blurred blobs behind content → remove
-- Neon or high contrast colored borders → hairline at 6 to 10% opacity
-- Many near identical tints of the same hue for text, like five lavenders → three text roles from one neutral ramp
-- Every element highlighted, so nothing stands out → one accent used once or twice per screen
-- Glass cards with a white inner highlight and a colored shadow → plain raised surface with a hairline
+- 배경, 카드, 버튼, 활성 내비게이션 항목의 보라에서 파랑, 바이올렛에서 핑크로 가는 그라디언트 → 중립 표면 하나, 강조색은 뜻이 있는 곳에만
+- 헤딩, 숫자, 로고의 그라디언트 텍스트 → 단색 주 텍스트 색
+- `shadow-[0_0_20px_rgba(139,92,246,0.5)]` 같은 색 글로우, 이모지의 `drop-shadow`, 빛나는 필 → 지운다. 깊이는 표면 단계와 헤어라인에서 얻는다
+- 콘텐츠 뒤의 방사형 색 번짐이나 흐릿한 블롭 → 지운다
+- 네온이나 대비 높은 색 테두리 → 불투명도 6에서 10%의 헤어라인
+- 라벤더 다섯 가지처럼 같은 색상의 거의 같은 색조를 텍스트에 여럿 씀 → 중립색 램프 하나에서 뽑은 텍스트 역할 셋
+- 모든 요소를 강조해서 아무것도 두드러지지 않음 → 화면당 한두 번만 쓰는 강조색 하나
+- 흰 내부 하이라이트와 색 그림자가 있는 글래스 카드 → 헤어라인이 있는 평범한 올라온 표면
 
-## Type
+## 타입
 
-- Headings at weight 800 or 900 → 400 to 500 and size for hierarchy
-- Uppercase labels with wide tracking, like `NAVIGATION` or `PAID THIS MONTH` → sentence case at normal or slightly open tracking
-- Too many sizes and weights on one screen → a few sizes from the scale, weights 400 and 500
-- Numbers in mixed formats, like `$48,210` next to `$124,860.40`, or `07` → one format, tabular figures
-- Negative letter spacing on small text → zero or slightly positive
-- Italic used for emphasis → color or weight instead
+- 굵기 800이나 900의 헤딩 → 400에서 500, 위계는 크기로
+- `NAVIGATION`이나 `PAID THIS MONTH`처럼 자간 넓은 대문자 라벨 → 보통이거나 살짝 넓은 자간의 문장형 대소문자
+- 한 화면에 크기와 굵기가 너무 많음 → 스케일의 크기 몇 개, 굵기 400과 500
+- `$48,210` 옆의 `$124,860.40`이나 `07`처럼 섞인 숫자 형식 → 한 형식, tabular 숫자
+- 작은 텍스트의 음수 자간 → 0이나 살짝 양수
+- 강조에 쓴 이탤릭 → 대신 색이나 굵기
 
-## Icons
+## 아이콘
 
-- Emoji as nav icons, label decoration or status, like 🏠 📥 🚀 💰 ⚠️ 📈 🔥 😬 → one line icon set or nothing
-- Emoji inside pills and counts, like `18 👤` → plain number
-- Icons in many sizes and colors → one size, one stroke, text role color
-- Icons nudged off the column → same icon box width in every row
-- A sparkle ✨ for anything AI → remove or use a plain icon only where it explains something
+- 🏠 📥 🚀 💰 ⚠️ 📈 🔥 😬처럼 내비게이션 아이콘, 라벨 장식, 상태로 쓴 이모지 → 라인 아이콘 세트 하나, 또는 없음
+- `18 👤`처럼 필과 개수 안의 이모지 → 그냥 숫자
+- 크기와 색이 제각각인 아이콘 → 크기 하나, 획 하나, 텍스트 역할 색
+- 열에서 밀려난 아이콘 → 모든 행에서 같은 아이콘 상자 너비
+- AI면 무엇에든 붙는 반짝이 ✨ → 지우거나, 무언가를 설명하는 곳에만 평범한 아이콘
 
-## Spacing
+## 간격
 
-- Arbitrary values, like `mt-[13px]`, `ml-[7px]`, `h-[31px]` → steps on the 4px scale
-- Rows in one list with different heights or gaps → one height, one gap
-- Groups that sit closer to their neighbours than to their own items → smaller gaps inside groups, bigger between them
-- Uneven padding inside sibling cards → one padding
-- Big empty gaps above a section and cramped space below it → balanced rhythm
+- `mt-[13px]`, `ml-[7px]`, `h-[31px]` 같은 임의 값 → 4px 스케일의 단계
+- 한 목록에서 행 높이나 갭이 다름 → 높이 하나, 갭 하나
+- 자기 항목보다 이웃에 더 가까이 붙은 그룹 → 그룹 안의 갭은 작게, 그룹 사이는 크게
+- 형제 카드 안의 고르지 않은 패딩 → 패딩 하나
+- 섹션 위의 큰 빈 틈과 아래의 비좁은 공간 → 균형 잡힌 리듬
 
-## Copy
+## 카피
 
-- Greeting headlines, like `Welcome back, Damir! 👋` → the page or period as the title
-- Exclamation marks and `!!` → plain statement
-- Changes without a reference, like `+12%!!` or `3 less!!` → `+12% vs last month`, `3 fewer vs last month`
-- Wordy placeholders, like `Search anything...` → `Search`
-- Hype words, like supercharge, seamless, unlock, magic, revolutionize → what the thing actually does
-- Trailing periods on labels and buttons → none
-- Fake looking data, like `$123,456` or `[X]` → plausible numbers
+- `Welcome back, Damir! 👋` 같은 인사 헤드라인 → 페이지나 기간을 제목으로
+- 느낌표와 `!!` → 평범한 서술
+- `+12%!!`나 `3 less!!`처럼 기준 없는 변화 → `+12% vs last month`, `3 fewer vs last month`
+- `Search anything...` 같은 장황한 플레이스홀더 → `Search`
+- supercharge, seamless, unlock, magic, revolutionize 같은 과장어 → 그것이 실제로 하는 일
+- 라벨과 버튼 끝의 마침표 → 없앤다
+- `$123,456`이나 `[X]`처럼 가짜 같은 데이터 → 그럴듯한 숫자
 
-## Components
+## 컴포넌트
 
-- Glowing pills for counts, plans, shortcuts or status → quiet mono text or a keycap
-- `PRO`, `New ✨`, `Beta 🚀` badges everywhere → remove or one quiet text badge
-- Every element a full pill, from search to buttons to cards → radius by size, nested radius math
-- Charts with rainbow bars, glowing bars, pill shaped bars or uppercase day labels → one or two series, muted grid and mono labels, one highlight color
-- Every chart or stack in several shades of the accent, so nothing leads → neutral steps with the accent only on the one thing that matters
-- Sparklines, tallies or mini bars added to every stat card → the number, its label and its change
-- Equal cards side by side, each with the same chart or layout → one main chart, compact stats, varied widths
-- Logo as a gradient tile with a sparkle and a gradient wordmark → product name as text plus a simple flat mark
-- Logo mark as a glossy orb, a gradient ball or a glowing dot → a flat glyph in one solid color, or the wordmark alone
+- 개수, 플랜, 단축키, 상태에 쓴 빛나는 필 → 조용한 모노 텍스트나 키캡
+- 곳곳의 `PRO`, `New ✨`, `Beta 🚀` 배지 → 지우거나 조용한 텍스트 배지 하나
+- 검색부터 버튼, 카드까지 모든 요소가 완전한 필 → 크기에 맞는 반경, 중첩 반경 계산
+- 무지개 막대, 빛나는 막대, 필 모양 막대, 대문자 요일 라벨이 있는 차트 → 시리즈 한두 개, 흐린 격자와 모노 라벨, 하이라이트 색 하나
+- 모든 차트나 스택이 강조색의 여러 농도라서 앞서는 것이 없음 → 중립 단계에 두고 정말 중요한 하나에만 강조색
+- 모든 통계 카드에 더한 스파크라인, 탤리, 미니 막대 → 숫자, 그 라벨, 그 변화
+- 같은 차트나 레이아웃을 담은 같은 카드가 나란히 놓임 → 메인 차트 하나, 조밀한 통계, 다양한 너비
+- 반짝이를 넣은 그라디언트 타일과 그라디언트 워드마크로 된 로고 → 텍스트로 쓴 제품 이름과 단순한 평면 마크
+- 번들거리는 구, 그라디언트 공, 빛나는 점으로 된 로고 마크 → 단색의 평면 글리프, 또는 워드마크만
 
-## Landing pages and heroes
+## 랜딩 페이지와 히어로
 
-- A pill badge above the headline, like `✨ Introducing X 2.0` → remove, or a quiet text link if it is real news
-- A headline that could fit any product, like `Supercharge your workflow with AI` → say what the product does for whom
-- Gradient or shimmer on the headline → solid text
-- Floating blobs, orbs, grids and glowing lines behind the hero → plain background or one real product visual
-- Everything stacked and centered, headline, text, buttons and a picture below → an asymmetric split or text over a large product view, see the Layout pass
-- Three or more buttons, or chips and avatars stacked under the buttons → one primary and at most one secondary action
-- `Trusted by 10,000+ teams`, `Loved by 10,000+`, rows of avatar dots or five stars without a source → ask if it is real, then make it quiet and specific or remove it
-- Parallax and elements floating on scroll → static layout, motion only with a purpose
-- Feature cards with an emoji, a bold title and a vague line each → fewer features, concrete copy, line icons or none
+- `✨ Introducing X 2.0`처럼 헤드라인 위의 필 배지 → 지우거나, 진짜 소식이면 조용한 텍스트 링크
+- `Supercharge your workflow with AI`처럼 어느 제품에나 맞는 헤드라인 → 제품이 누구를 위해 무엇을 하는지 말한다
+- 헤드라인의 그라디언트나 시머 → 단색 텍스트
+- 히어로 뒤에 떠다니는 블롭, 구, 격자, 빛나는 선 → 평범한 배경이나 진짜 제품 비주얼 하나
+- 헤드라인, 텍스트, 버튼, 아래 그림까지 모두 쌓아 가운데 맞춤 → 비대칭 분할이나 큰 제품 뷰 위의 텍스트. 레이아웃 패스 참고
+- 버튼이 셋 이상이거나 버튼 아래에 칩과 아바타가 쌓임 → 주 동작 하나와 많아야 보조 동작 하나
+- 출처 없는 `Trusted by 10,000+ teams`, `Loved by 10,000+`, 아바타 점 줄, 별 다섯 개 → 사실인지 묻고 조용하고 구체적으로 바꾸거나 지운다
+- 패럴랙스와 스크롤에 떠다니는 요소 → 정적 레이아웃, 모션은 목적이 있을 때만
+- 이모지, 굵은 제목, 모호한 한 줄로 된 기능 카드 → 기능은 더 적게, 카피는 구체적으로, 라인 아이콘을 쓰거나 아이콘 없이
 
-## Visuals
+## 비주얼
 
-- Glossy 3D blobs, orbs, liquid chrome shapes or a purple nebula as the hero visual → the product itself or one concrete metaphor for what it does
-- Stock robots, glowing brains, circuit lines or holograms for anything AI → remove, or show what the AI actually produces
-- Text, fake buttons or a fake logo baked into an image → real text in the page, a clean image without text
-- An image that does not blend into the page, with a hard edge and a different black → background matched to the page and a soft mask at the edges
-- A visual on every section → one visual where it helps, usually only the hero
+- 히어로 비주얼로 쓴 번들거리는 3D 블롭, 구, 액체 크롬 형상, 보라색 성운 → 제품 자체나 제품이 하는 일의 구체적인 은유 하나
+- AI면 무엇에든 쓰는 스톡 로봇, 빛나는 뇌, 회로선, 홀로그램 → 지우거나 AI가 실제로 내놓는 것을 보여 준다
+- 이미지에 박아 넣은 텍스트, 가짜 버튼, 가짜 로고 → 페이지의 실제 텍스트, 텍스트 없는 깨끗한 이미지
+- 경계가 딱딱하고 검정이 달라 페이지에 녹아들지 않는 이미지 → 페이지에 맞춘 배경과 가장자리의 부드러운 마스크
+- 섹션마다 있는 비주얼 → 도움이 되는 곳에 비주얼 하나, 대개 히어로에만
 
-## Motion
+## 모션
 
-- `animate-pulse`, `animate-ping` or breathing glows on things that are not live → static
-- `transition-all` and `hover:scale` on cards and buttons → color or surface step on hover, a tiny scale down on press
-- Bouncy springs and overshoot on simple UI → one ease-out curve
-- Everything flying in on load from different directions → one short fade and rise with a small stagger
-- Parallax, floating loops and elements that move on scroll → static layout
-- Animating width, height, top or left → transform and opacity
+- 살아 있지 않은 것에 쓴 `animate-pulse`, `animate-ping`, 숨 쉬는 글로우 → 정적으로
+- 카드와 버튼의 `transition-all`과 `hover:scale` → hover에는 색이나 표면 단계, 누름에는 아주 작은 축소
+- 단순한 UI의 튕기는 스프링과 오버슈트 → ease-out 곡선 하나
+- 로드할 때 모든 것이 여러 방향에서 날아듦 → 작은 스태거를 곁들인 짧은 페이드와 상승 하나
+- 패럴랙스, 떠다니는 루프, 스크롤에 움직이는 요소 → 정적 레이아웃
+- width, height, top, left 애니메이션 → transform과 opacity
 
-## Template look
+## 템플릿 모습
 
-These are not slop, but they are what a cleaned up screen falls back to when nobody made a decision. Watch for them after the passes.
+이것은 슬롭은 아니지만 아무도 결정을 내리지 않았을 때 정리된 화면이 되돌아가는 모습이다. 패스를 마친 뒤 살펴본다.
 
-- Pure grey #161616 page, Inter, white text and the old brand color on one button, on a product whose world is warm or bright → a ramp tinted toward the world and an accent from it
-- A headline that would fit another product if you swapped the name → say what this product does, with its own nouns
-- A hero visual that is an empty box or a generic picture → a product preview in code or an image from the world
-- Every product getting the same layout, type and palette → let the direction choose
+- 세계가 따뜻하거나 밝은 제품에 순수한 회색 #161616 페이지, Inter, 흰 텍스트, 버튼 하나의 옛 브랜드 색 → 세계 쪽으로 색조를 넣은 램프와 거기서 나온 강조색
+- 이름만 바꾸면 다른 제품에도 맞을 헤드라인 → 이 제품이 하는 일을 제품 고유의 명사로 말한다
+- 빈 상자나 일반적인 그림인 히어로 비주얼 → 코드로 만든 제품 미리보기나 세계에서 나온 이미지
+- 모든 제품이 같은 레이아웃, 타입, 팔레트를 가짐 → 방향이 고르게 한다
 
 ---
 
-Part of unslop by Damir Sokolovsky ([@heydamir](https://x.com/heydamir)), CC BY 4.0. Keep this credit in copies and adaptations.
+Damir Sokolovsky([@heydamir](https://x.com/heydamir))의 unslop 일부를 한국어로 옮겼다. CC BY 4.0. 사본과 파생물에 이 크레딧을 남긴다.

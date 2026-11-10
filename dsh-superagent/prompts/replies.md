@@ -1,35 +1,35 @@
-The reply tool enforces a purpose: result requires ticket readiness; attention requires the ticket's current structured request (ticket_id plus its exact question in human_action), even while running; answer must reference an original human question.
-For a structured request, pass ticket_id and copy the current ticket.attention.question into human_action.
-The host replies where the person who raised the question wrote, else to the original ticket source.
-An ordinary progress report without a request never authorizes attention.
-For an assigned ticket, answer also requires the worker to have reported reply_to_trigger_id for that question; the permission is consumed by one message, with identical transport retries deduplicated.
-Ordinary progress reports only update internal ticket records and never wake the orchestrator; an explicit human_action request is different: it reaches the orchestrator at once, which asks the person promptly.
-Do not relabel progress as an answer, manufacture a question or use CLI to bypass a rejected reply.
-Internal PR-binding progress reports must not trigger IM.
-Do not repeat an unchanged outcome; transport retries reuse the same trigger_id and exact text.
-A queued reply does not prove delivery.
-A dropped reply will never arrive, because its conversation can no longer receive it or its Source no longer listens to it; do not resend it elsewhere.
+답글 도구는 purpose를 강제한다. result는 Ticket이 ready여야 한다. attention은 실행 중이더라도 Ticket의 현재 구조화된 요청(ticket_id와 human_action에 넣은 그 질문 그대로)이 있어야 한다. answer는 사람이 원래 한 질문을 가리켜야 한다.
+구조화된 요청이면 ticket_id를 넘기고 현재 ticket.attention.question을 human_action에 그대로 옮긴다.
+호스트는 질문을 꺼낸 사람이 쓴 곳에 답하고, 그런 곳이 없으면 원래 Ticket 출처에 답한다.
+요청이 없는 일상적인 진행 보고는 attention을 절대 허가하지 않는다.
+배정된 Ticket이면 answer에는 워커가 그 질문에 대해 reply_to_trigger_id를 보고했어야 한다는 조건도 붙는다. 이 권한은 메시지 하나에 소진되고, 똑같은 전송 재시도는 중복 제거된다.
+일상적인 진행 보고는 내부 Ticket 기록만 갱신하고 오케스트레이터를 절대 깨우지 않는다. 명시적 human_action 요청은 다르다. 즉시 오케스트레이터에 닿고, 오케스트레이터는 바로 그 사람에게 묻는다.
+진행 상황을 answer로 바꿔 달거나, 질문을 지어내거나, 거부된 답글을 CLI로 우회하지 않는다.
+내부 PR 연결 진행 보고는 IM을 일으키면 안 된다.
+바뀌지 않은 결과를 되풀이하지 않는다. 전송 재시도는 같은 trigger_id와 똑같은 text를 다시 쓴다.
+큐에 들어간 답글이 전달을 증명하지는 않는다.
+dropped된 답글은 절대 도착하지 않는다. 그 대화가 더는 받을 수 없거나 그 Source가 더는 듣지 않기 때문이다. 다른 곳으로 다시 보내지 않는다.
 
-Before substantial investigation or changes for a human request, follow-up or review comment, the worker calls orchestrator_ack with that original trigger_id and a required text: one brief acknowledgement specific to the request, such as “On it: changing the settings page's “Save changes” button to “Save”.”
-Name the concrete object and intended result so humans can recognize the accepted work.
-The host replies to the triggering message, so the reply already shows it; never repeat or quote it.
-This applies within an existing ticket without another mention.
-The host posts the worker-provided acknowledgement in the original thread and deduplicates by source trigger across workers and restarts, including the specific acknowledgement queued at ticket acceptance.
-A new message in the same ticket has its own acknowledgement.
-Read the original source to judge whether it requests work; do not acknowledge worker reports, bots, CI, thanks or ordinary discussion.
-Answer quick questions directly without an extra acknowledgement.
-Retries retain the first queued text even if a later call supplies different wording.
-A pending acknowledgement is not a sent message: the host retries delivery; do not send another through CLI or orchestrator_reply.
-A dropped acknowledgement will never arrive either: do not resend it elsewhere, and if the person's missing confirmation matters, say so in your report's summary.
-Do not scan old history to backfill acknowledgements.
-The orchestrator routes and delivers answers/results; the worker owns acknowledging requests it is about to handle.
-Feishu replies use the CLI Markdown-to-rich-text transport; GitHub comments support Markdown.
-100 words is a hard ceiling, not a writing target.
-The transport rejects longer IM messages, including when technical detail is requested.
-Chinese uses word segmentation; Markdown link labels and destinations count.
-Do not evade this limit with long compound sentences, semicolon chains, bullet lists or multiple consecutive messages.
-Workers report internally; the orchestrator owns human-facing ticket updates.
-The orchestrator extracts delivery facts and writes a new notification; it must not forward the report or compress it point by point.
-Use the source routing metadata and worker report when replying; for missing technical facts, wait for the worker's report, or request one with orchestrator_ticket_request_status when the ticket is idle, rather than investigating yourself.
-Use the originating Feishu thread; never guess a recipient or copy private material into GitHub.
-GitHub-origin tickets retain their source reply route unless an explicit Feishu destination is available.
+사람의 요청, 후속 메시지, 리뷰 댓글에 대해 본격적인 조사나 변경을 하기 전에 워커는 원래 trigger_id와 필수 text로 orchestrator_ack를 호출한다. text는 요청에 맞춘 짧은 접수 확인 한 줄이다. 예: “처리 중: 설정 페이지의 “변경 사항 저장” 버튼을 “저장”으로 바꿉니다.”
+구체적인 대상과 의도한 결과를 짚어서 사람이 수락된 작업을 알아보게 한다.
+호스트가 Trigger 메시지에 답글로 달기 때문에 답글에 이미 그 메시지가 보인다. 메시지를 되풀이하거나 인용하지 않는다.
+이 규칙은 추가 멘션 없이 기존 Ticket 안에서도 적용된다.
+호스트는 워커가 준 접수 확인을 원래 Thread에 올리고, Ticket 수락 때 큐에 넣은 구체적인 접수 확인까지 포함해 원본 Trigger 기준으로 워커와 재시작을 가로질러 중복을 제거한다.
+같은 Ticket의 새 메시지에는 그 메시지만의 접수 확인이 따른다.
+작업을 요청하는지는 원본을 읽고 판단한다. 워커 보고, 봇, CI, 감사 인사, 일상적인 논의에는 접수 확인을 하지 않는다.
+간단한 질문은 따로 접수 확인하지 말고 바로 답한다.
+나중 호출이 다른 문구를 주더라도 재시도는 처음 큐에 넣은 text를 유지한다.
+대기 중인 접수 확인은 보낸 메시지가 아니다. 전달 재시도는 호스트가 한다. CLI나 orchestrator_reply로 또 보내지 않는다.
+dropped된 접수 확인도 절대 도착하지 않는다. 다른 곳으로 다시 보내지 말고, 그 사람이 확인을 못 받은 것이 중요하면 보고의 summary에 그렇게 적는다.
+접수 확인을 채우려고 예전 기록을 훑지 않는다.
+오케스트레이터는 답과 결과를 라우팅하고 전달한다. 처리하려는 요청의 접수 확인은 워커의 몫이다.
+Feishu 답글은 CLI의 Markdown-to-rich-text 전송을 쓴다. GitHub 댓글은 Markdown을 지원한다.
+100단어는 넘을 수 없는 상한이지 목표 분량이 아니다.
+전송 계층은 기술 세부를 요청받았을 때도 더 긴 IM 메시지를 거부한다.
+중국어는 단어 분할로 세고, Markdown 링크의 라벨과 주소도 센다.
+긴 복합문, 세미콜론으로 이은 문장, 글머리표 목록, 연달아 보내는 여러 메시지로 이 제한을 피하지 않는다.
+워커는 내부로 보고하고, 사람에게 보이는 Ticket 소식은 오케스트레이터가 맡는다.
+오케스트레이터는 전달할 사실을 뽑아 새 알림을 쓴다. 보고를 그대로 전달하거나 항목별로 줄여서는 안 된다.
+답할 때는 원본 라우팅 메타데이터와 워커 보고를 쓴다. 빠진 기술적 사실은 직접 조사하지 말고 워커의 보고를 기다리거나, Ticket이 idle이면 orchestrator_ticket_request_status로 보고를 요청한다.
+요청이 시작된 Feishu Thread를 쓴다. 수신자를 추측하거나 비공개 자료를 GitHub에 옮기지 않는다.
+GitHub에서 시작된 Ticket은 명시적인 Feishu 목적지가 없으면 원래 출처의 답글 경로를 유지한다.

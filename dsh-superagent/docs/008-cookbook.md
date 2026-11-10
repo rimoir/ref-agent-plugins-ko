@@ -1,36 +1,36 @@
-# 008 Cookbook
+# 008 쿡북
 
-This cookbook shows how to extend dsh-superagent. It uses the terms in [001 Domain model](001-domain.md) and [002 Authorization](002-authorization.md), and the components in [007 Architecture](007-architecture.md).
+이 쿡북은 dsh-superagent를 확장하는 방법을 보여 준다. [001 Domain model](001-domain.md)과 [002 Authorization](002-authorization.md)의 용어, [007 Architecture](007-architecture.md)의 구성 요소를 쓴다.
 
-## Add a Source
+## Source 추가하기
 
-This recipe implements a Source kind called `webhook`. It reads an imaginary message queue through an invented CLI, `hookq`, and converts messages to Triggers. All other interfaces are part of dsh-superagent.
+이 레시피는 `webhook`이라는 Source kind를 구현한다. 지어낸 CLI `hookq`로 가상의 메시지 큐를 읽고 메시지를 Trigger로 바꾼다. 그 밖의 인터페이스는 모두 dsh-superagent의 것이다.
 
-The implementation has four responsibilities: translate events, define receiving and authorization rules, provide replies and context, and maintain a polling loop. The numbered steps build those pieces in order.
+구현이 맡는 일은 네 가지다. 이벤트를 변환하고, 수신과 권한 규칙을 정하고, 답장과 맥락을 제공하고, 폴링 루프를 유지한다. 번호 붙은 단계가 이 조각들을 차례로 만든다.
 
-The example assumes this CLI contract:
+예시는 다음 CLI 계약을 가정한다.
 
-- `hookq pull --after <n> --json` prints the messages after position `n`, oldest first: `{"me": "<the agent's id on the queue>", "items": […], "next": <position>}`. An item has `id`, `conversation`, `thread` (the id of the message that started its thread, absent on that message), `sender` with `id` and `bot`, `mentions_me`, `text`, `at` and `url`.
-- `hookq reply --conversation <id> --to <message id> --key <key> --text <text>` replies under a message, once per key. For a conversation that was deleted it fails with `{"error": {"code": 410, "message": "…"}}` on standard error.
-- `hookq thread --conversation <id> --root <message id> --json`, with `--after <cursor>` for a later page, prints a page of a thread, oldest first: `{"items": […], "next": "<cursor>"}`, without `next` on the last page.
+- `hookq pull --after <n> --json`은 위치 `n` 뒤의 메시지를 오래된 순으로 출력한다: `{"me": "<the agent's id on the queue>", "items": […], "next": <position>}`. 항목에는 `id`, `conversation`, `thread`(그 스레드를 시작한 메시지의 id, 시작 메시지 자신에는 없음), `id`와 `bot`을 가진 `sender`, `mentions_me`, `text`, `at`, `url`이 있다.
+- `hookq reply --conversation <id> --to <message id> --key <key> --text <text>`는 메시지 아래에 답장을 단다. 키 하나에 한 번만 단다. 삭제된 대화에서는 표준 오류에 `{"error": {"code": 410, "message": "…"}}`를 내고 실패한다.
+- `hookq thread --conversation <id> --root <message id> --json`은 스레드의 한 페이지를 오래된 순으로 출력한다: `{"items": […], "next": "<cursor>"}`. 다음 페이지는 `--after <cursor>`로 읽고, 마지막 페이지에는 `next`가 없다.
 
-Put the kind and its plugin entry in `src/sources/webhook.ts`, following `src/sources/github.ts`. If the Source grows, split translation, Channel and polling code into separate modules as the Feishu Source does.
+kind와 플러그인 엔트리는 `src/sources/github.ts`를 본떠 `src/sources/webhook.ts`에 둔다. Source가 커지면 Feishu Source처럼 변환, Channel, 폴링 코드를 별도 모듈로 나눈다.
 
-### 1. Map the events onto the domain
+### 1. 이벤트를 도메인에 대응시키기
 
-Choose stable mappings before writing code. Trigger ids, Thread ids and Channel addresses are persisted, so changing them later can disconnect existing records.
+코드를 쓰기 전에 안정적인 대응을 정한다. Trigger id, Thread id, Channel 주소는 저장되므로 나중에 바꾸면 기존 기록과 연결이 끊길 수 있다.
 
-| Concept | For the webhook queue |
+| 개념 | webhook 큐에서 |
 | --- | --- |
-| Trigger | One message |
-| Thread | A message and the replies to it in one conversation: `<conversation>:<id of the first message>` |
-| Actor | The sender's id on the queue, as the allowed list names it |
-| Channel address | The conversation and the message a reply goes under |
-| Receiving scope | A conversation, with its own row in the admission table |
+| Trigger | 메시지 하나 |
+| Thread | 한 대화 안의 메시지와 그 답장들: `<conversation>:<id of the first message>` |
+| Actor | 허용 목록이 부르는 대로의, 큐에서의 발신자 id |
+| Channel 주소 | 답장이 달릴 대화와 메시지 |
+| 수신 범위 | 대화 하나. admission 표에 자기 행이 있다 |
 
-### 2. Configuration: schema, fields, facts and health
+### 2. 설정: schema, fields, facts, health
 
-The module imports what the steps below use:
+모듈은 아래 단계에서 쓰는 것을 import한다.
 
 ```ts
 import type { Context } from '@deepseek-ai/cordis'
@@ -68,35 +68,35 @@ export const webhookKind: SourceKind<WebhookConfig> = {
       label: { zh: '轮询间隔 / 秒', en: 'Polling interval / seconds' } },
   ],
   health: ['webhook'],
-  // find, scope, channel, threadContext, policy and environment follow in the next steps.
+  // find, scope, channel, threadContext, policy, environment는 다음 단계에서 이어진다.
 }
 ```
 
-- `kind` is the stable Source id. It appears in Trigger `source`, Thread-key prefixes, the `source:webhook` settings block and the Source Policy.
-- `schema` validates stored configuration and supplies defaults. Before an operator saves an instance, the registry creates an enabled instance from those defaults. Make defaults receive nothing; this example defaults to no conversations.
-- `fields` generates the Source settings form without custom panel code. A `rows` field edits entries keyed by its first column; `advanced` hides less common settings. Implement `refreshLabels` if the Source can resolve ids to display names. Save those names under `KV.sources.labels(kind)`. Columns with `choose` and `refresh` can then offer them.
-- Optional `facts(deployment)` displays values derived by setup, such as the account behind a CLI. Setup currently checks only GitHub and Feishu fields listed in `SETUP_FIELDS`, so this example supplies no facts.
-- `health` declares the Source's health entries, initially `starting`. Registration claims each name and refuses collisions with entries such as `runtime`, `reply`, `worker` or effect kinds. Use the kind's name and reserve `sync:<id>` for Policy syncs. An `error` makes the status script exit 2 and the hourly check notify the operator, so report it only when human action may be needed.
+- `kind`는 바뀌지 않는 Source id다. Trigger의 `source`, Thread 키 접두어, `source:webhook` 설정 블록, Source Policy에 나타난다.
+- `schema`는 저장된 설정을 검증하고 기본값을 채운다. 운영자가 인스턴스를 저장하기 전에는 레지스트리가 이 기본값으로 켜진 인스턴스를 만든다. 그러니 기본값은 아무것도 받지 않게 한다. 이 예시의 기본값은 대화가 하나도 없는 것이다.
+- `fields`는 패널 코드를 따로 쓰지 않고 Source 설정 폼을 만든다. `rows` 필드는 첫 열을 키로 하는 항목들을 편집하고, `advanced`는 덜 쓰는 설정을 숨긴다. Source가 id를 표시 이름으로 풀 수 있으면 `refreshLabels`를 구현한다. 그 이름은 `KV.sources.labels(kind)` 아래에 저장한다. 그러면 `choose`와 `refresh`가 있는 열이 그 이름을 보여 줄 수 있다.
+- 선택 항목인 `facts(deployment)`는 CLI 뒤의 계정처럼 설정 과정이 알아낸 값을 보여 준다. 지금 설정 과정은 `SETUP_FIELDS`에 나열된 GitHub와 Feishu 필드만 확인하므로 이 예시는 facts를 주지 않는다.
+- `health`는 Source의 상태 항목을 선언한다. 처음 값은 `starting`이다. 등록할 때 각 이름을 차지하고 `runtime`, `reply`, `worker`, effect kind 같은 항목과 겹치면 거부한다. kind 이름을 쓰고, `sync:<id>`는 Policy 동기화용으로 남겨 둔다. `error`를 알리면 상태 스크립트가 2로 끝나고 매시간 점검이 운영자에게 알리므로 사람이 손써야 할 수 있을 때만 알린다.
 
-### 3. Translate a message into a Trigger
+### 3. 메시지를 Trigger로 변환하기
 
-Validate CLI responses before converting them:
+변환하기 전에 CLI 응답을 검증한다.
 
 ```ts
-/** One message as `hookq pull` and `hookq thread` print it. */
+/** `hookq pull`과 `hookq thread`가 출력하는 메시지 하나. */
 const MessageSchema = z.looseObject({
   id: z.string().min(1), conversation: z.string().min(1), thread: z.string().optional(),
   sender: z.looseObject({ id: z.string(), bot: z.boolean().default(false) }), mentions_me: z.boolean().default(false),
   text: z.string(), at: z.string(), url: z.string().optional(),
 })
 type QueueMessage = z.infer<typeof MessageSchema>
-/** The answer of `hookq pull`, whose items are read one by one, and of `hookq thread`. */
+/** `hookq pull`의 응답(항목을 하나씩 읽는다)과 `hookq thread`의 응답. */
 const PageSchema = z.looseObject({ me: z.string(), items: z.array(z.unknown()), next: z.number().int() })
 const ThreadPageSchema = z.looseObject({ items: z.array(MessageSchema), next: z.string().optional() })
 ```
 
 ```ts
-/** The Trigger of one queue message; the agent's own messages produce none. */
+/** 큐 메시지 하나의 Trigger. 에이전트 자신의 메시지는 Trigger를 만들지 않는다. */
 export function webhookTrigger(message: QueueMessage, me: string): Trigger | undefined {
   if (message.sender.id === me) return undefined
   const thread = `${message.conversation}:${message.thread ?? message.id}`
@@ -117,22 +117,22 @@ export function webhookTrigger(message: QueueMessage, me: string): Trigger | und
 }
 ```
 
-- **Stable ids.** Derive the Trigger id from the queue id through `key`. `Engine.receive` returns `duplicate` for stored ids, and duplicate accepts create only one Ticket. Re-reading messages is therefore safe. To treat edits as new events, include an edit version in the id, as GitHub does with comment `updated_at`.
-- **Threads.** The first Thread is primary and owns the Eval. Additional Threads add Correlation context. The Source chooses the id; its full key is `webhook:<id>`.
-- **Sender.** Use Source-native ids in `actor`. Set `human: false` for bots and CI. Listed bots can only become inferred candidates. An empty actor id, as for CI, uses the admission cell for unlisted, unaddressed senders. Set `addressed` to `mention` or `direct` only when the message actually addresses the agent; this gives an allowed person's message explicit strength. Never produce a Trigger for the agent's own message.
-- **Reply destination and metadata.** `channel` identifies where replies go; `url` links to the source message. `channel.thread` groups messages for ordered delivery: a Ticket's later messages wait behind its earlier ones until an earlier message has failed three times. Other Tickets do not wait. Keep Source-specific fields in `meta`, such as the receiving conversation and Thread root. Both `meta` and `text` are untrusted data, not authorization.
+- **안정적인 id.** Trigger id는 `key`로 큐 id에서 만든다. `Engine.receive`는 이미 저장된 id에 `duplicate`를 돌려주고, 중복 수락은 Ticket을 하나만 만든다. 그래서 메시지를 다시 읽어도 안전하다. 편집을 새 이벤트로 다루려면 GitHub가 댓글의 `updated_at`을 쓰듯 id에 편집 버전을 넣는다.
+- **Thread.** 첫 Thread가 주 Thread이고 Eval을 가진다. 추가 Thread는 Correlation 맥락을 더한다. id는 Source가 정하고, 전체 키는 `webhook:<id>`다.
+- **발신자.** `actor`에는 Source 고유의 id를 쓴다. 봇과 CI에는 `human: false`를 둔다. 목록에 있는 봇은 추론 후보만 될 수 있다. CI처럼 actor id가 비어 있으면 목록에 없고 부르지도 않은 발신자의 admission 칸을 쓴다. `addressed`는 메시지가 실제로 에이전트를 부를 때만 `mention`이나 `direct`로 둔다. 그러면 허용된 사람의 메시지가 explicit 강도를 얻는다. 에이전트 자신의 메시지에는 절대 Trigger를 만들지 않는다.
+- **답장 대상과 메타데이터.** `channel`은 답장이 갈 곳을, `url`은 원본 메시지 링크를 나타낸다. `channel.thread`는 순서대로 전달할 메시지를 묶는다. 한 Ticket의 나중 메시지는 앞선 메시지 뒤에서 기다리고, 앞선 메시지가 세 번 실패하면 더 기다리지 않는다. 다른 Ticket은 기다리지 않는다. 수신한 대화와 Thread 루트처럼 Source 고유의 필드는 `meta`에 둔다. `meta`와 `text`는 모두 믿을 수 없는 데이터이며 권한 근거가 아니다.
 
-Agents can read the new kind through `orchestrator_read trigger/<id>` and `thread/<key>`. These expose message text, disposition and neighboring Triggers. A new kind does not automatically receive a built-in skill, resources for original service records or pull-request binding.
+에이전트는 `orchestrator_read trigger/<id>`와 `thread/<key>`로 새 kind를 읽을 수 있다. 이 둘은 메시지 본문, 처리 결과, 이웃 Trigger를 보여 준다. 새 kind는 내장 스킬, 원래 서비스 기록용 리소스, pull request 연결을 저절로 얻지 않는다.
 
-Text search works without extra code. Implement `find(query)` when people use Source-specific references such as message ids, URLs or `#12`. Return the Thread keys and search terms those references identify:
+텍스트 검색은 코드를 더 쓰지 않아도 된다. 사람들이 메시지 id, URL, `#12` 같은 Source 고유의 참조를 쓴다면 `find(query)`를 구현한다. 그 참조가 가리키는 Thread 키와 검색어를 돌려준다.
 
 ```ts
   find: query => ({ threads: [], terms: [...new Set(query.match(/\bm[0-9]+\b/g) ?? [])] }),
 ```
 
-Here a queue message id in the query, such as `m42`, searches the Triggers for it.
+여기서는 쿼리 안의 큐 메시지 id(예: `m42`)로 Trigger를 검색한다.
 
-### 4. What the Source receives: scope
+### 4. Source가 받는 것: scope
 
 ```ts
   scope({ meta }, config) {
@@ -142,13 +142,13 @@ Here a queue message id in the query, such as `m42`, searches the Triggers for i
   },
 ```
 
-The Engine calls `scope` through `SourceRegistry` for each incoming Trigger. Out-of-scope messages are stored as filtered with their reason and create no Thread. Pass messages to `receive` rather than silently dropping them in the polling loop, so the panel can explain filtering.
+Engine은 들어오는 Trigger마다 `SourceRegistry`를 거쳐 `scope`를 부른다. 범위 밖 메시지는 이유와 함께 filtered로 저장되고 Thread를 만들지 않는다. 폴링 루프에서 조용히 버리지 말고 `receive`로 넘긴다. 그래야 패널이 걸러진 이유를 설명할 수 있다.
 
-`observed: true` means the Source receives unaddressed messages in that scope, allowing admission-table decisions for them. `row` identifies the corresponding admission row.
+`observed: true`는 Source가 그 범위에서 에이전트를 부르지 않은 메시지도 받는다는 뜻이다. 그러면 그 메시지에 admission 표의 결정을 적용할 수 있다. `row`는 해당 admission 행을 가리킨다.
 
-Revalidation calls `scope` with the Mandate's stored metadata. Make it depend only on `meta` and configuration. Resuming requires `listened`, not `observed`. Without `scope`, a kind receives every Trigger it produces but observes none.
+재검증은 Mandate에 저장된 메타데이터로 `scope`를 부른다. 그러니 `scope`는 `meta`와 설정에만 의존하게 한다. 재개에는 `observed`가 아니라 `listened`가 필요하다. `scope`가 없으면 kind는 자기가 만든 Trigger를 모두 받지만 아무것도 observe하지 않는다.
 
-### 5. Replies: the Channel
+### 5. 답장: Channel
 
 ```ts
   channel: {
@@ -174,17 +174,17 @@ export async function sendWebhook(host: Pick<SourceContext, 'commands'>, message
 }
 ```
 
-- **Idempotent sends.** Outbox calls `SourceRegistry.send`, which invokes `channel.send`. Messages wait while the Source plugin is unloaded. A send may fail after the remote service received it, so retries must not duplicate messages. Use `message.id` as an idempotency key: `hookq` supports `--key`; GitHub stores a hidden comment marker; Feishu accepts an idempotency key.
-- **Permanent versus retryable failure.** Return `sent` on success and `gone` only when delivery is permanently impossible, such as the example's 410. A gone message is retained as dropped and never queued again; it appears in `GET sources` and on the Source page. Throw for other failures so Outbox retries after 5 seconds, doubling to 300 seconds. `CliError.code` is the code reported by the CLI output.
-- **Allowed destinations.** `allowed(address, config)` checks only the saved address and current configuration. Put every required fact in the address; for example, Feishu records whether the chat is direct. A destination no longer listened to is dropped, while a disabled Source leaves messages waiting. Without `allowed`, all addresses are permitted while the Source is enabled.
-- **Links.** `link(address, links)` returns the URL and label the panel displays through `SourceRegistry.link`.
+- **멱등 전송.** Outbox가 `SourceRegistry.send`를 부르고, 이것이 `channel.send`를 호출한다. Source 플러그인이 내려가 있는 동안 메시지는 기다린다. 원격 서비스가 받은 뒤에 전송이 실패할 수도 있으므로 재시도가 메시지를 중복시키면 안 된다. `message.id`를 멱등 키로 쓴다. `hookq`는 `--key`를 지원하고, GitHub는 숨은 댓글 표식을 저장하고, Feishu는 멱등 키를 받는다.
+- **영구 실패와 재시도할 실패.** 성공하면 `sent`를, 예시의 410처럼 전달이 영영 불가능할 때만 `gone`을 돌려준다. gone 메시지는 dropped로 남고 다시 큐에 들어가지 않는다. `GET sources`와 Source 페이지에 나타난다. 그 밖의 실패에는 예외를 던진다. 그러면 Outbox가 5초 뒤 다시 시도하고 간격을 두 배씩 늘려 300초까지 간다. `CliError.code`는 CLI 출력이 알린 코드다.
+- **허용된 대상.** `allowed(address, config)`는 저장된 주소와 현재 설정만 확인한다. 필요한 사실은 모두 주소에 넣는다. 예를 들어 Feishu는 채팅이 다이렉트인지 기록한다. 더는 수신하지 않는 대상의 메시지는 버리고, Source가 꺼져 있으면 메시지를 기다리게 둔다. `allowed`가 없으면 Source가 켜져 있는 동안 모든 주소를 허용한다.
+- **링크.** `link(address, links)`는 패널이 `SourceRegistry.link`로 보여 줄 URL과 라벨을 돌려준다.
 
-### 6. Thread context for assessments
+### 6. 평가용 Thread 맥락
 
 ```ts
   threadContext: {
     messageId: trigger => String(trigger.meta.messageId ?? ''),
-    // A queue thread is flat: its root, and the message a reply answers, are on its first page, as on GitHub.
+    // 큐 스레드는 평평하다. GitHub처럼 루트와 답장이 가리키는 메시지가 첫 페이지에 있다.
     read: async (commands, trigger, _part, cursor) => {
       const page = ThreadPageSchema.parse(JSON.parse(await commands.run('hookq', ['thread', '--conversation',
         String(trigger.meta.conversation), '--root', String(trigger.meta.root), '--json', ...(cursor ? ['--after', cursor] : [])])))
@@ -195,21 +195,21 @@ export async function sendWebhook(host: Pick<SourceContext, 'commands'>, message
   },
 ```
 
-Proactive assessment needs the conversation around a Trigger. `orchestrator_eval` reads an initial window; `orchestrator_eval_read` expands pages, the root or the parent message. Implement the optional `threadContext` interface to provide these reads:
+먼저 나서는 평가에는 Trigger 주변의 대화가 필요하다. `orchestrator_eval`은 처음 구간을 읽고, `orchestrator_eval_read`는 페이지, 루트, 부모 메시지로 넓혀 읽는다. 이 읽기를 제공하려면 선택 인터페이스 `threadContext`를 구현한다.
 
-- `read(commands, trigger, part, cursor, config)` returns a `ContextPart`. Its `messages` use `ContextMessage`: `{id, from, at, text}` plus applicable `bot`, `deleted`, `reply_to`, `url`, `path` and `line` fields. `next` is omitted on the last page. `body` is the content shown to the assessing Session, here the same messages. Optional `status` can describe special results such as Feishu's `chat_neighbours`. `part` is `thread`, `root` or `parent`.
-- `messageId(trigger)` finds the Trigger's own message among them.
-- `images(text)` and `image(…)` are for a kind whose messages carry images, as Feishu's do; the example leaves them out.
+- `read(commands, trigger, part, cursor, config)`는 `ContextPart`를 돌려준다. 그 `messages`는 `ContextMessage` 형식이다. `{id, from, at, text}`에 해당하는 `bot`, `deleted`, `reply_to`, `url`, `path`, `line` 필드를 더한다. 마지막 페이지에서는 `next`를 뺀다. `body`는 평가하는 Session에게 보여 줄 내용이고 여기서는 같은 메시지다. 선택 항목 `status`는 Feishu의 `chat_neighbours` 같은 특수한 결과를 나타낼 수 있다. `part`는 `thread`, `root`, `parent` 중 하나다.
+- `messageId(trigger)`는 그중 Trigger 자신의 메시지를 찾는다.
+- `images(text)`와 `image(…)`는 Feishu처럼 메시지에 이미지가 실리는 kind를 위한 것이다. 예시에서는 뺀다.
 
-A kind without `threadContext` gives assessments no Thread context; the Trigger's own text stays readable.
+`threadContext`가 없는 kind는 평가에 Thread 맥락을 주지 않는다. Trigger 자신의 본문은 여전히 읽을 수 있다.
 
-If messages reply to earlier messages, add `repliesTo(trigger)`. It returns the corresponding Trigger id, allowing follow-up notices and worker Inputs to show the replied-to message when stored. For example, if `hookq` supplies `reply_to` and translation stores it as `meta.replyTo`:
+메시지가 앞선 메시지에 답하는 구조라면 `repliesTo(trigger)`를 추가한다. 이 함수는 해당 Trigger id를 돌려주고, 그러면 후속 알림과 워커 Input이 저장된 답장 대상 메시지를 보여 줄 수 있다. 예를 들어 `hookq`가 `reply_to`를 주고 변환 단계가 그것을 `meta.replyTo`로 저장한다면 다음과 같다.
 
 ```ts
   repliesTo: trigger => typeof trigger.meta.replyTo === 'string' ? key('webhook', trigger.meta.replyTo) : undefined,
 ```
 
-### 7. Who may ask: the Source's part of the Policy
+### 7. 누가 요청할 수 있는가: Policy 중 Source의 부분
 
 ```ts
   policy: {
@@ -227,13 +227,13 @@ If messages reply to earlier messages, add `repliesTo(trigger)`. It returns the 
   },
 ```
 
-- `schema` validates the Source Policy, including `allowed` sender ids. Id comparison is case-insensitive. Admission tables are validated separately and shared across kinds. This Policy part is saved at `policy.sources.webhook` and contributes to the Policy version.
-- `fields` generates the form under **Eval → On each Source**, beginning with `allowed`. `explicit` explains how to address the agent. Optional `unnamed: {person, bot}` supplies display labels for opaque ids such as Feishu's `ou_…`; this example omits it because queue ids are readable names.
-- `rows(config)` lists admission scopes and their available cells. Each row id must match the `row` returned by `scope`. Unaddressed-message cells are available only where the Source observes those messages. Kinds without `rows` use default cells.
-- Optional `bots` lists bots eligible for inferred candidacy, using the same entry shape as `allowed`. Without it, no bot is admitted.
-- Optional `sync: {label, ready(part), run(host, part, signal)}` refreshes membership at startup and on **Sync now**. Feishu uses chat membership. Failures appear under `sync:<id>` and retry after one minute, doubling to one hour until successful.
+- `schema`는 `allowed` 발신자 id를 포함해 Source Policy를 검증한다. id 비교는 대소문자를 가리지 않는다. admission 표는 따로 검증하고 모든 kind가 함께 쓴다. 이 Policy 부분은 `policy.sources.webhook`에 저장되고 Policy 버전에 반영된다.
+- `fields`는 **Eval → On each Source** 아래의 폼을 만들고 `allowed`부터 보여 준다. `explicit`는 에이전트를 부르는 방법을 설명한다. 선택 항목 `unnamed: {person, bot}`는 Feishu의 `ou_…`처럼 읽을 수 없는 id에 표시 라벨을 준다. 큐 id는 읽을 수 있는 이름이라 이 예시는 생략한다.
+- `rows(config)`는 admission 범위와 쓸 수 있는 칸을 나열한다. 각 행 id는 `scope`가 돌려주는 `row`와 같아야 한다. 부르지 않은 메시지의 칸은 Source가 그 메시지를 observe하는 곳에서만 쓸 수 있다. `rows`가 없는 kind는 기본 칸을 쓴다.
+- 선택 항목 `bots`는 추론 후보가 될 수 있는 봇을 `allowed`와 같은 항목 형식으로 나열한다. 없으면 어떤 봇도 받아들이지 않는다.
+- 선택 항목 `sync: {label, ready(part), run(host, part, signal)}`는 시작할 때와 **Sync now**를 누를 때 멤버를 새로 고친다. Feishu는 채팅 멤버를 쓴다. 실패는 `sync:<id>` 아래에 나타나고, 1분 뒤 다시 시도하며 성공할 때까지 간격을 두 배씩 늘려 한 시간까지 간다.
 
-### 8. Variables for the Executor
+### 8. Executor용 변수
 
 ```ts
   environment: {
@@ -245,11 +245,11 @@ If messages reply to earlier messages, add `repliesTo(trigger)`. It returns the 
   },
 ```
 
-Execution settings show declared `variables` beside the prepare command even when the Source is disabled. While enabled, `values` supplies Ticket-specific values using deployment, configuration and the originating Trigger.
+Execution 설정은 Source가 꺼져 있어도 선언된 `variables`를 prepare 명령 옆에 보여 준다. 켜져 있는 동안 `values`가 배포, 설정, 출발 Trigger로 Ticket별 값을 채운다.
 
-The prepare command reads environment variables; the worker reads their values in its instructions. Use the `DSH_SUPERAGENT_<KIND>_…` prefix, return an empty value for Tickets from another Source, and never include credentials.
+prepare 명령은 환경 변수를 읽고, 워커는 지시문에서 그 값을 읽는다. `DSH_SUPERAGENT_<KIND>_…` 접두어를 쓰고, 다른 Source에서 온 Ticket에는 빈 값을 돌려주고, 자격 증명은 절대 넣지 않는다.
 
-### 9. The plugin entry and its loop
+### 9. 플러그인 엔트리와 루프
 
 ```ts
 export const name = 'dsh-superagent-webhook'
@@ -259,7 +259,7 @@ export function apply(ctx: Context): void {
   ctx.effect(() => {
     const source = sourceContext(ctx.orchestrator, webhookKind)
     const controller = new AbortController()
-    // DSH ends its process on an unhandled rejection, so a failure that escapes the loop becomes the Source's health.
+    // DSH는 처리되지 않은 rejection이 나면 프로세스를 끝내므로, 루프를 빠져나온 실패는 Source의 상태로 바꾼다.
     const running = watch(source, controller.signal)
       .catch((error: unknown) => { source.report('webhook', { state: 'error', detail: String(error) }) })
     return async () => { controller.abort(); await running }
@@ -267,12 +267,12 @@ export function apply(ctx: Context): void {
 }
 ```
 
-The plugin injects `orchestrator`. Its first effect registers the kind and unregisters it on disposal. The second runs the polling loop with a `SourceContext`. Disposal aborts the loop and awaits completion, including during application stop or restart.
+플러그인은 `orchestrator`를 주입받는다. 첫 effect는 kind를 등록하고 해제될 때 등록을 푼다. 두 번째 effect는 `SourceContext`로 폴링 루프를 돌린다. 해제하면 루프를 중단시키고 끝날 때까지 기다린다. 애플리케이션이 멈추거나 재시작할 때도 마찬가지다.
 
 ```ts
 async function watch(ctx: SourceContext, signal: AbortSignal): Promise<void> {
   await ctx.ready
-  // Setup restarts dsh-superagent once it resolves the accounts; until then the Source reads nothing.
+  // 설정 과정은 계정을 확인하면 dsh-superagent를 재시작한다. 그때까지 Source는 아무것도 읽지 않는다.
   if (!ctx.configured()) { ctx.report('webhook', health('paused', 'setupPending')); return }
   let failures = 0
   while (!signal.aborted) {
@@ -286,7 +286,7 @@ async function watch(ctx: SourceContext, signal: AbortSignal): Promise<void> {
         ctx.report('webhook', { state: 'ready', detail: `${read} messages, ${unreadable} unreadable`, at })
       } catch (error) {
         failures += 1
-        // One network failure is retried on the next round; three in a row need a person.
+        // 네트워크 실패 한 번은 다음 회차에 다시 시도한다. 세 번 연속이면 사람이 봐야 한다.
         if (!signal.aborted && failures >= 3) {
           ctx.report('webhook', health('error', 'pollFailures', { count: String(failures), error: String(error) }))
         }
@@ -296,7 +296,7 @@ async function watch(ctx: SourceContext, signal: AbortSignal): Promise<void> {
   }
 }
 
-/** Read the queue after the cursor, take in each message, then move the cursor past them. */
+/** 커서 뒤의 큐를 읽고 메시지를 하나씩 받아들인 뒤 커서를 그 뒤로 옮긴다. */
 export async function pollQueue(ctx: SourceContext, signal: AbortSignal): Promise<{ read: number; unreadable: number }> {
   const after = ctx.state.get(KV.webhook.cursor) ?? 0
   const output = await ctx.commands.withSignal(signal).run('hookq', ['pull', '--after', String(after), '--json'])
@@ -318,29 +318,29 @@ export async function pollQueue(ctx: SourceContext, signal: AbortSignal): Promis
 ```
 
 
-- **Setup and the switch.** Wait for `ctx.ready`, and read nothing while `ctx.configured()` is false. Read `ctx.config(kind)` on every round: it is undefined while the Source is off.
-- **Cursors.** Store read positions in `ctx.state` using typed entries in `KV` (`src/kv.ts`), such as `webhook: {cursor: record<number>('webhook-cursor')}`. `tests/store.spec.ts` requires key literals to appear only in that registry. External packages can define keys with exported `record` and `family`. Setting `undefined` removes a record; `ctx.atomic` groups writes in a transaction.
+- **설정과 스위치.** `ctx.ready`를 기다리고, `ctx.configured()`가 false인 동안에는 아무것도 읽지 않는다. `ctx.config(kind)`는 회차마다 읽는다. Source가 꺼져 있으면 undefined다.
+- **커서.** 읽은 위치는 `KV`(`src/kv.ts`)의 타입 있는 항목으로 `ctx.state`에 저장한다. 예: `webhook: {cursor: record<number>('webhook-cursor')}`. `tests/store.spec.ts`는 키 리터럴이 그 레지스트리에만 나오도록 요구한다. 외부 패키지는 export된 `record`와 `family`로 키를 정의할 수 있다. `undefined`를 넣으면 기록이 지워지고, `ctx.atomic`은 쓰기를 트랜잭션 하나로 묶는다.
 
-  Advance a cursor only after every covered Trigger has been stored. An interrupted round leaves the cursor unchanged; stable ids make replay safe. For timestamp cursors, `cursorAt(started)` from `src/sources/poll.ts` subtracts five seconds to allow for late remote writes.
-- **Thread metadata.** After receiving a Trigger, call `ctx.threads.describe(key, {label, url, facts})` to populate its display information. `ctx.threads.patch(key, meta)` delegates to `threads.patchMeta`, setting Source-owned keys or removing them when the value is `undefined`. Both ignore absent Threads, including those of filtered Triggers.
-- **Per-item errors.** Count malformed items and continue rather than failing the entire batch. `validItems(item, list, tally)` in `src/infra/commands.ts` supports this pattern. For independently polled Threads, use `pollThreads` from `src/sources/poll.ts`; it records each failure as `pollError`. Its `polled` predicate keeps live subscriptions and a two-week window after the later of the last Trigger and Ticket end.
-- **Health.** Write only declared entries through `ctx.report`. `health(state, code, values)` provides fixed messages such as `setupPending`, `sourceOff` and `pollFailures`. Count consecutive failures before reporting `error`.
-- **Abort.** Pass the signal to `ctx.commands.withSignal(signal)` and to `delay`, and check it between items, so a stop or a restart ends the loop at once.
+  커서는 그 범위의 Trigger를 모두 저장한 뒤에만 옮긴다. 중간에 끊긴 회차는 커서를 그대로 두고, 안정적인 id 덕에 다시 읽어도 안전하다. 타임스탬프 커서라면 `src/sources/poll.ts`의 `cursorAt(started)`가 원격 쓰기가 늦을 것을 감안해 5초를 뺀다.
+- **Thread 메타데이터.** Trigger를 받은 뒤 `ctx.threads.describe(key, {label, url, facts})`를 불러 표시 정보를 채운다. `ctx.threads.patch(key, meta)`는 `threads.patchMeta`에 위임해 Source 소유 키를 정하고, 값이 `undefined`면 지운다. 둘 다 없는 Thread는 무시한다. 걸러진 Trigger의 Thread도 여기에 든다.
+- **항목별 오류.** 형식이 잘못된 항목은 세고 넘어간다. 묶음 전체를 실패시키지 않는다. `src/infra/commands.ts`의 `validItems(item, list, tally)`가 이 방식을 돕는다. Thread를 따로따로 폴링한다면 `src/sources/poll.ts`의 `pollThreads`를 쓴다. 이 함수는 실패를 하나하나 `pollError`로 기록한다. 그 `polled` 조건은 살아 있는 구독과, 마지막 Trigger와 Ticket 종료 중 나중 것 이후 2주 구간을 유지한다.
+- **상태.** `ctx.report`로는 선언한 항목만 쓴다. `health(state, code, values)`가 `setupPending`, `sourceOff`, `pollFailures` 같은 고정 메시지를 준다. `error`를 알리기 전에 연속 실패를 센다.
+- **중단.** 신호를 `ctx.commands.withSignal(signal)`과 `delay`에 넘기고 항목 사이마다 확인한다. 그래야 중지나 재시작이 루프를 바로 끝낸다.
 
-This example does not send Source-originated notices. A Source that needs them calls `ctx.notify`; Outbox delivers them like other replies.
+이 예시는 Source가 먼저 보내는 알림을 보내지 않는다. 그런 알림이 필요한 Source는 `ctx.notify`를 부르고, Outbox가 다른 답장처럼 전달한다.
 
-It also does not bind Threads to Ticket completion. Use `ctx.tickets.bindThread` and `threadClosed` only when a Source's Thread lifecycle determines whether work is done, as GitHub pull requests do. The Engine still decides when the Ticket ends.
+Thread를 Ticket 완료에 연결하지도 않는다. GitHub pull request처럼 Source의 Thread 생애가 작업 완료 여부를 정할 때만 `ctx.tickets.bindThread`와 `threadClosed`를 쓴다. Ticket이 언제 끝나는지는 여전히 Engine이 정한다.
 
-### 10. Register the plugin
+### 10. 플러그인 등록하기
 
-Build the module as its own entry in `tsdown.config.ts`:
+모듈을 `tsdown.config.ts`의 독립 엔트리로 빌드한다.
 
 ```ts
 entry: { index: 'src/index.ts', 'github-watch': 'src/sources/github.ts', 'feishu-watch': 'src/sources/feishu.ts',
   'webhook-watch': 'src/sources/webhook.ts' },
 ```
 
-Then export the built file in `package.json` by adding `"./webhook-watch": "./lib/webhook-watch.js"` to `exports`, and add the plugin to the `insert` list of the bundle's `cordis.patch.yml`, disabled, as Feishu is:
+그다음 `package.json`의 `exports`에 `"./webhook-watch": "./lib/webhook-watch.js"`를 넣어 빌드한 파일을 내보내고, Feishu처럼 꺼진 상태로 번들의 `cordis.patch.yml` `insert` 목록에 플러그인을 추가한다.
 
 ```yaml
     - id: dsh-superagent-webhook
@@ -348,15 +348,15 @@ Then export the built file in `package.json` by adding `"./webhook-watch": "./li
       disabled: true
 ```
 
-Enable the plugin in a profile's `cordis.patch.yml` with `id: dsh-superagent-webhook` and `disabled: false`. Build and restart. The new Source appears in Sources settings and under **Eval → On each Source**.
+프로필의 `cordis.patch.yml`에서 `id: dsh-superagent-webhook`에 `disabled: false`를 두어 플러그인을 켠다. 빌드하고 재시작한다. 새 Source가 Sources 설정과 **Eval → On each Source** 아래에 나타난다.
 
-Add its module and spec to the module and test tables in [007 Architecture](007-architecture.md). `tests/docs.spec.ts` checks that both indexes are complete.
+[007 Architecture](007-architecture.md)의 모듈 표와 테스트 표에 모듈과 spec을 추가한다. `tests/docs.spec.ts`가 두 색인이 빠짐없는지 검사한다.
 
-### 11. Tests
+### 11. 테스트
 
-Create `tests/webhook.spec.ts` using the pattern in `tests/sources.spec.ts`: a real Store in a temporary directory, a `SourceRegistry` with `HealthBoard`, an Engine with stand-in ports, and a `SourceContext` from `sourceContextOf`.
+`tests/sources.spec.ts`의 방식대로 `tests/webhook.spec.ts`를 만든다. 임시 디렉터리의 실제 Store, `HealthBoard`를 가진 `SourceRegistry`, 대역 포트를 단 Engine, `sourceContextOf`로 만든 `SourceContext`를 쓴다.
 
-Mock CLI calls by spying on `Commands.run`. Also spy on `withSignal`, because it normally returns a new `Commands` instance.
+CLI 호출은 `Commands.run`을 spy해서 흉내 낸다. `withSignal`도 spy한다. 원래는 새 `Commands` 인스턴스를 돌려주기 때문이다.
 
 ```ts
 function host(overrides: Partial<SourceContextDeps> = {}) {
@@ -365,7 +365,7 @@ function host(overrides: Partial<SourceContextDeps> = {}) {
     sources: { webhook: { enabled: true, config: { conversations: [{ id: 'ops', listen: 'mentions' }] } } },
     policy: { sources: { webhook: { allowed: [{ id: 'alice' }] } } },
   }))
-  // The registry claims the kind's health entries on the board, where the test reads them.
+  // 레지스트리가 board에서 kind의 상태 항목을 차지하고, 테스트는 거기서 읽는다.
   const board = new HealthBoard()
   const sources = new SourceRegistry(() => store.settings(), board)
   sources.register(webhookKind)
@@ -374,12 +374,12 @@ function host(overrides: Partial<SourceContextDeps> = {}) {
     outbox: { send: vi.fn(), status: () => undefined, withdraw: vi.fn() } })
   const commands = new Commands(() => testDeployment(), {}, new AbortController().signal)
   const receive = vi.fn((trigger: Trigger) => { const result = engine.receive(trigger); engine.evaluateDue(); return result })
-  // The Source's own notices go to the outbox, which keeps their receipts and sends nothing here.
+  // Source 자신의 알림은 outbox로 간다. 여기서 outbox는 영수증만 남기고 아무것도 보내지 않는다.
   const deps: SourceContextDeps = { store, engine, outbox: { send: message => { store.receipts.add(message) } }, commands, sources,
     deployment: testDeployment(), ready: Promise.resolve(), configured: () => true, receive, ...overrides }
   return { ...deps, store, engine, commands, receive, health: board.all, ctx: sourceContextOf(deps, webhookKind) }
 }
-/** The queue as `hookq` answers it. */
+/** `hookq`가 응답하는 큐. */
 function queue(h: ReturnType<typeof host>, answer: () => unknown) {
   vi.spyOn(h.commands, 'withSignal').mockReturnValue(h.commands)
   return vi.spyOn(h.commands, 'run').mockImplementation(async () => JSON.stringify(answer()))
@@ -392,7 +392,7 @@ it('takes in what the queue holds after the cursor, once, and moves the cursor a
   expect(await h.receive.mock.results[0]!.value).toBe('stored')
   expect(await h.receive.mock.results[1]!.value).toBe('filtered')
   expect(h.store.get(KV.webhook.cursor)).toBe(3)
-  // An allowed sender who mentions the agent makes an explicit request.
+  // 에이전트를 멘션한 허용 발신자는 explicit 요청을 만든다.
   expect(h.engine.candidate(key('webhook', 'm1'))?.strength).toBe('explicit')
   await pollQueue(h.ctx, new AbortController().signal)
   expect(await h.receive.mock.results[2]!.value).toBe('duplicate')
@@ -400,26 +400,26 @@ it('takes in what the queue holds after the cursor, once, and moves the cursor a
 })
 ```
 
-`message(id, fields)` builds a queue item. Cover at least:
+`message(id, fields)`는 큐 항목을 만든다. 적어도 다음을 다룬다.
 
-- the translation: a stable id, the Thread, the actor, `human` and `addressed`, and no Trigger for the agent's own message;
-- a round: Triggers stored once, one outside the scope `filtered`, the cursor moved after them, an allowed sender's mention evaluated as `explicit`;
-- a round cut short, which keeps its cursor;
-- `send`: `sent`, `gone` for a 410 only, and a throw for any other failure, with the CLI's error built by `commandError`;
-- the Thread context: the messages of a page and the cursor of the next, as `tests/registry.spec.ts` reads a kind's Threads through `SourceRegistry.threadContext`;
-- the plugin: `apply` registers the kind and reports `setupPending` while setup waits, its disposers unregister the kind, and a failure that escapes the loop becomes the Source's health instead of an unhandled rejection;
-- the Source's part of the Policy and its admission rows, as `tests/registry.spec.ts` and `tests/policy.spec.ts` check the Feishu Source's.
+- 변환: 안정적인 id, Thread, actor, `human`과 `addressed`, 에이전트 자신의 메시지에는 Trigger 없음
+- 한 회차: Trigger가 한 번만 저장되고, 범위 밖 하나는 `filtered`가 되고, 커서가 그 뒤로 옮겨지고, 허용 발신자의 멘션이 `explicit`로 평가됨
+- 중간에 끊긴 회차는 커서를 그대로 둠
+- `send`: `sent`, 410일 때만 `gone`, 그 밖의 실패에는 예외. CLI 오류는 `commandError`로 만든다
+- Thread 맥락: 한 페이지의 메시지와 다음 페이지 커서. `tests/registry.spec.ts`가 `SourceRegistry.threadContext`로 kind의 Thread를 읽는 방식대로 한다
+- 플러그인: `apply`가 kind를 등록하고 설정을 기다리는 동안 `setupPending`을 알림, disposer가 kind 등록을 풂, 루프를 빠져나온 실패가 처리되지 않은 rejection이 아니라 Source의 상태가 됨
+- Policy 중 Source의 부분과 admission 행. `tests/registry.spec.ts`와 `tests/policy.spec.ts`가 Feishu Source를 검사하는 방식대로 한다
 
-### Checklist
+### 점검 목록
 
-1. Map Triggers, Threads, actors, Channel addresses and receiving scopes.
-2. Write the kind: `schema`, `fields`, `health`, and `facts` if setup derives any.
-3. Translate events into Triggers with stable ids, and drop the agent's own.
-4. Decide what the Source receives in `scope`, from `meta` alone.
-5. Give it a Channel whose `send` posts each message once and answers `gone` only when the conversation can never receive it.
-6. Give assessments its Thread context, if it can read a Thread.
-7. Give it a part of the Policy with `allowed` and the admission rows.
-8. Register its execution environment variables.
-9. Write the plugin entry and a loop that waits for setup, follows the switch, moves cursors after `receive`, keeps errors per item, reports health and stops on abort; name the cursors in `KV`.
-10. Add the build entry, the export and the `cordis.patch.yml` insert, and list the module and its spec in the tables of 007.
-11. Test it as `tests/sources.spec.ts` tests the other Sources.
+1. Trigger, Thread, actor, Channel 주소, 수신 범위를 대응시킨다.
+2. kind를 쓴다. `schema`, `fields`, `health`, 그리고 설정 과정이 알아내는 값이 있으면 `facts`를 쓴다.
+3. 이벤트를 안정적인 id의 Trigger로 바꾸고 에이전트 자신의 것은 버린다.
+4. Source가 무엇을 받을지 `scope`에서 `meta`만으로 정한다.
+5. Channel을 준다. 그 `send`는 메시지마다 한 번만 올리고, 대화가 영영 받을 수 없을 때만 `gone`을 답한다.
+6. Thread를 읽을 수 있다면 평가에 Thread 맥락을 준다.
+7. `allowed`와 admission 행을 가진 Policy 부분을 준다.
+8. 실행 환경 변수를 등록한다.
+9. 플러그인 엔트리와 루프를 쓴다. 루프는 설정을 기다리고, 스위치를 따르고, `receive` 뒤에 커서를 옮기고, 오류를 항목별로 다루고, 상태를 알리고, 중단 신호에 멈춘다. 커서 이름은 `KV`에 둔다.
+10. 빌드 엔트리, export, `cordis.patch.yml` insert를 추가하고 007의 표에 모듈과 spec을 올린다.
+11. `tests/sources.spec.ts`가 다른 Source를 테스트하는 방식대로 테스트한다.

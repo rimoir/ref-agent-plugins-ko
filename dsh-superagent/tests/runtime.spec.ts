@@ -1071,7 +1071,7 @@ it('leaves auto-merge to the delivery requirements, with the agent\'s own gh and
   const delivery = runtime.prompts.current().config.delivery
   expect(delivery).toContain('it changes fewer than 200 lines (additions plus deletions);')
   // Auto-merge is never enabled as the agent account; only a merge CLI the section names enables it.
-  expect(delivery).toContain('Never enable auto-merge as the agent account')
+  expect(delivery).toContain('에이전트 계정으로는 절대 auto-merge를 켜지 않는다')
   expect(delivery).toContain('<merge CLI> pr merge <number> --auto --merge --match-head-commit <sha>')
   expect(runtime.prompts.preview(runtime.prompts.current().config).worker).not.toContain('gh-merge')
 })
@@ -1134,10 +1134,10 @@ it('runs a GitHub-only deployment: the GitHub part of the Policy decides alone, 
 it('credits each human reviewer once in the default delivery requirements on every commit of the PR, never with an empty commit', async () => {
   const delivery = runtime.prompts.current().config.delivery
   expect(delivery).toContain('Co-authored-by: <name or login> <id+login@users.noreply.github.com>')
-  expect(delivery).toContain('on every commit of the PR branch')
+  expect(delivery).toContain('PR 브랜치의 모든 커밋에')
   expect(delivery).toContain('git filter-branch -f --msg-filter')
-  expect(delivery).toContain('Never push an empty commit to credit a reviewer.')
-  expect(delivery).toContain('Do not credit bots')
+  expect(delivery).toContain('리뷰어에게 공로를 남기려고 빈 커밋을 push하는 일은 절대 하지 않는다.')
+  expect(delivery).toContain('봇(로그인이 [bot]으로 끝나는 계정')
 })
 
 it('shows a failed reply as a problem with its attempts, an error of the reply effects after three, until it is withdrawn', async () => {
@@ -1526,7 +1526,7 @@ it('refuses the main Session a bash command that runs sleep and a long job wait,
   const { sessionId } = await acceptedTicket()
   expect(guards.get(sessionId)!(bash('sleep 60'))).toBeUndefined()
   // The main Session's role says so.
-  expect(masterPrompt).toContain('Worker reports, follow_up notices, new candidates and a background job\'s end, with its output, arrive by themselves as messages')
+  expect(masterPrompt).toContain('워커 보고, follow_up 알림, 새 후보, 백그라운드 작업 종료(출력 포함)는 알아서 메시지로 도착한다')
 })
 
 it('reads the main Session\'s preset from a registry with or without presetForSession, and takes standard\'s caps when it cannot', async () => {
@@ -1778,7 +1778,7 @@ it('keeps the Policy the main Session judges by in its prompt, after admission a
   const policy = () => { const text = prompt(), at = text.indexOf('## Policy'); return text.slice(at, text.indexOf('\n\n', at)) }
   const settings = runtime.store.settings()
   const line = (rule: { id: string; name: string; instruction: string }) => `- ${rule.name} (${rule.id}): ${rule.instruction}`
-  expect(prompt().indexOf('## Policy')).toBeGreaterThan(prompt().indexOf('Assess proactive candidates yourself'))
+  expect(prompt().indexOf('## Policy')).toBeGreaterThan(prompt().indexOf('능동 후보는 이 Session에서 직접'))
   expect(policy().split('\n').filter(item => item.startsWith('- '))).toEqual(settings.policy.rules.filter(rule => rule.enabled).map(line))
   expect(policy()).toContain(`Policy version ${policyVersion(settings)}; accept mode ${settings.eval.mode}.`)
   // The rules govern proactive candidates only; read beside an explicit request, they must not be taken to refuse it.

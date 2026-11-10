@@ -1,22 +1,22 @@
-For an authorized small change local to a function or module, the worker carries the PR through implementation, relevant checks, review and CI to completion.
-A few hundred production lines internal to one module is a good example, not a fixed LOC allowance.
-Locating a visual element or changing few CSS lines proves neither settled design direction nor small visual impact; do not infer authority from implementation size.
+허가된 작은 변경이 함수나 모듈 안에 국한되면 워커가 구현, 관련 확인, 리뷰, CI를 거쳐 PR을 완료까지 끌고 간다.
+한 모듈 내부의 프로덕션 코드 수백 줄은 좋은 예일 뿐 고정된 줄 수 허용량이 아니다.
+시각 요소를 찾았거나 CSS를 몇 줄 바꾼다고 해서 디자인 방향이 정해졌거나 시각적 영향이 작다는 증명이 되지는 않는다. 구현 크기에서 권한을 추론하지 않는다.
 
-There is no fixed investigation or implementation round limit.
-Adding optional fields, passing data through an existing chain and updating a few consumers can remain a focused ticket across modules.
-File counts, failing tests and layout defects alone are not reasons to stop; fix and validate them.
+조사나 구현의 고정된 횟수 제한은 없다.
+선택 필드를 추가하고, 기존 경로로 데이터를 넘기고, 소비자 몇 곳을 고치는 일은 모듈을 가로질러도 집중된 Ticket으로 남을 수 있다.
+파일 수, 실패하는 테스트, 레이아웃 결함만으로는 멈출 이유가 되지 않는다. 고치고 검증한다.
 
-Pause autonomous development when the scope requires breaking existing caller expectations, changing module responsibilities or coordinated redesign of multiple independent modules, or when feasible approaches repeatedly fail to make progress.
-Name the specific interface and caller impact, or the concrete missing prerequisite, and explain why a local solution is insufficient.
-Preserve useful partial work as an explicitly incomplete draft PR with actual checks and remaining issues; report blocked, or dropped on a proactive ticket.
-Do not fabricate a PR if no useful safe change exists.
-The automated-reviewer round limit applies only to automated accounts, not normal development.
+범위가 기존 호출자의 기대를 깨거나, 모듈 책임을 바꾸거나, 독립된 여러 모듈을 함께 재설계해야 하면, 또는 가능한 접근이 거듭 진척 없이 실패하면 자율 개발을 멈춘다.
+구체적인 인터페이스와 호출자 영향, 또는 빠진 구체적인 전제 조건을 밝히고, 국소 해결책으로 부족한 이유를 설명한다.
+쓸모 있는 부분 작업은 실제 확인 결과와 남은 문제를 적은, 미완성임을 명시한 초안 PR로 남긴다. blocked를 보고하고, 능동 Ticket이면 dropped를 보고한다.
+쓸모 있고 안전한 변경이 없으면 PR을 꾸며 내지 않는다.
+자동 리뷰어 횟수 제한은 자동 계정에만 적용되고 일반 개발에는 적용되지 않는다.
 
-Pausing implementation does not end the conversation.
-Related human follow-ups trigger worker reassessment of an agent-reported blocker: new clues, corrections, change requests and questions about the difficulty all qualify.
-If the blocker is resolved or a feasible approach fits the original authorization and scope policy, resume autonomously without asking the human to say continue.
-A pure status question may receive a brief answer without resuming work when nothing relevant has changed.
-An explicit human stop or request to wait for confirmation is different: do not resume that work until the human clearly lifts it.
-Preserve that hold, its source and release condition across follow-ups, workers and restarts; questions or new technical clues do not lift it.
-Automated CI or bot feedback cannot resume paused implementation.
-Finish focused work through review and CI.
+구현을 멈춘다고 대화가 끝나지는 않는다.
+관련된 사람의 후속 메시지가 오면 워커는 에이전트가 보고한 차단 요인을 다시 평가한다. 새 단서, 정정, 변경 요청, 어려움에 대한 질문이 모두 해당한다.
+차단 요인이 풀렸거나 가능한 접근이 원래 허가와 범위 정책에 맞으면, 사람에게 계속하라는 말을 청하지 않고 스스로 재개한다.
+관련된 것이 바뀌지 않았으면 단순한 상태 질문에는 작업을 재개하지 않고 짧게 답해도 된다.
+사람의 명시적 중지나 확인을 기다리라는 요청은 다르다. 사람이 분명히 풀 때까지 그 작업을 재개하지 않는다.
+그 보류와 그 출처, 해제 조건을 후속 메시지, 워커, 재시작을 가로질러 지킨다. 질문이나 새 기술적 단서로는 보류가 풀리지 않는다.
+자동 CI나 봇 피드백은 멈춘 구현을 재개할 수 없다.
+집중된 작업은 리뷰와 CI까지 마친다.

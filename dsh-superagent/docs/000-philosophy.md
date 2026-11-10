@@ -1,33 +1,33 @@
-# 000 Philosophy
+# 000 철학
 
-dsh-superagent is a framework, and also a way of working with an agent. Its core principle:
+dsh-superagent는 프레임워크이면서 에이전트와 일하는 방식이기도 하다. 핵심 원칙은 이것이다.
 
-**Take as little human attention as possible, and give as much value as possible.**
+**사람의 주의는 되도록 적게 쓰고, 가치는 되도록 많이 준다.**
 
-Every part of the project is judged by the attention it costs. A message, a notification, a question, a setting, a panel element and a paragraph of documentation each cost someone's attention, and each has to give more value than that, or it is removed.
+프로젝트의 모든 부분은 그것이 쓰는 주의로 평가한다. 메시지, 알림, 질문, 설정, 패널 요소, 문서 한 단락은 모두 누군가의 주의를 쓴다. 각각은 그보다 큰 가치를 줘야 하고, 그러지 못하면 없앤다.
 
-## What follows for the agent
+## 에이전트에게 따르는 것
 
-- **It acts only when asked, or when a written rule allows it.** A request counts only when it addresses the agent directly and comes from a person the team allowed: one on an allowed list, or anyone in a conversation the team opened to requests. Work nobody asked for needs a rule the team wrote, and starts in a mode that only records what the agent would have done.
-- **It speaks only when a person must act or can use a result.** It confirms a request once and names what it will do. It stays quiet while it works. It writes again when a result is ready, when it needs a decision, or when it cannot finish. Messages are short and go to the conversation where the request was made.
-- **It asks one concrete question at a time,** in a structured form, so the question reaches the person instead of staying inside a long report.
-- **It stops by impact, not by effort.** A local change goes as far as a reviewable result. A change that needs a design decision stops with a clear question.
-- **It reports honestly.** A draft is marked unfinished, a failure is reported as a failure, and a limit is never bypassed to avoid asking.
+- **요청받았을 때나 글로 쓴 규칙이 허락할 때만 움직인다.** 요청은 에이전트를 직접 부르고, 팀이 허락한 사람에게서 왔을 때만 인정한다. 허락한 사람은 허용 목록에 있는 사람이거나, 팀이 요청을 받도록 열어 둔 대화에 있는 누구나다. 아무도 부탁하지 않은 일에는 팀이 쓴 규칙이 필요하고, 에이전트가 했을 일을 기록만 하는 모드에서 시작한다.
+- **사람이 행동해야 하거나 결과를 쓸 수 있을 때만 말한다.** 요청은 한 번 확인하고 무엇을 할지 밝힌다. 일하는 동안에는 조용히 있다. 결과가 준비됐을 때, 결정이 필요할 때, 끝낼 수 없을 때 다시 쓴다. 메시지는 짧고, 요청이 나온 대화로 간다.
+- **한 번에 구체적인 질문 하나를 묻는다.** 정해진 형식으로 물어서 질문이 긴 보고서 안에 묻히지 않고 사람에게 닿게 한다.
+- **노력이 아니라 영향을 보고 멈춘다.** 국소적인 변경은 리뷰할 수 있는 결과까지 간다. 설계 결정이 필요한 변경은 분명한 질문과 함께 멈춘다.
+- **정직하게 보고한다.** 초안은 미완성으로 표시하고, 실패는 실패로 보고하고, 묻지 않으려고 제한을 우회하지 않는다.
 
-## What follows for the design
+## 설계에 따르는 것
 
-- **Few concepts.** The design has only its domain concepts, such as a Source, and their concrete implementations, such as GitHub and Feishu. A business need becomes an attribute of one of them, or a prompt the agent follows. The design does not add a concept for it.
-- **Few settings.** A default replaces a setting when one value suits almost every team. Behaviour that a team describes in words is prompt text, not a setting.
-- **A panel that shows only what needs a person.** It lists first what waits for a person. A healthy state takes no space.
-- **Documents read in order.** Each numbered document builds only on the ones before it, so a reader never needs a concept that has not been introduced yet.
+- **적은 개념.** 설계에는 Source 같은 도메인 개념과 GitHub, Feishu 같은 구체 구현만 있다. 업무상 필요는 그중 하나의 속성이 되거나 에이전트가 따르는 프롬프트가 된다. 그 필요를 위해 개념을 더하지 않는다.
+- **적은 설정.** 거의 모든 팀에 맞는 값이 하나 있으면 설정 대신 기본값을 둔다. 팀이 말로 설명하는 동작은 설정이 아니라 프롬프트 글이다.
+- **사람이 봐야 할 것만 보여 주는 패널.** 사람을 기다리는 것을 먼저 나열한다. 건강한 상태는 자리를 차지하지 않는다.
+- **순서대로 읽는 문서.** 번호 붙은 각 문서는 앞의 문서만 바탕으로 해서, 읽는 사람이 아직 소개되지 않은 개념을 알아야 할 일이 없다.
 
-## Responsibility
+## 책임
 
-The agent comments, opens pull requests and messages people under accounts your team sees every day. Every message it sends costs your colleagues' attention, and you are responsible for it. The more the agent can do, the more care its operator owes the team:
+에이전트는 팀이 매일 보는 계정으로 댓글을 달고, pull request를 열고, 사람들에게 메시지를 보낸다. 에이전트가 보내는 메시지마다 동료의 주의가 들고, 그 책임은 운영자에게 있다. 에이전트가 많은 일을 할 수 있을수록 운영자는 팀에 더 신경 써야 한다.
 
-- **Start narrow.** Begin with a short allowed list and with proactive work only recorded. Widen both once what the agent would have done looks right.
-- **Tune for less noise.** When the agent is noisy, make its prompts shorter and stricter, or pause it. Do not add more messages to explain the noise.
-- **Do not use it to produce volume.** Mass pull requests, broadcast messages and busywork cost the team more than they give.
-- **Own what it says.** Read what the agent posts in your name, and correct it in the prompts when it is wrong.
+- **좁게 시작한다.** 짧은 허용 목록으로 시작하고 능동 작업은 기록만 한다. 에이전트가 했을 일이 맞아 보이면 둘 다 넓힌다.
+- **소음이 줄도록 조정한다.** 에이전트가 시끄러우면 프롬프트를 짧고 엄격하게 고치거나 멈춘다. 소음을 설명하는 메시지를 더 보태지 않는다.
+- **양을 찍어 내는 데 쓰지 않는다.** pull request 대량 생산, 일괄 메시지, 시늉뿐인 일은 주는 것보다 팀에 드는 비용이 크다.
+- **에이전트가 한 말에 책임진다.** 에이전트가 운영자 이름으로 올린 글을 읽고, 틀렸으면 프롬프트에서 바로잡는다.
 
-The goal is the right help at the right time, and nothing at any other time.
+목표는 맞는 때에 맞는 도움을 주고, 다른 때에는 아무것도 하지 않는 것이다.

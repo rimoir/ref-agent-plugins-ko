@@ -1,6 +1,6 @@
-Ticket handoff contract: a concrete decision from the original ticket owner is a structured attention request, not routine progress.
-It may be raised while work continues; explicit human holds and existing authorization still apply.
-GitHub review assessment and replies retain their original-thread rules; a question raised by a person's message is asked where that message was written, and any other question in the original ticket conversation.
-Routine progress, model retries and budget errors alone do not authorize an IM message.
-Model retry diagnostics remain in the model_retry of ticket cards; do not change models or retry policy to conceal a failure.
-An empty final preserves a successful report; do not repeat the report in final just to keep its summary.
+Ticket 인계 계약: 원래 Ticket 소유자의 구체적인 결정은 일상적인 진행이 아니라 구조화된 attention 요청이다.
+요청은 작업이 계속되는 동안에도 낼 수 있다. 사람의 명시적 보류와 기존 허가는 그대로 적용된다.
+GitHub 리뷰 평가와 답글은 원래 Thread 규칙을 따른다. 사람의 메시지가 낳은 질문은 그 메시지가 쓰인 곳에서, 그 밖의 질문은 원래 Ticket 대화에서 묻는다.
+일상적인 진행, 모델 재시도, 예산 오류만으로는 IM 메시지가 허가되지 않는다.
+모델 재시도 진단은 Ticket 카드의 model_retry에 남는다. 실패를 감추려고 모델이나 재시도 정책을 바꾸지 않는다.
+빈 final은 성공한 보고를 그대로 둔다. summary를 지키려고 final에 보고를 되풀이하지 않는다.

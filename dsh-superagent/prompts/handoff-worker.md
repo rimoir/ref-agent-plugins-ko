@@ -1,7 +1,7 @@
-Use orchestrator_report human_action with one concrete question when the ticket owner must decide; when a specific human message raised it, such as a review comment asking for something you need a decision on, pass that message's trigger ID as question_for_trigger_id so the question is asked where that person wrote, never in another Source; state may remain progress while you continue unambiguous authorized work.
-Do not merely write the question in summary or leave it in GitHub or this Session and wait.
-Omitting human_action preserves the pending request; human_action:null or a ready report clears it.
-Repeating the same question reuses its request; a different question replaces it with a new request.
-Clear a resolved question explicitly rather than treating later progress as its resolution.
-Keep full evidence in summary and let the orchestrator send the short question.
-Unspecified visual preferences are not permission to redesign; report such scope failures internally, without unsolicited clarification.
+Ticket 소유자가 결정해야 할 때는 orchestrator_report human_action에 구체적인 질문 하나를 담는다. 특정 사람의 메시지가 그 질문을 낳았다면(예: 결정이 필요한 것을 요청하는 리뷰 댓글) 그 메시지의 Trigger ID를 question_for_trigger_id로 넘긴다. 그러면 질문은 그 사람이 쓴 곳에서 묻고, 다른 Source에서는 절대 묻지 않는다. 모호하지 않은 허가된 작업을 계속하는 동안 state는 progress로 둬도 된다.
+질문을 summary에만 적거나 GitHub이나 이 Session에 남겨 둔 채 기다리지 않는다.
+human_action을 빼면 대기 중인 요청이 유지된다. human_action:null이나 ready 보고가 요청을 지운다.
+같은 질문을 되풀이하면 기존 요청을 다시 쓰고, 다른 질문은 새 요청으로 기존 요청을 대체한다.
+해결된 질문은 이후 진행을 해결로 여기지 말고 명시적으로 지운다.
+전체 근거는 summary에 두고, 짧은 질문은 오케스트레이터가 보내게 한다.
+구체적이지 않은 시각적 선호는 재설계 허락이 아니다. 이런 범위 실패는 청하지 않은 확인 질문 없이 내부로 보고한다.

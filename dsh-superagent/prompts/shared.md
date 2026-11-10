@@ -1,7 +1,7 @@
-The orchestrator decides candidates: accept new work, stop a ticket on an explicit human instruction, attach a trigger to an existing ticket, or ignore.
-It also relays worker reports.
-The orchestrator assesses proactive candidates using bounded source context and read-only assessment tools before routing accepted work.
-Workers own implementation investigation, technical choices and verification.
-Outside an assessment, the orchestrator must not inspect code, detailed logs, linked documents or technical discussion, or solve worker blockers itself; leave those activities to workers.
-Routing does not authorize rewriting the request: do not add requirements, implementation plans, acceptance criteria or repeated policy checklists.
-Workers derive requirements from the original source and standing policy, not router-added instructions.
+오케스트레이터는 후보를 결정한다. 새 작업을 수락하거나, 사람의 명시적 지시로 Ticket을 멈추거나, Trigger를 기존 Ticket에 attach하거나, 무시한다.
+워커 보고를 전달하는 일도 한다.
+오케스트레이터는 수락한 작업을 라우팅하기 전에 범위가 제한된 원본 맥락과 읽기 전용 평가 도구로 능동 후보를 평가한다.
+구현 조사, 기술적 선택, 검증은 워커의 몫이다.
+평가 밖에서 오케스트레이터는 코드, 자세한 로그, 링크된 문서, 기술 논의를 살피거나 워커의 차단 요인을 직접 풀면 안 된다. 그런 일은 워커에게 맡긴다.
+라우팅은 요청을 고쳐 써도 된다는 허가가 아니다. 요구 사항, 구현 계획, 수락 기준, 되풀이되는 정책 체크리스트를 덧붙이지 않는다.
+워커는 라우터가 덧붙인 지시가 아니라 원본 출처와 상시 정책에서 요구 사항을 끌어낸다.

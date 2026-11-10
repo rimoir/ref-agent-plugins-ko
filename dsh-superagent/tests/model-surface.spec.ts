@@ -332,7 +332,7 @@ function failures(): Map<string, string> {
     }
     // Text only one role reads names the other role's tools only in a sentence that says the other role uses them.
     const other = role === 'orchestrator' ? 'worker' : role === 'worker' ? 'orchestrator' : undefined
-    const names = other === 'worker' ? /\b(workers?|executors?)\b/i : /\b(orchestrator|main session)\b/i
+    const names = other === 'worker' ? /\b(workers?|executors?)\b|워커/i : /\b(orchestrator|main session)\b|오케스트레이터|메인 Session/i
     for (const sentence of sentences(text)) {
       for (const [, count] of sentence.matchAll(/\b(\d+)[- ]words?\b/g)) {
         const limit = /routing/i.test(sentence) ? NOTE_WORDS : IM_WORDS
@@ -399,8 +399,8 @@ it.each(['orchestrator', 'worker'] as const)('keeps the %s within its character 
 it('keeps the routing rules in dispatch, which says the main Session may accept the rest of a stop message as new work', () => {
   const route = toolsOf('orchestrator').get('orchestrator_route')!.description
   const dispatch = surfaces.find(surface => surface.where === 'orchestrator prompt runtime/dispatch')!.text
-  expect(dispatch).toContain('you may accept the rest of the message as new work')
-  expect(dispatch).toContain('decide those whose card already settles them in one orchestrator_route call')
+  expect(dispatch).toContain('메시지의 나머지를 새 작업으로 수락해도 된다')
+  expect(dispatch).toContain('카드만으로 판가름 나는 것들을 orchestrator_route 호출 한 번에')
   expect(route).not.toMatch(/needs a new ticket on another explicit instruction/)
 })
 

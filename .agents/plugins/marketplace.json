@@ -1,0 +1,23 @@
+{
+  "name": "ref-agent-plugins-ko",
+  "interface": {
+    "displayName": "ref-agent-plugins-ko"
+  },
+  "plugins": [
+    {
+      "name": "ponytail",
+      "source": {
+        "source": "local",
+        "path": "./ponytail"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL",
+        "products": [
+          "CODEX"
+        ]
+      },
+      "category": "Productivity"
+    }
+  ]
+}

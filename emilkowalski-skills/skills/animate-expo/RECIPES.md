@@ -32,7 +32,7 @@ export default function RootLayout() {
 import { useState, useEffect, useMemo } from 'react';
 import Animated, {
   useSharedValue, useAnimatedStyle, useAnimatedScrollHandler, useAnimatedReaction,
-  withSpring, withTiming, interpolate, Extrapolation, Easing,
+  withSpring, withTiming, cancelAnimation, interpolate, Extrapolation, Easing,
   FadeInDown, FadeOutDown, LinearTransition,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -86,7 +86,7 @@ function rubberband(overshoot, dimension, constant = 0.55) {
 
 ## 누름 피드백
 
-앱 안의 누를 수 있는 모든 요소에 쓴다. 이 레시피가 빈도 관문을 통과하는 것은 오로지 거의 느껴지지 않기 때문이다. 이만큼 자주 닿는 요소에는 120ms와 3% scale이 상한이다. SKILL.md 1단계에 따라 그보다 길거나 큰 것은 더 드문 순간의 몫이다. 제스처도 공유 값도 없다. CSS 트랜지션 하나가 구현의 전부다.
+앱 안의 누를 수 있는 모든 요소에 쓴다. 이 레시피가 빈도 관문을 통과하는 것은 오로지 거의 느껴지지 않기 때문이다. 120ms와 3% scale로 누름 예산 100–150ms 안에 든다. SKILL.md 1단계에 따라 그보다 길거나 큰 것은 더 드문 순간의 몫이다. 제스처도 공유 값도 없다. CSS 트랜지션 하나가 구현의 전부다.
 
 ```jsx
 import Animated from 'react-native-reanimated';
@@ -133,6 +133,7 @@ const context = useSharedValue(0);
 const pan = useMemo(() => Gesture.Pan()
   .activeOffsetY([-10, 10])   // 가로 스와이프에 양보하고, 확정 전에 의도를 확인한다
   .onStart(() => {
+    cancelAnimation(translateY);     // 돌고 있는 스프링을 멈춰 잡는 순간 튀지 않게 한다
     context.set(translateY.get());   // 0이 아니라 지금 화면에 보이는 값에서 시작한다
   })
   .onUpdate((e) => {
@@ -182,7 +183,7 @@ const context = useSharedValue(0);
 
 const pan = useMemo(() => Gesture.Pan()
   .activeOffsetX([-10, 10])   // 축을 선언해야 한다. 아니면 세로 스크롤과 다툰다
-  .onStart(() => { context.set(x.get()); })   // 스프링 도중에 잡으면 0이 아니라 행이 있는 자리에서 이어진다
+  .onStart(() => { cancelAnimation(x); context.set(x.get()); })   // 스프링 도중에 잡으면 0이 아니라 행이 있는 자리에서 이어진다
   .onUpdate((e) => { x.set(Math.min(0, context.get() + e.translationX)); })
   .onEnd((e) => {
     const projected = x.get() + project(e.velocityX);
@@ -224,7 +225,7 @@ const titleStyle = useAnimatedStyle(() => ({
 
 **헤더를 접으려고 `height`를 절대 애니메이션하지 않는다.** 그러면 스크롤 프레임마다 헤더와 그 아래 모든 것에 레이아웃 계산이 돈다. 스크롤 자체와 경쟁하므로 끊길 수밖에 없는 애니메이션이다. 컨테이너에 고정 높이를 주고 안의 내용을 이동시키며 `overflow: 'hidden'`으로 잘라 낸다.
 
-`Extrapolation.CLAMP`는 선택이 아니다. 이것이 없으면 60을 넘게 스크롤할 때 opacity가 계속 음수로 내려가고, 긴 목록의 아래쪽에서 헤더가 뒤집힌 채 다시 나타난다.
+`Extrapolation.CLAMP`는 선택이 아니다. 이것이 없으면 60을 넘게 스크롤할 때 `translateY`가 계속 −12 너머로 밀려 제목이 컨테이너 밖으로 미끄러져 나간다.
 
 ---
 
@@ -312,7 +313,7 @@ const pillStyle = useAnimatedStyle(() => ({
 
 ```jsx
 <Stack screenOptions={{ animation: reduced ? 'fade' : 'default' }}>
-  <Stack.Screen name="settings" options={{ animation: 'slide_from_right', animationMatchesGesture: true }} />
+  <Stack.Screen name="settings" options={{ animation: reduced ? 'fade' : 'slide_from_right', animationMatchesGesture: true }} />
   <Stack.Screen name="compose" options={{ presentation: 'modal' }} />
   <Stack.Screen name="filter" options={{
     presentation: 'formSheet',
@@ -355,7 +356,7 @@ const TOAST_EXIT = FadeOutDown.duration(250).easing(EASE_OUT);
 />
 ```
 
-- **300ms 상한은 여기서도 지킨다.** 토스트는 예외가 아니다. 사용자가 부르지 않은 것이므로 오히려 사용자가 요청한 모션보다 더 빠르고 조용해야 한다.
+- **300ms 상한은 여기서도 지킨다.** 웹의 예외는 Sonner의 400ms 토스트다. 네이티브에서 토스트는 사용자가 부르지 않은 것이므로 오히려 사용자가 요청한 모션보다 더 빠르고 조용해야 한다.
 - **들어온 길로 나간다.** 아래에서 들어와 옆으로 나가면 서로 관계없는 두 요소로 읽힌다.
 - **퇴장은 등장보다 ~20% 빠르게.** 사용자는 이미 다 읽었다. 시간을 들일 가치가 있는 것은 도착이지 떠남이 아니다.
 - **안전 영역 여백은 언제나 반영한다.** `bottom: 16`에 둔 토스트는 요즘 iPhone이라면 모두 홈 인디케이터 밑에 깔린다.

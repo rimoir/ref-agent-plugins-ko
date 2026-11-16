@@ -2,24 +2,23 @@
 
 [SKILL.md](SKILL.md)의 관계를 바로 옮겨 쓸 수 있는 패턴이다. 값은 출발점이니 녹화를 보며 조정한다.
 
-## 겹침: 인덱스 변수를 쓴 CSS 스태거
+## 겹침: 지연 변수를 쓴 CSS 스태거
 
-단발성 등장(히어로, 개인 사이트 인트로)에 쓴다. 지연은 CSS 변수에서 요소마다 계산되니 항목마다 클래스를 둘 필요가 없다.
+단발성 등장(히어로, 개인 사이트 인트로)에 쓴다. 요소마다 자기 지연을 CSS 변수에 담으니 항목마다 클래스를 둘 필요가 없다. 간격은 그룹이 진행될수록 줄어들어(120ms, 그다음 80ms) 메트로놈이 아니라 물결로 읽힌다.
 
 ```tsx
 <div className="stagger">
-  <h1 style={{ "--i": 0 }}>Title</h1>
-  <p style={{ "--i": 0 }}>First paragraph, same beat as the title</p>
-  <p style={{ "--i": 1 }}>Supporting paragraph</p>
-  <div style={{ "--i": 2 }}>CTAs</div>
+  <h1 style={{ "--delay": "0ms" }}>Title</h1>
+  <p style={{ "--delay": "0ms" }}>First paragraph, same beat as the title</p>
+  <p style={{ "--delay": "120ms" }}>Supporting paragraph</p>
+  <div style={{ "--delay": "200ms" }}>CTAs</div>
 </div>
 ```
 
 ```css
 .stagger > * {
-  --step: 120ms;
   animation: enter 0.6s ease both;
-  animation-delay: calc(var(--step) * var(--i));
+  animation-delay: var(--delay, 0ms);
 }
 
 @keyframes enter {
@@ -85,7 +84,7 @@ const decoration = {
 - 역할마다 자기 variant(거리, 지속 시간)가 있다. 스태거는 각자 *언제* 시작할지만 정한다.
 - `stagger(0.05, { from: "center" })`는 가운데에서 바깥으로 퍼진다. 사용자가 조작한 항목에서 퍼지게 하려면 숫자 인덱스를 쓴다.
 - 오래된 Motion 버전은 `delayChildren: stagger(...)` 대신 `staggerChildren: 0.06`을 쓴다.
-- 긴 목록은 처음 약 6개 뒤의 항목에 6번째와 같은 지연을 줘서 그룹이 약 300ms를 넘지 않게 한다.
+- 긴 목록은 처음 5개 뒤의 항목에 5번째와 같은 지연을 줘서 그룹이 약 300ms를 넘지 않게 한다.
 
 ## 함께: 퇴장하는 요소를 흐름에서 빼기
 
@@ -145,7 +144,7 @@ const fadeDuration = useMemo(() => {
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.96 }}
-        transition={{ duration: fadeDuration, ease: [0.26, 0.08, 0.25, 1] }}
+        transition={{ duration: fadeDuration, ease: "easeOut" }}
       >
         {content}
       </motion.div>
@@ -200,7 +199,7 @@ const variants = {
 
 .checkmark {
   animation: draw 0.4s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
-  animation-delay: 0.6s; /* = 사각형의 지속 시간 */
+  animation-delay: 0.5s; /* 사각형의 0.6s가 끝나기 직전 */
 }
 
 @keyframes draw {
@@ -208,7 +207,7 @@ const variants = {
 }
 ```
 
-두 경로에 `pathLength="100"`을 주면 `stroke-dasharray: 100; stroke-dashoffset: 100`이 둥근 숫자로 각각을 숨긴다. 넘겨주는 지점이 하나의 몸짓으로 읽히게 하려면 체크 표시를 사각형이 끝나기 조금 전에 시작한다(예: 0.5초).
+두 경로에 `pathLength="100"`을 주면 `stroke-dasharray: 100; stroke-dashoffset: 100`이 둥근 숫자로 각각을 숨긴다. 체크 표시를 사각형이 끝나기 0.1초 전에 시작하면 넘겨주는 지점이 하나의 몸짓으로 읽힌다.
 
 ## 시퀀스: 크로스페이드로 복잡한 두 상태 사이를 모핑하기
 
@@ -242,7 +241,6 @@ const variants = {
 ```tsx
 const [scope, animate] = useAnimate();
 const running = useRef<ReturnType<typeof animate>[]>([]);
-const ready = useRef(false); // 렌더링되지 않는 플래그라 useState를 쓰지 않는다
 
 function play(steps: ReturnType<typeof animate>[]) {
   running.current.forEach((a) => a.stop()); // 시퀀스를 절대 쌓지 않는다
@@ -251,7 +249,6 @@ function play(steps: ReturnType<typeof animate>[]) {
 }
 
 const onEnter = async () => {
-  ready.current = false;
   await play([
     animate("[data-animate='icon']", { y: -4 }, { duration: 0.3 }),
     ...[...scope.current.querySelectorAll("[data-animate='line']")].map((el, i) =>
@@ -262,11 +259,9 @@ const onEnter = async () => {
       ),
     ),
   ]);
-  ready.current = true;
 };
 
 const onClick = () => {
-  if (!ready.current) return;
   // 반복 동작은 준비 단계를 건너뛴다. 비율은 같고 타임라인에서 더 일찍 시작한다
   play([animate("[data-animate='bg']", { scale: [1, 0.96, 1.02, 1] }, { duration: 0.4 })]);
 };

@@ -1,4 +1,4 @@
-<a href="http://aiforui.dev/">
+<a href="https://aiforui.dev/">
 <img width="360" height="202" alt="opengraph-image 2" src="https://github.com/user-attachments/assets/84fca9a6-0b2b-4927-8f48-f3ce194a5c47" />
 </a>
 
@@ -18,13 +18,15 @@ Vercel, Linear 같은 회사에서 일하며 쌓은 수년의 경험을 바탕�
 
 내 스킬 소식은 여기서 받아 볼 수 있다.
 
-[뉴스레터 구독하기](https://aiforui.dev/skills)
+[뉴스레터 구독하기](https://aiforui.dev/newsletter)
 
 ## 설치
 
 ```bash
 npx skills@latest add emilkowalski/skills
 ```
+
+[aiforui.dev/skills](https://aiforui.dev/skills)의 스킬 페이지마다 스킬을 언제 쓰는지, 결과 예시, 써 볼 만한 프롬프트가 나온다.
 
 ## 왜 쓰나
 
@@ -40,20 +42,22 @@ npx skills@latest add emilkowalski/skills
 
 ## 참조
 
-- **[emil-design-eng](./skills/emil-design-eng/SKILL.md)**: 중심이 되는 스킬이다. 대부분 애니메이션을 다루고 디자인 조언도 일부 담았다.
-- **[animate](./skills/animate/SKILL.md)**: 곡선, 지속 시간, 속성 등을 올바르게 골라 애니메이션을 처음부터 만든다.
-- **[animate-expo](./skills/animate-expo/SKILL.md)**: 같은 기준을 React Native와 Expo에 적용한다. 제스처, 시트, 햅틱, 화면 전환, 그리고 모션을 JS 스레드 밖에 두는 일을 다룬다.
-- **[review-animations](./skills/review-animations/SKILL.md)**: 내 규칙에 따라 애니메이션을 엄격하게 리뷰한다.
-- **[improve-animations](./skills/improve-animations/SKILL.md)**: 코드베이스의 애니메이션을 모두 점검하고 우선순위를 매긴 그 자체로 완결된 계획을 만든다. 어떤 에이전트든 이 계획을 실행할 수 있다.
-- **[find-animation-opportunities](./skills/find-animation-opportunities/SKILL.md)**: UI에서 모션이 정말로 도움이 될 곳을 찾고 애니메이션을 넣지 말아야 할 곳도 알려 준다.
-- **[remove-animations](./skills/remove-animations/SKILL.md)**: 기회 찾기의 반대다. 앱에 필요 없는 애니메이션을 지운다. 키보드 단축키에 붙은 모션, 모든 섹션의 페이드인, 그룹 안 툴팁마다 붙은 지연 같은 것이다.
-- **[choreograph](./skills/choreograph/SKILL.md)**: 함께 애니메이션되는 여러 요소를 조율한다. 무엇이 앞서고, 무엇이 따르고, 무엇이 동시에 돌고, 무엇이 아예 움직이지 말아야 하는지 정한다.
-- **[animation-performance](./skills/animation-performance/SKILL.md)**: 프레임을 놓치는 애니메이션을 고친다. 대부분의 에이전트가 못 보고 지나치는 미묘한 문제를 많이 다룬다.
-- **[animation-vocabulary](./skills/animation-vocabulary/SKILL.md)**: 알맞은 용어로 원하는 것을 정확히 말해 AI에게서 더 나은 애니메이션을 얻는다.
-- **[apple-design](./skills/apple-design/SKILL.md)**: Apple의 WWDC 디자인 세션에서 추려 웹에 맞게 옮긴, 인터페이스 디자인과 유려한 모션의 원칙이다.
-- **[write-swift](./skills/write-swift/SKILL.md)**: 모던 Swift를 쓴다. 값 타입, Swift 6 동시성, 제네릭, 성능, Swift Testing을 다룬다.
-- **[pick-ui-library](./skills/pick-ui-library/SKILL.md)**: AI가 토스트 컴포넌트를 직접 짜거나 버려진 패키지를 설치하게 두지 않고 내가 쓰고 믿는 라이브러리 중에서 에이전트가 작업에 맞는 것을 고르게 한다.
-- **[prototype](./skills/prototype/SKILL.md)**: 설명한 UI 조각을 서로 다른 여러 버전으로 만들고 선택기로 하나씩 넘겨 본다.
-- **[mobile-native](./skills/mobile-native/SKILL.md)**: 웹 앱이 휴대폰에서 네이티브 앱처럼 느껴지게 한다. 탭한 뒤 남는 hover 상태, 탭 하이라이트 깜빡임, 100vh 버그, 페이지를 확대하는 입력 필드, 반응이 늦은 탭, 안전 영역, 그 밖에 웹사이트와 앱을 가르는 작은 수정들을 다룬다.
-- **[break-ui](./skills/break-ui/SKILL.md)**: 만든 UI에 최악의 데이터를 넣어 깨뜨려 본다. 긴 이름, 특이한 이메일, 한 글자 이름, 아주 큰 개수, 빈 목록, 긴 라벨 같은 것이다.
-- **[ask-sonner](./skills/ask-sonner/SKILL.md)**: 내가 만든 토스트 라이브러리 [Sonner](https://sonner.emilkowal.ski)를 쓰는 안내서다. 설정, 스타일링, 레시피, 가장 흔한 문제의 해결법을 담았다.
+- **[emil-design-eng](https://aiforui.dev/skills/emil-design-eng)**: 중심이 되는 스킬이다. 대부분 애니메이션을 다루고 디자인 조언도 일부 담았다.
+- **[animate](https://aiforui.dev/skills/animate)**: 곡선, 지속 시간, 속성 등을 올바르게 골라 애니메이션을 처음부터 만든다.
+- **[animate-expo](https://aiforui.dev/skills/animate-expo)**: 같은 기준을 React Native와 Expo에 적용한다. 제스처, 시트, 햅틱, 화면 전환, 그리고 모션을 JS 스레드 밖에 두는 일을 다룬다.
+- **[review-animations](https://aiforui.dev/skills/review-animations)**: 내 규칙에 따라 애니메이션을 엄격하게 리뷰한다.
+- **[improve-animations](https://aiforui.dev/skills/improve-animations)**: 코드베이스의 애니메이션을 모두 점검하고 우선순위를 매긴 그 자체로 완결된 계획을 만든다. 어떤 에이전트든 이 계획을 실행할 수 있다.
+- **[find-animation-opportunities](https://aiforui.dev/skills/find-animation-opportunities)**: UI에서 모션이 정말로 도움이 될 곳을 찾고 애니메이션을 넣지 말아야 할 곳도 알려 준다.
+- **[remove-animations](https://aiforui.dev/skills/remove-animations)**: 기회 찾기의 반대다. 앱에 필요 없는 애니메이션을 지운다. 키보드 단축키에 붙은 모션, 모든 섹션의 페이드인, 그룹 안 툴팁마다 붙은 지연 같은 것이다.
+- **[choreograph](https://aiforui.dev/skills/choreograph)**: 함께 애니메이션되는 여러 요소를 조율한다. 무엇이 앞서고, 무엇이 따르고, 무엇이 동시에 돌고, 무엇이 아예 움직이지 말아야 하는지 정한다.
+- **[animation-performance](https://aiforui.dev/skills/animation-performance)**: 프레임을 놓치는 애니메이션을 고친다. 대부분의 에이전트가 못 보고 지나치는 미묘한 문제를 많이 다룬다.
+- **[animation-vocabulary](https://aiforui.dev/skills/animation-vocabulary)**: 알맞은 용어로 원하는 것을 정확히 말해 AI에게서 더 나은 애니메이션을 얻는다.
+- **[apple-design](https://aiforui.dev/skills/apple-design)**: Apple의 WWDC 디자인 세션에서 추려 웹에 맞게 옮긴, 인터페이스 디자인과 유려한 모션의 원칙이다.
+- **[gestures](https://aiforui.dev/skills/gestures)**: 손가락을 1:1로 따라가고, 놓는 순간의 속도를 이어받고, 애니메이션 도중에도 잡을 수 있는 드래그, 스와이프, 시트 인터랙션을 만든다.
+- **[pick-ui-library](https://aiforui.dev/skills/pick-ui-library)**: AI가 토스트 컴포넌트를 직접 짜거나 버려진 패키지를 설치하게 두지 않고 내가 쓰고 믿는 라이브러리 중에서 에이전트가 작업에 맞는 것을 고르게 한다.
+- **[prototype](https://aiforui.dev/skills/prototype)**: 설명한 UI 조각을 서로 다른 여러 버전으로 만들고 선택기로 하나씩 넘겨 본다.
+- **[mobile-native](https://aiforui.dev/skills/mobile-native)**: 웹 앱이 휴대폰에서 네이티브 앱처럼 느껴지게 한다. 탭한 뒤 남는 hover 상태, 탭 하이라이트 깜빡임, 100vh 버그, 페이지를 확대하는 입력 필드, 반응이 늦은 탭, 안전 영역, 그 밖에 웹사이트와 앱을 가르는 작은 수정들을 다룬다.
+- **[break-ui](https://aiforui.dev/skills/break-ui)**: 만든 UI에 최악의 데이터를 넣어 깨뜨려 본다. 긴 이름, 특이한 이메일, 한 글자 이름, 아주 큰 개수, 빈 목록, 긴 라벨 같은 것이다.
+- **[learn-taste](https://aiforui.dev/skills/learn-taste)**: 세션 끝에 돌린다. 직접 고친 부분까지 포함해 디자인 수정을 모두 모으고, 하나하나를 이유가 붙은 규칙으로 바꿔 `DESIGN.md`에 넣는다. 그래서 다음 에이전트가 같은 실수를 하지 않는다.
+- **[ask-emil](https://aiforui.dev/skills/ask-emil)**: 어떤 스킬을 쓸지 모르겠다면 상황을 설명한다. 아이디어부터 출시까지, 맞는 스킬이나 맞는 스킬 순서를 짚어 준다.
+- **[ask-sonner](https://aiforui.dev/skills/ask-sonner)**: 내가 만든 토스트 라이브러리 [Sonner](https://sonner.emilkowal.ski)를 쓰는 안내서다. 설정, 스타일링, 레시피, 가장 흔한 문제의 해결법을 담았다.

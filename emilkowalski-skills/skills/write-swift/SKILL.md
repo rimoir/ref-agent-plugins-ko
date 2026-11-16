@@ -15,7 +15,7 @@ description: 모던 Swift를 잘 쓰는 방법을 다룬다. 값 타입 모델�
 
 언어가 의도한 방식대로 Swift를 쓰는 방법을 다룬다. Swift 6.4까지 반영했다.
 
-**툴체인 기준: Swift 6.3**(2026년 8월 기준 최신 릴리스). ⚠ 표시가 없으면 여기 나온 코드는 모두 6.3에서 컴파일된다. ⚠는 아직 릴리스되지 않은 Swift 6.4 기능을 뜻한다. 동시성 지침은 Swift 6.2 모델을 전제한다. 프로젝트가 6.1 이하라면 `async`와 `@concurrent`에 관한 §3의 규칙은 적용되지 않는다.
+**툴체인 기준: Swift 6.3.** `swift --version`으로 확인한다. ⚠ 표시가 없으면 여기 나온 코드는 모두 6.3에서 컴파일된다. ⚠는 아직 릴리스되지 않은 Swift 6.4 기능을 뜻한다. 동시성 지침은 Swift 6.2 모델을 전제한다. 프로젝트가 6.1 이하라면 `async`와 `@concurrent`에 관한 §3의 규칙은 적용되지 않는다.
 
 관통하는 원칙은 이것이다. **Swift는 점진적 공개(progressive disclosure) 언어다. 동작하는 것 중 가장 단순하고, 가장 정적이고, 가장 단일 스레드인 것에서 시작한다. 동적인 요소(동시성, 참조 의미론, 존재 타입(existential), 안전하지 않은 포인터)는 이유를 짚을 수 있는 곳에서만 대가를 치르고 들인다.** 아래 규칙은 모두 이 원칙을 적용한 것이다.
 
@@ -38,7 +38,7 @@ Swift에서 값 타입은 특별한 경우가 아니라 기본이다.
 
 - **기본은 `struct`와 `enum`이다. `class`는 정체성, 공유된 가변 상태, 상속, 자원 수명이 필요할 때만 쓴다.** 창, 데이터베이스 연결, 렌더링 엔진에 저장된 엔티티는 정체성이 있다. `Point`, `Drink`, `Material`에는 없다.
 - **기본은 `let`이고, `var`는 값을 바꿀 때만 쓴다.** `any`보다 `some`을 먼저, 참조보다 값을 먼저 쓰는 것과 같은 규율이다. 좁게 시작하고, 이유가 있을 때 넓힌다.
-- **가변 참조 타입 프로퍼티를 가진 구조체는 값도 참조도 아니다.** 복사본들이 객체를 공유하고, 변경이 복사본 사이로 새어 나간다. 참조하는 타입을 불변으로 두거나, 그 객체에 위임하기만 하는 계산 프로퍼티만 노출하거나, copy-on-write 뒤에 둔 `private` 저장 프로퍼티로 만든다.
+- **가변 참조 타입 프로퍼티를 가진 구조체는 값도 참조도 아니다.** 복사본들이 객체를 공유하고, 변경이 복사본 사이로 새어 나간다. 참조하는 타입을 불변으로 두거나, copy-on-write 뒤에 둔 `private` 저장 프로퍼티로 만든다. 그 객체에 위임하는 계산 프로퍼티만으로는 해결되지 않는다. 위임하는 setter도 공유 객체를 바꾸기 때문이다.
 - **copy-on-write는 외부 저장소(out-of-line storage)와 값 의미론을 *함께* 얻는 방법이다.** final 클래스를 구조체로 감싸고, 변경하기 전에 `isKnownUniquelyReferenced(&storage)`를 확인한다. 유일한 참조가 아니면 먼저 복사한다. `Array`, `String`, `Dictionary`가 바로 이렇게 동작한다.
 - **열거형은 "정해진 것들의 집합"과 상호 배타적인 상태를 위한 도구다.** 옵셔널 저장 프로퍼티 여러 개(`isSharing`, `selectedRows`, `shareTarget`)를 `enum State` 하나로 바꾸면 잘못된 조합을 표현할 수 없게 된다. 상태 변경도 끝내기를 잊을 수 있는 여러 번의 프로퍼티 쓰기가 아니라 한 번의 원자적 변경이 된다.
 - **값을 조합하면 값이 된다.** 저장 프로퍼티가 모두 값 타입인 구조체는 값 의미론을 공짜로 얻는다. 덕분에 실행 취소, diff 계산, 상태 복원이 프로퍼티마다 따로가 아니라 코드 경로 하나로 끝난다.
@@ -58,7 +58,7 @@ struct Material {                       // 값 의미론 유지
 }
 ```
 
-**복사 불가 타입**(noncopyable)은 `~Copyable`로 표시하며 고유한 소유권을 표현한다. 파일 디스크립터, 계좌 이체, 열린 자원 같은 것이다. 복사를 막으면 "이걸 두 번 실행하면 안 된다"가 단언(assertion)에서 컴파일 오류로 바뀌고, 구조체의 `deinit`이 의미를 갖는다. 마무리하는 메서드에 `consuming`을 붙여 그것이 마지막 사용임을 컴파일러가 증명하게 한다. 매개변수 소유권도 명시적으로 드러난다. 종류는 `borrowing`(읽기 전용, 기본값), `consuming`(가져가 버림), `inout`/`mutating`(일시적 쓰기 접근)이다.
+**복사 불가 타입**(noncopyable)은 `~Copyable`로 표시하며 고유한 소유권을 표현한다. 파일 디스크립터, 계좌 이체, 열린 자원 같은 것이다. 복사를 막으면 "이걸 두 번 실행하면 안 된다"가 단언(assertion)에서 컴파일 오류로 바뀌고, 구조체의 `deinit`이 의미를 갖는다. 마무리하는 메서드에 `consuming`을 붙여 그것이 마지막 사용임을 컴파일러가 증명하게 한다. 매개변수 소유권도 명시적으로 드러난다. 종류는 `borrowing`(읽기 전용), `consuming`(가져가 버림), `inout`/`mutating`(일시적 쓰기 접근)이다. `~Copyable` 매개변수에는 기본값이 없어서 반드시 하나를 선언해야 한다.
 
 ---
 
@@ -91,7 +91,7 @@ Swift 오류 처리는 세 가지 위에 서 있다. 오류가 날 수 있는 �
 
 ### 바뀐 규칙
 
-**Swift 6.2에서는 함수에 `async`를 붙여도 현재 액터를 벗어나지 *않는다*.** 호출된 곳에서 그대로 돈다. "가장 자연스럽게 쓰는 코드"가 기본적으로 데이터 경쟁 없이 동작하는 이유가 이것이다.
+**Approachable Concurrency를 켜면(Swift 6.2+, `NonisolatedNonsendingByDefault`를 활성화한다) `nonisolated` 함수에 `async`를 붙여도 호출자의 액터를 벗어나지 *않는다*.** 호출된 곳에서 그대로 돈다. "가장 자연스럽게 쓰는 코드"가 기본적으로 데이터 경쟁 없이 동작하는 이유가 이것이다.
 
 - **`@concurrent`는** 항상 동시 스레드 풀로 전환한다. *직접 짠* CPU 집약 작업에 쓴다.
 - **`nonisolated`는** 호출된 곳 어디서든 돈다. **라이브러리 API에는 이것이 맞는 기본값이다.** 호출자가 정하기 때문이다. 타입에 `nonisolated`를 붙이면 모든 멤버가 nonisolated가 된다(Swift 6.1+).
@@ -155,7 +155,7 @@ nonisolated struct PhotoProcessor {          // 메인 액터와 분리
 구조적 태스크(`async let`, 태스크 그룹)는 지역 변수처럼 범위가 정해진다. 블록보다 오래 살 수 없고, 자동으로 await되고, 태스크 트리를 따라 취소, 우선순위, 태스크 로컬 값을 물려받는다. 비구조적 태스크(`Task { }`, `Task.detached`)는 이 중 어느 것도 자동으로 주지 않는다.
 
 - **`async let`은** 개수가 고정되어 정적으로 알 수 있는 동시 자식 작업에 쓴다.
-- **`withTaskGroup`은** 개수가 동적일 때 쓴다. 태스크 그룹은 `AsyncSequence`를 준수하므로 결과가 도착하는 대로 순회한다. 자식이 아무것도 반환하지 않으면 **`withDiscardingTaskGroup`을** 쓴다. 이 그룹은 각 자식의 자원을 즉시 해제하고, 첫 오류가 나면 형제 태스크를 취소한다.
+- **`withTaskGroup`은** 개수가 동적일 때 쓴다. 태스크 그룹은 `AsyncSequence`를 준수하므로 결과가 도착하는 대로 순회한다. 자식이 아무것도 반환하지 않으면 **`withDiscardingTaskGroup`을** 쓴다. 이 그룹은 각 자식의 자원을 즉시 해제한다. **`withThrowingDiscardingTaskGroup`은** 첫 오류가 나면 형제 태스크도 취소한다.
 - **`Task { }`는** 작업의 수명이 범위에 맞지 않을 때만 쓴다. 델리게이트 콜백, 버튼 탭, 뷰가 나타나는 일에 반응할 때다. 액터 격리와 우선순위는 물려받지만 취소는 직접 관리해야 한다.
 - **`Task.detached`는** 거의 쓰지 않는다. 아무것도 물려받지 않는다. 격리도, 우선순위도, 태스크 로컬 값도 없다. 분리된 루트가 필요하면 여러 번 분리하지 말고 그 *안에* 태스크 그룹을 둔다.
 
@@ -216,7 +216,7 @@ nonisolated struct PhotoProcessor {          // 메인 액터와 분리
 
 - **Swift 전용 API에는 타입 접두어를 붙이지 않는다.** 모듈이 구분해 준다. 접두어는 Objective-C API를 그대로 따르는 곳에만 남긴다. 다만 특정 프레임워크에서 아주 일반적인 이름은 피한다. 맥락 밖에서 읽기 어렵고, 쓰는 쪽에서 직접 구분해야 한다.
 - **비동기 대안과 결과를 바로 반환하는 모든 것에서 앞의 `get`을 뺀다.** `getPersistentPosts`가 아니라 `persistentPosts`다.
-- **접근 제어는 문서다.** `private`(파일), `internal`(모듈, 기본값), `package`, `public`. 경계에서 명시적으로 써야 앞서 말한 Sendable 여부와 API 진화에 관한 결정을 내리게 된다.
+- **접근 제어는 문서다.** `private`(감싸는 선언과 같은 파일의 그 확장), `fileprivate`(파일), `internal`(모듈, 기본값), `package`, `public`. 경계에서 명시적으로 써야 앞서 말한 Sendable 여부와 API 진화에 관한 결정을 내리게 된다.
 - **잘못된 상태를 아예 쓸 수 없게 모델을 설계한다.** private setter와 검증하는 mutating 메서드를 함께 쓴다. 닫힌 집합에는 열거형을 쓴다. `String` 대신 강한 타입의 `UUID`를 쓴다.
 - **프로퍼티 래퍼**는 *접근 정책*(`@Argument`, `@Published`, 방어적 복사, 지연, 스레드 로컬)을 뽑아내, 선언하는 자리에서 정책을 한 단어로 밝히게 한다. 키 경로에 `@dynamicMemberLookup`을 함께 쓰면 래퍼를 거쳐 값을 투영할 수 있다(`$binding.title`이 이렇게 동작한다).
 - 선언적 DSL에는 **결과 빌더**를 쓴다. 반복 코드가 컴파일러가 대신 쓸 수 있었을 코드라면 **매크로**를 쓴다(§12).
@@ -291,7 +291,7 @@ nonisolated struct PhotoProcessor {          // 메인 액터와 분리
 컴파일러가 유도할 수 있는 코드를 쓰고 있을 때 매크로를 꺼낸다. 그때만이다.
 
 - **매크로는 확장 전에 타입 검사를 받는다.** 인자가 매크로에 선언된 시그니처에 맞는지 검사하므로, 잘못 쓰면 생성된 코드 속 엉망이 아니라 호출 지점의 깔끔한 오류가 된다.
-- **독립형(freestanding) 매크로**(`#foo`)는 표현식이나 선언을 만든다. **부착형(attached) 매크로**(`@Foo`)는 다섯 역할 중 하나로 선언을 보강한다. 역할은 member, peer, accessor, member-attribute, conformance다. 역할은 조합된다. `@Observable`은 member + member-attribute + conformance다.
+- **독립형(freestanding) 매크로**(`#foo`)는 표현식이나 선언을 만든다. **부착형(attached) 매크로**(`@Foo`)는 하나 이상의 역할로 선언을 보강한다. 역할은 member, peer, accessor, member-attribute, extension, body다. 역할은 조합된다. `@Observable`은 member + member-attribute + extension이다.
 - **`assertMacroExpansion`으로 매크로를 순수한 구문 트리 변환으로 테스트한다.** 가장 빠르게 반복할 수 있는 방법이고, 아무도 읽지 않는 코드에서 버그를 피하는 방법이다. `expansion`에 중단점을 걸고 구문 노드를 `po`로 출력해 모양을 익힌다.
 - **매크로가 적용되지 않으면 제대로 된 진단을 낸다.** 오류를 던지거나, 특정 위치에 경고와 fix-it을 달 때는 `context.addDiagnostic`을 쓴다. 매크로가 컴파일되지 않을 코드를 조용히 만들게 절대 두지 않는다.
 - 확장된 코드는 평범한 Swift다. 들여다볼 수 있고("Expand Macro"), 디버깅할 수 있고, 한 단계씩 실행할 수 있다.
@@ -328,7 +328,7 @@ nonisolated struct PhotoProcessor {          // 메인 액터와 분리
 | 이것 대신 | 이렇게 쓴다 | 버전 |
 | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----- |
 | 중첩 삼항 연산자, `let`을 초기화하려고 즉시 호출하는 클로저 | `if`/`switch` **표현식** | 5.9   |
-| 인자 1개, 2개, 3개…용 오버로드 | **매개변수 팩**(parameter packs, `each T`), 팩을 순회하는 `for` | 5.9   |
+| 인자 1개, 2개, 3개…용 오버로드 | **매개변수 팩**(parameter packs, `each T`), 팩을 순회하는 `for` | 팩 5.9, 순회 6.0 |
 | `ObservableObject` + 모든 프로퍼티에 `@Published` | **`@Observable`** | 5.9   |
 | 변경을 알려고 객체를 폴링하기 | **`Observations { ... }`**: 트랜잭션 단위 업데이트의 `AsyncSequence` | 6.2   |
 | 문자열 기반 `userInfo`를 쓰는 `NotificationCenter` | 구체적인 알림 타입(`MainActorMessage` / `AsyncMessage`) | 6.2   |
@@ -343,7 +343,7 @@ nonisolated struct PhotoProcessor {          // 메인 액터와 분리
 | 일괄 적용하는 "경고를 오류로 처리" | 선언 / 경고 그룹마다 **`@diagnose`** | 6.4 ⚠ |
 | `weak var` 때문에 쓰는 `@unchecked Sendable` | `weak let`, 또는 **`~Sendable`로** Sendable이 아님을 밝히기 | 6.4 ⚠ |
 | 포인터로 바이너리 형식을 직접 파싱하기 | **Swift Binary Parsing**(`ParserSpan`, 오버플로를 검사하는 파싱 이니셜라이저) | 6.2   |
-| 어색한 테스트 함수 이름 | **원시 식별자**(raw identifiers): `` @Test func `fruits have a tropical climate`() `` | 6.0   |
+| 어색한 테스트 함수 이름 | **원시 식별자**(raw identifiers): `` @Test func `fruits have a tropical climate`() `` | 6.2   |
 
 알아 둘 것이 더 있다. **Swift Regex 파서는 Foundation의 진짜 파서와 조합된다**(`.date(...)`, `.currency(...)`). 정규식 안에서 날짜나 숫자 파싱을 절대 손으로 짜지 않는다. 로케일은 시스템 것을 물려받지 말고 명시한다. 그리고 패턴이 입력 전체에 걸쳐 역추적하지 않도록 `NegativeLookahead`나 `Local`(원자 그룹)을 쓴다.
 

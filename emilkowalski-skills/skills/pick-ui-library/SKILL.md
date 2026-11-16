@@ -1,6 +1,6 @@
 ---
 name: pick-ui-library
-description: 주어진 프론트엔드 작업에 맞는 라이브러리를 주관이 뚜렷한 엄선 목록에서 고른다. 숫자, OTP 입력, 차트, 명령 메뉴, 가상화, 드래그 앤 드롭, 토스트, 상태, 스타일링 등을 다룬다. 명시적으로 호출할 때만 실행된다. 스스로 실행되지는 않는다.
+description: 프론트엔드 작업에 쓸 라이브러리를 엄선 목록에서 고른다. 프리미티브, 토스트, 드로어, 명령 메뉴, OTP, 숫자, 차트, 가상화, 드래그 앤 드롭, 상태, 스타일링을 다룬다.
 disable-model-invocation: true
 ---
 
@@ -32,8 +32,9 @@ disable-model-invocation: true
 | 스타일이 없고 접근성을 갖춘 UI 컴포넌트(다이얼로그, 팝오버, 메뉴, 셀렉트…) | [base-ui](https://base-ui.com) |
 | 명령 메뉴(⌘K 팔레트) | [cmdk](https://cmdk.paco.me) |
 | 토스트 / 알림 | [Sonner](https://sonner.emilkowal.ski) |
+| 드로어 / 바텀 시트 | [Vaul](https://vaul.emilkowal.ski) |
 | 일회용 비밀번호 / 인증 코드 입력 | [input-otp](https://input-otp.rodz.dev) |
-| 커스터마이즈할 수 있는 GUI / 컨트롤 패널 | [Leva](https://github.com/pmndrs/leva). 대안으로 [dialkit](https://joshpuckett.me/dialkit) |
+| 커스터마이즈할 수 있는 GUI / 컨트롤 패널 | [Leva](https://github.com/pmndrs/leva) |
 
 ### 모션과 시각 효과
 
@@ -43,7 +44,7 @@ disable-model-invocation: true
 | 숫자 애니메이션(카운터, 가격, 통계) | [NumberFlow](https://number-flow.barvian.me) |
 | 애니메이션 텍스트 컴포넌트 | [torph](https://torph.lochie.me/) |
 | 3D 지구본 | [Cobe](https://cobe.vercel.app) |
-| 동적 OG 이미지(HTML/CSS → SVG/PNG) | [Satori](https://github.com/vercel/satori) |
+| 동적 OG 이미지(HTML/CSS → SVG) | [Satori](https://github.com/vercel/satori) |
 | 구문 강조 | [shiki](https://shiki.style) |
 
 스프링, 레이아웃 애니메이션, 퇴장 애니메이션, 제스처로 움직이는 값이 필요할 때 motion을 쓴다. 단순한 hover나 페이드에는 필요 없다. 그럴 때는 평범한 CSS 트랜지션이 맞는 도구다.

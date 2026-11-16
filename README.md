@@ -11,7 +11,7 @@
 | [`unlazy/`](unlazy/) | [Leonxlnx/unlazy](https://github.com/Leonxlnx/unlazy) | v2.1.0 | 긴 자율 작업에서 완료 기준을 먼저 세우고 검증하게 하는 스킬 |
 | [`code-migration-kit/`](code-migration-kit/) | [anthropics/code-migration-kit-with-claude-code](https://github.com/anthropics/code-migration-kit-with-claude-code) | main `cf91c9d` | Claude Code로 코드를 옮기는 프롬프트와 템플릿 묶음 |
 | [`emilkowalski-skills/`](emilkowalski-skills/) | [emilkowalski/skills](https://github.com/emilkowalski/skills) | main `c8a7962` | Emil Kowalski의 UI 모션·디테일 스킬 모음 |
-| [`unslop/`](unslop/) | [heydamir/unslop](https://github.com/heydamir/unslop) | main `a6f121e` | 바이브 코딩으로 만든 AI 티 나는 UI를 디자인된 인터페이스로 바꾸는 스킬 |
+| [`unslop/`](unslop/) | [heydamir/unslop](https://github.com/heydamir/unslop) | main `620163e` | 바이브 코딩으로 만든 AI 티 나는 UI를 디자인된 인터페이스로 바꾸는 스킬 |
 | [`dsh-superagent/`](dsh-superagent/) | [deepseek-ai/dsh-superagent-prototype](https://github.com/deepseek-ai/dsh-superagent-prototype) | main `8c32a9d` | DeepSeek Harness 번들 |
 <!-- plugins:end -->
 

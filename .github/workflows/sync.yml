@@ -6,6 +6,9 @@ name: 번역 PR 충돌 정리
 on:
   push:
     branches: [main]
+  # 봇(GITHUB_TOKEN)의 auto-merge는 push 이벤트를 만들지 않으니 주기적으로도 돈다.
+  schedule:
+    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 permissions:

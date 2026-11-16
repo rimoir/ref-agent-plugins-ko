@@ -77,9 +77,10 @@ jobs:
             - upstream 클론: ${{ runner.temp }}/upstream (전체 히스토리)
             `${{ matrix.name }}/`와 sources.json만 고친다. 커밋하지 않는다.
             마지막에 `python3 tools/render.py`와 `python3 tools/verify.py ${{ matrix.name }}`를 돌려 통과시킨다.
+            갱신하지 않고 멈추는 경우에는 이유를 `${{ runner.temp }}/pr.md`에 쓰고 끝낸다.
             끝나면 PR 본문으로 쓸 내용(반영 범위, 구조 변경, 판단이 필요했던 곳)을 `${{ runner.temp }}/pr.md`에 쓴다.
           claude_args: >-
-            --allowedTools "Read,Edit,Write,Glob,Grep,Bash"
+            --model claude-opus-5-5 --allowedTools "Read,Edit,Write,Glob,Grep,Bash"
       - name: 검증
         run: |
           python3 tools/render.py --check
@@ -91,7 +92,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git diff --cached --quiet && { echo "바뀐 것이 없다"; exit 1; }
+          git diff --cached --quiet && { echo "::error::바뀐 것이 없다"; cat "$RUNNER_TEMP/pr.md" 2>/dev/null; exit 1; }
           to="${{ matrix.to }}"; case "${{ matrix.track }}:$to" in main:*) to="main $to";; *:v*) ;; *) to="v$to";; esac
           title="docs(${{ matrix.name }}): 한국어 번역 갱신 (upstream $to)"
           git commit -q -m "$title" -m "${{ matrix.from }}..${{ matrix.to }}"

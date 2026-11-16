@@ -71,7 +71,10 @@
     "marketplace": {
       "strict": false,
       "license": "CC-BY-4.0"
-    }
+    },
+    "test": [
+      "node --test test/"
+    ]
   },
   "dsh-superagent": {
     "repo": "deepseek-ai/dsh-superagent-prototype",

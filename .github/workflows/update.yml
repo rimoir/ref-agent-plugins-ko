@@ -22,7 +22,7 @@ jobs:
     outputs:
       matrix: ${{ steps.d.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - id: d
         env:
           GH_TOKEN: ${{ github.token }}
@@ -56,19 +56,20 @@ jobs:
       max-parallel: 1  # 구독 사용량이 한꺼번에 몰리지 않게 한다
       matrix: ${{ fromJSON(needs.detect.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - run: git switch -c "${{ matrix.branch }}"
       - name: upstream 클론
         run: git clone --quiet "https://github.com/${{ matrix.repo }}" "$RUNNER_TEMP/upstream"
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
       - run: corepack enable
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
           prompt: |
             AGENTS.md를 끝까지 읽고 "갱신 절차" 3~6단계를 따라 `${{ matrix.name }}/` 번역을 갱신한다.
             - 기준: sources.json의 ${{ matrix.name }}.ref = ${{ matrix.from }}

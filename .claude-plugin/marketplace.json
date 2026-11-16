@@ -38,7 +38,7 @@
       "name": "unslop",
       "source": "./unslop",
       "strict": false,
-      "description": "바이브 코딩으로 만든 AI 티 나는 UI를 디자인된 인터페이스로 바꾸는 스킬 (한국어 번역, upstream main a6f121e)",
+      "description": "바이브 코딩으로 만든 AI 티 나는 UI를 디자인된 인터페이스로 바꾸는 스킬 (한국어 번역, upstream main 620163e)",
       "license": "CC-BY-4.0"
     }
   ]

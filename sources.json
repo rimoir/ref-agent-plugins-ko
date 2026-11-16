@@ -66,12 +66,15 @@
   "unslop": {
     "repo": "heydamir/unslop",
     "track": "main",
-    "ref": "a6f121e",
+    "ref": "620163e",
     "summary": "바이브 코딩으로 만든 AI 티 나는 UI를 디자인된 인터페이스로 바꾸는 스킬",
     "marketplace": {
       "strict": false,
       "license": "CC-BY-4.0"
-    }
+    },
+    "test": [
+      "node --test test/*.test.mjs"
+    ]
   },
   "dsh-superagent": {
     "repo": "deepseek-ai/dsh-superagent-prototype",

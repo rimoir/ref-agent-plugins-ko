@@ -17,8 +17,6 @@
 
 ## 설치
 
-비공개 저장소라 GitHub 인증이 필요하다.
-
 Claude Code:
 
 ```text

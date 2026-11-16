@@ -92,7 +92,7 @@ jobs:
           git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
           git add -A
           git diff --cached --quiet && { echo "바뀐 것이 없다"; exit 1; }
-          to="${{ matrix.to }}"; case "$to" in v*) ;; [0-9]*) to="v$to";; *) to="main $to";; esac
+          to="${{ matrix.to }}"; case "${{ matrix.track }}:$to" in main:*) to="main $to";; *:v*) ;; *) to="v$to";; esac
           title="docs(${{ matrix.name }}): 한국어 번역 갱신 (upstream $to)"
           git commit -q -m "$title" -m "${{ matrix.from }}..${{ matrix.to }}"
           git push -u origin "${{ matrix.branch }}"

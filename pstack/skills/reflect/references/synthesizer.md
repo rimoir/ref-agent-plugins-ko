@@ -25,7 +25,7 @@
 - "linter at SHA `bd91aa7` uses chars/4 heuristic"
 - "`<specific-skill-name>` has 175 tokens at limit 80"
 - "Bugbot flagged regex backtracking on May 2"
-- "we renamed `gpt-4` to `gpt-4o` in `encodingForModel`"
+- "we renamed `parseConfig` to `loadConfig` in `settings.ts`"
 
 남긴다(지속되는 패턴):
 - "트리거 감지용 닫힌 정규식 enum은 깨지기 쉽다. 스키마로 검증하는 구조를 택한다"

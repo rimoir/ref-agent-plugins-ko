@@ -29,7 +29,7 @@ ls -t <agent-transcripts>/*.jsonl <agent-transcripts>/*/*.jsonl <agent-transcrip
 | 관점 | 역할 줄 | 기본 `model` | 프롬프트 템플릿 |
 |---|---|---|---|
 | 판단(Judgment) | `reflect judgment, divergent, synthesizer` | `claude-opus-5-5-xhigh` | `references/judgment-reviewer.md` |
-| 도구(Tooling) | `reflect tooling` | `grok-4.7-xhigh-fast` | `references/tooling-reviewer.md` |
+| 도구(Tooling) | `reflect tooling` | `claude-opus-5-5-high-fast` | `references/tooling-reviewer.md` |
 | 발산(Divergent) | `reflect judgment, divergent, synthesizer` | `claude-opus-5-5-xhigh` | `references/divergent-reviewer.md` |
 
 각 템플릿을 원문 그대로 넘기고, 표시된 자리에 대화 기록 경로나 요약을 넣는다. 리뷰어는 `Task` 응답 본문으로 발견 사항을 돌려준다.

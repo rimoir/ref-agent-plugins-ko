@@ -10,7 +10,7 @@
 6. `node pstack/skills/poteto-mode/scripts/check-plan.mjs <plan.md>`를 돌리고 출력된 줄을 모두 고친다(**encode-lessons-in-structure** 원칙 스킬).
 7. 넘겨준다. 계획 경로와 스크립트 출력을 올리고 멈춘다. 실행은 운영자가 명시적으로 진행하라고 할 때, 계획이 지정한 실행 플레이북으로 시작한다.
 
-**검증.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked(테스트만으로는 검증이 충분하지 않다. PR은 unit, live, perf 칸이 모두 체크되어야만 검증된 것이다. **prove-it-works** 원칙 스킬). 이 문장이 검증 규칙이다. 모든 검증 블록은 이 문장으로 시작한다. live 블록은 필수다. PR head에서 레인(lane) 열 개가 **swarm** 스킬에 따라 `swarm workers` 모델(기본값 `grok-4.7-xhigh-fast`)로 control skill을 써서 실제 화면을 조작한다. 레인마다 칸 하나이고, 구체적인 시나리오, 저장할 스크린샷, 통과 조건을 갖는다. 그중 하나는 **Regression lane against trunk(trunk 대비 회귀 레인)**다. 이 레인은 핵심 시나리오 하나를 trunk와 head에서 똑같이 돌린다. trunk에 해당 기능이 없으면 trunk 결과를 지어내지 말고 그 사실을 기록한 뒤, diff가 추가하는 동작과 사용자가 기다리는 최종 상태를 대신 검증한다. perf 게이트는 양쪽을 다 본다. trunk와 head 모두 지정한 지표를 내야 한다. trunk에 기능이 없으면 diff가 추가하는 작업을 따로 떼어 그 작업과 사용자가 기다리는 종단 간 상태에 절대 예산을 정한다. 서로 다른 시나리오 사이의 비율을 주장하지 않는다. perf 블록에는 지표, 교차 실행하는 측정(probe), 먼저 잰 trunk 기준선, 실패로 판정하는 수치를 담은 규칙을 적는다. 상호작용을 바꾸는 PR은 리뷰 게이트를 거친다. 운영자가 머지 전에 채팅에서 스크린샷과 영상으로 검토한다. 상호작용을 바꾸지 않는 PR은 `**Review gate.** None. <PR id> is not review-gated.`라고 쓰고 그 아래에 칸을 두지 않는다.
+**검증.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked(테스트만으로는 검증이 충분하지 않다. PR은 unit, live, perf 칸이 모두 체크되어야만 검증된 것이다. **prove-it-works** 원칙 스킬). 이 문장이 검증 규칙이다. 모든 검증 블록은 이 문장으로 시작한다. live 블록은 필수다. PR head에서 레인(lane) 열 개가 **swarm** 스킬에 따라 `swarm workers` 모델(기본값 `claude-opus-5-5-high-fast`)로 control skill을 써서 실제 화면을 조작한다. 레인마다 칸 하나이고, 구체적인 시나리오, 저장할 스크린샷, 통과 조건을 갖는다. 그중 하나는 **Regression lane against trunk(trunk 대비 회귀 레인)**다. 이 레인은 핵심 시나리오 하나를 trunk와 head에서 똑같이 돌린다. trunk에 해당 기능이 없으면 trunk 결과를 지어내지 말고 그 사실을 기록한 뒤, diff가 추가하는 동작과 사용자가 기다리는 최종 상태를 대신 검증한다. perf 게이트는 양쪽을 다 본다. trunk와 head 모두 지정한 지표를 내야 한다. trunk에 기능이 없으면 diff가 추가하는 작업을 따로 떼어 그 작업과 사용자가 기다리는 종단 간 상태에 절대 예산을 정한다. 서로 다른 시나리오 사이의 비율을 주장하지 않는다. perf 블록에는 지표, 교차 실행하는 측정(probe), 먼저 잰 trunk 기준선, 실패로 판정하는 수치를 담은 규칙을 적는다. 상호작용을 바꾸는 PR은 리뷰 게이트를 거친다. 운영자가 머지 전에 채팅에서 스크린샷과 영상으로 검토한다. 상호작용을 바꾸지 않는 PR은 `**Review gate.** None. <PR id> is not review-gated.`라고 쓰고 그 아래에 칸을 두지 않는다.
 
 **Control skill.** 화면 종류로 고른다. 브라우저, Electron, 웹 UI는 `cursor-team-kit`의 `control-ui`를 쓴다. CLI와 TUI는 `cursor-team-kit`의 `control-cli`를 쓴다. 네이티브 모바일은 레포에 있는 시뮬레이터 조작 스킬을 쓴다. 두 화면을 건드리는 PR은 양쪽 모두에 레인을 둔다. control skill이 없는 화면은 부록 C의 위험 항목이고, 그래도 live 블록에는 각 레인이 그 화면을 어떻게 조작하는지 적는다.
 
@@ -149,7 +149,7 @@ live 레인은 각자 PR head에서 자기 클라우드 VM으로 돈다. `cursor
 
 ## Appendix D. 링크와 읽을거리
 
-<수정 전에 읽을 문서. 어느 PR에 `pstack/skills/how/SKILL.md`와 `pstack/skills/interrogate/SKILL.md`를 쓰는지. `pstack/skills/show-me-your-work/SKILL.md`에 따른 기록.>
+<수정 전에 읽을 문서. 어느 PR에 `pstack/skills/interrogate/SKILL.md`를 쓰는지. `pstack/skills/show-me-your-work/SKILL.md`에 따른 기록.>
 ````
 
 **답변:** 계획 경로, 의존 관계와 리뷰 게이트 대상을 포함한 PR id 목록, 프로토타입이 증명한 것과 증명되지 않은 채 남은 것, 검사 스크립트 출력.

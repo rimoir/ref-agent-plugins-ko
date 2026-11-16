@@ -22,7 +22,7 @@ disable-model-invocation: true
 
 ## Phase A: 문제의 기반 다지기
 
-새 코드가 건드리는 모든 시스템의 실제 멘탈 모델을 세운다. 관련 서브시스템에 **how** 스킬을 돌린다. 파일 이름을 대는 것은 기반 다지기가 아니다. `how`가 정한 아키텍처 설명을 만든다. 설계가 소유권이나 계층을 다시 정의한다면, 기존 형태에 **why** 스킬도 돌려서 그 근거가 추측이 아니라 제약이 되게 한다.
+새 코드가 건드리는 모든 시스템의 실제 멘탈 모델을 세운다. 관련 서브시스템을 추적한다. 파일 이름을 대는 것은 기반 다지기가 아니다. 각각의 아키텍처 설명을 쓴다. 설계가 소유권이나 계층을 다시 정의한다면, 기존 형태에 **why** 스킬도 돌려서 그 근거가 추측이 아니라 제약이 되게 한다.
 
 Phase A는 통합할 주변 시스템이 없는 진짜 백지 작업일 때만 건너뛴다.
 
@@ -30,7 +30,7 @@ Phase A는 통합할 주변 시스템이 없는 진짜 백지 작업일 때만 �
 
 design-sketch 작업과 Phase A의 기반 산출물을 가지고 **arena** 스킬을 돌린다. 각 러너의 프롬프트로 `references/runner-prompt.md`를 넘긴다.
 
-러너는 `pstack-models.mdc` 규칙의 `arena runners` 줄 대신 `architect runners` 줄에서 가져온다. 규칙이나 그 줄이 없으면 `claude-opus-5-5-xhigh`와 `grok-4.7-xhigh-fast`를 쓴다. 별칭 항목과 거부된 항목은 **arena** 스킬 Phase A의 러너 규칙을 따른다.
+러너는 `pstack-models.mdc` 규칙의 `arena runners` 줄 대신 `architect runners` 줄에서 가져온다. 규칙이나 그 줄이 없으면 `claude-fable-5-2-high`, `claude-opus-5-5-high-fast`, `gemini-4-carbon-high`를 쓴다. 별칭 항목과 거부된 항목은 **arena** 스킬 Phase A의 러너 규칙을 따른다.
 
 두 번 설계한다. 첫 후보가 충분해 보여도 종합 전에 구조적으로 다른 후보를 최소 두 개 요구한다. **exhaust-the-design-space** 원칙 스킬을 구체화한 것이다. 한 형태 안의 국소 수정이 아니라 형태 전체가 다른 대안이어야 한다.
 
@@ -71,7 +71,7 @@ Arena는 종합된 설계 패키지 하나를 돌려준다. 그 종합 결정이
 
 버릴 때는:
 
-1. 지금까지 만든 것에 **how** 스킬을 다시 돌린다.
+1. 지금까지 만든 것을 다시 추적한다.
 2. redesign-from-first-principles에 따라, 새 제약이 처음부터 가정이었던 것처럼 다시 설계한다.
 3. **subtract-before-you-add** 원칙 스킬에 따라 더하기 전에 뺀다. 새 스케치는 커지기 전에 먼저 옛 스케치보다 작아야 한다.
 4. Phase B로 돌아가 arena를 다시 돌린다.

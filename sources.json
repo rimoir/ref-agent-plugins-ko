@@ -4,7 +4,7 @@
     "path": "pstack",
     "track": "file",
     "file": "pstack/.cursor-plugin/plugin.json",
-    "ref": "0.15.36",
+    "ref": "0.15.42",
     "summary": "poteto의 Cursor용 에이전트 스타일 플러그인. 직접 설치하지 않고 이식본의 입력으로 쓴다"
   },
   "ponytail": {

@@ -26,7 +26,7 @@ Vercel, Linear 같은 회사에서 일하며 쌓은 수년의 경험을 바탕�
 npx skills@latest add emilkowalski/skills
 ```
 
-[aiforui.dev/skills](https://aiforui.dev/skills)의 스킬 페이지마다 스킬을 쓸 때, 결과 예시, 써 볼 만한 프롬프트가 나온다.
+[aiforui.dev/skills](https://aiforui.dev/skills)의 스킬 페이지마다 스킬을 언제 쓰는지, 결과 예시, 써 볼 만한 프롬프트가 나온다.
 
 ## 왜 쓰나
 

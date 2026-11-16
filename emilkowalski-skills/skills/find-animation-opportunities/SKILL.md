@@ -17,7 +17,7 @@ description: 코드베이스나 UI에서 애니메이션이 없지만 있어야 
 
 ## 작업 태도
 
-**절제**가 가장 큰 특징인 시니어 디자인 엔지니어로 일한다. 이 스킬은 Emil Kowalski의 ["You Don't Need Animations"](https://emilkowal.ski/ui/you-dont-need-animations)를 전제로 한다. 때로는 애니메이션이 없는 것이 최고의 애니메이션이다. 어디에나 모션을 제안하는 기회 탐색기는 쓸모없는 것보다 더 나쁘다. 이 저장소가 막으려고 존재하는 굼뜨고 애니메이션이 지나친 인터페이스를 만들어 내기 때문이다.
+**절제**가 가장 큰 특징인 시니어 디자인 엔지니어로 일한다. 이 스킬은 Emil Kowalski의 ["You Don't Need Animations"](https://emilkowal.ski/ui/you-dont-need-animations)를 전제로 한다. 때로는 애니메이션이 없는 것이 최고의 애니메이션이다. 어디에나 모션을 제안하는 기회 탐색기는 쓸모없는 것보다 더 나쁘다. 굼뜨고 애니메이션이 지나친 인터페이스를 만들어 내기 때문이다.
 
 그래서 이 스킬은 찾는 도구인 만큼 거르는 도구이기도 하다. 후보는 대부분 거절할 것으로 예상한다. 확신이 강한 기회 몇 개가 긴 희망 목록보다 낫다.
 
@@ -58,7 +58,7 @@ description: 코드베이스나 UI에서 애니메이션이 없지만 있어야 
 
 ### 3. 속도: 예산 안에 머무를 수 있나?
 
-제안은 반드시 표준 예산(UI는 300ms 미만) 안에서 통해야 한다.
+제안은 반드시 표준 예산(UI는 300ms 미만. 모달, 드로어, 시트, 토스트는 문서화된 예외다) 안에서 통해야 한다.
 
 | 요소 | 지속 시간 |
 | --- | --- |
@@ -79,8 +79,8 @@ description: 코드베이스나 UI에서 애니메이션이 없지만 있어야 
 아래 이음매를 훑는다. 하나하나가 진짜 기회로 알려진 유형이다.
 
 **피드백 공백**
-- `:active` 상태가 없는 누를 수 있는 요소 → `transform: scale(0.97)`과 `transition: transform 160ms ease-out`(은은하게: 0.95–0.98)
-- 길게 눌러 확인하는 채움이 실수를 막아 줄 자리인데 그냥 클릭 한 번으로 확인하는 파괴적 동작 → `clip-path: inset(0 100% 0 0)` 오버레이, 누를 때 2s linear, 뗄 때 200ms ease-out으로 제자리로 튕겨 돌아오기
+- `:active` 상태가 없는 누를 수 있는 요소 → `transform: scale(0.97)`과 `transition: transform 160ms var(--ease-out)`(은은하게: 0.95–0.98)
+- 길게 눌러 확인하는 채움이 실수를 막아 줄 자리인데 그냥 클릭 한 번으로 확인하는 파괴적 동작 → `clip-path: inset(0 100% 0 0)` 오버레이, 누를 때 2s linear, 뗄 때 200ms `var(--ease-out)`으로 제자리로 튕겨 돌아오기
 
 **순간이동하는 상태**
 - 즉시 바뀌거나, 나타나거나, 사라지는 콘텐츠(조건부 렌더링, 라우트 콘텐츠, 펼쳐지는 섹션) → `scale(0.95–0.97)` + `opacity: 0`에서 시작하는 페이드/스케일 등장, `ease-out`, 절대 `scale(0)`은 쓰지 않음, JS 없는 등장에는 `@starting-style`
@@ -89,10 +89,9 @@ description: 코드베이스나 UI에서 애니메이션이 없지만 있어야 
 
 **공간적 맥락 누락**
 - 트리거와 아무 연결 없이 나타나는 패널, 팝오버, 메뉴 → 트리거에 `transform-origin`을 두고 커지며 등장(Base UI: `var(--transform-origin)`). 모달은 예외(가운데에 머문다)
-- 들어올 때와 다른 방식으로 나가는 닫을 수 있는 화면 요소(토스트, 시트) → 대칭 경로, 하드코딩한 픽셀이 아닌 `translateY(100%)` 같은 퍼센트 값
 
 **묶음 등장**
-- 사용자가 가끔 보는 페이지에서 한꺼번에 튀어나오는 그리드나 목록 → 30–80ms 스태거. 장식이므로 절대 상호작용을 막지 않아야 함
+- 사용자가 가끔 보는 페이지에서 한꺼번에 튀어나오는 그리드나 목록 → 30–80ms 스태거, 균일하지 않게, 컨테이너마다 등장 하나(`../choreograph/SKILL.md` 참고). 장식이므로 절대 상호작용을 막지 않아야 함
 
 **제스처 이음매**
 - 물리감 없이 툭 제자리로 붙는 드래그/스와이프 요소 → 스프링(`{ type: "spring", duration: 0.5, bounce: 0.2 }`, 바운스 0.1–0.3), 속도 기반 닫기(`Math.abs(distance)/elapsedMs > ~0.11`), 경계에서 급정지 대신 러버밴딩(rubber-banding)
@@ -118,13 +117,13 @@ description: 코드베이스나 UI에서 애니메이션이 없지만 있어야 
 | # | Location | Today | Purpose | Frequency | Suggested motion |
 | --- | --- | --- | --- | --- | --- |
 | 1 | `Toast.tsx:41` | 새 토스트가 즉시 나타남 | 거슬리는 변화 막기 | 가끔 | `@starting-style`로 등장: `opacity: 0; translateY(100%)` → 자리 잡은 상태, `transition: 400ms ease`, 같은 가장자리로 퇴장 |
-| 2 | `Button.tsx:18` | 누름 피드백 없음 | 피드백 | 하루 수십 회 | `:active { transform: scale(0.97) }`, `transition: transform 160ms ease-out`. 이 빈도 등급에 맞을 만큼 은은함 |
+| 2 | `Button.tsx:18` | 누름 피드백 없음 | 피드백 | 하루 수십 회 | `:active { transform: scale(0.97) }`, `transition: transform 160ms var(--ease-out)`. 이 빈도 등급에 맞을 만큼 은은함 |
 
-모든 "Suggested motion" 셀에는 이 저장소의 공통 어휘(`--ease-out: cubic-bezier(0.23, 1, 0.32, 1)`, `--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1)`, `--ease-drawer: cubic-bezier(0.32, 0.72, 0, 1)`)에서 가져온 정확한 값(곡선, 지속 시간, 속성)을 적고, 절대 어림하지 않는다. `transform`과 `opacity`만 애니메이션한다. 동작 줄이기 처리(0이 아니라 더 부드럽게)를 넣고, 제안에 hover가 들어가면 `@media (hover: hover) and (pointer: fine)` 제한도 넣는다.
+모든 "Suggested motion" 셀에는 다음 토큰(`--ease-out: cubic-bezier(0.23, 1, 0.32, 1)`, `--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1)`, `--ease-drawer: cubic-bezier(0.32, 0.72, 0, 1)`)에서 가져온 정확한 값(곡선, 지속 시간, 속성)을 적고, 절대 어림하지 않는다. `transform`과 `opacity`를 우선한다. `clip-path`(길게 눌러 확인)와 측정한 높이(아코디언)는 문서화된 예외다. 동작 줄이기 처리(0이 아니라 더 부드럽게)를 넣고, 제안에 hover가 들어가면 `@media (hover: hover) and (pointer: fine)` 제한도 넣는다.
 
 ### 2부: 거절한 후보(필수)
 
-검토했지만 일부러 제안하지 **않은** 곳 2–5개를, 각각 탈락시킨 관문 질문과 함께 적는다.
+검토했지만 일부러 제안하지 **않은** 곳을 5개까지, 각각 탈락시킨 관문 질문과 함께 적는다. 탈락시킨 것이 없으면 없다고 적는다.
 
 - `CommandMenu.tsx:12`: 명령 팔레트 열기/닫기. **거절: 키보드로 시작, 하루 100회 이상. 절대 애니메이션을 넣지 않는다.**
 - `Chart.tsx:88`: 분석 그래프의 선 그리기 애니메이션. **거절: 사용자가 읽고 있는 기능적 데이터. 장식은 방해가 된다.**

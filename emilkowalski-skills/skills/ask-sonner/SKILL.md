@@ -19,7 +19,7 @@ description: React 토스트 라이브러리 Sonner를 안내한다. Toaster 설
 
 필요한 것은 딱 두 가지다.
 
-1. **한 번만 마운트한 `<Toaster />` 하나**: 가능한 한 루트 가까이에 둔다(Next.js에서는 `layout.tsx`, 서버 컴포넌트 안에서도 동작한다). 페이지마다 렌더링하거나 조건부로 렌더링하는 일은 절대 하지 않는다. Toaster가 하나 더 마운트되면 모든 토스트가 두 번씩 나온다.
+1. **한 번만 마운트한 `<Toaster />` 하나**: 가능한 한 루트 가까이에 둔다(Next.js에서는 `layout.tsx`, 서버 컴포넌트 안에서도 동작한다). 페이지마다 렌더링하거나 조건부로 렌더링하는 일은 절대 하지 않는다. 자기 `id`가 없는 Toaster가 하나 더 있으면 모든 토스트가 두 번씩 나온다.
 2. **클라이언트 코드에서 부르는 `toast()`**: 이벤트 핸들러, Effect, 콜백에서 부른다. 평범한 함수라 훅도 프로바이더도 필요 없다. 하지만 서버에서는 아무 일도 하지 않는다. 서버 액션에서는 결과를 반환하고 그 결과를 받는 클라이언트 코드에서 `toast()`를 호출한다.
 
 ```jsx
@@ -48,17 +48,17 @@ const id = toast.loading('Uploading…');
 toast.success('Uploaded', { id });
 ```
 
-**지속**: `{ duration: Infinity }`. **닫기**: `toast.dismiss(id)`, 전부 닫으려면 `toast.dismiss()`. **활성 토스트 읽기**: React 안에서는 `useSonner()`, 밖에서는 `toast.getActiveToasts()`.
+**지속**: `{ duration: Infinity }`. **닫기**: `toast.dismiss(id)`, 전부 닫으려면 `toast.dismiss()`. **활성 토스트 읽기**: React 안에서는 `useSonner()`, 밖에서는 `toast.getToasts()`.
 
 **텍스트 안의 링크나 컴포넌트**: 제목이나 설명에 함수를 넘긴다. `toast(() => <a href="…">View</a>)`처럼 쓴다.
 
-**여러 Toaster**: 각각에 `id`를 주고 `toast('…', { toasterId: 'canvas' })`로 대상을 지정한다. `toasterId`가 없으면 모든 Toaster가 그 토스트를 렌더링한다.
+**여러 Toaster**: 각각에 `id`를 주고 `toast('…', { toasterId: 'canvas' })`로 대상을 지정한다. `id`가 있는 Toaster는 자기를 대상으로 한 토스트만 렌더링하고, `id`가 없는 Toaster는 대상을 지정하지 않은 토스트만 렌더링한다.
 
-**닫기 콜백**: `onDismiss`는 닫기 버튼이나 스와이프로 닫힐 때 발생한다. `onAutoClose`는 시간이 다 되면 발생한다. 둘은 별개다. 하나로 된 '닫힘' 콜백은 없다.
+**닫기 콜백**: `onDismiss`는 닫기 버튼, 스와이프, `toast.dismiss()`로 닫힐 때 발생한다. `onAutoClose`는 시간이 다 되면 발생한다. 둘은 별개다. 하나로 된 '닫힘' 콜백은 없다.
 
 ## 스타일링: 단계 사다리
 
-변경에 필요한 만큼만 올라간다. 너무 일찍 맨 윗단으로 뛰어오르는 것은 괜찮지만(권장하는 최종 상태다), 중간에 머무르는 것은 괜찮지 않다.
+변경에 필요한 만큼만 올라간다. 예외가 있다. `!important`를 붙일 클래스가 몇 개를 넘을 것 같으면 곧장 헤드리스로 간다. 헤드리스가 권장하는 최종 상태다.
 
 1. **기본값**: 성공/오류를 화려하게 하려면 Toaster에 `richColors`를, 테마와 반대로 뒤집으려면 `invert`를 더한다.
 2. **인라인 조정**: Toaster에 `toastOptions={{ style: {…} }}`를 주면 모든 토스트에 적용되고, `toast()` 호출마다 `style`을 주면 그 토스트에만 적용된다.
@@ -78,11 +78,11 @@ toast.success('Uploaded', { id });
 | Tailwind/CSS 클래스가 먹히지 않음 | 기본 스타일이 덮어쓴다. `!important`를 붙이거나 `unstyled` / 헤드리스를 쓴다(위 사다리 참고). |
 | 토스트가 스타일이 하나도 적용되지 않은 채 렌더링됨(Astro, view transitions에서 흔함) | Sonner가 주입한 스타일시트가 사라졌다. 레이아웃에서 `import 'sonner/dist/styles.css'`로 명시적으로 불러온다. |
 | Shadow DOM 안에서 스타일이 없음 | 스타일이 shadow root가 아니라 `document.head`에 들어간다. 텍스트에 `[data-sonner-toaster]`가 들어 있는 style 태그를 shadow root로 복사한다. |
-| 모달/오버레이 뒤에 깔리거나 잘리는 토스트 | 조상 요소가 쌓임 맥락을 만들거나(`transform`, `filter`, `overflow`) 오버레이의 z-index가 Toaster보다 높다. `<Toaster />`를 dialog/portal 컨테이너 바깥의 문서 루트로 옮긴다. |
+| 모달/오버레이 뒤에 깔리거나 잘리는 토스트 | 조상 요소가 쌓임 맥락을 만들거나(`transform`, `filter`) 토스트를 잘라 내거나(`overflow`), 오버레이의 z-index가 Toaster보다 높다. `<Toaster />`를 dialog/portal 컨테이너 바깥의 문서 루트로 옮긴다. |
 | 다크 모드가 무시됨 | `theme`의 기본값이 `'light'`다. `theme="system"`을 설정하거나 resolve된 테마를 넘긴다(위 테마 참고). |
 | 성공/오류가 초록/빨강이 아니라 회색으로 보임 | 그게 기본값이다. Toaster에 `richColors`를 더한다. |
-| 토스트가 닫히지 않음 | `duration: Infinity`나 `dismissible: false`가 있거나, promise가 끝나지 않는 `toast.promise`다. 로딩 토스트가 끝없이 기다린다. |
+| 토스트가 닫히지 않음 | `duration: Infinity`가 있거나, promise가 끝나지 않는 `toast.promise`다. 로딩 토스트가 끝없이 기다린다. |
 | 로딩에서 멈춘 `toast.promise` | 첫 인자로 promise(또는 promise를 반환하는 함수)가 필요하고, 그 promise가 실제로 resolve/reject되어야 한다. |
 | 밀어서 닫기 방향이 틀림 / 동작하지 않음 | 방향은 `position`에서 정해진다. Toaster의 `swipeDirections`로 덮어쓴다. |
 | 토스트가 모든 Toaster에 나타남 | Toaster가 여럿이면 대상을 지정해야 한다. Toaster마다 `id`를 주고 `toast()` 호출에 `toasterId`를 넘긴다. |
-| 모바일에서 화면 가장자리에 너무 붙는 토스트 | `offset`(데스크톱, 기본값 32px)과 `mobileOffset`(<600px, 기본값 16px)을 쓴다. 숫자, CSS 문자열, 면마다 값을 주는 객체를 받는다. |
+| 모바일에서 화면 가장자리에 너무 붙는 토스트 | `offset`(데스크톱, 기본값 24px)과 `mobileOffset`(<600px, 기본값 16px)을 쓴다. 숫자, CSS 문자열, 면마다 값을 주는 객체를 받는다. |

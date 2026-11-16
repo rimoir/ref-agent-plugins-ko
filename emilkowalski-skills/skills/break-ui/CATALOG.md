@@ -13,7 +13,7 @@ UI를 깨뜨리는 현실적인 값을 컴포넌트가 렌더링하는 값의 �
 | `Aleksandra Wiśniewska-Kowalczyk` | 길고 하이픈과 발음 구별 기호가 있음. 두 줄로 줄바꿈되고 하이픈이 줄바꿈 지점이 됨 |
 | `Christopher Alexander Montgomery III` | 길고 접미사가 붙음. 첫 단어 + 마지막 단어로 만드는 단순한 이니셜은 `CI`가 됨 |
 | `Konstantin Oberhauser-Wettstein` | 길고 복합 성씨임. 한 줄짜리 행에서 넘침 |
-| `Jo` | 두 글자. 이름 열이 거의 비어 보이고 단순한 이니셜은 `J`가 됨 |
+| `Jo` | 두 글자. 이름 열이 거의 비어 보임 |
 | `J` | 한 글자. 이니셜도 한 글자이고 이름이 링크라면 클릭 영역이 아주 짧음 |
 | `Ólafur Darri Ólafsson` | 악센트 붙은 대문자로 시작함. 대문자 변환/정렬 로직, 이니셜 `ÓÓ` |
 | `Đặng Thị Ngọc Hân` | 베트남어 발음 구별 기호가 겹겹이 쌓임. 빡빡한 `line-height` + `overflow: hidden`에 잘림 |
@@ -34,9 +34,9 @@ UI를 깨뜨리는 현실적인 값을 컴포넌트가 렌더링하는 값의 �
 | 값 | 깨지는 것 |
 | --- | --- |
 | `bartholomew.fitzgerald@northwind-industries-holdings.example.com` | 고전적인 사례. `overflow-wrap: anywhere`가 없으면 형제 요소를 모두 행 밖으로 밀어냄 |
-| `a@b.co` | 현실적으로 가장 짧은 값. 긴 이메일을 가정한 레이아웃이 텅 비어 보임 |
+| `a@b.test` | 현실적으로 가장 짧은 값. 긴 이메일을 가정한 레이아웃이 텅 비어 보임 |
 | `first.last+billing-notifications@example.com` | 플러스 주소. `+`를 거부하는 검증, 의미 있는 부분을 말줄임하는 표시 |
-| `ops@sub.department.region.example.co.uk` | 하위 도메인이 많고 TLD가 두 부분. "도메인" 추출 로직 |
+| `ops@sub.department.region.example.test` | 하위 도메인이 많음. "도메인" 추출 로직 |
 | `https://example.com/workspaces/acme/projects/q3-launch/docs/9f8e7d6c5b4a?tab=comments&filter=unresolved` | 긴 URL. 넘침, 그리고 끝 말줄임이 서로 다른 부분을 가림 |
 | `9f8e7d6c-5b4a-4c3d-8e2f-1a0b9c8d7e6f` | UUID. 고정폭 글꼴 너비, 가운데 말줄임 후보 |
 | `Q3 Board Deck — FINAL (revised) v12 [approved by legal].pdf` | 파일 이름. 끝 말줄임이 버전과 확장자를 가림, 경로 속 대괄호와 대시 |
@@ -65,7 +65,7 @@ UI를 깨뜨리는 현실적인 값을 컴포넌트가 렌더링하는 값의 �
 | `0` | 0일 때의 상태: "0 members", 빈 진행 막대, 퍼센트 계산의 0 나누기 |
 | `1` | 복수형: "1 members", "1 days ago" |
 | `1284` | 천 단위 구분 기호가 필요함: `1,284` |
-| `1000000` | 개수 배지의 너비. 정밀도가 중요하지 않은 곳에서는 `1M` 같은 축약형을 고려 |
+| `1000000` | 개수 배지의 너비. 정밀도가 중요하지 않은 곳에서는 `1M` 같은 축약형을 씀 |
 | `12345678.9` as currency | `$12,345,678.90`. 합계 열을 넘침 |
 | `-42.5` | 음수 부호, 빨간색 표시 로직, 회계 형식의 괄호 |
 | `0.1 + 0.2` | `0.30000000000000004`가 그대로 렌더링됨 |
@@ -90,7 +90,7 @@ UI를 깨뜨리는 현실적인 값을 컴포넌트가 렌더링하는 값의 �
 | 값 | 깨지는 것 |
 | --- | --- |
 | Now | "just now" 대신 "0 seconds ago"가 나옴 |
-| 12 days ago, 11 months ago, 3 years ago | 상대 시간 임곗값. 일주일쯤 지나면 절대 날짜로 바꿈 |
+| 12 days ago, 11 months ago, 3 years ago | 상대 시간 임곗값. 7일이 지나면 절대 날짜로 바꿈 |
 | A future date | "in 3 days" 대 "-3 days ago" |
 | `1970-01-01` | 0 타임스탬프가 실제 날짜처럼 보임 |
 | `2025-12-31T23:30:00-08:00` | UTC와 사용자 시간대에서 서로 다른 날로 보임 |

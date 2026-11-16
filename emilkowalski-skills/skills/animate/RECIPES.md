@@ -169,7 +169,7 @@ useEffect(() => { setMounted(true); }, []);
 
 ## 그룹 등장에 스태거 넣기
 
-사용자가 가끔 보는 목록이나 그리드에 쓴다. 하루 종일 스크롤하며 지나치는 목록에는 쓰지 않는다.
+사용자가 가끔 보는 목록이나 그리드에 쓴다. 하루 종일 스크롤하며 지나치는 목록에는 쓰지 않는다. 그룹 등장은 `../choreograph/SKILL.md`를 따른다(컨테이너마다 등장 하나, 균일하지 않은 지연).
 
 ```css
 .item {
@@ -179,8 +179,8 @@ useEffect(() => { setMounted(true); }, []);
 }
 
 .item:nth-child(2) { animation-delay: 50ms; }
-.item:nth-child(3) { animation-delay: 100ms; }
-.item:nth-child(4) { animation-delay: 150ms; }
+.item:nth-child(3) { animation-delay: 90ms; }
+.item:nth-child(4) { animation-delay: 120ms; }
 
 @keyframes fadeIn {
   to {

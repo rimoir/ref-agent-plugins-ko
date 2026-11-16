@@ -33,7 +33,7 @@ React Native용 제작 스킬이다. 모션 요청을 실제 기기에서 엄격
 ## 철칙
 
 1. **순서대로 진행한다.** 1단계와 2단계를 통과해야 나머지로 넘어간다.
-2. **코어 `Animated`가 아니라 Reanimated를 쓴다.** 코어 `Animated`는 브리지를 건너지 않고는 제스처로 구동할 수 없고, 어차피 `useNativeDriver`는 transform과 opacity 말고는 받지 않는다. Reanimated 워클릿은 UI 스레드에서 돌고 JS가 바빠도 계속 돈다.
+2. **코어 `Animated`가 아니라 Reanimated를 쓴다.** 코어 `Animated`는 제스처 로직(임곗값, 놓을 때의 스프링)을 UI 스레드에서 돌릴 수 없고, 어차피 `useNativeDriver`는 transform과 opacity 말고는 받지 않는다. Reanimated 워클릿은 UI 스레드에서 돌고 JS가 바빠도 계속 돈다.
 3. **어림한 값을 쓰지 않는다.** 곡선과 스프링 설정은 아래 표에서 가져온다.
 4. **동작 줄이기 대응은 애니메이션과 함께 내보낸다.** 후속 작업으로 미루지 않는다.
 5. **느낌은 지원하는 가장 느린 기기의 릴리스 빌드에서 판단한다.** 그 밖의 것은 검증으로 치지 않는다.
@@ -105,7 +105,7 @@ React Native용 제작 스킬이다. 모션 요청을 실제 기기에서 엄격
 
 ### 5. 타이밍 또는 스프링
 
-**손가락이 관여했으면 스프링을 쓴다.** 스프링은 중단을 거쳐도 속도를 이어 가고, 타이밍 곡선은 처음부터 다시 시작한다. 그 밖에는 모두 타이밍을 쓴다.
+**손가락으로 끌거나, 튕기거나, 놓는 것이면 스프링을 쓴다.** 누름 피드백은 이산적인 상태 변화라서 타이밍을 쓴다. 스프링은 중단을 거쳐도 속도를 이어 가고, 타이밍 곡선은 처음부터 다시 시작한다. 그 밖에는 모두 타이밍을 쓴다.
 
 Reanimated 스프링은 Apple의 디자이너용 매개변수 두 개를 그대로 받는다. 질량/강성/감쇠가 아니라 이 형태를 쓴다.
 
@@ -175,14 +175,14 @@ const EASE_SHEET = Easing.bezier(0.32, 0.72, 0, 1);    // iOS 시트 곡선
 | 순간 | 호출 |
 | --- | --- |
 | 값이 한 단계를 넘어갈 때(피커, 슬라이더 디텐트, 세그먼트 컨트롤) | `Haptics.selectionAsync()` |
-| 무언가가 제자리에 붙을 때, 시트 디텐트가 걸릴 때, 드래그가 확정될 때 | `Haptics.impactAsync(ImpactFeedbackStyle.Light)` |
-| 무거운 물체가 내려앉을 때, 파괴적인 동작이 실행될 때 | `Haptics.impactAsync(ImpactFeedbackStyle.Medium)` |
-| 작업이 성공하거나 실패했을 때 | `Haptics.notificationAsync(NotificationFeedbackType.Success / Error)` |
+| 무언가가 제자리에 붙을 때, 시트 디텐트가 걸릴 때, 드래그가 확정될 때 | `Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)` |
+| 무거운 물체가 내려앉을 때, 파괴적인 동작이 실행될 때 | `Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)` |
+| 작업이 성공하거나 실패했을 때 | `Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success / Error)` |
 
 규칙은 세 가지이고 예외가 없다.
 
 - **시각 효과와 같은 프레임.** 애니메이션보다 늦은 햅틱은 피드백이 아니라 결함으로 읽힌다. 애니메이션이 끝날 때가 아니라 원인이 되는 순간(디텐트가 걸리는 순간)에 실행한다.
-- **사용자 동작 하나에 한 번.** 스크롤에도, 프레임마다도, 사용자가 일으키지 않은 등장 애니메이션에도 절대 쓰지 않는다.
+- **의미 있는 이벤트 하나에 한 번.** 한 단계, 한 번의 붙음, 한 번의 확정이 그 단위다. 스크롤에도, 프레임마다도, 사용자가 일으키지 않은 등장 애니메이션에도 절대 쓰지 않는다.
 - **유일한 피드백으로 쓰지 않기.** 많은 사용자가 햅틱을 시스템 전체에서 꺼 두고, 대부분의 Android 기기에서는 느껴지지 않는다. 시각 효과만으로도 성립해야 한다.
 
 워클릿에서는 햅틱을 RN 런타임으로 넘겨 예약해야 한다. `scheduleOnRN(Haptics.selectionAsync)`.

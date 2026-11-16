@@ -67,7 +67,7 @@ description: 웹 앱이 휴대폰에서 네이티브 앱처럼 느껴지게 만�
 }
 ```
 
-두 조건 모두 중요하다. `(hover: hover)`는 주 입력 장치가 hover할 수 있다는 뜻이다. `(pointer: fine)`은 마우스처럼 정밀하다는 뜻이다. 이 조건이 스타일러스를 걸러 내고, hover를 지원한다고 주장하는 드문 Android 기기도 걸러 낸다. Tailwind v4에서는 `hover:` 변형이 이미 `@media (hover: hover)`로 컴파일된다. v3에서는 `future.hoverOnlyWhenSupported`를 설정한다.
+두 조건 모두 중요하다. `(hover: hover)`는 주 입력 장치가 hover할 수 있다는 뜻이다. `(pointer: fine)`은 마우스처럼 정밀하다는 뜻이다. 이 조건이 hover를 지원한다고 주장하면서 포인터는 거친 터치스크린(일부 Android 기기)을 걸러 낸다. Tailwind v4에서는 `hover:` 변형이 이미 `@media (hover: hover)`로 컴파일된다. v3에서는 `future.hoverOnlyWhenSupported`를 설정한다.
 
 터치 사용자에게도 누름 피드백은 필요하다. 모든 입력 방식에서 동작하는 `:active`로 준다(§5 참고).
 
@@ -230,7 +230,7 @@ button, [role="button"], .tab, .chip, .drag-handle {
 <meta name="color-scheme" content="light dark" />
 ```
 
-값은 페이지 맨 위의 색에 맞춘다. 브랜드 색이 아니라 헤더 배경색이다. Next.js에서는 `viewport` export(`themeColor: [{ media, color }]`)로 설정한다. 앱이 OS 설정이 아니라 클래스로 테마를 바꾼다면, 토글할 때 JavaScript로 태그를 갱신한다. 설치된 PWA라면 `apple-mobile-web-app-status-bar-style`과 매니페스트의 `theme_color`/`background_color`도 같은 결정이다.
+값은 페이지 맨 위의 색에 맞춘다. 브랜드 색이 아니라 헤더 배경색이다. Next.js에서는 `viewport` export(`themeColor: [{ media, color }]`)로 설정한다. 앱이 OS 설정이 아니라 클래스로 테마를 바꾼다면, 토글할 때 JavaScript로 태그를 갱신한다. 설치된 PWA라면 매니페스트의 `theme_color`/`background_color`를 같은 색으로 맞춘다. `apple-mobile-web-app-status-bar-style`은 `default`, `black`, `black-translucent` 중에서 고른다.
 
 ### 11. Chrome에서는 맞고 휴대폰에서는 어긋남
 
@@ -266,6 +266,9 @@ input, textarea, select {
 
 button, a, [role="button"] {
   touch-action: manipulation;
+}
+
+button, [role="button"] {
   user-select: none;
   -webkit-user-select: none;
 }
@@ -275,7 +278,7 @@ button, a, [role="button"] {
 }
 ```
 
-`interactive-widget=resizes-content`를 주면 Android Chrome에서 소프트웨어 키보드가 레이아웃 뷰포트를 줄인다. 그래서 `100dvh`와 아래에 고정한 입력 필드가 iOS에서처럼 키보드에 반응한다. 앱이 당겨서 새로 고침을 반기는 스크롤 문서라면 `html`에서 `overscroll-behavior: none`을 뺀다.
+`interactive-widget=resizes-content`를 주면 Android Chrome에서 소프트웨어 키보드가 레이아웃 뷰포트를 줄인다. 그래서 `100dvh`와 아래에 고정한 입력 필드가 키보드에 반응한다. 앱이 당겨서 새로 고침을 반기는 스크롤 문서라면 `html`에서 `overscroll-behavior: none`을 뺀다.
 
 ## 절대 내보내지 말 것
 

@@ -90,6 +90,7 @@ jobs:
             --model claude-opus-5-5 --effort xhigh --allowedTools "Read,Edit,Write,Glob,Grep,Bash"
       - name: 사용량
         if: always() && steps.claude.outputs.execution_file
+        continue-on-error: true
         run: python3 tools/usage-summary.py "${{ steps.claude.outputs.execution_file }}" "번역 ${{ matrix.name }}" >> "$GITHUB_STEP_SUMMARY"
       - name: 검증
         continue-on-error: true  # 실패해도 PR을 열고 리뷰·자동 수정에 맡긴다

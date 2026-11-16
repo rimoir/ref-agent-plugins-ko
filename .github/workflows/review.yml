@@ -102,7 +102,8 @@ jobs:
             --model claude-opus-5-5 --effort xhigh --allowedTools "Read,Write,Glob,Grep,Bash"
       - name: 사용량
         if: always() && steps.claude.outputs.execution_file
-        run: git show origin/main:tools/usage-summary.py | python3 - "${{ steps.claude.outputs.execution_file }}" "리뷰 PR #${{ env.PR }}" >> "$GITHUB_STEP_SUMMARY"
+        continue-on-error: true
+        run: git show origin/main:tools/usage-summary.py | python3 - "${{ steps.claude.outputs.execution_file }}" "리뷰 PR ${{ env.PR }}" >> "$GITHUB_STEP_SUMMARY"
       - name: 리뷰 게시와 review 상태
         id: post
         env:
@@ -146,7 +147,8 @@ jobs:
             --model claude-opus-5-5 --effort xhigh --allowedTools "Read,Edit,Write,Glob,Grep,Bash"
       - name: 수정 사용량
         if: always() && steps.fix.outputs.execution_file
-        run: git show origin/main:tools/usage-summary.py | python3 - "${{ steps.fix.outputs.execution_file }}" "수정 PR #${{ env.PR }}" >> "$GITHUB_STEP_SUMMARY"
+        continue-on-error: true
+        run: git show origin/main:tools/usage-summary.py | python3 - "${{ steps.fix.outputs.execution_file }}" "수정 PR ${{ env.PR }}" >> "$GITHUB_STEP_SUMMARY"
       - name: 수정 push와 재리뷰
         if: steps.fix.outcome == 'success'
         run: |

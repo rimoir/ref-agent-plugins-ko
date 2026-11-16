@@ -1,0 +1,67 @@
+# main에 머지가 생기면 열린 i18n PR 중 생성 파일(README 표, 마켓플레이스)만 충돌한 것을 정리한다.
+# 번역은 그대로라 review 상태를 새 커밋으로 옮기고, verify는 다시 돌린다. 다른 파일이 충돌하면 사람에게 넘긴다.
+name: 번역 PR 충돌 정리
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  statuses: write
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: 테스트 도구
+        run: |
+          corepack enable
+          sudo apt-get install -y -qq ffmpeg >/dev/null
+          pip install -q pandas
+      - name: 충돌 정리
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
+          status() { gh api "repos/$GITHUB_REPOSITORY/statuses/$1" -f state="$2" -f context="$3" -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >/dev/null; }
+          for pr in $(gh pr list --state open --json number,headRefName -q '.[]|select(.headRefName|startswith("i18n/"))|.number'); do
+            # mergeable은 GitHub이 늦게 계산하니 잠시 기다린다.
+            for _ in 1 2 3 4 5 6; do m=$(gh pr view "$pr" --json mergeable -q .mergeable); [ "$m" != UNKNOWN ] && break; sleep 5; done
+            [ "$m" = CONFLICTING ] || { echo "#$pr: $m, 건너뜀"; continue; }
+            gh pr checkout -f "$pr"
+            old=$(git rev-parse HEAD)
+            review=$(gh api "repos/$GITHUB_REPOSITORY/commits/$old/status" -q '.statuses[]|select(.context=="review")|.state' | head -1)
+            if ! git merge -q --no-edit origin/main; then
+              others=$(git diff --name-only --diff-filter=U | grep -vxE 'README.md|\.claude-plugin/marketplace.json' || true)
+              if [ -n "$others" ]; then
+                git merge --abort
+                gh pr comment "$pr" --body "main과 번역 파일이 충돌해 자동으로 정리하지 못했다: $(echo $others)"
+                continue
+              fi
+              git checkout --ours README.md .claude-plugin/marketplace.json
+              python3 tools/render.py
+              git add -A
+              git commit -q --no-edit
+            fi
+            python3 tools/render.py && git add -A && { git diff --cached --quiet || git commit -q -m "chore: README와 마켓플레이스 다시 생성"; }
+            git push -q
+            new=$(git rev-parse HEAD)
+            name=$(python3 -c 'import json,subprocess;b=json.loads(subprocess.check_output(["git","show","origin/main:sources.json"]));h=json.load(open("sources.json"));print(next(n for n,s in h.items() if b.get(n,{}).get("ref")!=s["ref"]))')
+            if python3 tools/verify.py "$name" origin/main; then status "$new" success verify; else status "$new" failure verify; fi
+            [ -n "$review" ] && status "$new" "$review" review
+            echo "#$pr: 정리함 ($old -> $new, review=$review)"
+          done

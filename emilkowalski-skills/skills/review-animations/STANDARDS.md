@@ -46,7 +46,7 @@ CSS 기본 이징은 너무 약하다. 강한 커스텀 곡선을 쓴다.
 | 모달, 드로어 | 200–500ms |
 | 마케팅 / 설명용 | 더 길어도 됨 |
 
-**규칙: UI 애니메이션은 300ms 미만으로 한다.** 180ms 드롭다운이 400ms 드롭다운보다 반응이 빠르게 느껴진다. 스피너가 빠르면 로딩도 빠르게 느껴진다(실제 시간은 같다). 첫 툴팁 뒤로 툴팁을 즉시 띄우면(지연과 애니메이션 생략) 툴바가 더 빠르게 느껴진다.
+**규칙: UI 애니메이션은 300ms 미만으로 한다. 모달, 드로어, 시트, 토스트는 문서화된 예외다**(모달과 드로어는 500ms까지, 토스트는 Sonner의 400ms `ease`를 쓴다. "통일성" 참고). 180ms 드롭다운이 400ms 드롭다운보다 반응이 빠르게 느껴진다. 스피너가 빠르면 로딩도 빠르게 느껴진다(실제 시간은 같다). 첫 툴팁 뒤로 툴팁을 즉시 띄우면(지연과 애니메이션 생략) 툴바가 더 빠르게 느껴진다.
 
 ## 물리감
 
@@ -56,7 +56,7 @@ CSS 기본 이징은 너무 약하다. 강한 커스텀 곡선을 쓴다.
   .popover { transform-origin: var(--transform-origin); } /* Base UI */
   ```
   **모달은 예외다**: 뷰포트 가운데에 나타나므로 `transform-origin: center`를 그대로 둔다.
-- **버튼 누름 피드백.** `:active`에서 `transform: scale(0.97)`을 주고 `transition: transform 160ms ease-out`을 쓴다. 값은 은은하게 둔다(0.95–0.98). 누를 수 있는 모든 요소에 적용한다.
+- **버튼 누름 피드백.** `:active`에서 `transform: scale(0.97)`을 주고 `transition: transform 160ms var(--ease-out)`을 쓴다. 값은 은은하게 둔다(0.95–0.98). 누를 수 있는 모든 요소에 적용한다.
 
 ## 스프링
 
@@ -103,13 +103,13 @@ JS 없이 등장을 만들 때는 `@starting-style`을 쓴다.
 사용자가 결정하는 곳에서는 느리게, 시스템이 응답하는 곳에서는 빠르게 한다.
 
 ```css
-.overlay { transition: clip-path 200ms ease-out; }            /* 뗄 때: 빠르게 */
+.overlay { transition: clip-path 200ms var(--ease-out); }            /* 뗄 때: 빠르게 */
 .button:active .overlay { transition: clip-path 2s linear; }  /* 누를 때: 느리고 신중하게 */
 ```
 
 ## 성능
 
-- **`transform`과 `opacity`만 애니메이션한다**: 레이아웃과 페인트를 건너뛰고 GPU에서 돈다. `padding`/`margin`/`height`/`width`/`top`/`left`는 렌더링 세 단계를 모두 일으킨다.
+- **`transform`과 `opacity`를 우선한다**: 레이아웃과 페인트를 건너뛰고 GPU에서 돈다. `clip-path`와 측정한 높이(아코디언)는 문서화된 예외다. `padding`/`margin`/`height`/`width`/`top`/`left`는 렌더링 세 단계를 모두 일으킨다.
 - **부모의 CSS 변수로 자식의 transform을 움직이지 않는다**: 모든 자식의 스타일을 다시 계산하게 된다. 요소에 `transform`을 바로 설정한다.
   ```js
   element.style.setProperty('--swipe-amount', `${d}px`); // 나쁨: 모든 자식을 재계산
@@ -148,12 +148,12 @@ JS 없이 등장을 만들 때는 `@starting-style`을 쓴다.
 
 ## 스태거
 
-묶음 등장에는 스태거를 건다. 항목 사이 간격은 30–80ms다. 지연이 더 길면 느리게 느껴진다. 스태거는 장식이다. 재생하는 동안 절대 상호작용을 막지 않는다.
+묶음 등장에는 스태거를 건다. 항목 사이 간격은 30–80ms다. 지연이 더 길면 느리게 느껴진다. 스태거는 장식이다. 재생하는 동안 절대 상호작용을 막지 않는다. 그룹 등장은 `../choreograph/SKILL.md`를 따른다(컨테이너마다 등장 하나, 균일하지 않은 지연).
 
 ```css
-.item { opacity: 0; transform: translateY(8px); animation: fadeIn 300ms ease-out forwards; }
+.item { opacity: 0; transform: translateY(8px); animation: fadeIn 300ms var(--ease-out) forwards; }
 .item:nth-child(2) { animation-delay: 50ms; }
-.item:nth-child(3) { animation-delay: 100ms; }
+.item:nth-child(3) { animation-delay: 90ms; }
 @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
 ```
 
@@ -163,6 +163,7 @@ JS 없이 등장을 만들 때는 `@starting-style`을 쓴다.
 @media (prefers-reduced-motion: reduce) {
   .element { animation: fade 0.2s ease; } /* opacity/색은 두고 transform 기반 모션은 뺀다 */
 }
+@keyframes fade { from { opacity: 0; } }
 @media (hover: hover) and (pointer: fine) {
   .element:hover { transform: scale(1.05); } /* hover 모션 제한, 터치는 탭할 때 가짜 hover를 일으킨다 */
 }

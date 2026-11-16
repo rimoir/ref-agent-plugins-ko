@@ -1,0 +1,191 @@
+# 번역 PR을 검증하고, 번역에 참여하지 않은 Claude가 리뷰한다.
+# verify와 review 상태가 둘 다 success면 auto-merge로 머지된다.
+# 차단 지적이 있으면 Claude가 고치고 다시 리뷰한다(MAX_ROUND까지). 그래도 남으면 사람을 기다린다.
+# 사람은 지적 줄에 `@claude ...`로 답해 고치게 할 수 있다(claude.yml).
+name: 번역 PR 리뷰
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: "PR 번호"
+        required: true
+      round:
+        description: "MAX_ROUND보다 작으면 차단 지적을 자동으로 고친다"
+        default: "0"
+  pull_request:
+    types: [synchronize]  # 사람이 i18n 브랜치에 고친 커밋을 올렸을 때
+    branches: [main]
+
+permissions:
+  actions: write  # 재리뷰를 workflow_dispatch로 부른다
+  contents: write
+  pull-requests: write
+  statuses: write
+
+concurrency:
+  group: review-${{ inputs.pr || github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    # 공개 저장소라 포크 PR에서는 돌지 않게 한다.
+    if: github.event_name == 'workflow_dispatch' || (startsWith(github.head_ref, 'i18n/') && github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR: ${{ inputs.pr || github.event.pull_request.number }}
+      MAX_ROUND: 2
+      # 사람이 올린 커밋은 자동으로 고치지 않는다.
+      ROUND: ${{ github.event_name == 'pull_request' && '2' || inputs.round }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: PR 정보
+        id: pr
+        run: |
+          gh pr checkout "$PR"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          # sources.json에서 ref가 바뀐 플러그인을 찾는다.
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, subprocess
+          base = json.loads(subprocess.run(["git", "show", "origin/main:sources.json"], capture_output=True, text=True, check=True).stdout)
+          head = json.load(open("sources.json"))
+          [(n, s)] = [(n, s) for n, s in head.items() if base.get(n, {}).get("ref") != s["ref"]]
+          print(f"name={n}\nrepo={s['repo']}\nfrom={base.get(n, {}).get('ref', '')}\nto={s['ref']}")
+          PY
+      - name: upstream 클론
+        run: git clone --quiet "https://github.com/${{ steps.pr.outputs.repo }}" "$RUNNER_TEMP/upstream"
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: 테스트 도구  # unslop story 테스트는 ffmpeg, ponytail csv 테스트는 pandas가 필요하다
+        run: |
+          corepack enable
+          sudo apt-get install -y -qq ffmpeg >/dev/null
+          pip install -q pandas
+      - name: verify
+        id: verify
+        continue-on-error: true
+        run: |
+          python3 tools/render.py --check
+          python3 tools/verify.py "${{ steps.pr.outputs.name }}" origin/main 2>&1 | tee "$RUNNER_TEMP/verify.log"
+      - name: verify 상태
+        run: |
+          state=${{ steps.verify.outcome == 'success' && 'success' || 'failure' }}
+          gh api "repos/$GITHUB_REPOSITORY/statuses/${{ steps.pr.outputs.sha }}" \
+            -f state="$state" -f context=verify -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+      - uses: anthropics/claude-code-action@v1
+        id: claude
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
+          allowed_bots: github-actions  # 재리뷰는 수정 단계가 봇으로 부른다
+          prompt: |
+            너는 번역 PR #${{ env.PR }}의 리뷰어다. 이 번역을 직접 하지 않았다. 통과시키는 것이 아니라 문제를 찾는 것이 일이다.
+            AGENTS.md를 끝까지 읽는다. 그다음 두 diff를 나란히 놓고 본다.
+            - upstream: `${{ runner.temp }}/upstream`에서 `${{ steps.pr.outputs.from }}`부터 `${{ steps.pr.outputs.to }}`까지
+              (track이 file이면 sources.json의 file을 `git log`로 따라가 두 버전의 커밋을 찾는다)
+            - 번역: `git diff origin/main...HEAD -- ${{ steps.pr.outputs.name }}/`
+            찾을 것:
+            1. 누락: upstream에서 바뀐 문장이나 파일이 번역에 반영되지 않음
+            2. 오역: 뜻이 달라짐, 빠진 조건이나 부정
+            3. 번역하면 안 되는 것을 번역함: 명령, 경로, 식별자, 스크립트·테스트가 찾는 문자열, 코드 토큰
+            4. 원문으로 둬야 할 파일이 upstream과 다름, upstream에 없는 변경
+            5. AGENTS.md 문체 규칙 위반
+            6. PR 본문의 "판단이 필요했던 곳"이 타당한지
+            7. verify 실패: `${{ runner.temp }}/verify.log` (결과: ${{ steps.verify.outcome }}). 실패했으면 원인을 지적으로 적는다
+            확실한 문제만 적는다. 취향 차이는 적지 않는다. 고치지 않는다. 커밋하지 않는다.
+            지적마다 severity를 붙인다.
+            - blocking: 1~4번, 7번. 뜻이 달라졌거나 빠졌거나 동작이 깨진다
+            - minor: 5~6번, 기존 용어와 다른 표기, 공백, PR 본문 표현
+            line은 PR head 파일의 줄 번호다. 파일과 무관한 지적은 path를 "PR"로 쓰고 line을 뺀다.
+            결과를 `${{ runner.temp }}/review.json`에 쓴다:
+            {"summary": "한두 문장", "findings": [{"severity": "blocking" 또는 "minor", "path": "...", "line": 숫자, "body": "무엇이 왜 틀렸고 어떻게 고칠지"}]}
+          claude_args: >-
+            --model claude-opus-5-5 --effort xhigh --allowedTools "Read,Write,Glob,Grep,Bash"
+      - name: 사용량
+        if: always() && steps.claude.outputs.execution_file
+        continue-on-error: true
+        run: git show origin/main:tools/usage-summary.py | python3 - "${{ steps.claude.outputs.execution_file }}" "리뷰 PR ${{ env.PR }}" >> "$GITHUB_STEP_SUMMARY"
+      - name: 리뷰 게시와 review 상태
+        id: post
+        run: |
+          f="$RUNNER_TEMP/review.json"
+          [ -f "$f" ] || echo '{"summary":"리뷰어가 결과를 남기지 않았다.","findings":[{"severity":"blocking","path":"PR","body":"리뷰 결과 없음"}]}' > "$f"
+          # 차단 지적이 없으면 통과다. minor는 줄 코멘트로만 남긴다.
+          verdict=$(python3 - "$f" "$RUNNER_TEMP/review-req.json" <<'PY'
+          import json, os, sys
+          r = json.load(open(sys.argv[1]))
+          fs = r.get("findings", [])
+          blocking = [x for x in fs if x.get("severity") != "minor"]
+          verdict = "changes" if blocking else "approve"
+          auto = int(os.environ["ROUND"]) < int(os.environ["MAX_ROUND"])
+          head = "통과" if verdict == "approve" else ("자동 수정 진행" if auto else "사람 검토 필요")
+          body = [f"### 자동 리뷰 {os.environ['ROUND']}회차: {head}", "", r["summary"], ""]
+          comments = []
+          for x in fs:
+              tag = "차단" if x in blocking else "사소"
+              text = f"**[{tag}]** {x['body']}"
+              if x.get("line") and x["path"] != "PR":
+                  comments.append({"path": x["path"], "line": x["line"], "side": "RIGHT", "body": text})
+              else:
+                  body.append(f"- `{x['path']}` {text}")
+          if not auto and verdict == "changes":
+              body += ["", "고치려면 해당 줄이나 PR에 `@claude <지시>`로 답한다."]
+          json.dump({"event": "COMMENT", "body": "\n".join(body), "comments": comments}, open(sys.argv[2], "w"))
+          print(verdict)
+          PY
+          )
+          req="$RUNNER_TEMP/review-req.json"
+          if ! gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/reviews" --input "$req" >/dev/null; then
+            # 줄 번호가 diff 밖이면 422가 난다. 줄 코멘트를 본문으로 내린다.
+            python3 - "$req" <<'PY'
+          import json, sys
+          r = json.load(open(sys.argv[1]))
+          r["body"] += "\n" + "\n".join(f"- `{c['path']}:{c['line']}` {c['body']}" for c in r.pop("comments"))
+          json.dump(r, open(sys.argv[1], "w"))
+          PY
+            gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/reviews" --input "$req" >/dev/null
+          fi
+          state=$([ "$verdict" = approve ] && echo success || echo failure)
+          gh api "repos/$GITHUB_REPOSITORY/statuses/${{ steps.pr.outputs.sha }}" \
+            -f state="$state" -f context=review -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          [ "$state" = success ] && [ "${{ steps.verify.outcome }}" = success ] && gh pr merge "$PR" --squash --auto || true
+          echo "verdict=$verdict" >> "$GITHUB_OUTPUT"
+      - uses: anthropics/claude-code-action@v1
+        id: fix
+        if: fromJSON(env.ROUND) < fromJSON(env.MAX_ROUND) && (steps.post.outputs.verdict != 'approve' || steps.verify.outcome != 'success')
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
+          allowed_bots: github-actions  # 재리뷰는 수정 단계가 봇으로 부른다
+          prompt: |
+            번역 PR #${{ env.PR }}(`${{ steps.pr.outputs.name }}/`)에 리뷰 지적이 있다. AGENTS.md를 끝까지 읽고 지적을 반영한다.
+            - 지적: `${{ runner.temp }}/review.json`
+            - verify 로그: `${{ runner.temp }}/verify.log`
+            - upstream 클론: `${{ runner.temp }}/upstream`
+            blocking과 minor를 모두 다룬다. 지적마다 upstream 원문과 기존 번역을 직접 확인한다. 맞으면 고치고, 틀렸다고 판단하면 고치지 않고 근거를 남긴다.
+            지적이 없는 곳은 건드리지 않는다. 커밋하지 않는다.
+            마지막에 `python3 tools/render.py`와 `python3 tools/verify.py ${{ steps.pr.outputs.name }} origin/main`을 통과시킨다.
+            PR 본문이 바뀐 사실과 어긋나면 `gh pr view ${{ env.PR }} --json body -q .body`로 받아 고친 전체 본문을 `${{ runner.temp }}/pr.md`에 쓴다.
+            지적마다 "반영" 또는 "반영 안 함: 근거"를 한 줄씩 `${{ runner.temp }}/fix.md`에 쓴다.
+          claude_args: >-
+            --model claude-opus-5-5 --effort xhigh --allowedTools "Read,Edit,Write,Glob,Grep,Bash"
+      - name: 수정 사용량
+        if: always() && steps.fix.outputs.execution_file
+        continue-on-error: true
+        run: git show origin/main:tools/usage-summary.py | python3 - "${{ steps.fix.outputs.execution_file }}" "수정 PR ${{ env.PR }}" >> "$GITHUB_STEP_SUMMARY"
+      - name: 수정 push와 재리뷰
+        if: steps.fix.outcome == 'success'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
+          [ -f "$RUNNER_TEMP/pr.md" ] && gh pr edit "$PR" --body-file "$RUNNER_TEMP/pr.md"
+          [ -f "$RUNNER_TEMP/fix.md" ] && gh pr comment "$PR" --body-file <(printf '### 자동 수정\n\n'; cat "$RUNNER_TEMP/fix.md")
+          git add -A
+          git diff --cached --quiet || { git commit -q -m "fix(${{ steps.pr.outputs.name }}): 자동 리뷰 지적 반영"; git push -q; }
+          # GITHUB_TOKEN의 push는 pull_request 워크플로를 깨우지 못하니 직접 부른다.
+          gh workflow run review.yml -f pr="$PR" -f round=$((ROUND + 1))

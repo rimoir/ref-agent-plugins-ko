@@ -1,7 +1,7 @@
 """sources.json의 ref와 upstream 최신을 비교해 바뀐 플러그인을 JSON 줄로 출력한다.
 
 사용법: python3 tools/check-updates.py
-출력 한 줄: {"name": ..., "repo": ..., "from": <ref>, "to": <최신>}
+출력 한 줄: {"name": ..., "repo": ..., "track": ..., "from": <ref>, "to": <최신>}
 """
 import base64
 import json
@@ -28,4 +28,4 @@ def latest(s):
 for name, s in json.load(open("sources.json")).items():
     new = latest(s)
     if new != s["ref"]:
-        print(json.dumps({"name": name, "repo": s["repo"], "from": s["ref"], "to": new}))
+        print(json.dumps({"name": name, "repo": s["repo"], "track": s["track"], "from": s["ref"], "to": new}))

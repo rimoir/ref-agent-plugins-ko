@@ -57,7 +57,6 @@
   height: 28px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.12);
-  will-change: transform;
 }
 
 /* 슬라이드 애니메이션은 첫 페인트 뒤(data-ready)에만 켜서 로드할 때는 움직이지 않게 한다. */
@@ -83,11 +82,15 @@
   color: rgba(255, 255, 255, 0.55);
   font: inherit;
   cursor: pointer;
-  transition: color 150ms ease-out;
+  transition:
+    color 150ms ease-out,
+    transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.proto-picker-item:hover {
-  color: rgba(255, 255, 255, 0.85);
+@media (hover: hover) and (pointer: fine) {
+  .proto-picker-item:hover {
+    color: rgba(255, 255, 255, 0.85);
+  }
 }
 
 .proto-picker-item:active {
@@ -191,7 +194,8 @@ document.addEventListener('keydown', (e) => {
   else if (e.key === 'r' || e.key === 'R') mount(current);
 });
 
-setActive((parseInt(new URLSearchParams(location.search).get('v'), 10) || 1) - 1);
+const requested = parseInt(new URLSearchParams(location.search).get('v'), 10);
+setActive(requested >= 1 && requested <= variants.length ? requested - 1 : 0);
 // 슬라이드 애니메이션은 첫 페인트 뒤에만 켜서 로드할 때는 움직이지 않게 한다.
 requestAnimationFrame(() => requestAnimationFrame(() => picker.setAttribute('data-ready', '')));
 ```

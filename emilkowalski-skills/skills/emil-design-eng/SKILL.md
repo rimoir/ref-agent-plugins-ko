@@ -1,6 +1,6 @@
 ---
 name: emil-design-eng
-description: UI 다듬기, 컴포넌트 설계, 애니메이션 결정, 소프트웨어를 훌륭하게 느껴지게 하는 보이지 않는 디테일을 다루는 Emil Kowalski의 철학을 담는다.
+description: UI 다듬기, 컴포넌트 설계, 애니메이션 결정, 소프트웨어를 훌륭하게 느껴지게 하는 보이지 않는 디테일을 다루는 Emil Kowalski의 디자인 엔지니어링 철학이다. UI 컴포넌트의 상호작용과 다듬기(누름과 hover 상태, 팝오버 원점, 툴팁 타이밍, 트랜지션과 키프레임, clip-path 기법, 드래그 디테일)를 만들거나 리뷰하는데 더 좁은 스킬이 맞지 않을 때 쓴다.
 ---
 
 # 디자인 엔지니어링
@@ -41,7 +41,7 @@ UI 코드를 리뷰할 때는 **반드시** Before/After 열이 있는 마크다
 
 | Before | After | Why |
 | --- | --- | --- |
-| `transition: all 300ms` | `transition: transform 200ms ease-out` | 속성을 정확히 지정하고 `all`은 피한다 |
+| `transition: all 300ms` | `transition: transform 200ms var(--ease-out)` | 속성을 정확히 지정하고 `all`은 피한다 |
 | `transform: scale(0)` | `transform: scale(0.95); opacity: 0` | 현실에서 아무것도 없는 데서 나타나는 것은 없다 |
 | 드롭다운에 `ease-in` | 커스텀 곡선을 쓴 `ease-out` | `ease-in`은 굼뜨게 느껴지고 `ease-out`은 즉각적인 피드백을 준다 |
 | 버튼에 `:active` 상태 없음 | `:active`에 `transform: scale(0.97)` | 버튼은 누르면 반응하는 느낌이 나야 한다 |
@@ -51,7 +51,7 @@ UI 코드를 리뷰할 때는 **반드시** Before/After 열이 있는 마크다
 
 ```
 Before: transition: all 300ms
-After: transition: transform 200ms ease-out
+After: transition: transform 200ms var(--ease-out)
 ────────────────────────────
 Before: scale(0)
 After: scale(0.95)
@@ -132,7 +132,7 @@ Raycast에는 열기/닫기 애니메이션이 없다. 하루에 수백 번 쓰�
 | 모달, 드로어             | 200-500ms     |
 | 마케팅/설명용            | 더 길어도 됨  |
 
-**규칙: UI 애니메이션은 300ms 미만으로 한다.** 180ms 드롭다운은 400ms 드롭다운보다 반응이 빠르게 느껴진다. 더 빨리 도는 스피너는 로딩 시간이 똑같아도 앱이 더 빨리 로드되는 것처럼 느끼게 한다.
+**규칙: UI 애니메이션은 300ms 미만으로 한다. 모달, 드로어, 시트, 토스트는 문서화된 예외다**(모달과 드로어는 500ms까지, 토스트는 Sonner의 400ms `ease`를 쓴다. "통일성이 중요하다" 참고). 180ms 드롭다운은 400ms 드롭다운보다 반응이 빠르게 느껴진다. 더 빨리 도는 스피너는 로딩 시간이 똑같아도 앱이 더 빨리 로드되는 것처럼 느끼게 한다.
 
 ### 체감 성능
 
@@ -160,13 +160,15 @@ Raycast에는 열기/닫기 애니메이션이 없다. 하루에 수백 번 쓰�
 시각 변화를 마우스 위치에 바로 묶으면 움직임이 없어서 인위적으로 느껴진다. 값을 즉시 갱신하는 대신 Motion(옛 Framer Motion)의 `useSpring`으로 값 변화를 스프링처럼 보간한다.
 
 ```jsx
-import { useSpring } from 'framer-motion';
+import { useSpring, useTransform } from 'motion/react';
+
+// mouseX는 pointermove에서 갱신되는 motion value(useMotionValue)다
 
 // 스프링 없음: 인위적이고 즉각적으로 느껴진다
-const rotation = mouseX * 0.1;
+const rotation = useTransform(mouseX, (x) => x * 0.1);
 
 // 스프링 있음: 자연스럽고 관성이 있다
-const springRotation = useSpring(mouseX * 0.1, {
+const springRotation = useSpring(rotation, {
   stiffness: 100,
   damping: 10,
 });
@@ -202,7 +204,7 @@ const springRotation = useSpring(mouseX * 0.1, {
 
 ```css
 .button {
-  transition: transform 160ms ease-out;
+  transition: transform 160ms var(--ease-out);
 }
 
 .button:active {
@@ -250,7 +252,7 @@ opacity와 함께 `scale(0.9)` 이상에서 시작한다. 거의 보이지 않�
 
 ```css
 .tooltip {
-  transition: transform 125ms ease-out, opacity 125ms ease-out;
+  transition: transform 125ms var(--ease-out), opacity 125ms var(--ease-out);
   transform-origin: var(--transform-origin);
 }
 
@@ -297,7 +299,7 @@ CSS 트랜지션은 애니메이션 도중에 중단하고 목표를 다시 잡�
 
 ```css
 .button {
-  transition: transform 160ms ease-out;
+  transition: transform 160ms var(--ease-out);
 }
 
 .button:active {
@@ -412,7 +414,7 @@ useEffect(() => {
 /* 왼쪽에서 오른쪽으로 드러내기 */
 .overlay {
   clip-path: inset(0 100% 0 0);
-  transition: clip-path 200ms ease-out;
+  transition: clip-path 200ms var(--ease-out);
 }
 .button:active .overlay {
   clip-path: inset(0 0 0 0);
@@ -434,7 +436,7 @@ useEffect(() => {
 
 ### 비교 슬라이더
 
-이미지 두 장을 겹친다. 위쪽 이미지를 `clip-path: inset(0 50% 0 0)`으로 잘라 낸다. 드래그 위치에 따라 오른쪽 inset 값을 조절한다. 추가 DOM 요소가 필요 없고 완전히 하드웨어 가속된다.
+이미지 두 장을 겹친다. 위쪽 이미지를 `clip-path: inset(0 50% 0 0)`으로 잘라 낸다. 드래그 위치에 따라 오른쪽 inset 값을 조절한다. 추가 DOM 요소가 필요 없다.
 
 ## 제스처와 드래그 상호작용
 
@@ -506,11 +508,11 @@ element.style.transform = `translateY(${distance}px)`;
 
 어떤 Motion 애니메이션은 어느 버전에서든 메인 스레드에서 돈다. 레이아웃 애니메이션(`layout`, `layoutId`), `onUpdate`나 `transformTemplate`을 쓰는 애니메이션, 관성(드래그 모멘텀), 모션 값이 프레임마다 움직이는 값(드래그, `useTransform`)이 그렇다.
 
-브라우저가 콘텐츠를 불러오거나, 스크립트를 실행하거나, 페인트하는 일을 동시에 할 때 이 차이가 중요해진다. Vercel에서는 대시보드 탭 애니메이션이 Shared Layout Animations를 썼고 페이지를 불러오는 동안 프레임을 놓쳤다. CSS 애니메이션(메인 스레드 밖에서 실행)으로 바꾸자 해결됐다.
+브라우저가 콘텐츠를 불러오거나, 스크립트를 실행하거나, 페인트하는 일을 동시에 할 때 이 차이가 중요해진다. Vercel에서는 대시보드 탭 애니메이션이 Shared Layout Animations를 썼고 페이지를 불러오는 동안 프레임을 놓쳤다. CSS 애니메이션(`transform`/`opacity`에서는 합성기에서 실행)으로 바꾸자 해결됐다.
 
 ### 부하가 걸리면 CSS 애니메이션이 JS보다 낫다
 
-CSS 애니메이션은 메인 스레드 밖에서 실행된다. 브라우저가 새 페이지를 불러오느라 바쁠 때 `requestAnimationFrame`으로 도는 애니메이션(Motion 레이아웃 애니메이션 포함)은 프레임을 놓친다. CSS 애니메이션은 부드럽게 유지된다. 미리 정해진 애니메이션에는 CSS를 쓴다. 동적이고 중단 가능한 애니메이션에는 JS를 쓴다.
+`transform`과 `opacity`의 CSS 애니메이션은 메인 스레드 밖의 합성기에서 실행된다. 브라우저가 새 페이지를 불러오느라 바쁠 때 `requestAnimationFrame`으로 도는 애니메이션(Motion 레이아웃 애니메이션 포함)은 프레임을 놓친다. CSS 애니메이션은 부드럽게 유지된다. 미리 정해진 애니메이션에는 CSS를 쓴다. 동적이고 중단 가능한 애니메이션에는 JS를 쓴다.
 
 ### 코드로 제어하는 CSS 애니메이션에는 WAAPI를 쓴다
 
@@ -537,6 +539,12 @@ element.animate([{ clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0 0)'
     /* transform 기반 모션 없음 */
   }
 }
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
 ```
 
 ```jsx
@@ -558,7 +566,7 @@ const closedX = shouldReduceMotion ? 0 : '-100%';
 
 ## Sonner 원칙(사랑받는 컴포넌트 만들기)
 
-이 원칙들은 Sonner(주간 npm 다운로드 13M+)를 만들며 얻었고, 어떤 컴포넌트에든 적용된다.
+이 원칙들은 Sonner를 만들며 얻었고, 어떤 컴포넌트에든 적용된다.
 
 1. **개발자 경험이 핵심이다.** 훅도, 컨텍스트도, 복잡한 설정도 필요 없다. `<Toaster />`를 한 번 넣고 어디서든 `toast()`를 호출한다. 도입할 때 마찰이 적을수록 더 많은 사람이 쓴다.
 
@@ -593,7 +601,7 @@ Sonner의 애니메이션이 만족스럽게 느껴지는 이유 중 하나는 �
 ```css
 /* 뗄 때: 빠르게 */
 .overlay {
-  transition: clip-path 200ms ease-out;
+  transition: clip-path 200ms var(--ease-out);
 }
 
 /* 누를 때: 느리고 신중하게 */
@@ -610,7 +618,7 @@ Sonner의 애니메이션이 만족스럽게 느껴지는 이유 중 하나는 �
 .item {
   opacity: 0;
   transform: translateY(8px);
-  animation: fadeIn 300ms ease-out forwards;
+  animation: fadeIn 300ms var(--ease-out) forwards;
 }
 
 .item:nth-child(1) {
@@ -620,10 +628,10 @@ Sonner의 애니메이션이 만족스럽게 느껴지는 이유 중 하나는 �
   animation-delay: 50ms;
 }
 .item:nth-child(3) {
-  animation-delay: 100ms;
+  animation-delay: 90ms;
 }
 .item:nth-child(4) {
-  animation-delay: 150ms;
+  animation-delay: 120ms;
 }
 
 @keyframes fadeIn {
@@ -634,7 +642,7 @@ Sonner의 애니메이션이 만족스럽게 느껴지는 이유 중 하나는 �
 }
 ```
 
-스태거 지연은 짧게 유지한다(항목 사이 30-80ms). 지연이 길면 인터페이스가 느리게 느껴진다. 스태거는 장식이다. 스태거 애니메이션이 재생되는 동안 절대 상호작용을 막지 않는다.
+스태거 지연은 짧게 유지한다(항목 사이 30-80ms). 지연이 길면 인터페이스가 느리게 느껴진다. 스태거는 장식이다. 스태거 애니메이션이 재생되는 동안 절대 상호작용을 막지 않는다. 그룹 등장은 `../choreograph/SKILL.md`를 따른다(컨테이너마다 등장 하나, 균일하지 않은 지연).
 
 ## 애니메이션 디버깅
 
@@ -663,14 +671,14 @@ UI 코드를 리뷰할 때 확인할 것:
 
 | 문제                                       | 해결                                                             |
 | ------------------------------------------ | ---------------------------------------------------------------- |
-| `transition: all`                          | 속성을 정확히 지정한다: `transition: transform 200ms ease-out`   |
+| `transition: all`                          | 속성을 정확히 지정한다: `transition: transform 200ms var(--ease-out)` |
 | `scale(0)` 등장 애니메이션                 | `opacity: 0`과 함께 `scale(0.95)`에서 시작한다                   |
 | UI 요소에 `ease-in`                        | `ease-out`이나 커스텀 곡선으로 바꾼다                            |
 | 팝오버에 `transform-origin: center`        | 트리거 위치로 설정하거나 Base UI의 `var(--transform-origin)`을 쓴다(모달은 예외라 가운데를 유지한다) |
 | 키보드 동작에 애니메이션                   | 애니메이션을 완전히 없앤다                                       |
-| UI 요소의 지속 시간 > 300ms                | 150-250ms로 줄인다                                               |
+| UI 요소의 지속 시간 > 300ms(모달, 드로어, 시트, 토스트 제외) | 150-250ms로 줄인다                                |
 | 미디어 쿼리 없는 hover 애니메이션          | `@media (hover: hover) and (pointer: fine)`을 더한다             |
 | 빠르게 연달아 실행되는 요소에 키프레임     | 중단 가능하도록 CSS 트랜지션을 쓴다                              |
 | 부하 상태의 Motion `x`/`y` prop(14.2 이전) | 14.2+로 올리거나 `transform: "translateX()"`를 쓴다              |
-| 등장과 퇴장의 전환 속도가 같음             | 퇴장을 등장보다 빠르게 한다(예: 등장 2s, 퇴장 200ms)             |
-| 요소가 한꺼번에 나타남                     | 스태거 지연을 더한다(항목 사이 30-80ms)                          |
+| 등장과 퇴장의 전환 속도가 같음             | 퇴장을 등장보다 빠르게 한다(예: 등장 250ms, 퇴장 200ms)          |
+| 요소가 한꺼번에 나타남                     | 스태거 지연을 더한다(항목 사이 30-80ms, 균일하지 않게. `../choreograph/SKILL.md` 참고) |

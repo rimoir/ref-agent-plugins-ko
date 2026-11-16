@@ -31,7 +31,7 @@
       "name": "emilkowalski-skills",
       "source": "./emilkowalski-skills",
       "strict": false,
-      "description": "Emil Kowalski의 UI 모션·디테일 스킬 모음 (한국어 번역, upstream main c8a7962)",
+      "description": "Emil Kowalski의 UI 모션·디테일 스킬 모음 (한국어 번역, upstream main 64eb3de)",
       "license": "MIT"
     },
     {

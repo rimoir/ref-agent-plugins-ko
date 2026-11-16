@@ -80,6 +80,7 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ github.token }}
+          allowed_bots: github-actions  # 재리뷰는 수정 단계가 봇으로 부른다
           prompt: |
             너는 번역 PR #${{ env.PR }}의 리뷰어다. 이 번역을 직접 하지 않았다. 통과시키는 것이 아니라 문제를 찾는 것이 일이다.
             AGENTS.md를 끝까지 읽는다. 그다음 두 diff를 나란히 놓고 본다.
@@ -132,6 +133,7 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ github.token }}
+          allowed_bots: github-actions  # 재리뷰는 수정 단계가 봇으로 부른다
           prompt: |
             번역 PR #${{ env.PR }}(`${{ steps.pr.outputs.name }}/`)에 리뷰 지적이 있다. AGENTS.md를 끝까지 읽고 지적을 반영한다.
             - 지적: `${{ runner.temp }}/review.json`

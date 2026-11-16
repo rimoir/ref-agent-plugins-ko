@@ -1,4 +1,5 @@
 # main에 머지가 생기면 열린 i18n PR 중 생성 파일(README 표, 마켓플레이스)만 충돌한 것을 정리한다.
+# 머지된 i18n 브랜치도 지운다.
 # 번역은 그대로라 review 상태를 새 커밋으로 옮기고, verify는 다시 돌린다. 다른 파일이 충돌하면 사람에게 넘긴다.
 name: 번역 PR 충돌 정리
 
@@ -64,4 +65,10 @@ jobs:
             if python3 tools/verify.py "$name" origin/main; then status "$new" success verify; else status "$new" failure verify; fi
             [ -n "$review" ] && status "$new" "$review" review
             echo "#$pr: 정리함 ($old -> $new, review=$review)"
+          done
+      - name: 머지된 브랜치 지우기
+        # 봇이 auto-merge한 PR은 "Automatically delete head branches"가 지우지 않는다.
+        run: |
+          for b in $(gh pr list --state merged --limit 50 --json headRefName -q '.[].headRefName|select(startswith("i18n/"))'); do
+            git ls-remote --exit-code --heads origin "$b" >/dev/null && git push -q origin --delete "$b" && echo "지움: $b"
           done

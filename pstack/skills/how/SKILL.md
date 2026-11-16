@@ -14,7 +14,7 @@ disable-model-invocation: true
 
 `subagent_type: generalPurpose`, `readonly: true`인 Task subagent 하나를 띄워 한 번에 탐색하고 설명하게 한다. 사용자의 질문과 다음 브리프를 준다.
 
-> You are writing an architectural explanation for a senior engineer. Explore the codebase and write an explanation that a senior engineer unfamiliar with this area could read and walk away with a solid mental model. They should understand the architecture well enough to start working in it confidently. You have read-only access to the codebase.
+> 너는 시니어 엔지니어를 위한 아키텍처 설명을 쓴다. 코드베이스를 탐색하고, 이 영역을 모르는 시니어 엔지니어가 읽고 나면 탄탄한 멘탈 모델을 갖게 되는 설명을 쓴다. 그 엔지니어가 자신 있게 여기서 작업을 시작할 수 있을 만큼 아키텍처를 이해해야 한다. 너는 코드베이스에 읽기 전용으로만 접근한다.
 
 ## 2. 제시
 

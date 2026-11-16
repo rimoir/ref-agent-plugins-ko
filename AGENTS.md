@@ -117,7 +117,7 @@
 
 - **자동:** `tools/verify.py`가 앵커, 추가한 줄의 em대시·세미콜론(경고), `sources.json`의 `test`를 돈다.
 - **mermaid:** 바꾼 블록을 렌더한다.
-- **테스트 예외:** ponytail은 `pi-extension` 테스트도 따로 돌린다. pandas가 없는 환경에서는 `csv: correct pandas one-liner passes` 1건이 실패한다.
+- **테스트 환경:** CI는 Node 22, ffmpeg, pandas를 설치한다. 로컬에 없으면 unslop story 테스트와 ponytail csv 테스트가 실패한다.
 - **diff 검토:** `git diff -U0 --word-diff=plain`으로 코드 토큰이나 문자열 리터럴이 바뀌지 않았는지 읽는다.
 
 ## 커밋

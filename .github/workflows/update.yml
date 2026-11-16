@@ -66,7 +66,11 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - run: corepack enable
+      - name: 테스트 도구  # unslop story 테스트는 ffmpeg, ponytail csv 테스트는 pandas가 필요하다
+        run: |
+          corepack enable
+          sudo apt-get install -y -qq ffmpeg >/dev/null
+          pip install -q pandas
       - uses: anthropics/claude-code-action@v1
         id: claude
         with:
@@ -88,6 +92,7 @@ jobs:
         if: always() && steps.claude.outputs.execution_file
         run: python3 tools/usage-summary.py "${{ steps.claude.outputs.execution_file }}" "번역 ${{ matrix.name }}" >> "$GITHUB_STEP_SUMMARY"
       - name: 검증
+        continue-on-error: true  # 실패해도 PR을 열고 리뷰·자동 수정에 맡긴다
         run: |
           python3 tools/render.py --check
           python3 tools/verify.py "${{ matrix.name }}"

@@ -12,7 +12,7 @@
     "track": "tag",
     "ref": "v5.3.3",
     "test": [
-      "node --test tests/",
+      "npm test",
       "node scripts/check-versions.js",
       "node scripts/check-rule-copies.js"
     ],

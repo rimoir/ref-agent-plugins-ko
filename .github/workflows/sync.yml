@@ -73,5 +73,5 @@ jobs:
         # 봇이 auto-merge한 PR은 "Automatically delete head branches"가 지우지 않는다.
         run: |
           for b in $(gh pr list --state merged --limit 50 --json headRefName -q '.[].headRefName|select(startswith("i18n/"))'); do
-            git ls-remote --exit-code --heads origin "$b" >/dev/null && git push -q origin --delete "$b" && echo "지움: $b"
+            if git ls-remote --exit-code --heads origin "$b" >/dev/null; then git push -q origin --delete "$b" && echo "지움: $b"; fi
           done

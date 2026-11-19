@@ -43,7 +43,7 @@
 
 `.github/workflows/update.yml`이 3일마다 위 절차를 돌린다. 감지는 LLM 없이 하고, 바뀐 플러그인마다 Claude Code가 번역한 뒤 `i18n/<플러그인>-<새 ref>` 브랜치로 PR을 연다. 같은 브랜치가 이미 있으면 건너뛰니 PR을 머지하거나 닫고 브랜치를 지워야 다음 갱신이 잡힌다. 한 플러그인만 다시 돌리려면 Actions에서 `only`를 넣어 수동 실행한다.
 
-PR이 열리면 `review.yml`이 verify를 돌리고, 번역에 참여하지 않은 Claude가 upstream diff와 대조해 리뷰한다. 지적은 차단(오역, 누락, 토큰 변경, 원문 불일치, verify 실패)과 사소로 나뉜다. 차단 지적이 있으면 Claude가 고치고 다시 리뷰하며, 최대 3회 리뷰한다. 차단 지적이 없으면 squash auto-merge된다. 끝까지 남은 지적은 해당 줄이나 PR에 `@claude <지시>`로 답해 고치게 한다(`claude.yml`, 저장소 소유자만).
+PR이 열리면 `review.yml`이 verify를 돌리고, 번역에 참여하지 않은 Claude가 upstream diff와 대조해 리뷰한다. 지적은 차단(오역, 누락, 토큰 변경, 원문 불일치, verify 실패)과 사소로 나뉜다. 차단 지적이 있으면 Claude가 고치고 다시 리뷰하며, 최대 3회 리뷰한다. 차단 지적이 없으면 바로 squash 머지하고, `sync.yml`이 다른 열린 PR의 README·마켓플레이스 충돌을 정리한다. 끝까지 남은 지적은 해당 줄이나 PR에 `@claude <지시>`로 답해 고치게 한다(`claude.yml`, 저장소 소유자만).
 
 ## 새 플러그인 추가
 

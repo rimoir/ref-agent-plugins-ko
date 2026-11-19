@@ -1,14 +1,11 @@
 # main에 머지가 생기면 열린 i18n PR 중 생성 파일(README 표, 마켓플레이스)만 충돌한 것을 정리한다.
-# 머지된 i18n 브랜치도 지운다.
+# 봇 머지는 push 이벤트를 만들지 않으니 review.yml이 머지 뒤 이 워크플로를 직접 부른다.
 # 번역은 그대로라 review 상태를 새 커밋으로 옮기고, verify는 다시 돌린다. 다른 파일이 충돌하면 사람에게 넘긴다.
 name: 번역 PR 충돌 정리
 
 on:
   push:
     branches: [main]
-  # 봇(GITHUB_TOKEN)의 auto-merge는 push 이벤트를 만들지 않으니 주기적으로도 돈다.
-  schedule:
-    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -21,20 +18,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # i18n 브랜치가 하나도 없으면(열린 PR도, 지울 브랜치도 없으면) 할 일이 없다.
-  check:
-    runs-on: ubuntu-latest
-    outputs:
-      branches: ${{ steps.c.outputs.n }}
-    steps:
-      - id: c
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: echo "n=$(gh api repos/${{ github.repository }}/git/matching-refs/heads/i18n/ --jq length)" >> "$GITHUB_OUTPUT"
-
   sync:
-    needs: check
-    if: needs.check.outputs.branches != '0'
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}
@@ -59,6 +43,7 @@ jobs:
             # mergeable은 GitHub이 늦게 계산하니 잠시 기다린다.
             for _ in 1 2 3 4 5 6; do m=$(gh pr view "$pr" --json mergeable -q .mergeable); [ "$m" != UNKNOWN ] && break; sleep 5; done
             [ "$m" = CONFLICTING ] || { echo "#$pr: $m, 건너뜀"; continue; }
+            git fetch -q origin main  # 앞 PR을 이 루프에서 머지했으면 main이 바뀌었다
             gh pr checkout -f "$pr"
             old=$(git rev-parse HEAD)
             review=$(gh api "repos/$GITHUB_REPOSITORY/commits/$old/status" -q '.statuses[]|select(.context=="review")|.state' | head -1)
@@ -81,10 +66,6 @@ jobs:
             if python3 tools/verify.py "$name" origin/main; then status "$new" success verify; else status "$new" failure verify; fi
             [ -n "$review" ] && status "$new" "$review" review
             echo "#$pr: 정리함 ($old -> $new, review=$review)"
-          done
-      - name: 머지된 브랜치 지우기
-        # 봇이 auto-merge한 PR은 "Automatically delete head branches"가 지우지 않는다.
-        run: |
-          for b in $(gh pr list --state merged --limit 50 --json headRefName -q '.[].headRefName|select(startswith("i18n/"))'); do
-            if git ls-remote --exit-code --heads origin "$b" >/dev/null; then git push -q origin --delete "$b" && echo "지움: $b"; fi
+            # 봇이 상태를 옮겨도 auto-merge가 늦거나 안 걸릴 수 있으니 둘 다 success면 직접 머지한다.
+            [ "$review" = success ] && python3 tools/verify.py "$name" origin/main >/dev/null 2>&1 && gh pr merge "$pr" --squash --delete-branch || true
           done

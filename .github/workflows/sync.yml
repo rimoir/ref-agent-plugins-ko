@@ -3,9 +3,8 @@
 # 번역은 그대로라 review 상태를 새 커밋으로 옮기고, verify는 다시 돌린다. 다른 파일이 충돌하면 사람에게 넘긴다.
 name: 번역 PR 충돌 정리
 
+# 사람이 main에 push해 충돌이 생기면 Actions에서 직접 실행한다.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

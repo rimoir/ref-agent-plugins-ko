@@ -14,7 +14,7 @@ disable-model-invocation: true
 
 1. 각 후보가 만들어 낼 산출물을 밝힌다.
 2. 채점 기준(rubric)을 끌어낸다. *이* 작업에서 성공이 어떤 모습인지를 채점할 수 있는 구체적인 기준 3~6개로 적는다. 채점 기준은 Phase D에서 고르는 쪽의 도구다. 후보는 작업만 본다.
-3. 실행자(runner)를 고른다. `~/.cursor/rules/pstack-models.mdc`의 `arena runners` 줄을 쓴다. 규칙 파일이나 그 줄이 없으면 기본으로 `claude-fable-5-2-high`, `claude-opus-5-5-high-fast`, `gemini-4-carbon-high`에 하나씩 띄운다. 이 줄의 `auto`나 `inherit-parent` 항목은 부모 모델을 뜻하므로 그 항목에는 `model`을 생략한다. Task 도구가 설정된 항목을 거부하면 그 자리는 같은 계열의 기본 모델로 돌리고 그렇게 했다고 밝힌다. 계열은 접두사로 나누고, 가장 길게 맞는 접두사가 이긴다. `claude-fable-*`, `claude-*`, `gemini-*`가 있다. 비교하기 전에 앞의 `cursor-`는 뗀다. 그 밖의 slug는 첫 하이픈 앞의 글자가 계열이다. 계열의 기본 모델은 위 기본 목록에 있는 그 계열의 항목이다. 그 계열에 기본 모델이 없거나 Task 도구가 그 기본 모델을 거부하면 오류 메시지에서 같은 계열의 가장 가까운 유효 slug를 쓴다. 그런 slug가 없으면 그 자리를 빼고 그렇다고 밝힌다. 뺀 자리 때문에 실행자가 둘보다 적어지면 둘이 될 때까지 실행자를 더한다. 그 줄의 항목이 하나뿐이면 하나까지만 더한다. 더한 실행자는 남은 실행자의 모델로 돌리고, 남은 실행자가 없으면 `model`을 생략해 부모 모델로 돌리며, 그렇다고 밝힌다. arena가 설계 방향 여러 개를 다루면 실행자를 더 띄운다. 작업이 판단보다 생성량에 좌우되면 같은 모델을 N번 쓴다. 각 subagent의 추론 수준과 속도(fast 또는 표준)는 **poteto-mode** 스킬의 Subagents 절에 따라 작업에 맞게 고른다.
+3. 실행자(runner)는 `~/.cursor/rules/pstack-models.mdc`의 `arena runners` 줄에서 고르며, 기본은 `claude-fable-5-2-high`, `claude-opus-5-5-high-fast`, `gemini-4-neon-high`다. `auto`나 `inherit-parent` 항목은 부모 모델이므로 `model`을 생략하고 `generalPurpose`를 띄운다. Task 도구가 slug를 거부하면 같은 계열에서 가장 가까운 유효 slug를 쓰거나 그 자리를 빼되, 실행자는 적어도 둘을 유지하고 그렇다고 밝힌다. 계열은 접두사로 나누며, 앞의 `cursor-`를 뗀 뒤 가장 길게 맞는 접두사가 이긴다. `claude-fable-*`, `claude-*`, `gemini-*`가 있다. 그 밖의 slug는 첫 하이픈 앞의 글자가 계열이다. 설계 방향이 여러 개면 실행자를 더 띄우고, 작업이 판단보다 생성량에 좌우되면 한 모델을 되풀이해 쓴다. 각 subagent의 추론 수준은 **poteto-mode** 스킬의 Subagents 절에 따라 고른다.
 4. **separate-before-serializing-shared-state** 원칙 스킬에 따라 후보마다 자기 출력 위치(가능하면 git worktree, 아니면 `/tmp/arena-<slug>/candidate-<n>/`)를 준다.
 
 ## Phase B: Fan out
@@ -25,7 +25,7 @@ disable-model-invocation: true
 
 ## Phase C: Cross-judge
 
-Phase B의 후보가 모두 끝나면 `~/.cursor/rules/pstack-models.mdc`의 `arena cross-judge pool` 줄에서 모델 하나를 고른다. 규칙 파일이나 그 줄이 없으면 `claude-fable-5-2-high`, `claude-opus-5-5-high-fast`, `gemini-4-carbon-high` 중에서 고른다. 읽기 전용 판정 subagent 하나를 띄운다. 판정자는 절대 부모와 같은 벤더가 아니다. 벤더는 Phase A 3단계가 정한 계열과 같되, `claude-fable-*`와 `claude-*`는 한 벤더다. 다른 벤더의 항목만 pool 순서대로 시도한다. `auto`나 `inherit-parent` 항목은 부모 모델이므로 판정하지 않는다. 기본 pool에서 Claude 부모는 `gemini-4-carbon-high`를 받는다. 다른 벤더의 부모는 `claude-fable-5-2-high`를 먼저, 그다음 `claude-opus-5-5-high-fast`를 받는다. Task 도구가 항목을 거부하면 오류 메시지에서 같은 모델의 가장 가까운 수준이나 속도의 유효 slug를 쓰고, 그런 slug가 없으면 다음 항목으로 넘어간다. 다른 벤더의 항목이 하나도 돌지 않으면 기본 pool에서 다른 벤더의 항목을 같은 방식으로 시도한다. 그마저 하나도 돌지 않으면 판정자를 건너뛰고 Phase D에서 혼자 기반을 고르며, 그렇다고 밝힌다. 부모의 모델을 모르면 pool의 실제 slug를 pool 순서대로 시도하고, 벤더 검사를 하지 않았다고 밝힌다. 판정자는 채점 기준과 경로 라벨이 붙은 후보를 보고, 기준마다 점수를 매기고, 근거와 함께 기반을 추천한다. 판정자는 Phase D에서 내가 읽는 동안 병렬로 돈다. 후보가 아직 쓰는 중에는 판정자를 띄우지 않는다.
+Phase B의 후보가 모두 끝나면 `~/.cursor/rules/pstack-models.mdc`의 `arena cross-judge pool` 줄에서 읽기 전용 판정자 하나를 띄운다. 기본은 `claude-opus-5-5-high-fast`, `gemini-4-neon-high`다. 판정자는 절대 부모와 같은 벤더가 아니며, 이 검사에서 Fable은 Claude로 친다. 그러니 다른 벤더의 첫 항목을 쓴다. `auto`나 `inherit-parent` 항목은 부모 모델이다. 부모의 모델을 모르면 첫 실제 slug를 쓰고, 벤더 검사를 하지 않았다고 밝힌다. Task 도구가 slug를 거부하면 같은 계열에서 가장 가까운 유효 slug를 쓰고, 안 되면 그다음 다른 벤더 항목을 쓰고, 그래도 안 되면 판정자를 건너뛰며, 그렇다고 밝힌다. 내가 Phase D에서 읽는 동안 판정자는 후보마다 경로 라벨로 채점 기준별 점수를 매기고 기반을 추천한다.
 
 ## Phase D: 기반 고르기
 

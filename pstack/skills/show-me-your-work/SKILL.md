@@ -64,7 +64,7 @@ helper `scripts/log.sh <logfile> <phase> <decision> <why> <evidence> <result>`�
 
 ## 다른 모델로 기록 검토하기
 
-넘겨주기 전에 작업한 모델과 다른 계열의 모델로 subagent를 띄운다. 자기 검토는 대체재가 아니다. subagent는 감사 기록과 실행 transcript를 읽고 사용자가 눈여겨볼 점을 짚는다. 작업을 다시 하는 것이 아니라 최선이 아니거나 위험한 부분을 훑는 것이다. 각 subagent의 추론 수준과 속도(fast 또는 표준)는 **poteto-mode** 스킬의 Subagents 절에 따라 작업에 맞게 고른다.
+넘겨주기 전에 작업한 모델과 다른 벤더의 모델로 subagent를 띄운다. 자기 검토는 대체재가 아니다. subagent는 감사 기록과 실행 transcript를 읽고 사용자가 눈여겨볼 점을 짚는다. 작업을 다시 하는 것이 아니라 최선이 아니거나 위험한 부분을 훑는 것이다. 각 subagent의 추론 수준은 **poteto-mode** 스킬의 Subagents 절에 따라 작업에 맞게 고른다.
 
 - 근거가 약하거나 없는 채로 기록된 결정.
 - 건너뛰었거나, transcript에 증거 없이 했다고만 주장한 검증 단계.

@@ -49,7 +49,7 @@ pstack은 Cursor용으로 만들었고, Claude Code에도 `/plugin marketplace a
 
 ## `/poteto-mode`로 작업 시작하기
 
-`/poteto-mode`는 작업에 맞는 플레이북을 고르고, 그 단계를 todo 목록에 옮기고, 단계에 필요할 때 다른 스킬을 돌린다. 건너뛴 단계는 `skip: <reason>`으로 목록에 남는다. 좋은 프롬프트는 목표와 완료를 판단하는 방법을 밝힌다. 스킬을 나열하지 않는다. 손으로 짠 순서는 플레이북이 지킬 단계를 빠뜨리거나 뒤섞기 쉽기 때문이다. 프롬프트 다듬기를 돕기 전에 [`references/prompting.md`](references/prompting.md)를 읽는다. 예시는 [가이드 2쪽](../../docs/guide/02-poteto-mode.md)에 있다.
+`/poteto-mode`는 작업에 맞는 플레이북을 고르고, 그 단계를 todo 목록에 옮기고, 단계에 필요할 때 다른 스킬을 돌린다. 좋은 프롬프트는 목표와 완료를 판단하는 방법을 밝힌다. 스킬을 나열하지 않는다. 손으로 짠 순서는 플레이북이 지킬 단계를 빠뜨리거나 뒤섞기 쉽기 때문이다. 프롬프트 다듬기를 돕기 전에 [`references/prompting.md`](references/prompting.md)를 읽는다. 예시는 [가이드 2쪽](../../docs/guide/02-poteto-mode.md)에 있다.
 
 `/poteto-mode`가 계속 켜져 있는지는 사용자가 어떻게 시작했는지에 달렸다.
 
@@ -106,16 +106,15 @@ pstack은 Cursor용으로 만들었고, Claude Code에도 `/plugin marketplace a
 
 - `/how`는 코드가 무엇을 하는지 설명한다. `/why`는 그 이유를 설명한다. `/teach`는 둘 중 하나나 둘 다 돌리고 결과를 쉽게 풀어 준다.
 - `/arena`는 모든 작업자에게 같은 지시를 주고 가장 좋은 부분을 합친다. `/swarm`은 작업을 조각이나 경주로 나누고 보고서 하나를 돌려준다.
-- `/architect`는 설계를 정하자마자 구현한다. 코드를 쓰기 전에 설계를 검토하려면 "with checkpoint"를 붙인다.
 - `/interrogate`는 diff를 리뷰한다. `/blast-radius`는 diff 바깥의 깨짐을 찾고, 변경을 안전하게 만드는 사실 하나를 증명한다.
 - `/recall`은 최근 채팅들에 걸친 맥락을 다시 세운다. `/ketchup`은 사용자의 마지막 메시지 이후 이 채팅만 다룬다. 특정 채팅이나 브랜치 하나를 이어 받는 것은 Session pickup 플레이북이다.
-- `/figure-it-out`은 엄밀한 실행 하나를 설계한다. Orchestrate 플레이북은 며칠과 많은 PR에 걸친 프로그램을 돌린다. Autonomous run 플레이북은 작업 하나를 완료 조건까지 끌고 간다.
+- `/figure-it-out`은 엄밀한 실행 하나를 설계한다. Autonomous run 플레이북은 작업 하나를 완료 조건까지 끌고 간다.
 
 pstack에 없는 것:
 
 - `/deslop`, `control-cli`, `control-ui`는 `cursor-team-kit` 플러그인에 들어 있다.
 - `/loop`와 `/create-skill`은 Cursor 내장 기능이다.
-- pstack에는 `/orchestrate` 스킬이 없다. Orchestrate는 `/poteto-mode`의 플레이북이다. 슬래시 메뉴에 `/orchestrate`가 보이면 다른 플러그인이 제공하는 것이다.
+- pstack에는 `/orchestrate` 스킬이 없다. 슬래시 메뉴에 `/orchestrate`가 보이면 다른 플러그인이 제공하는 것이다.
 
 ## 플레이북과 원칙
 
@@ -128,7 +127,7 @@ pstack에 없는 것:
 - "full autopilot on this queue"는 Autopilot-full을, "autopilot, don't merge"는 Autopilot-stack을 돌린다.
 - "run the eval playbook"은 Eval을 돌린다.
 
-`/poteto-mode` 없이 "babysit this pr" 같은 표현을 쓰면 같은 일을 하는 Cursor 자체 스킬이 대신 시작될 수 있다. [`poteto-mode`](../poteto-mode/SKILL.md)의 Playbooks 절에 모든 플레이북과 적용 시점이 있다. PR을 열고, babysit하고, 반영하는 과정은 [가이드 6쪽](../../docs/guide/06-verify-and-ship.md)이 다룬다.
+`/poteto-mode` 없이 "babysit this pr" 같은 표현을 쓰면 같은 일을 하는 Cursor 자체 스킬이 대신 시작될 수 있다. [`poteto-mode`](../poteto-mode/SKILL.md)의 Playbooks 절에 모든 플레이북이 있다. PR을 열고, babysit하고, 반영하는 과정은 [가이드 6쪽](../../docs/guide/06-verify-and-ship.md)이 다룬다.
 
 pstack에는 계획 스킬이 없다. Cursor의 Plan Mode를 함께 쓰면 된다. 여러 단계나 쌓인 PR에 걸친 작업이라면 `/poteto-mode`에 계획을 요청할 때 [Multi-phase plan 플레이북](../poteto-mode/playbooks/multi-phase-plan.md)이 돈다. 이 플레이북은 계획을 쓰고 구현하지는 않는다. 설계 질문이라면 Prototype 플레이북이나 `/architect`가 먼저 코드로 결론을 낸다.
 

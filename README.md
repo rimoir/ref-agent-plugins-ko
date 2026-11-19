@@ -5,7 +5,7 @@
 <!-- plugins:begin -->
 | 플러그인 | upstream | 번역 기준 | 설명 |
 | --- | --- | --- | --- |
-| [`pstack/`](pstack/) | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack) | v0.15.42 | poteto의 Cursor용 에이전트 스타일 플러그인. 직접 설치하지 않고 이식본의 입력으로 쓴다 |
+| [`pstack/`](pstack/) | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack) | v0.15.44 | poteto의 Cursor용 에이전트 스타일 플러그인. 직접 설치하지 않고 이식본의 입력으로 쓴다 |
 | [`ponytail/`](ponytail/) | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | v5.3.3 | 가장 단순하게 동작하는 해법을 강제하는 게으른 시니어 개발자 모드 |
 | [`mattpocock-skills/`](mattpocock-skills/) | [mattpocock/skills](https://github.com/mattpocock/skills) | v1.3.2 | Matt Pocock의 엔지니어링 스킬 모음 |
 | [`unlazy/`](unlazy/) | [Leonxlnx/unlazy](https://github.com/Leonxlnx/unlazy) | v2.1.0 | 긴 자율 작업에서 완료 기준을 먼저 세우고 검증하게 하는 스킬 |

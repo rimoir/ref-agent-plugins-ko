@@ -5,7 +5,7 @@
 판정은 패치 하나를 덮고, 초록 CI는 head 하나를 덮는다. 4단계는 전체 swarm을 한 번 돌리고, 큰 변경이 있을 때만 다시 돌린다. `playbooks/shipping.md`의 patch-id 규칙이 레인의 결과를 이어 줄 수 있지만, 새 head는 모두 자기 초록 CI가 필요하다.
 
 1. **운영자의 관문이 먼저다.** 위임은 큐의 항목에만 해당하므로, 운영자가 자기 것으로 지목한 항목과 큐 밖의 PR은 merge-ready에서 멈춘다. 계획을 밝히라는 요청은 시작 지시가 아니다.
-2. **PR마다 담당자 하나를 띄우고, 대체자가 찾을 수 있는 곳에 작업을 남기게 한다.** 프로그램 전체에서 forge를 한 번 정한다. 기본은 GitHub CLI(`gh`)다. `command -v origin`이 성공하고 Origin이 저장소를 확인할 수 있으면 모든 PR 작업에 `origin pr`을 쓴다. 그렇지 않으면 `gh`를 쓰고 대체 사실을 기록한다. Graphite(`gt`)를 요구하지 않는다. 각 담당자는 Cursor 클라우드 에이전트이며, 빌드하고, `playbooks/opening-a-pr.md`에 따라 PR을 열고, 실제 산출물에서 변경을 입증하고, `playbooks/babysit.md`에 따라 초록불까지 babysit하고, 4단계와 5단계가 허락하면 병합한다.
+2. **PR마다 담당자 하나를 띄우고, 대체자가 찾을 수 있는 곳에 작업을 남기게 한다.** 프로그램 전체에서 forge를 한 번 정한다. 기본은 GitHub CLI(`gh`)다. `command -v origin`이 성공하고 Origin이 저장소를 확인할 수 있으면 모든 PR 작업에 `origin pr`을 쓴다. 그렇지 않으면 `gh`를 쓰고 대체 사실을 기록한다. Graphite(`gt`)를 요구하지 않는다. 각 담당자는 Cursor 클라우드 에이전트이며, 빌드하고, `playbooks/opening-a-pr.md`에 따라 PR을 열고, 실제 산출물에서 변경을 입증하고, `playbooks/babysit.md`에 따라 초록불까지 babysit하고, 4단계와 5단계가 허락하면 병합한다. 그 플레이북이 rebase를 보고하라고 하는 곳에서는 담당자가 자기 브랜치를 rebase하고 `git push --force-with-lease`로 게시한다.
 
    CI와 봇이 작업과 나란히 돌도록 PR을 일찍 연다. 코드는 군더더기 제거(`cursor-team-kit` 플러그인의 `deslop` 스킬(`/deslop`))와 `/no-comments` 패스를 마친 뒤에야 준비된 것이다. 그래야 전체 swarm이 완성된 코드에서 돈다. 그다음 현재 trunk 위로 rebase하고 자체 입증 전에 code-ready head를 보고한다. 그래야 검증이 패치가 반영될 base에서 돈다. 그 뒤의 head도 모두 보고하고, 자체 입증, CI, babysit이 끝나면 merge-ready를 보고한다. rebase할 때마다 CI가 다시 시작되므로, 수정 라운드는 trunk와 충돌하거나, trunk 때문에 CI가 깨지거나, 같은 파일을 건드리는 알려진 동시 변경이 trunk에 들어오지 않는 한 그 base에 머문다. code-ready push 전과, 검증자가 필요한 이후 push 전에는 커밋된 head에서 건드린 경로에 대한 저장소 검사를 돌린다.
 

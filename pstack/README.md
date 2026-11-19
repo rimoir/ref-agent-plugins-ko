@@ -40,7 +40,7 @@ claude code는 이 readme와 가이드까지 포함한 pstack의 생성 사본�
 
 처음이라면 [pstack 가이드](./docs/guide/README.md)가 설정과 프롬프트 작성부터 검증, 밤샘 실행까지 첫 실전 작업을 차근차근 안내한다. 막혔거나 어떤 스킬이 맞는지 모르겠다면 [`/poteto-help`](./skills/poteto-help/SKILL.md)에 물어보라.
 
-이게 전부다. 나머지 스킬은 상황에 따라 쓰며, 모드 스킬이 필요할 때 알아서 사용한다. 기본 설정에서 모드는 모델의 강점에 따라 일을 나눈다. 코드 위임(feature, refactoring, bug fix, perf, hillclimb)과 산문, 판단은 opus 5.5에 가고, 가장 어려운 변경은 fable 5.2에 간다. 기본 패널은 fable 5.2 / opus 5.5 / gemini 4 carbon이다. [`/setup-pstack`](./skills/setup-pstack/SKILL.md)으로 무엇이든 바꿀 수 있다.
+이게 전부다. 나머지 스킬은 상황에 따라 쓰며, 모드 스킬이 필요할 때 알아서 사용한다. 기본 설정에서 코드 위임(feature, refactoring, bug fix, perf, hillclimb)과 산문, 판단은 xhigh의 opus 5.5에 가고, xhigh보다 높게 도는 역할은 없다. 리뷰 패널 밖에서 fable 5.2는 사용자가 이름을 지정했을 때나 같은 브리프로 opus 5.5를 두 번 돌려 실패했을 때만 돈다. 기본 패널은 fable 5.2 / opus 5.5 / gemini 4 neon이다. [`/setup-pstack`](./skills/setup-pstack/SKILL.md)으로 무엇이든 바꿀 수 있다.
 
 ## 사용법
 
@@ -50,7 +50,7 @@ claude code는 이 readme와 가이드까지 포함한 pstack의 생성 사본�
 
 ### 그냥 [`/poteto-mode`](./skills/poteto-mode/SKILL.md)를 써라
 
-이 스킬이 주된 지름길이다. 에이전트에게 엄격한 엔지니어링 작업을 맡겨야 할 때마다 쓴다. 플레이북 스물세 개가 함께 들어 있다.
+이 스킬이 주된 지름길이다. 에이전트에게 엄격한 엔지니어링 작업을 맡겨야 할 때마다 쓴다. 플레이북 스물두 개가 함께 들어 있다.
 
 ```
 /poteto-mode 이 PR에 미묘한 버그가 있어. 가만히 둬도 750ms마다 스크롤이 밀려. 먼저 재현하고
@@ -63,7 +63,7 @@ claude code는 이 readme와 가이드까지 포함한 pstack의 생성 사본�
 ```
 
 <details>
-<summary>플레이북 스물세 개</summary>
+<summary>플레이북 스물두 개</summary>
 
 | 플레이북 | 용도 |
 |---|---|
@@ -82,7 +82,6 @@ claude code는 이 readme와 가이드까지 포함한 pstack의 생성 사본�
 | [babysit](./skills/poteto-mode/playbooks/babysit.md) | PR이나 스택을 머지 가능한 상태로 끌고 간다. 충돌, 리뷰 스레드, CI. |
 | [shipping](./skills/poteto-mode/playbooks/shipping.md) | 초록불 스택을 독립적으로 검증한 뒤, 검증된 연속 구간을 아래에서부터 올리며 반영한다. 기본은 github이고 가능하면 origin을 쓴다. |
 | [autonomous run](./skills/poteto-mode/playbooks/autonomous-run.md) | 긴 작업을 멈추지 않고 끝까지 몰고 간다. |
-| [orchestrate](./skills/poteto-mode/playbooks/orchestrate.md) | 코디네이터 채팅 하나에 맡기는 상시 프로젝트. 며칠에 걸치고, 쌓인 PR이 많고, subagent 무리를 부린다. |
 | [autopilot-full](./skills/poteto-mode/playbooks/autopilot-full.md) | 독립 PR들을 머지까지 몰고 간다. PR마다 담당자 하나를 둔다. 코드가 준비된 head는 스웜(swarm)이 검증하고, 그 뒤 패치가 바뀔 때마다 새로 확인한다. |
 | [autopilot-stack](./skills/poteto-mode/playbooks/autopilot-stack.md) | 머지를 뺀 autopilot-full. 운영자가 리뷰하고 반영할 PR들을 만들고 검증하며, PR은 그것이 기반으로 삼는 PR 위에만 쌓는다. |
 | [session pickup](./skills/poteto-mode/playbooks/session-pickup.md) | 이전 에이전트가 진행 중이던 작업을 재개하거나 넘겨받는다. |

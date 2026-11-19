@@ -19,7 +19,7 @@ disable-model-invocation: true
 
 1. 완료 조건(done predicate)과 swarm이 돌려줘야 할 산출물이나 보고서를 밝힌다.
 2. 형태를 고른다. 조각으로 나누거나, 같은 지시로 작업자 N개를 경주시키거나, 둘을 섞는다. 경주나 혼합 형태라면 띄우기 전에 `first pass`, `rank all`, `best-of` 중 하나를 선언한다.
-3. 작업자 모델은 `~/.cursor/rules/pstack-models.mdc`의 `swarm workers` 줄에서 고른다. 규칙이나 그 줄이 없으면 `claude-opus-5-5-high-fast`를 쓴다. `auto`나 `inherit-parent`이면 `model`을 생략해 작업자들이 부모 모델로 돌게 한다. Task 도구가 slug를 거부하면 기본값을 쓰고 그렇다고 알린다. 기본값을 거부하면 오류 메시지에서 같은 계열의 가장 가까운 유효 slug를 쓴다. 모델 경주라면 각 갈래의 모델을 미리 명시한다. 각 subagent의 추론 수준과 속도(fast 또는 표준)는 **poteto-mode** 스킬의 Subagents 절에 따라 작업에 맞게 고른다.
+3. 작업자 모델은 `~/.cursor/rules/pstack-models.mdc`의 `swarm workers` 줄에서 고른다. 규칙이나 그 줄이 없으면 `claude-opus-5-5-high-fast`를 쓴다. `auto`나 `inherit-parent`이면 `model`을 생략해 작업자들이 부모 모델로 돌게 한다. Task 도구가 slug를 거부하면 기본값을 쓰고 그렇다고 알린다. 기본값을 거부하면 오류 메시지에서 같은 계열의 가장 가까운 유효 slug를 쓴다. 모델 경주라면 각 갈래의 모델을 미리 명시한다. 각 subagent의 추론 수준은 **poteto-mode** 스킬의 Subagents 절에 따라 작업에 맞게 고른다.
 4. 작업자가 무언가를 쓴다면 각자 쓸 수 있는 출력 위치를 따로 준다. 작업자가 커밋을 검증하거나 측정한다면 지시마다 정확한 SHA를 명시한다. 측정 지시에는 방법(샘플 수, 샘플 하나가 무엇인지, 순서)도 명시한다. 작업자는 결과에 둘 다 기록한다.
 
 ## Phase B: 펼치기

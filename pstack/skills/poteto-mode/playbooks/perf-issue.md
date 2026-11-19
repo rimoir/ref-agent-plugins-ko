@@ -14,7 +14,7 @@
    7. 더 싸게 해라.
 
    앞선 주문으로 목표를 채우면 멈춘다.
-3. 트레이스로 수정을 계획한다. 함수 경계를 넘으면 `architect`부터 한다. 설정한 perf-issue 모델(기본 `claude-opus-5-5-xhigh`)을 쓰는 subagent에게 구현을 위임한다. 각 subagent의 추론 수준과 속도(fast 또는 표준)는 Subagents 절에 따라 작업에 맞게 고른다. diff를 리뷰한다. 수정 뒤 트레이스를 남긴다.
+3. 트레이스로 수정을 계획한다. 함수 경계를 넘으면 `architect`부터 한다. 설정한 perf-issue 모델(기본 `claude-opus-5-5-xhigh-fast`)을 쓰는 subagent에게 구현을 위임한다. 각 subagent의 추론 수준은 Subagents 절에 따라 작업에 맞게 고른다. diff를 리뷰한다. 수정 뒤 트레이스를 남긴다.
    **sequence-verifiable-units** 원칙 스킬을 적용해 다음 시도 전에 시도마다 검증한다.
 4. 산출물을 파싱하고 비교한다(JSON을 sqlite로, diff). "결론 없음"이나 엉뚱한 표면은 통과가 아니다. 표시해 둔다.
 5. PR에 측정값을 인용한다.

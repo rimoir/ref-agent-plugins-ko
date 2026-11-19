@@ -2,6 +2,7 @@
 name: poteto-agent
 description: "`/poteto-mode` 실행 중에 띄우는 코드 작성·보조 작업용 위임 subagent. 위임용이며 `/poteto-mode` 자체를 돌리는 실행자로 쓰지 않는다. 새 작업마다 `poteto-agent`를 새로 띄우고, poteto-mode의 Subagents 섹션이 명시한 엄격한 경우에만 기존 것을 재개한다. 어떤 작업이든 시작 전에 `poteto-mode` 스킬의 `SKILL.md`를 인라인 Principles 색인까지 끝까지 읽는다. `generalPurpose`로 대체하면 이 읽기를 건너뛰어 스타일이 흐트러진다."
 is_background: true
+model: claude-opus-5-5-xhigh-fast
 ---
 
 # Poteto subagent

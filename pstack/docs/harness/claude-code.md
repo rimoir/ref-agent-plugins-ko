@@ -8,7 +8,7 @@ pstack 스킬은 Cursor 이름을 쓴다. Claude Code에서는 세션마다 이 
 | --- | --- |
 | `Task` | `Agent` |
 | `AskQuestion` | `AskUserQuestion`. `-p` 모드에는 없으므로 평범한 글로 묻는다. |
-| 할 일 목록 열기 | 세션에 `TodoWrite`가 있으면 쓴다. 없으면 목록을 답변 안에 두고 phase마다 갱신한다. |
+| 할 일 목록 열기, 또는 단계를 할 일 목록 도구에 복사하기 | 세션에 `TodoWrite`가 있으면 쓴다. 없으면 목록을 답변 안에 두고 phase마다 갱신한다. |
 | 다른 pstack 스킬 실행(`/name` 또는 "**name** 스킬") | `<pstack>/skills/<name>/SKILL.md`를 `Read`로 읽고 따른다. `Skill` 도구는 pstack 스킬 대부분을 거부한다. 사용자에게 입력하라고 안내할 때는 `/pstack:<name>`으로 쓴다. |
 | `Grep`, `Glob` | 세션에 `Grep`이나 `Glob`이 없으면 `Bash`로 `rg`를 쓴다. |
 
@@ -18,6 +18,7 @@ pstack 스킬은 Cursor 이름을 쓴다. Claude Code에서는 세션마다 이 
 | --- | --- |
 | `subagent_type: generalPurpose` | `subagent_type: "general-purpose"` |
 | `poteto-agent`, `comment-sicko` | `pstack:poteto-agent`, `pstack:comment-sicko` |
+| `poteto-agent` 파일의 `model:` 줄 | Cursor slug가 들어 있다. `pstack:poteto-agent`를 띄우는 `Agent` 호출마다 모델 표로 대응시킨 `model`과 `effort`를 넘겨서 그 slug가 API에 닿지 않게 한다. |
 | `readonly: true` | `subagent_type: "Explore"`. 이 에이전트도 `Bash`를 쓸 수 있으므로 지시에 "파일을 고치지 않는다"를 함께 적고, 끝난 뒤 `git status`를 확인한다. |
 | `readonly: false` | `general-purpose`. 세션의 MCP 서버를 그대로 쓴다. |
 | `environment: "cloud"` | `isolation: "worktree"`. 작업자가 체크아웃할 브랜치나 커밋을 지정한다. |
@@ -42,7 +43,7 @@ pstack 스킬은 Cursor 이름을 쓴다. Claude Code에서는 세션마다 이 
 Claude Code는 새 세션마다 `~/.claude/rules/`의 모든 `.md` 파일을 불러오므로 `setup-pstack`은 규칙을 거기에 쓴다. 단계는 다음만 바꿔서 따른다.
 
 - 감지. 감지한 모델은 `Agent` 도구 스키마가 나열하는 `model` 값이고, 각각 `effort` 값 중 하나를 effort로 갖는다. 실제 모델은 `opus xhigh`처럼 `<model> <effort>`로 쓴다. effort가 마지막 토큰이므로 예산 단계가 쓰인 그대로 동작한다.
-- 기본값. 기본 slug마다 위의 행으로 대응시킨다. `claude-opus-5-5-xhigh`는 `opus xhigh`, `claude-opus-5-5-high-fast`는 `opus high`, `claude-fable-5-2-max`는 `fable max`, `gemini-4-carbon-high`는 `inherit-parent`다.
+- 기본값. 기본 slug마다 위의 행으로 대응시킨다. `claude-opus-5-5-xhigh-fast`는 `opus xhigh`, `claude-opus-5-5-high-fast`는 `opus high`, `claude-fable-5-2-high`는 `fable high`, `gemini-4-neon-high`는 `inherit-parent`다.
 - 쓰기. frontmatter 없이 `~/.claude/rules/pstack-models.md`를 쓰고, 그다음 주석 줄, `# budget` 줄, 5단계의 역할마다 한 줄을 쓴다. 파일 전체를 덮어쓴다. 역할 줄을 `CLAUDE.md`나 `AGENTS.md`에 절대 넣지 않는다.
 
 ## 경로

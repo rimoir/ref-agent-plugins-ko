@@ -21,7 +21,20 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # i18n 브랜치가 하나도 없으면(열린 PR도, 지울 브랜치도 없으면) 할 일이 없다.
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      branches: ${{ steps.c.outputs.n }}
+    steps:
+      - id: c
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: echo "n=$(gh api repos/${{ github.repository }}/git/matching-refs/heads/i18n/ --jq length)" >> "$GITHUB_OUTPUT"
+
   sync:
+    needs: check
+    if: needs.check.outputs.branches != '0'
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}

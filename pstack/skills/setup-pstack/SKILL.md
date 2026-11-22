@@ -17,7 +17,7 @@ pstack의 역할별 모델을 정하는 항상 적용 규칙 `~/.cursor/rules/ps
 
 역할별 기본 모델 대응은 아래 5단계에 나온 규칙 모양이다. `~/.cursor/rules/pstack-models.mdc`가 이미 있으면 읽고, 그 `# budget` 줄과 역할 값을 현재 선택으로 본다. 없으면 기본값에서 시작한다. `hardest tasks`, `architect runners`, `reflect tooling`, `why investigators`처럼 역할이 5단계에 없는 줄은 은퇴한 역할의 것이다. 버린다.
 
-Gemini 4 Neon 이전에는 옛 Gemini 모델이 패널 자리를 맡았다. 그래서 어떤 규칙이든 패널 역할(`arena runners`, `arena cross-judge pool`, `interrogate reviewers`)에 있는 `gemini-4-*` 항목 중 `gemini-4-neon-*`이 아닌 것은 옛 기본값이다. 그런 항목은 모두 `gemini-4-neon-high`로 바꾼다. 바꾼 항목이 무엇인지 사용자에게 알린다.
+예전 기본값은 패널 자리에 다른 Gemini 모델을 두었고, 그다음에는 `gemini-4-neon-high`를 두었다. 그래서 어떤 규칙이든 패널 역할(`arena runners`, `arena cross-judge pool`, `interrogate reviewers`)에 있는 `gemini-4-neon-high` 항목과, `gemini-4-*` 항목 중 `gemini-4-neon-*`이 아닌 것은 옛 기본값이다. 그런 항목은 모두 `gemini-4-neon-xhigh`로 바꾼다. 그 밖의 수준에 있는 Gemini 4 Neon 항목은 사용자의 선택이므로 남긴다. 바꾼 항목이 무엇인지 사용자에게 알린다.
 
 `# defaults: 3` 줄이 없는 규칙은 옛 설정에서 온 것이다. 그 설정은 모든 역할에 줄을 썼으므로 일부 값은 선택이 아니라 옛 기본값이다. 3단계 전에 다음 값을 바꾼다.
 
@@ -35,7 +35,7 @@ Gemini 4 Neon 이전에는 옛 Gemini 모델이 패널 자리를 맡았다. 그�
 - `medium — high reasoning`
 - `small — medium reasoning`
 
-**(b) 적용.** 스킬 기본값으로 작업 표를 만들고, 다시 실행하는 경우에는 계열, 목록, 별칭(`inherit-parent`, `auto`)으로 바꾼 역할을 유지한다. 계열은 **arena** 스킬 Phase A가 정한 것을 쓰므로 Fable은 별도 계열이다. 역할마다 목표 effort가 있고, 이는 기본값의 effort를 예산만큼 옮긴 것이다. `large`는 그대로 두고, `medium`은 한 단계 내리고, `small`은 두 단계 내린다. 순서는 `xhigh` > `high` > `medium` > `low`이다. `xhigh`보다 높게 도는 역할은 없고, 목표가 순서의 맨 아래에 있으면 거기에 머문다. 기본값 대부분은 `xhigh`에 있고, 예산 라벨마다 그 기본값이 어디에 놓이는지 적혀 있다. 역할의 모든 실제 slug(패널 항목 포함)의 effort 토큰을 그 역할의 목표로 설정한다. effort 토큰은 마지막 토큰, 또는 끝에 `fast`가 붙어 있으면 그 앞의 토큰이다. 결과가 감지된 slug가 아니면, 같은 계열의 감지된 slug 중 목표 이하에서 effort가 가장 높은 것을 쓰고, 그것도 없으면 그 역할을 선택이 필요하다고 표시한다. `inherit-parent`와 `auto`는 바뀌지 않는다. 따라서 `medium`은 `claude-opus-5-5-xhigh-fast`를 `claude-opus-5-5-high-fast`로, `claude-opus-5-5-high-fast`를 `claude-opus-5-5-medium-fast`로 바꾸고, `small`은 둘을 `claude-opus-5-5-medium-fast`와 `claude-opus-5-5-low-fast`로 바꾼다. Opus 5.5는 항상 `-fast` slug로 돌므로 Opus 5.5 값은 모두 `-fast`로 끝난다. Fable 5.2와 Gemini에는 fast slug가 없으니 절대 쓰지 않는다. Gemini 4 Neon에는 `xhigh` slug가 있지만, 역할의 목표가 `xhigh`여도 Gemini 항목은 `high`에 머문다.
+**(b) 적용.** 스킬 기본값으로 작업 표를 만들고, 다시 실행하는 경우에는 계열, 목록, 별칭(`inherit-parent`, `auto`)으로 바꾼 역할을 유지한다. 계열은 **arena** 스킬 Phase A가 정한 것을 쓰므로 Fable은 별도 계열이다. 역할마다 목표 effort가 있고, 이는 기본값의 effort를 예산만큼 옮긴 것이다. `large`는 그대로 두고, `medium`은 한 단계 내리고, `small`은 두 단계 내린다. 순서는 `xhigh` > `high` > `medium` > `low`이다. `xhigh`보다 높게 도는 역할은 없고, 목표가 순서의 맨 아래에 있으면 거기에 머문다. 기본값 대부분은 `xhigh`에 있고, 예산 라벨마다 그 기본값이 어디에 놓이는지 적혀 있다. 역할의 모든 실제 slug(패널 항목 포함)의 effort 토큰을 그 역할의 목표로 설정한다. effort 토큰은 마지막 토큰, 또는 끝에 `fast`가 붙어 있으면 그 앞의 토큰이다. 결과가 감지된 slug가 아니면, 같은 계열의 감지된 slug 중 목표 이하에서 effort가 가장 높은 것을 쓰고, 그것도 없으면 그 역할을 선택이 필요하다고 표시한다. `inherit-parent`와 `auto`는 바뀌지 않는다. 따라서 `medium`은 `claude-opus-5-5-xhigh-fast`를 `claude-opus-5-5-high-fast`로, `claude-opus-5-5-high-fast`를 `claude-opus-5-5-medium-fast`로 바꾸고, `small`은 둘을 `claude-opus-5-5-medium-fast`와 `claude-opus-5-5-low-fast`로 바꾼다. Opus 5.5는 항상 `-fast` slug로 돌므로 Opus 5.5 값은 모두 `-fast`로 끝난다. Fable 5.2와 Gemini에는 fast slug가 없으니 절대 쓰지 않는다. Gemini 4 Neon slug는 `low`부터 `xhigh`까지 있고 `max`나 `fast` slug는 없으므로, Gemini 자리는 가장 높은 slug인 `gemini-4-neon-xhigh`로 돈다. 패널 역할의 Gemini 4 Neon 항목은 자기 목표를 따르며, 그 목표는 `xhigh`를 예산만큼 옮긴 것이다. 따라서 `large`는 `gemini-4-neon-xhigh`를 그대로 두고, `medium`은 `gemini-4-neon-high`를, `small`은 `gemini-4-neon-medium`을 쓴다.
 
 **(c) 역할을 보여 주고 확인.** 모든 역할을 모델과 함께 보여 주고, 감지된 집합에 없는 실제 slug는 선택이 필요하다고 표시한다. 2단계에서 버린 줄도 각각 나열한다. 그대로 받아들일지, 특정 역할을 바꿀지 묻고, 선택지로 `xhigh` 이하의 감지된 모델과 `inherit-parent`, `auto`를 제시한다(둘 다 이 역할이 부모 채팅 모델로 돈다는 뜻이며, Auto 사용자가 Auto에 머무는 방법이다). 자유 텍스트보다 AskQuestion을 우선한다. 패널 역할(arena runners, interrogate reviewers)의 값은 목록이고, 별칭 항목을 포함해 항목마다 subagent 하나가 돌므로 목록 길이가 개수를 정한다. `arena cross-judge pool`도 목록이지만, Arena는 판정자 하나를 돌린다. 부모와 다른 벤더의 값만 목록 순서대로 시도하므로 선호 순서대로 적는다. Fable과 다른 Claude 모델은 한 벤더다. `inherit-parent`나 `auto` 값은 판정하지 않는다. `swarm workers`는 경주나 비교가 갈래마다 다른 모델을 배정하지 않는 한 모든 worker의 기본 모델이다.
 
@@ -61,10 +61,10 @@ bug-fix: claude-opus-5-5-xhigh-fast
 perf-issue: claude-opus-5-5-xhigh-fast
 hillclimb: claude-opus-5-5-xhigh-fast
 judgment and prose: claude-opus-5-5-xhigh-fast
-arena runners: claude-fable-5-2-high, claude-opus-5-5-high-fast, gemini-4-neon-high
-arena cross-judge pool: claude-opus-5-5-high-fast, gemini-4-neon-high
+arena runners: claude-fable-5-2-high, claude-opus-5-5-high-fast, gemini-4-neon-xhigh
+arena cross-judge pool: claude-opus-5-5-high-fast, gemini-4-neon-xhigh
 swarm workers: claude-opus-5-5-high-fast
-interrogate reviewers: claude-fable-5-2-high, claude-opus-5-5-high-fast, gemini-4-neon-high
+interrogate reviewers: claude-fable-5-2-high, claude-opus-5-5-high-fast, gemini-4-neon-xhigh
 ```
 
 ### 6. 확인

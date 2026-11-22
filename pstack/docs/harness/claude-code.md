@@ -43,7 +43,7 @@ pstack 스킬은 Cursor 이름을 쓴다. Claude Code에서는 세션마다 이 
 Claude Code는 새 세션마다 `~/.claude/rules/`의 모든 `.md` 파일을 불러오므로 `setup-pstack`은 규칙을 거기에 쓴다. 단계는 다음만 바꿔서 따른다.
 
 - 감지. 감지한 모델은 `Agent` 도구 스키마가 나열하는 `model` 값이고, 각각 `effort` 값 중 하나를 effort로 갖는다. 실제 모델은 `opus xhigh`처럼 `<model> <effort>`로 쓴다. effort가 마지막 토큰이므로 예산 단계가 쓰인 그대로 동작한다.
-- 기본값. 기본 slug마다 위의 행으로 대응시킨다. `claude-opus-5-5-xhigh-fast`는 `opus xhigh`, `claude-opus-5-5-high-fast`는 `opus high`, `claude-fable-5-2-high`는 `fable high`, `gemini-4-neon-high`는 `inherit-parent`다.
+- 기본값. 기본 slug마다 위의 행으로 대응시킨다. `claude-opus-5-5-xhigh-fast`는 `opus xhigh`, `claude-opus-5-5-high-fast`는 `opus high`, `claude-fable-5-2-high`는 `fable high`, `gemini-4-neon-xhigh`는 `inherit-parent`다.
 - 쓰기. frontmatter 없이 `~/.claude/rules/pstack-models.md`를 쓰고, 그다음 주석 줄, `# budget` 줄, 5단계의 역할마다 한 줄을 쓴다. 파일 전체를 덮어쓴다. 역할 줄을 `CLAUDE.md`나 `AGENTS.md`에 절대 넣지 않는다.
 
 ## 경로

@@ -68,6 +68,7 @@ pstack은 Cursor용으로 만들었고, Claude Code에도 `/plugin marketplace a
 | 사소하지 않은 작업을 엄밀하게 하기 | [`/poteto-mode`](../poteto-mode/SKILL.md) |
 | 에이전트가 시작하기 전에 내 목표와 문제를 이해했는지 확인하기 | [`/in-your-own-words`](../in-your-own-words/SKILL.md) |
 | 보내기 전에 프롬프트를 더 크게가 아니라 더 깊게 다시 쓰기. 최고 전문가가 더할 것, 그들의 원자료와 방법, 바깥에서 확인하는 수단을 담는다. 프롬프트를 돌려줄 뿐 작업은 하지 않는다 | [`/sharpen`](../sharpen/SKILL.md) |
+| 내가 만드는 것을 가리키는 전문가의 용어를 인접 분야에서 빌린 용어까지 배우고, 인용한 출처를 모두 확인받은 뒤, 그 용어로 내 설명을 다시 쓰게 하기 | [`/reframe`](../reframe/SKILL.md) |
 | 코드가 지금 어떻게 동작하는지, 새 코드를 어디에 둘지 알기 | [`/how`](../how/SKILL.md) |
 | 코드가 왜 이런 모양인지, 숫자가 어디서 왔는지 알기 | [`/why`](../why/SKILL.md) |
 | 변경이나 하위 시스템을 쉬운 말로 이해하기 | [`/teach`](../teach/SKILL.md) |
